@@ -1,0 +1,1 @@
+This repository contains teh scripts for integrating the Cloud Middlewares with the EGI GLUE BDII information system. More info on how to setup these scripts is here: https://wiki.egi.eu/wiki/Fedclouds_BDII_instructions
