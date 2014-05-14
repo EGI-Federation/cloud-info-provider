@@ -1,0 +1,34 @@
+dn: GLUE2ServiceID=cloud.compute.%(site_name)s_service,GLUE2GroupID=cloud,GLUE2DomainID=%(site_name)s,o=glue
+objectClass: GLUE2Entity
+objectClass: GLUE2Service
+objectClass: GLUE2ComputingService
+GLUE2ServiceAdminDomainForeignKey: %(site_name)s
+GLUE2ServiceID: cloud.compute.%(site_name)s_service
+GLUE2ServiceQualityLevel: %(production_level)s
+GLUE2ServiceType: IaaS
+GLUE2ServiceCapability: %(iaas_capabilities)s
+creatorsName: o=glue
+entryDN: GLUE2ServiceID=cloud.compute.%(site_name)s_service,GLUE2GroupID=cloud,GLUE2DomainID=%(site_name)s,o=glue
+hasSubordinates: TRUE
+modifiersName: o=glue
+structuralObjectClass: GLUE2Service
+subschemaSubentry: cn=Subschema
+
+dn: GLUE2ManagerID=cloud.compute.%(site_name)s_manager,GLUE2ServiceID=cloud.compute.%(site_name)s_service,GLUE2GroupID=cloud,GLUE2DomainID=%(site_name)s,o=glue
+objectClass: GLUE2Entity
+objectClass: GLUE2Manager
+objectClass: GLUE2ComputingManager
+GLUE2ManagerID: cloud.compute.%(site_name)s_manager
+GLUE2ManagerProductName: %(iaas_hypervisor)s
+GLUE2ManagerServiceForeignKey: cloud.compute.%(site_name)s_service
+GLUE2ComputingManagerComputingServiceForeignKey: cloud.compute.%(site_name)s_service
+GLUE2EntityName: Cloud Manager at %(site_name)s
+GLUE2ManagerProductVersion: %(iaas_hypervisor_version)s
+GLUE2ComputingManagerTotalLogicalCPUs: %(site_total_cpu_cores)s
+GLUE2ComputingManagerWorkingAreaTotal: %(site_total_ram_gb)s
+creatorsName: o=glue
+entryDN: GLUE2ManagerID=cloud.compute.%(site_name)s_manager,GLUE2ServiceID=cloud.compute.%(site_name)s_service,GLUE2GroupID=cloud,GLUE2DomainID=%(site_name)s,o=glue
+hasSubordinates: FALSE
+modifiersName: o=glue
+structuralObjectClass: GLUE2Manager
+subschemaSubentry: cn=Subschema

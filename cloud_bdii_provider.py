@@ -157,57 +157,6 @@ provider['staas_endpoints'] = (
 
 
 
-def compute_service(site_name,production_level, service_type,capabilities):
-    '''Return the GLUE2Service entity
-    site_name: Unique name of the cloud-site
-    capabilities: list of strings containing the various capabilities
-    service_type: IaaS,PaaS,SaaS
-    '''
-    text = """dn: GLUE2ServiceID=cloud.compute.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-objectClass: GLUE2Entity
-objectClass: GLUE2Service
-objectClass: GLUE2ComputingService
-GLUE2ServiceAdminDomainForeignKey: %s
-GLUE2ServiceID: cloud.compute.%s_service
-GLUE2ServiceQualityLevel: %s
-GLUE2ServiceType: %s
-GLUE2ServiceCapability: %s
-creatorsName: o=glue
-entryDN: GLUE2ServiceID=cloud.compute.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-hasSubordinates: TRUE
-modifiersName: o=glue
-structuralObjectClass: GLUE2Service
-subschemaSubentry: cn=Subschema
-"""%(site_name,site_name,site_name,site_name, production_level, 'IaaS',capabilities,site_name,site_name)
-
-    return text
-
-
-def compute_manager(site_name,product_name,product_version,total_cpus,total_ram,vm_name,vm_version):
-  ''' Not intensively used, so far, used only to attach execution environment.'''
-
-  text = """dn: GLUE2ManagerID=cloud.compute.%s_manager,GLUE2ServiceID=cloud.compute.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-objectClass: GLUE2Entity
-objectClass: GLUE2Manager
-objectClass: GLUE2ComputingManager
-GLUE2ManagerID: cloud.compute.%s_manager
-GLUE2ManagerProductName: %s
-GLUE2ManagerServiceForeignKey: cloud.compute.%s_service
-GLUE2ComputingManagerComputingServiceForeignKey: cloud.compute.%s_service
-GLUE2EntityName: Cloud Manager at %s
-GLUE2ManagerProductVersion: %s
-GLUE2ComputingManagerTotalLogicalCPUs: %s
-GLUE2ComputingManagerWorkingAreaTotal: %s
-creatorsName: o=glue
-entryDN: GLUE2ManagerID=cloud.compute.%s_manager,GLUE2ServiceID=cloud.compute.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-hasSubordinates: FALSE
-modifiersName: o=glue
-structuralObjectClass: GLUE2Manager
-subschemaSubentry: cn=Subschema
-"""%(site_name,site_name,site_name,site_name,vm_name,site_name,site_name,site_name,vm_version,total_cpus,total_ram,site_name,site_name,site_name)
-  return text
-
-
 def computing_endpoint (site_name,endpoint_url,endpoint_interface,capabilities,service_type_name,service_type_version,service_type_developer,interface_version,endpoint_technology, auth_method):
     ''' '''
     text = """
@@ -409,9 +358,29 @@ class BaseBDII(object):
                 self.ldif[template] = f.read()
 
 
+class IaaSBDII(BaseBDII):
+    def __init__(self, provider):
+        self.provider_info = provider
+        templates = ("compute_service",)
+        super(IaaSBDII, self).__init__(templates)
+
+    def _format_compute_service(self):
+        return self.ldif["compute_service"] % self.provider_info
+
+    def render(self):
+        output = []
+        output.append(self._format_compute_service())
+        return "\n".join(output)
+
+
 class CloudBDII(BaseBDII):
     def __init__(self, provider):
         self.provider_info = provider
+
+        self.services = []
+        if self.provider_info.get('iaas_endpoints', None):
+            self.services.append(IaaSBDII(provider))
+
         templates = ("headers", "domain", "bdii")
         super(CloudBDII, self).__init__(templates)
 
@@ -429,6 +398,8 @@ class CloudBDII(BaseBDII):
         output.append(self._format_headers())
         output.append(self._format_domain())
         output.append(self._format_bdii())
+        for i in self.services:
+            output.append(i.render())
         return "\n".join(output)
 
 
@@ -439,8 +410,6 @@ def main():
     # NOTE(aloga): Refactored code <<<<
 
     if provider['iaas_endpoints']:
-        print compute_service(provider['site_name'],provider['production_level'],'IaaS',provider['iaas_capabilities'])
-        print compute_manager(provider['site_name'],provider['iaas_middleware'],provider['iaas_middleware_version'],provider['site_total_cpu_cores'],provider['site_total_ram_gb'],provider['iaas_hypervisor'],provider['iaas_hypervisor_version'])
         for endpoint in provider['iaas_endpoints']:
             print computing_endpoint(provider['site_name'],endpoint['endpoint_url'],endpoint['endpoint_interface'],provider['iaas_capabilities'],endpoint['service_type_name'],endpoint['service_type_version'],endpoint['service_type_developer'],endpoint['interface_version'],endpoint['endpoint_technology'],endpoint['auth_method'])
         for ex_env in provider['resource_tpl']:
