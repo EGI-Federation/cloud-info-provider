@@ -155,65 +155,6 @@ provider['staas_endpoints'] = (
 )
 
 
-
-def domain (site_name, web_site_name, ngi, country, site_latitude, site_longitude, general_contact, security_contact, user_contact, sysadmin_contact):
-    ''' returns the adminDomain GLUE2 entity:
-    - site-name: is the human-readable name of the site providing the cloud resources e.g.:'''
-    text = """dn: GLUE2DomainID=%s,o=glue
-objectClass: GLUE2AdminDomain
-objectClass: GLUE2Domain
-GLUE2DomainID: %s
-GLUE2DomainDescription: %s
-GLUE2DomainWWW: %s
-GLUE2EntityOtherInfo: EGI_NGI=%s
-
-dn: GLUE2LocationID=location.%s,GLUE2DomainID=%s,o=glue
-objectClass: GLUE2Location
-GLUE2LocationID: location.%s
-GLUE2LocationCountry: %s
-GLUE2LocationDomainForeignKey: %s
-GLUE2LocationLongitude: %s
-GLUE2LocationLatitude: %s
-
-dn: GLUE2ContactID=general.contact.%s,GLUE2DomainID=%s,o=glue
-objectClass: GLUE2Contact
-GLUE2ContactDetail: mailto:%s
-GLUE2ContactID: general.contact.%s
-GLUE2ContactType: general
-GLUE2ContactDomainForeignKey: %s
-
-dn: GLUE2ContactID=sysadmin.contact.%s,GLUE2DomainID=%s,o=glue
-objectClass: GLUE2Contact
-GLUE2ContactDetail: mailto:%s
-GLUE2ContactID: sysadmin.contact.%s
-GLUE2ContactType: sysadmin
-GLUE2ContactDomainForeignKey: %s
-
-dn: GLUE2ContactID=security.contact.%s,GLUE2DomainID=%s,o=glue
-objectClass: GLUE2Contact
-GLUE2ContactDetail: mailto:%s
-GLUE2ContactID: security.contact.%s
-GLUE2ContactType: security
-GLUE2ContactDomainForeignKey: %s
-
-dn: GLUE2ContactID=usersupport.contact.%s,GLUE2DomainID=%s,o=glue
-objectClass: GLUE2Contact
-GLUE2ContactDetail: mailto:%s
-GLUE2ContactID: usersupport.contact.%s
-GLUE2ContactType: usersupport
-GLUE2ContactDomainForeignKey: %s
-
-dn: GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-objectClass: GLUE2Group
-GLUE2GroupID: cloud
-
-dn: GLUE2GroupID=resource,GLUE2DomainID=%s,o=glue
-objectClass: GLUE2Group
-GLUE2GroupID: resource
-"""%(site_name, site_name, site_name, web_site_name, ngi, site_name,site_name,site_name,country,site_longitude,site_latitude,site_name, site_name,site_name,general_contact,site_name,site_name, site_name,site_name,sysadmin_contact,site_name,site_name, site_name,site_name,security_contact,site_name,site_name, site_name,site_name,user_contact,site_name,site_name, site_name,site_name)
-    return text
-
-
 def localbdii(site_name,production_level,site_bdii_host,site_bdii_port):
     '''   '''
     text = """dn: GLUE2ServiceID=%(site_name)s_sitebdii,GLUE2GroupID=resource,o=glue
@@ -538,26 +479,33 @@ subschemaSubentry: cn=Subschema
 
 
 class CloudBDII(object):
-    def __init__(self):
+    def __init__(self, provider):
+        self.ldif = {}
+        self.provider_info = provider
         with open('templates/headers.ldif', 'r') as f:
-            self.headers = f.read()
+            self.ldif["headers"] = f.read()
+
+        with open('templates/domain.ldif', 'r') as f:
+            self.ldif["domain"] = f.read()
 
     def _format_headers(self):
-        return self.headers
+        return self.ldif["headers"]
+
+    def _format_domain(self):
+        return self.ldif["domain"] % self. provider_info
 
     def render(self):
         output = []
         output.append(self._format_headers())
-        return "".join(output)
+        output.append(self._format_domain())
+        return "\n".join(output)
 
 
 def main():
     # NOTE(aloga): Refactored code >>>>
-    bdii = CloudBDII()
+    bdii = CloudBDII(provider)
     print bdii.render()
     # NOTE(aloga): Refactored code <<<<
-
-    print domain(provider['site_name'],provider['www'],provider['affiliated_ngi'],provider['country'],provider['site_latitude'],provider['site_longitude'],provider['general_contact'],provider['security_contact'],provider['user_support_contact'],provider['sysadmin_contact'])
 
     print localbdii(provider['site_name'],provider['production_level'],provider['site_bdii_host'],provider['site_bdii_port'])
 

@@ -1,0 +1,51 @@
+dn: GLUE2DomainID=%(site_name)s,o=glue
+objectClass: GLUE2AdminDomain
+objectClass: GLUE2Domain
+GLUE2DomainID: %(site_name)s
+GLUE2DomainDescription: %(site_name)s
+GLUE2DomainWWW: %(www)s
+GLUE2EntityOtherInfo: EGI_NGI=%(affiliated_ngi)s
+
+dn: GLUE2LocationID=location.%(site_name)s,GLUE2DomainID=%(site_name)s,o=glue
+objectClass: GLUE2Location
+GLUE2LocationID: location.%(site_name)s
+GLUE2LocationCountry: %(country)s
+GLUE2LocationDomainForeignKey: %(site_name)s
+GLUE2LocationLongitude: %(site_longitude)s
+GLUE2LocationLatitude: %(site_latitude)s
+
+dn: GLUE2ContactID=general.contact.%(site_name)s,GLUE2DomainID=%(site_name)s,o=glue
+objectClass: GLUE2Contact
+GLUE2ContactDetail: mailto:%(general_contact)s
+GLUE2ContactID: general.contact.%(site_name)s
+GLUE2ContactType: general
+GLUE2ContactDomainForeignKey: %(site_name)s
+
+dn: GLUE2ContactID=sysadmin.contact.%(site_name)s,GLUE2DomainID=%(site_name)s,o=glue
+objectClass: GLUE2Contact
+GLUE2ContactDetail: mailto:%(sysadmin_contact)s
+GLUE2ContactID: sysadmin.contact.%(site_name)s
+GLUE2ContactType: sysadmin
+GLUE2ContactDomainForeignKey: %(site_name)s
+
+dn: GLUE2ContactID=security.contact.%(site_name)s,GLUE2DomainID=%(site_name)s,o=glue
+objectClass: GLUE2Contact
+GLUE2ContactDetail: mailto:%(security_contact)s
+GLUE2ContactID: security.contact.%(site_name)s
+GLUE2ContactType: security
+GLUE2ContactDomainForeignKey: %(site_name)s
+
+dn: GLUE2ContactID=usersupport.contact.%(site_name)s,GLUE2DomainID=%(site_name)s,o=glue
+objectClass: GLUE2Contact
+GLUE2ContactDetail: mailto:%(user_support_contact)s
+GLUE2ContactID: usersupport.contact.%(site_name)s
+GLUE2ContactType: usersupport
+GLUE2ContactDomainForeignKey: %(site_name)s
+
+dn: GLUE2GroupID=cloud,GLUE2DomainID=%(site_name)s,o=glue
+objectClass: GLUE2Group
+GLUE2GroupID: cloud
+
+dn: GLUE2GroupID=resource,GLUE2DomainID=%(site_name)s,o=glue
+objectClass: GLUE2Group
+GLUE2GroupID: resource
