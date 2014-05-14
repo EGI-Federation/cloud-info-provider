@@ -155,54 +155,6 @@ provider['staas_endpoints'] = (
 )
 
 
-def storage_service(site_name,production_level,service_type,capabilities):
-    '''Return the GLUE2Service entity
-    site_name: Unique name of the cloud-site
-    capabilities: list of strings containing the various capabilities
-    service_type: IaaS,PaaS,SaaS
-    '''
-    text = """dn: GLUE2ServiceID=cloud.storage.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-objectClass: GLUE2Entity
-objectClass: GLUE2Service
-objectClass: GLUE2StorageService
-GLUE2ServiceAdminDomainForeignKey: %s
-GLUE2ServiceID: cloud.storage.%s_service
-GLUE2ServiceQualityLevel: %s
-GLUE2ServiceType: %s
-GLUE2ServiceCapability: %s
-creatorsName: o=glue
-entryDN: GLUE2ServiceID=cloud.storage.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-hasSubordinates: TRUE
-modifiersName: o=glue
-structuralObjectClass: GLUE2Service
-subschemaSubentry: cn=Subschema
-"""%(site_name,site_name,site_name,site_name, production_level, 'STaaS',capabilities,site_name,site_name)
-    return text
-
-
-def storage_manager(site_name,product_name,product_version,total_storage):
-  ''' Not intensively used, so far, used only to attach execution environment.'''
-
-  text = """dn: GLUE2ManagerID=cloud.storage.%s_manager,GLUE2ServiceID=cloud.storage.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-objectClass: GLUE2Entity
-objectClass: GLUE2Manager
-objectClass: GLUE2StorageManager
-GLUE2ManagerID: cloud.storage.%s_manager
-GLUE2ManagerProductName: %s
-GLUE2ManagerServiceForeignKey: cloud.storage.%s_service
-GLUE2StorageManagerStorageServiceForeignKey: cloud.storage.%s_service
-GLUE2EntityName: Cloud Storage Manager at %s
-GLUE2ManagerProductVersion: %s
-creatorsName: o=glue
-entryDN: GLUE2ManagerID=cloud.storage.%s_manager,GLUE2ServiceID=cloud.storage.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-hasSubordinates: FALSE
-modifiersName: o=glue
-structuralObjectClass: GLUE2Manager
-subschemaSubentry: cn=Subschema
-"""%(site_name,site_name,site_name,site_name,product_name,site_name,site_name,site_name,product_version,site_name,site_name,site_name)
-  return text
-
-
 def storage_endpoint (site_name,endpoint_url,endpoint_interface,capabilities,service_type_name,service_type_version,service_type_developer,interface_version,endpoint_technology, auth_method):
     ''' '''
     text = """
@@ -277,6 +229,18 @@ class BaseBDII(object):
         return self.ldif.get(template, "") % fd
 
 
+class StaaSBDII(BaseBDII):
+    def __init__(self, provider):
+        self.provider_info = provider
+        templates = ("storage_service",)
+        super(StaaSBDII, self).__init__(templates, provider)
+
+    def render(self):
+        output = []
+        output.append(self._format_template("storage_service"))
+        return "\n".join(output)
+
+
 class IaaSBDII(BaseBDII):
     def __init__(self, provider):
         self.provider_info = provider
@@ -305,6 +269,9 @@ class CloudBDII(BaseBDII):
         if provider.get('iaas_endpoints', None):
             self.services.append(IaaSBDII(provider))
 
+        if provider.get('staas_endpoints', None):
+            self.services.append(StaaSBDII(provider))
+
         self.templates = ("headers", "domain", "bdii")
         super(CloudBDII, self).__init__(self.templates, provider)
 
@@ -324,8 +291,6 @@ def main():
     # NOTE(aloga): Refactored code <<<<
 
     if provider['staas_endpoints']:
-        print storage_service(provider['site_name'],provider['production_level'],'STaaS',provider['staas_capabilities'])
-        print storage_manager(provider['site_name'],provider['staas_middleware'],provider['staas_middleware_version'],provider['site_total_storage_gb'])
         for endpoint in provider['staas_endpoints']:
             print storage_endpoint(provider['site_name'],endpoint['endpoint_url'],endpoint['endpoint_interface'],provider['staas_capabilities'],endpoint['service_type_name'],endpoint['service_type_version'],endpoint['service_type_developer'],endpoint['interface_version'],endpoint['endpoint_technology'],endpoint['auth_method'])
         print storage_capacity(provider['site_name'],provider['site_total_storage_gb'])
