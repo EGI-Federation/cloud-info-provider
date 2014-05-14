@@ -154,24 +154,6 @@ provider['staas_endpoints'] = (
     },
 )
 
-######################
-# Main 				 #
-######################
-
-
-def headers ():
-	return """dn: o=glue
-objectClass: organization
-o: glue
-
-dn: GLUE2GroupID=grid,o=glue
-objectClass: GLUE2Group
-GLUE2GroupID: grid
-
-dn: GLUE2GroupID=resource,o=glue
-objectClass: GLUE2Group
-GLUE2GroupID: resource
-"""
 
 
 def domain (site_name, web_site_name, ngi, country, site_latitude, site_longitude, general_contact, security_contact, user_contact, sysadmin_contact):
@@ -552,9 +534,39 @@ subschemaSubentry: cn=Subschema
     return text
 
 
+####
+
+
+class CloudBDII(object):
+    # FIXME(aloga): move this into a file
+    headers = """dn: o=glue
+objectClass: organization
+o: glue
+
+dn: GLUE2GroupID=grid,o=glue
+objectClass: GLUE2Group
+GLUE2GroupID: grid
+
+dn: GLUE2GroupID=resource,o=glue
+objectClass: GLUE2Group
+GLUE2GroupID: resource
+"""
+
+    def _format_headers(self):
+        return self.headers
+
+    def render(self):
+        output = []
+        output.append(self._format_headers())
+        return "".join(output)
+
+
 def main():
-    #### OUTPUT
-    print headers()
+    # NOTE(aloga): Refactored code >>>>
+    bdii = CloudBDII()
+    print bdii.render()
+    # NOTE(aloga): Refactored code <<<<
+
     print domain(provider['site_name'],provider['www'],provider['affiliated_ngi'],provider['country'],provider['site_latitude'],provider['site_longitude'],provider['general_contact'],provider['security_contact'],provider['user_support_contact'],provider['sysadmin_contact'])
 
     print localbdii(provider['site_name'],provider['production_level'],provider['site_bdii_host'],provider['site_bdii_port'])
