@@ -463,7 +463,7 @@ def main():
 
     print localbdii(provider['site_name'],provider['production_level'],provider['site_bdii_host'],provider['site_bdii_port'])
 
-    if len(provider['iaas_endpoints'])>0:
+    if provider['iaas_endpoints']:
         print compute_service(provider['site_name'],provider['production_level'],'IaaS',provider['iaas_capabilities'])
         print compute_manager(provider['site_name'],provider['iaas_middleware'],provider['iaas_middleware_version'],provider['site_total_cpu_cores'],provider['site_total_ram_gb'],provider['iaas_hypervisor'],provider['iaas_hypervisor_version'])
         for endpoint in provider['iaas_endpoints']:
@@ -473,7 +473,7 @@ def main():
         for app_env in provider['os_tpl']:
 		print application_environment(provider['site_name'],app_env['image_name'],app_env['image_version'],app_env['os_family'],app_env['os_name'],app_env['os_version'],app_env['platform'],app_env['occi_id'],app_env['marketplace_id'])
 
-    if len(provider['staas_endpoints'])>0:
+    if provider['staas_endpoints']:
         print storage_service(provider['site_name'],provider['production_level'],'STaaS',provider['staas_capabilities'])
         print storage_manager(provider['site_name'],provider['staas_middleware'],provider['staas_middleware_version'],provider['site_total_storage_gb'])
         for endpoint in provider['staas_endpoints']:
