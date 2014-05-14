@@ -538,19 +538,9 @@ subschemaSubentry: cn=Subschema
 
 
 class CloudBDII(object):
-    # FIXME(aloga): move this into a file
-    headers = """dn: o=glue
-objectClass: organization
-o: glue
-
-dn: GLUE2GroupID=grid,o=glue
-objectClass: GLUE2Group
-GLUE2GroupID: grid
-
-dn: GLUE2GroupID=resource,o=glue
-objectClass: GLUE2Group
-GLUE2GroupID: resource
-"""
+    def __init__(self):
+        with open('templates/headers.ldif', 'r') as f:
+            self.headers = f.read()
 
     def _format_headers(self):
         return self.headers
