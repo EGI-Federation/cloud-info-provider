@@ -323,12 +323,6 @@ def main():
     print bdii.render()
     # NOTE(aloga): Refactored code <<<<
 
-#    if provider['iaas_endpoints']:
-#        for ex_env in provider['resource_tpl']:
-#            print execution_environment(provider['site_name'],ex_env['memory'],ex_env['occi_id'],ex_env['platform'],ex_env['cpu'],ex_env['network'])
-#        for app_env in provider['os_tpl']:
-#            print application_environment(provider['site_name'],app_env['image_name'],app_env['image_version'],app_env['os_family'],app_env['os_name'],app_env['os_version'],app_env['platform'],app_env['occi_id'],app_env['marketplace_id'])
-
     if provider['staas_endpoints']:
         print storage_service(provider['site_name'],provider['production_level'],'STaaS',provider['staas_capabilities'])
         print storage_manager(provider['site_name'],provider['staas_middleware'],provider['staas_middleware_version'],provider['site_total_storage_gb'])
