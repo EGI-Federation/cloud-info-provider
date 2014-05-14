@@ -157,43 +157,6 @@ provider['staas_endpoints'] = (
 
 
 
-def computing_endpoint (site_name,endpoint_url,endpoint_interface,capabilities,service_type_name,service_type_version,service_type_developer,interface_version,endpoint_technology, auth_method):
-    ''' '''
-    text = """
-dn: GLUE2EndpointID=%s_%s_%s_%s,GLUE2ServiceID=cloud.compute.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-objectClass: GLUE2Entity
-objectClass: GLUE2Endpoint
-objectClass: GLUE2ComputingEndpoint
-GLUE2EndpointHealthState: ok
-GLUE2EndpointID: %s_%s_%s_%s"""%(endpoint_url,endpoint_interface,interface_version, auth_method, site_name,site_name,endpoint_url,endpoint_interface,interface_version, auth_method)
-    text += """
-GLUE2EndpointInterfaceName: %s
-GLUE2EndpointQualityLevel: production
-GLUE2EndpointServiceForeignKey: cloud.compute.%s_service
-GLUE2EndpointServingState: production
-GLUE2EndpointURL: %s"""%(endpoint_interface,site_name,endpoint_url)
-    text +="""
-GLUE2ComputingEndpointComputingServiceForeignKey: cloud.compute.%s_service
-GLUE2EndpointCapability: %s
-GLUE2EndpointImplementationName: %s
-GLUE2EndpointImplementationVersion: %s
-GLUE2EndpointImplementor: %s"""%(site_name,capabilities,service_type_name,service_type_version,service_type_developer)
-    text += """
-GLUE2EndpointInterfaceVersion: %s
-#GLUE2EndpointSemantics:
-#GLUE2EndpointSupportedProfile:
-GLUE2EntityOtherInfo: Authn=%s
-GLUE2EndpointTechnology: %s"""%(interface_version,auth_method, endpoint_technology)
-    text +="""
-entryDN: GLUE2EndpointID=%s_%s_%s_%s,GLUE2ServiceID=cloud.compute.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-hasSubordinates: TRUE
-modifiersName: o=glue
-structuralObjectClass: GLUE2Endpoint
-subschemaSubentry: cn=Subschema
-"""%(endpoint_url,endpoint_interface,interface_version, auth_method,site_name,site_name)
-    return text
-
-
 def execution_environment (site_name,memory,occi_id,platform,cpu,network):
     ''' '''
     text = """dn: GLUE2ResourceID=%s_%s,GLUE2ServiceID=cloud.compute.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
@@ -361,15 +324,22 @@ class BaseBDII(object):
 class IaaSBDII(BaseBDII):
     def __init__(self, provider):
         self.provider_info = provider
-        templates = ("compute_service",)
+        templates = ("compute_service", "compute_endpoint", )
         super(IaaSBDII, self).__init__(templates)
 
     def _format_compute_service(self):
         return self.ldif["compute_service"] % self.provider_info
 
+    def _format_compute_endpoints(self, extra):
+        d = self.provider_info.copy()
+        d.update(extra)
+        return self.ldif["compute_endpoint"] % d
+
     def render(self):
         output = []
         output.append(self._format_compute_service())
+        for endpoint in self.provider_info['iaas_endpoints']:
+            output.append(self._format_compute_endpoints(endpoint))
         return "\n".join(output)
 
 
@@ -410,8 +380,6 @@ def main():
     # NOTE(aloga): Refactored code <<<<
 
     if provider['iaas_endpoints']:
-        for endpoint in provider['iaas_endpoints']:
-            print computing_endpoint(provider['site_name'],endpoint['endpoint_url'],endpoint['endpoint_interface'],provider['iaas_capabilities'],endpoint['service_type_name'],endpoint['service_type_version'],endpoint['service_type_developer'],endpoint['interface_version'],endpoint['endpoint_technology'],endpoint['auth_method'])
         for ex_env in provider['resource_tpl']:
             print execution_environment(provider['site_name'],ex_env['memory'],ex_env['occi_id'],ex_env['platform'],ex_env['cpu'],ex_env['network'])
         for app_env in provider['os_tpl']:
