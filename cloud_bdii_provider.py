@@ -157,36 +157,6 @@ provider['staas_endpoints'] = (
 
 
 
-def execution_environment (site_name,memory,occi_id,platform,cpu,network):
-    ''' '''
-    text = """dn: GLUE2ResourceID=%s_%s,GLUE2ServiceID=cloud.compute.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-objectClass: GLUE2Entity
-objectClass: GLUE2Resource
-objectClass: GLUE2ExecutionEnvironment
-GLUE2ExecutionEnvironmentConnectivityIn: TRUE
-GLUE2ExecutionEnvironmentConnectivityOut: TRUE
-GLUE2ExecutionEnvironmentVirtualMachine: TRUE
-GLUE2ExecutionEnvironmentMainMemorySize:%s
-GLUE2ExecutionEnvironmentPlatform: %s
-GLUE2ExecutionEnvironmentOSFamily: linux
-GLUE2ResourceManagerForeignKey: cloud.compute.%s_manager
-GLUE2EntityName: %s
-GLUE2ExecutionEnvironmentComputingManagerForeignKey: cloud.compute.%s_manager
-GLUE2ExecutionEnvironmentCPUModel: %s
-GLUE2ExecutionEnvironmentCPUMultiplicity: multicpu-multicore
-GLUE2ExecutionEnvironmentCPUVendor: %s
-GLUE2ExecutionEnvironmentLogicalCPUs: %s
-GLUE2ExecutionEnvironmentPhysicalCPUs: %s
-creatorsName: o=glue
-entryDN: GLUE2ResourceID=%s,GLUE2ServiceID=cloud.compute.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-hasSubordinates: TRUE
-modifiersName: o=glue
-structuralObjectClass: GLUE2Resource
-subschemaSubentry: cn=Subschema
-"""%(site_name,occi_id,site_name,site_name,memory,platform,site_name,occi_id,site_name,'virtual model','virtual vendor',cpu,cpu,site_name,site_name,site_name)
-    return text
-
-
 def application_environment (site_name,image_name,image_version,os_family,os_name,os_version,platform,occi_id,marketplaceid):
     ''' '''
     text = """dn: GLUE2ApplicationEnvironmentID=%s_%s,GLUE2ServiceID=cloud.compute.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
@@ -314,60 +284,52 @@ subschemaSubentry: cn=Subschema
 
 
 class BaseBDII(object):
-    def __init__(self, templates):
+    def __init__(self, templates, info):
+        self.info = info
         self.ldif = {}
-        for template in templates:
-            with open('templates/%s.ldif' % template, 'r') as f:
-                self.ldif[template] = f.read()
+        self.templates = templates
+        for tpl in self.templates:
+            with open('templates/%s.ldif' % tpl, 'r') as f:
+                self.ldif[tpl] = f.read()
+
+    def _format_template(self, template, info=None, extra={}):
+        if not info:
+            info = self.info
+        fd = info.copy()
+        fd.update(extra)
+        return self.ldif.get(template, "") % fd
 
 
 class IaaSBDII(BaseBDII):
     def __init__(self, provider):
         self.provider_info = provider
-        templates = ("compute_service", "compute_endpoint", )
-        super(IaaSBDII, self).__init__(templates)
-
-    def _format_compute_service(self):
-        return self.ldif["compute_service"] % self.provider_info
-
-    def _format_compute_endpoints(self, extra):
-        d = self.provider_info.copy()
-        d.update(extra)
-        return self.ldif["compute_endpoint"] % d
+        templates = ("compute_service", "compute_endpoint", "execution_environment")
+        super(IaaSBDII, self).__init__(templates, provider)
 
     def render(self):
         output = []
-        output.append(self._format_compute_service())
+        output.append(self._format_template("compute_service"))
         for endpoint in self.provider_info['iaas_endpoints']:
-            output.append(self._format_compute_endpoints(endpoint))
+            output.append(self._format_template("compute_endpoint", extra=endpoint))
+
+        for ex_env in self.provider_info['resource_tpl']:
+            output.append(self._format_template("execution_environment", extra=ex_env))
         return "\n".join(output)
 
 
 class CloudBDII(BaseBDII):
     def __init__(self, provider):
-        self.provider_info = provider
-
         self.services = []
-        if self.provider_info.get('iaas_endpoints', None):
+        if provider.get('iaas_endpoints', None):
             self.services.append(IaaSBDII(provider))
 
-        templates = ("headers", "domain", "bdii")
-        super(CloudBDII, self).__init__(templates)
-
-    def _format_headers(self):
-        return self.ldif["headers"]
-
-    def _format_bdii(self):
-        return self.ldif["bdii"] % self.provider_info
-
-    def _format_domain(self):
-        return self.ldif["domain"] % self. provider_info
+        self.templates = ("headers", "domain", "bdii")
+        super(CloudBDII, self).__init__(self.templates, provider)
 
     def render(self):
         output = []
-        output.append(self._format_headers())
-        output.append(self._format_domain())
-        output.append(self._format_bdii())
+        for tpl in self.templates:
+            output.append(self._format_template(tpl))
         for i in self.services:
             output.append(i.render())
         return "\n".join(output)
@@ -380,10 +342,10 @@ def main():
     # NOTE(aloga): Refactored code <<<<
 
     if provider['iaas_endpoints']:
-        for ex_env in provider['resource_tpl']:
-            print execution_environment(provider['site_name'],ex_env['memory'],ex_env['occi_id'],ex_env['platform'],ex_env['cpu'],ex_env['network'])
+#        for ex_env in provider['resource_tpl']:
+#            print execution_environment(provider['site_name'],ex_env['memory'],ex_env['occi_id'],ex_env['platform'],ex_env['cpu'],ex_env['network'])
         for app_env in provider['os_tpl']:
-		print application_environment(provider['site_name'],app_env['image_name'],app_env['image_version'],app_env['os_family'],app_env['os_name'],app_env['os_version'],app_env['platform'],app_env['occi_id'],app_env['marketplace_id'])
+            print application_environment(provider['site_name'],app_env['image_name'],app_env['image_version'],app_env['os_family'],app_env['os_name'],app_env['os_version'],app_env['platform'],app_env['occi_id'],app_env['marketplace_id'])
 
     if provider['staas_endpoints']:
         print storage_service(provider['site_name'],provider['production_level'],'STaaS',provider['staas_capabilities'])
