@@ -401,13 +401,19 @@ subschemaSubentry: cn=Subschema
 ####
 
 
-class CloudBDII(object):
-    def __init__(self, provider):
+class BaseBDII(object):
+    def __init__(self, templates):
         self.ldif = {}
-        self.provider_info = provider
-        for template in ("headers", "domain", "bdii"):
+        for template in templates:
             with open('templates/%s.ldif' % template, 'r') as f:
                 self.ldif[template] = f.read()
+
+
+class CloudBDII(BaseBDII):
+    def __init__(self, provider):
+        self.provider_info = provider
+        templates = ("headers", "domain", "bdii")
+        super(CloudBDII, self).__init__(templates)
 
     def _format_headers(self):
         return self.ldif["headers"]
