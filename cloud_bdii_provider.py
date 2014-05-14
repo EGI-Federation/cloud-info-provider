@@ -158,6 +158,7 @@ provider['staas_endpoints'] = (
 # Main 				 #
 ######################
 
+
 def headers ():
 	return """dn: o=glue
 objectClass: organization
@@ -171,6 +172,7 @@ dn: GLUE2GroupID=resource,o=glue
 objectClass: GLUE2Group
 GLUE2GroupID: resource
 """
+
 
 def domain (site_name, web_site_name, ngi, country, site_latitude, site_longitude, general_contact, security_contact, user_contact, sysadmin_contact):
     ''' returns the adminDomain GLUE2 entity:
@@ -228,6 +230,7 @@ objectClass: GLUE2Group
 GLUE2GroupID: resource
 """%(site_name, site_name, site_name, web_site_name, ngi, site_name,site_name,site_name,country,site_longitude,site_latitude,site_name, site_name,site_name,general_contact,site_name,site_name, site_name,site_name,sysadmin_contact,site_name,site_name, site_name,site_name,security_contact,site_name,site_name, site_name,site_name,user_contact,site_name,site_name, site_name,site_name)
     return text
+
 
 def localbdii(site_name,production_level,site_bdii_host,site_bdii_port):
     '''   '''
@@ -307,6 +310,7 @@ GLUE2EntityName: Access control rules for Endpoint %(site_name)s
 """% locals()
     return text
 
+
 def compute_service(site_name,production_level, service_type,capabilities):
     '''Return the GLUE2Service entity
     site_name: Unique name of the cloud-site
@@ -332,6 +336,7 @@ subschemaSubentry: cn=Subschema
 
     return text
 
+
 def compute_manager(site_name,product_name,product_version,total_cpus,total_ram,vm_name,vm_version):
   ''' Not intensively used, so far, used only to attach execution environment.'''
 
@@ -355,6 +360,7 @@ structuralObjectClass: GLUE2Manager
 subschemaSubentry: cn=Subschema
 """%(site_name,site_name,site_name,site_name,vm_name,site_name,site_name,site_name,vm_version,total_cpus,total_ram,site_name,site_name,site_name)
   return text
+
 
 def computing_endpoint (site_name,endpoint_url,endpoint_interface,capabilities,service_type_name,service_type_version,service_type_developer,interface_version,endpoint_technology, auth_method):
     ''' '''
@@ -392,6 +398,7 @@ subschemaSubentry: cn=Subschema
 """%(endpoint_url,endpoint_interface,interface_version, auth_method,site_name,site_name)
     return text
 
+
 def execution_environment (site_name,memory,occi_id,platform,cpu,network):
     ''' '''
     text = """dn: GLUE2ResourceID=%s_%s,GLUE2ServiceID=cloud.compute.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
@@ -421,6 +428,7 @@ subschemaSubentry: cn=Subschema
 """%(site_name,occi_id,site_name,site_name,memory,platform,site_name,occi_id,site_name,'virtual model','virtual vendor',cpu,cpu,site_name,site_name,site_name)
     return text
 
+
 def application_environment (site_name,image_name,image_version,os_family,os_name,os_version,platform,occi_id,marketplaceid):
     ''' '''
     text = """dn: GLUE2ApplicationEnvironmentID=%s_%s,GLUE2ServiceID=cloud.compute.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
@@ -440,6 +448,7 @@ structuralObjectClass: GLUE2ApplicationEnvironment
 subschemaSubentry: cn=Subschema
 """%(site_name,occi_id,site_name,site_name,image_name,image_version,marketplaceid,image_name,image_version,os_family,os_name,os_version,platform,occi_id,site_name,site_name,site_name,site_name)
     return text
+
 
 def storage_service(site_name,production_level,service_type,capabilities):
     '''Return the GLUE2Service entity
@@ -465,6 +474,7 @@ subschemaSubentry: cn=Subschema
 """%(site_name,site_name,site_name,site_name, production_level, 'STaaS',capabilities,site_name,site_name)
     return text
 
+
 def storage_manager(site_name,product_name,product_version,total_storage):
   ''' Not intensively used, so far, used only to attach execution environment.'''
 
@@ -486,6 +496,7 @@ structuralObjectClass: GLUE2Manager
 subschemaSubentry: cn=Subschema
 """%(site_name,site_name,site_name,site_name,product_name,site_name,site_name,site_name,product_version,site_name,site_name,site_name)
   return text
+
 
 def storage_endpoint (site_name,endpoint_url,endpoint_interface,capabilities,service_type_name,service_type_version,service_type_developer,interface_version,endpoint_technology, auth_method):
     ''' '''
@@ -521,6 +532,7 @@ subschemaSubentry: cn=Subschema
 """%(endpoint_url,endpoint_interface,interface_version, auth_method,site_name,site_name)
     return text
 
+
 def storage_capacity (site_name,total_storage):
     ''' '''
     text = """
@@ -538,6 +550,7 @@ structuralObjectClass: GLUE2StorageServiceCapacity
 subschemaSubentry: cn=Subschema
 """%(site_name,site_name,site_name,site_name,site_name,total_storage,site_name,site_name,site_name)
     return text
+
 
 def main():
     #### OUTPUT
