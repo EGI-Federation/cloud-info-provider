@@ -1,14 +1,5 @@
 #!/usr/bin/env python
-#
-# This (naive) script produces a text to be used in a LDIF file to be published by the Resource Provider LDAP server.
-# Edit the information below with your site information then run the script.
-#
-# Report any bug to the FedClouds task force.
-#
 
-##
-## Interfaces info
-##
 interface = {
     'IaaS_api': 'OCCI',
     'IaaS_api_version': '1.1',
@@ -20,9 +11,6 @@ interface = {
     'STaaS_api_authorization_method': 'X509-VOMS',
 }
 
-##
-## Site INFOS
-##
 provider = {
     'site_name': 'PRISMA-INFN-BARI',
     'www': 'http://recas-pon.ba.infn.it/',
@@ -34,7 +22,7 @@ provider = {
     'general_contact': 'prisma-iaas-open-support@lists.ba.infn.it',
     'sysadmin_contact': 'prisma-iaas-open-support@lists.ba.infn.it',
     'security_contact': 'prisma-iaas-open-support@lists.ba.infn.it',
-    'production_level': 'production', # e.g. 'production'
+    'production_level': 'production',
     'site_bdii_host': 'prisma-cloud.ba.infn.it',
     'site_bdii_port': '2170',
 
@@ -135,11 +123,10 @@ provider['resource_tpl'] = (
     },
 )
 
-#STorage-as-a-Service
-provider['staas_middleware'] = 'OpenStack Swift' #e.g. CDMI Proxy. Leave empty for no storage service
-provider['staas_middleware_version'] = 'havana' #CLOUD_MW version, e.g. 3.0
-provider['staas_middleware_developer'] = 'OpenStack' #CLOUD_MW version, e.g. 3.0
-provider['staas_capabilities'] = 'cloud.data.upload' # Capabilities must be agreed with the FedClouds task force
+provider['staas_middleware'] = 'OpenStack Swift'
+provider['staas_middleware_version'] = 'havana'
+provider['staas_middleware_developer'] = 'OpenStack'
+provider['staas_capabilities'] = 'cloud.data.upload'
 
 provider['staas_endpoints'] = (
     {
@@ -234,10 +221,8 @@ class CloudBDII(BaseBDII):
 
 
 def main():
-    # NOTE(aloga): Refactored code >>>>
     bdii = CloudBDII(provider)
     print bdii.render()
-    # NOTE(aloga): Refactored code <<<<
 
 
 if __name__ == "__main__":
