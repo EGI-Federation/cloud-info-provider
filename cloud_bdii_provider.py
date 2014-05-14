@@ -164,7 +164,6 @@ class BaseBDII(object):
 
 class StaaSBDII(BaseBDII):
     def __init__(self, provider):
-        self.provider_info = provider
         templates = ("storage_service", "storage_endpoint", "storage_capacity")
         super(StaaSBDII, self).__init__(templates, provider)
 
@@ -172,7 +171,7 @@ class StaaSBDII(BaseBDII):
         output = []
         output.append(self._format_template("storage_service"))
 
-        for endpoint in self.provider_info['staas_endpoints']:
+        for endpoint in provider['staas_endpoints']:
             output.append(self._format_template("storage_endpoint",
                                                 extra=endpoint))
 
@@ -183,7 +182,6 @@ class StaaSBDII(BaseBDII):
 
 class IaaSBDII(BaseBDII):
     def __init__(self, provider):
-        self.provider_info = provider
         templates = ("compute_service", "compute_endpoint",
                      "execution_environment", "application_environment")
         super(IaaSBDII, self).__init__(templates, provider)
@@ -192,15 +190,15 @@ class IaaSBDII(BaseBDII):
         output = []
         output.append(self._format_template("compute_service"))
 
-        for endpoint in self.provider_info['iaas_endpoints']:
+        for endpoint in provider['iaas_endpoints']:
             output.append(self._format_template("compute_endpoint",
                                                 extra=endpoint))
 
-        for ex_env in self.provider_info['resource_tpl']:
+        for ex_env in provider['resource_tpl']:
             output.append(self._format_template("execution_environment",
                                                 extra=ex_env))
 
-        for app_env in self.provider_info['os_tpl']:
+        for app_env in provider['os_tpl']:
             output.append(self._format_template("application_environment",
                                                 extra=app_env))
 
