@@ -155,29 +155,6 @@ provider['staas_endpoints'] = (
 )
 
 
-
-
-def application_environment (site_name,image_name,image_version,os_family,os_name,os_version,platform,occi_id,marketplaceid):
-    ''' '''
-    text = """dn: GLUE2ApplicationEnvironmentID=%s_%s,GLUE2ServiceID=cloud.compute.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-objectClass: GLUE2Entity
-objectClass: GLUE2ApplicationEnvironment
-GLUE2ApplicationEnvironmentAppName: %s
-GLUE2ApplicationEnvironmentAppVersion: %s
-GLUE2ApplicationEnvironmentRepository: %s
-GLUE2ApplicationEnvironmentDescription: %s version %s on %s %s %s %s
-GLUE2EntityName: %s
-GLUE2ApplicationEnvironmentComputingManagerForeignKey: cloud.compute.%s_manager
-creatorsName: o=glue
-entryDN: GLUE2ApplicationEnvironmentID=%s,GLUE2ServiceID=cloud.compute.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-hasSubordinates: TRUE
-modifiersName: o=glue
-structuralObjectClass: GLUE2ApplicationEnvironment
-subschemaSubentry: cn=Subschema
-"""%(site_name,occi_id,site_name,site_name,image_name,image_version,marketplaceid,image_name,image_version,os_family,os_name,os_version,platform,occi_id,site_name,site_name,site_name,site_name)
-    return text
-
-
 def storage_service(site_name,production_level,service_type,capabilities):
     '''Return the GLUE2Service entity
     site_name: Unique name of the cloud-site
@@ -303,17 +280,22 @@ class BaseBDII(object):
 class IaaSBDII(BaseBDII):
     def __init__(self, provider):
         self.provider_info = provider
-        templates = ("compute_service", "compute_endpoint", "execution_environment")
+        templates = ("compute_service", "compute_endpoint", "execution_environment", "application_environment")
         super(IaaSBDII, self).__init__(templates, provider)
 
     def render(self):
         output = []
         output.append(self._format_template("compute_service"))
+
         for endpoint in self.provider_info['iaas_endpoints']:
             output.append(self._format_template("compute_endpoint", extra=endpoint))
 
         for ex_env in self.provider_info['resource_tpl']:
             output.append(self._format_template("execution_environment", extra=ex_env))
+
+        for app_env in self.provider_info['os_tpl']:
+            output.append(self._format_template("application_environment", extra=app_env))
+
         return "\n".join(output)
 
 
@@ -341,11 +323,11 @@ def main():
     print bdii.render()
     # NOTE(aloga): Refactored code <<<<
 
-    if provider['iaas_endpoints']:
+#    if provider['iaas_endpoints']:
 #        for ex_env in provider['resource_tpl']:
 #            print execution_environment(provider['site_name'],ex_env['memory'],ex_env['occi_id'],ex_env['platform'],ex_env['cpu'],ex_env['network'])
-        for app_env in provider['os_tpl']:
-            print application_environment(provider['site_name'],app_env['image_name'],app_env['image_version'],app_env['os_family'],app_env['os_name'],app_env['os_version'],app_env['platform'],app_env['occi_id'],app_env['marketplace_id'])
+#        for app_env in provider['os_tpl']:
+#            print application_environment(provider['site_name'],app_env['image_name'],app_env['image_version'],app_env['os_family'],app_env['os_name'],app_env['os_version'],app_env['platform'],app_env['occi_id'],app_env['marketplace_id'])
 
     if provider['staas_endpoints']:
         print storage_service(provider['site_name'],provider['production_level'],'STaaS',provider['staas_capabilities'])

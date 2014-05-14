@@ -1,0 +1,15 @@
+dn: GLUE2ApplicationEnvironmentID=%(site_name)s_%(occi_id)s,GLUE2ServiceID=cloud.compute.%(site_name)s_service,GLUE2GroupID=cloud,GLUE2DomainID=%(site_name)s,o=glue
+objectClass: GLUE2Entity
+objectClass: GLUE2ApplicationEnvironment
+GLUE2ApplicationEnvironmentAppName: %(image_name)s
+GLUE2ApplicationEnvironmentAppVersion: %(image_version)s
+GLUE2ApplicationEnvironmentRepository: %(marketplace_id)s
+GLUE2ApplicationEnvironmentDescription: %(image_name)s version %(image_version)s on %(os_family)s %(os_name)s %(os_version)s %(platform)s
+GLUE2EntityName: %(occi_id)s
+GLUE2ApplicationEnvironmentComputingManagerForeignKey: cloud.compute.%(site_name)s_manager
+creatorsName: o=glue
+entryDN: GLUE2ApplicationEnvironmentID=%(site_name)s,GLUE2ServiceID=cloud.compute.%(site_name)s_service,GLUE2GroupID=cloud,GLUE2DomainID=%(site_name)s,o=glue
+hasSubordinates: TRUE
+modifiersName: o=glue
+structuralObjectClass: GLUE2ApplicationEnvironment
+subschemaSubentry: cn=Subschema
