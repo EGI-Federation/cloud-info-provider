@@ -36,12 +36,12 @@ provider = {
     'iaas_middleware_developer': 'OpenStack',
     'iaas_hypervisor': 'KVM',
     'iaas_hypervisor_version': '1.5.0',
-    'iaas_capabilities': ('cloud.managementSystem','cloud.vm.uploadImage'),
+    'iaas_capabilities': ('cloud.managementSystem', 'cloud.vm.uploadImage'),
 }
 
 provider['iaas_endpoints'] = (
     {
-        'endpoint_url':'https://prisma-cloud.ba.infn.it:8787',
+        'endpoint_url': 'https://prisma-cloud.ba.infn.it:8787',
         'endpoint_interface': interface['IaaS_api'],
         'service_type_name': provider['iaas_middleware'],
         'service_type_version': provider['iaas_middleware_version'],
@@ -57,7 +57,8 @@ provider['os_tpl'] = (
     {
         'image_name': 'SL64-x86_64',
         'image_version': '1.0',
-        'marketplace_id': 'http://appdb.egi.eu/store/vm/image/2c24de6c-e385-49f1-b64f-f9ff35e70f43:9/xml',
+        'marketplace_id': ('http://appdb.egi.eu/store/vm/image/'
+                           '2c24de6c-e385-49f1-b64f-f9ff35e70f43:9/xml'),
         'occi_id': 'os#ef13c0be-4de6-428f-ad5b-8f32b31a54a1',
         'os_family': 'linux',
         'os_name': 'SL',
@@ -67,7 +68,8 @@ provider['os_tpl'] = (
     {
         'image_name': 'ubuntu-precise-server-amd64',
         'image_version': '1.0',
-        'marketplace_id': 'http://appdb.egi.eu/store/vm/image/703157c0-e509-44c8-8371-58beb44d80d6:8/xml',
+        'marketplace_id': ('http://appdb.egi.eu/store/vm/image/'
+                           '703157c0-e509-44c8-8371-58beb44d80d6:8/xml'),
         'occi_id': 'os#c0a2f9e0-081a-419c-b9a5-8cb03b1decb5',
         'os_family': 'linux',
         'os_name': 'Ubuntu',
@@ -77,7 +79,8 @@ provider['os_tpl'] = (
     {
         'image_name': 'CernVM3',
         'image_version': '3.1.1.7',
-        'marketplace_id': 'http://appdb.egi.eu/store/vm/image/dfb2f33e-ba3f-4c5a-a387-6257e8558ba1:24/xml',
+        'marketplace_id': ('http://appdb.egi.eu/store/vm/image/'
+                           'dfb2f33e-ba3f-4c5a-a387-6257e8558ba1:24/xml'),
         'occi_id': 'os#5364f77a-e1cb-4a6c-862e-96dc79c4ef67',
         'os_family': 'linux',
         'os_name': 'SL',
@@ -170,7 +173,8 @@ class StaaSBDII(BaseBDII):
         output.append(self._format_template("storage_service"))
 
         for endpoint in self.provider_info['staas_endpoints']:
-            output.append(self._format_template("storage_endpoint", extra=endpoint))
+            output.append(self._format_template("storage_endpoint",
+                                                extra=endpoint))
 
         output.append(self._format_template("storage_capacity"))
 
@@ -180,7 +184,8 @@ class StaaSBDII(BaseBDII):
 class IaaSBDII(BaseBDII):
     def __init__(self, provider):
         self.provider_info = provider
-        templates = ("compute_service", "compute_endpoint", "execution_environment", "application_environment")
+        templates = ("compute_service", "compute_endpoint",
+                     "execution_environment", "application_environment")
         super(IaaSBDII, self).__init__(templates, provider)
 
     def render(self):
@@ -188,13 +193,16 @@ class IaaSBDII(BaseBDII):
         output.append(self._format_template("compute_service"))
 
         for endpoint in self.provider_info['iaas_endpoints']:
-            output.append(self._format_template("compute_endpoint", extra=endpoint))
+            output.append(self._format_template("compute_endpoint",
+                                                extra=endpoint))
 
         for ex_env in self.provider_info['resource_tpl']:
-            output.append(self._format_template("execution_environment", extra=ex_env))
+            output.append(self._format_template("execution_environment",
+                                                extra=ex_env))
 
         for app_env in self.provider_info['os_tpl']:
-            output.append(self._format_template("application_environment", extra=app_env))
+            output.append(self._format_template("application_environment",
+                                                extra=app_env))
 
         return "\n".join(output)
 
