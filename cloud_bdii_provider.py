@@ -155,83 +155,6 @@ provider['staas_endpoints'] = (
 )
 
 
-def localbdii(site_name,production_level,site_bdii_host,site_bdii_port):
-    '''   '''
-    text = """dn: GLUE2ServiceID=%(site_name)s_sitebdii,GLUE2GroupID=resource,o=glue
-objectClass: GLUE2Service
-GLUE2ServiceAdminDomainForeignKey: %(site_name)s
-GLUE2ServiceID: %(site_name)s_sitebdii
-GLUE2ServiceQualityLevel: %(production_level)s
-GLUE2ServiceType: bdii_site
-GLUE2EntityName: %(site_name)s_sitebdii
-GLUE2ServiceCapability: information.model
-GLUE2ServiceCapability: information.discovery
-GLUE2ServiceCapability: information.monitoring
-GLUE2ServiceComplexity: endpointType=1, share=0, resource=0
-
-dn: GLUE2EndpointID=%(site_bdii_host)s:%(site_bdii_port)s_sitebdii_endpoint,GLUE2ServiceID=%(site_name)s_sitebdii,GLUE2GroupID=resource,o=glue
-objectClass: GLUE2Endpoint
-GLUE2EndpointHealthState: ok
-GLUE2EndpointID: %(site_bdii_host)s:%(site_bdii_port)s_sitebdii_endpoint
-GLUE2EndpointInterfaceName: bdii_site
-GLUE2EndpointQualityLevel: %(production_level)s
-GLUE2EndpointServiceForeignKey: %(site_name)s_sitebdii
-GLUE2EndpointServingState: %(production_level)s
-GLUE2EndpointURL: ldap://%(site_bdii_host)s:%(site_bdii_port)s/GLUE2DomainID=%(site_name)s,o=glue
-GLUE2EndpointCapability: information.model
-GLUE2EndpointCapability: information.discovery
-GLUE2EndpointCapability: information.monitoring
-GLUE2EndpointDowntimeInfo: See the GOC DB for downtimes: https://goc.egi.eu/
-GLUE2EndpointHealthStateInfo: BDII Runnning [ OK ]
-GLUE2EntityName: bdii_site endpoint for Service %(site_name)s
-
-dn: GLUE2PolicyID=%(site_bdii_host)s:%(site_bdii_port)s_sitebdii_endpoint_policy,GLUE2EndpointID=%(site_bdii_host)s:%(site_bdii_port)s_sitebdii_endpoint,GLUE2ServiceID=%(site_name)s_sitebdii,GLUE2GroupID=resource,o=glue
-objectClass: GLUE2AccessPolicy
-objectClass: GLUE2Policy
-GLUE2AccessPolicyEndpointForeignKey: %(site_bdii_host)s:%(site_bdii_port)s_sitebdii_endpoint
-GLUE2PolicyID: %(site_bdii_host)s:%(site_bdii_port)s_sitebdii_endpoint_policy
-GLUE2PolicyRule: ALL
-GLUE2PolicyScheme: org.glite.standard
-GLUE2EntityName: Access control rules for Endpoint %(site_name)s
-
-dn: GLUE2ServiceID=%(site_name)s_sitebdii,GLUE2GroupID=resource,GLUE2DomainID=%(site_name)s,o=glue
-objectClass: GLUE2Service
-GLUE2ServiceAdminDomainForeignKey: %(site_name)s
-GLUE2ServiceID: %(site_name)s_sitebdii
-GLUE2ServiceQualityLevel: %(production_level)s
-GLUE2ServiceType: bdii_site
-GLUE2EntityName: %(site_name)s_sitebdii
-GLUE2ServiceCapability: information.model
-GLUE2ServiceCapability: information.discovery
-GLUE2ServiceCapability: information.monitoring
-GLUE2ServiceComplexity: endpointType=1, share=0, resource=0
-
-dn: GLUE2EndpointID=%(site_bdii_host)s:%(site_bdii_port)s_sitebdii_endpoint,GLUE2ServiceID=%(site_name)s_sitebdii,GLUE2GroupID=resource,GLUE2DomainID=%(site_name)s,o=glue
-objectClass: GLUE2Endpoint
-GLUE2EndpointHealthState: ok
-GLUE2EndpointID: %(site_bdii_host)s:%(site_bdii_port)s_sitebdii_endpoint
-GLUE2EndpointInterfaceName: bdii_site
-GLUE2EndpointQualityLevel: %(production_level)s
-GLUE2EndpointServiceForeignKey: %(site_name)s_sitebdii
-GLUE2EndpointServingState: %(production_level)s
-GLUE2EndpointURL: ldap://%(site_bdii_host)s:%(site_bdii_port)s/GLUE2DomainID=%(site_name)s,o=glue
-GLUE2EndpointCapability: information.model
-GLUE2EndpointCapability: information.discovery
-GLUE2EndpointCapability: information.monitoring
-GLUE2EndpointDowntimeInfo: See the GOC DB for downtimes: https://goc.egi.eu/
-GLUE2EndpointHealthStateInfo: BDII Runnning [ OK ]
-GLUE2EntityName: bdii_site endpoint for Service %(site_name)s
-
-dn: GLUE2PolicyID=%(site_bdii_host)s:%(site_bdii_port)s_sitebdii_endpoint_policy,GLUE2EndpointID=%(site_bdii_host)s:%(site_bdii_port)s_sitebdii_endpoint,GLUE2ServiceID=%(site_name)s_sitebdii,GLUE2GroupID=resource,GLUE2DomainID=%(site_name)s,o=glue
-objectClass: GLUE2AccessPolicy
-objectClass: GLUE2Policy
-GLUE2AccessPolicyEndpointForeignKey: %(site_bdii_host)s:%(site_bdii_port)s_sitebdii_endpoint
-GLUE2PolicyID: %(site_bdii_host)s:%(site_bdii_port)s_sitebdii_endpoint_policy
-GLUE2PolicyRule: ALL
-GLUE2PolicyScheme: org.glite.standard
-GLUE2EntityName: Access control rules for Endpoint %(site_name)s
-"""% locals()
-    return text
 
 
 def compute_service(site_name,production_level, service_type,capabilities):
@@ -482,14 +405,15 @@ class CloudBDII(object):
     def __init__(self, provider):
         self.ldif = {}
         self.provider_info = provider
-        with open('templates/headers.ldif', 'r') as f:
-            self.ldif["headers"] = f.read()
-
-        with open('templates/domain.ldif', 'r') as f:
-            self.ldif["domain"] = f.read()
+        for template in ("headers", "domain", "bdii"):
+            with open('templates/%s.ldif' % template, 'r') as f:
+                self.ldif[template] = f.read()
 
     def _format_headers(self):
         return self.ldif["headers"]
+
+    def _format_bdii(self):
+        return self.ldif["bdii"] % self.provider_info
 
     def _format_domain(self):
         return self.ldif["domain"] % self. provider_info
@@ -498,6 +422,7 @@ class CloudBDII(object):
         output = []
         output.append(self._format_headers())
         output.append(self._format_domain())
+        output.append(self._format_bdii())
         return "\n".join(output)
 
 
@@ -506,8 +431,6 @@ def main():
     bdii = CloudBDII(provider)
     print bdii.render()
     # NOTE(aloga): Refactored code <<<<
-
-    print localbdii(provider['site_name'],provider['production_level'],provider['site_bdii_host'],provider['site_bdii_port'])
 
     if provider['iaas_endpoints']:
         print compute_service(provider['site_name'],provider['production_level'],'IaaS',provider['iaas_capabilities'])
