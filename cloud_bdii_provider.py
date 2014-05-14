@@ -155,28 +155,6 @@ provider['staas_endpoints'] = (
 )
 
 
-def storage_capacity (site_name,total_storage):
-    ''' '''
-    text = """
-dn: GLUE2StorageServiceCapacityID=cloud.storage.%s_capacity,GLUE2ServiceID=cloud.storage.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-objectClass: GLUE2Entity
-objectClass: GLUE2StorageServiceCapacity
-GLUE2StorageServiceCapacityID: cloud.storage.%s_capacity
-GLUE2StorageServiceCapacityType: online
-GLUE2StorageServiceCapacityStorageServiceForeignKey: cloud.storage.%s_service
-GLUE2StorageServiceCapacityTotalSize: %s
-entryDN: GLUE2StorageServiceCapacityID=cloud.storage.%s_capacity,GLUE2ServiceID=cloud.storage.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-hasSubordinates: TRUE
-modifiersName: o=glue
-structuralObjectClass: GLUE2StorageServiceCapacity
-subschemaSubentry: cn=Subschema
-"""%(site_name,site_name,site_name,site_name,site_name,total_storage,site_name,site_name,site_name)
-    return text
-
-
-####
-
-
 class BaseBDII(object):
     def __init__(self, templates, info):
         self.info = info
@@ -197,7 +175,7 @@ class BaseBDII(object):
 class StaaSBDII(BaseBDII):
     def __init__(self, provider):
         self.provider_info = provider
-        templates = ("storage_service", "storage_endpoint")
+        templates = ("storage_service", "storage_endpoint", "storage_capacity")
         super(StaaSBDII, self).__init__(templates, provider)
 
     def render(self):
@@ -206,6 +184,8 @@ class StaaSBDII(BaseBDII):
 
         for endpoint in self.provider_info['staas_endpoints']:
             output.append(self._format_template("storage_endpoint", extra=endpoint))
+
+        output.append(self._format_template("storage_capacity"))
 
         return "\n".join(output)
 
@@ -259,8 +239,6 @@ def main():
     print bdii.render()
     # NOTE(aloga): Refactored code <<<<
 
-    if provider['staas_endpoints']:
-        print storage_capacity(provider['site_name'],provider['site_total_storage_gb'])
 
 if __name__ == "__main__":
     main()
