@@ -155,41 +155,6 @@ provider['staas_endpoints'] = (
 )
 
 
-def storage_endpoint (site_name,endpoint_url,endpoint_interface,capabilities,service_type_name,service_type_version,service_type_developer,interface_version,endpoint_technology, auth_method):
-    ''' '''
-    text = """
-dn: GLUE2EndpointID=%s_%s_%s_%s,GLUE2ServiceID=cloud.storage.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-objectClass: GLUE2Entity
-objectClass: GLUE2Endpoint
-objectClass: GLUE2StorageEndpoint
-GLUE2EndpointHealthState: ok
-GLUE2EndpointID: %s_%s_%s_%s"""%(endpoint_url,endpoint_interface,interface_version, auth_method, site_name,site_name,endpoint_url,endpoint_interface,interface_version, auth_method)
-    text += """
-GLUE2EndpointInterfaceName: %s
-GLUE2EndpointQualityLevel: production
-GLUE2EndpointServiceForeignKey: cloud.storage.%s_service
-GLUE2EndpointServingState: production
-GLUE2EndpointURL: %s"""%(endpoint_interface,site_name,endpoint_url)
-    text +="""
-GLUE2StorageEndpointStorageServiceForeignKey: cloud.storage.%s_service
-GLUE2EndpointCapability: %s
-GLUE2EndpointImplementationName: %s
-GLUE2EndpointImplementationVersion: %s
-GLUE2EndpointImplementor: %s"""%(site_name,capabilities,service_type_name,service_type_version,service_type_developer)
-    text += """
-GLUE2EndpointInterfaceVersion: %s
-GLUE2EntityOtherInfo: Authn=%s
-GLUE2EndpointTechnology: %s"""%(interface_version,auth_method, endpoint_technology)
-    text +="""
-entryDN: GLUE2EndpointID=%s_%s_%s_%s,GLUE2ServiceID=cloud.storage.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-hasSubordinates: TRUE
-modifiersName: o=glue
-structuralObjectClass: GLUE2Endpoint
-subschemaSubentry: cn=Subschema
-"""%(endpoint_url,endpoint_interface,interface_version, auth_method,site_name,site_name)
-    return text
-
-
 def storage_capacity (site_name,total_storage):
     ''' '''
     text = """
@@ -232,12 +197,16 @@ class BaseBDII(object):
 class StaaSBDII(BaseBDII):
     def __init__(self, provider):
         self.provider_info = provider
-        templates = ("storage_service",)
+        templates = ("storage_service", "storage_endpoint")
         super(StaaSBDII, self).__init__(templates, provider)
 
     def render(self):
         output = []
         output.append(self._format_template("storage_service"))
+
+        for endpoint in self.provider_info['staas_endpoints']:
+            output.append(self._format_template("storage_endpoint", extra=endpoint))
+
         return "\n".join(output)
 
 
@@ -291,8 +260,6 @@ def main():
     # NOTE(aloga): Refactored code <<<<
 
     if provider['staas_endpoints']:
-        for endpoint in provider['staas_endpoints']:
-            print storage_endpoint(provider['site_name'],endpoint['endpoint_url'],endpoint['endpoint_interface'],provider['staas_capabilities'],endpoint['service_type_name'],endpoint['service_type_version'],endpoint['service_type_developer'],endpoint['interface_version'],endpoint['endpoint_technology'],endpoint['auth_method'])
         print storage_capacity(provider['site_name'],provider['site_total_storage_gb'])
 
 if __name__ == "__main__":
