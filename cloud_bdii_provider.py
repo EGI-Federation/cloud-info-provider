@@ -1,5 +1,5 @@
-#!/bin/env python
-# 
+#!/usr/bin/env python
+#
 # This (naive) script produces a text to be used in a LDIF file to be published by the Resource Provider LDAP server.
 # Edit the information below with your site information then run the script.
 #
@@ -244,7 +244,7 @@ entryDN: GLUE2ServiceID=cloud.compute.%s_service,GLUE2GroupID=cloud,GLUE2DomainI
 hasSubordinates: TRUE
 modifiersName: o=glue
 structuralObjectClass: GLUE2Service
-subschemaSubentry: cn=Subschema 
+subschemaSubentry: cn=Subschema
 """%(site_name,site_name,site_name,site_name, production_level, 'IaaS',capabilities,site_name,site_name)
 
     return text
@@ -285,7 +285,7 @@ GLUE2EndpointID: %s_%s_%s_%s"""%(endpoint_url,endpoint_interface,interface_versi
     text += """
 GLUE2EndpointInterfaceName: %s
 GLUE2EndpointQualityLevel: production
-GLUE2EndpointServiceForeignKey: cloud.compute.%s_service 
+GLUE2EndpointServiceForeignKey: cloud.compute.%s_service
 GLUE2EndpointServingState: production
 GLUE2EndpointURL: %s"""%(endpoint_interface,site_name,endpoint_url)
     text +="""
@@ -296,8 +296,8 @@ GLUE2EndpointImplementationVersion: %s
 GLUE2EndpointImplementor: %s"""%(site_name,capabilities,service_type_name,service_type_version,service_type_developer)
     text += """
 GLUE2EndpointInterfaceVersion: %s
-#GLUE2EndpointSemantics: 
-#GLUE2EndpointSupportedProfile: 
+#GLUE2EndpointSemantics:
+#GLUE2EndpointSupportedProfile:
 GLUE2EntityOtherInfo: Authn=%s
 GLUE2EndpointTechnology: %s"""%(interface_version,auth_method, endpoint_technology)
     text +="""
@@ -337,7 +337,7 @@ structuralObjectClass: GLUE2Resource
 subschemaSubentry: cn=Subschema
 """%(site_name,occi_id,site_name,site_name,memory,platform,site_name,occi_id,site_name,'virtual model','virtual vendor',cpu,cpu,site_name,site_name,site_name)
     return text
-	
+
 def application_environment (site_name,image_name,image_version,os_family,os_name,os_version,platform,occi_id,marketplaceid):
     ''' '''
     text = """dn: GLUE2ApplicationEnvironmentID=%s_%s,GLUE2ServiceID=cloud.compute.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
@@ -456,26 +456,29 @@ subschemaSubentry: cn=Subschema
 """%(site_name,site_name,site_name,site_name,site_name,total_storage,site_name,site_name,site_name)
     return text
 
-#### OUTPUT
-print headers()
-print domain(provider['site_name'],provider['www'],provider['affiliated_ngi'],provider['country'],provider['site_latitude'],provider['site_longitude'],provider['general_contact'],provider['security_contact'],provider['user_support_contact'],provider['sysadmin_contact'])
+def main():
+    #### OUTPUT
+    print headers()
+    print domain(provider['site_name'],provider['www'],provider['affiliated_ngi'],provider['country'],provider['site_latitude'],provider['site_longitude'],provider['general_contact'],provider['security_contact'],provider['user_support_contact'],provider['sysadmin_contact'])
 
-print localbdii(provider['site_name'],provider['production_level'],provider['site_bdii_host'],provider['site_bdii_port'])
+    print localbdii(provider['site_name'],provider['production_level'],provider['site_bdii_host'],provider['site_bdii_port'])
 
-if len(provider['iaas_endpoints'])>0:
-	print compute_service(provider['site_name'],provider['production_level'],'IaaS',provider['iaas_capabilities'])
-	print compute_manager(provider['site_name'],provider['iaas_middleware'],provider['iaas_middleware_version'],provider['site_total_cpu_cores'],provider['site_total_ram_gb'],provider['iaas_hypervisor'],provider['iaas_hypervisor_version'])
-	for endpoint in provider['iaas_endpoints']:
-		print computing_endpoint(provider['site_name'],endpoint['endpoint_url'],endpoint['endpoint_interface'],provider['iaas_capabilities'],endpoint['service_type_name'],endpoint['service_type_version'],endpoint['service_type_developer'],endpoint['interface_version'],endpoint['endpoint_technology'],endpoint['auth_method'])
-	for ex_env in provider['resource_tpl']:
-		print execution_environment(provider['site_name'],ex_env['memory'],ex_env['occi_id'],ex_env['platform'],ex_env['cpu'],ex_env['network'])
-	for app_env in provider['os_tpl']:
+    if len(provider['iaas_endpoints'])>0:
+        print compute_service(provider['site_name'],provider['production_level'],'IaaS',provider['iaas_capabilities'])
+        print compute_manager(provider['site_name'],provider['iaas_middleware'],provider['iaas_middleware_version'],provider['site_total_cpu_cores'],provider['site_total_ram_gb'],provider['iaas_hypervisor'],provider['iaas_hypervisor_version'])
+        for endpoint in provider['iaas_endpoints']:
+            print computing_endpoint(provider['site_name'],endpoint['endpoint_url'],endpoint['endpoint_interface'],provider['iaas_capabilities'],endpoint['service_type_name'],endpoint['service_type_version'],endpoint['service_type_developer'],endpoint['interface_version'],endpoint['endpoint_technology'],endpoint['auth_method'])
+        for ex_env in provider['resource_tpl']:
+            print execution_environment(provider['site_name'],ex_env['memory'],ex_env['occi_id'],ex_env['platform'],ex_env['cpu'],ex_env['network'])
+        for app_env in provider['os_tpl']:
 		print application_environment(provider['site_name'],app_env['image_name'],app_env['image_version'],app_env['os_family'],app_env['os_name'],app_env['os_version'],app_env['platform'],app_env['occi_id'],app_env['marketplace_id'])
 
-if len(provider['staas_endpoints'])>0:
-	print storage_service(provider['site_name'],provider['production_level'],'STaaS',provider['staas_capabilities'])
-	print storage_manager(provider['site_name'],provider['staas_middleware'],provider['staas_middleware_version'],provider['site_total_storage_gb'])
-	for endpoint in provider['staas_endpoints']:
-		print storage_endpoint(provider['site_name'],endpoint['endpoint_url'],endpoint['endpoint_interface'],provider['staas_capabilities'],endpoint['service_type_name'],endpoint['service_type_version'],endpoint['service_type_developer'],endpoint['interface_version'],endpoint['endpoint_technology'],endpoint['auth_method'])
-	print storage_capacity(provider['site_name'],provider['site_total_storage_gb'])
+    if len(provider['staas_endpoints'])>0:
+        print storage_service(provider['site_name'],provider['production_level'],'STaaS',provider['staas_capabilities'])
+        print storage_manager(provider['site_name'],provider['staas_middleware'],provider['staas_middleware_version'],provider['site_total_storage_gb'])
+        for endpoint in provider['staas_endpoints']:
+            print storage_endpoint(provider['site_name'],endpoint['endpoint_url'],endpoint['endpoint_interface'],provider['staas_capabilities'],endpoint['service_type_name'],endpoint['service_type_version'],endpoint['service_type_developer'],endpoint['interface_version'],endpoint['endpoint_technology'],endpoint['auth_method'])
+        print storage_capacity(provider['site_name'],provider['site_total_storage_gb'])
 
+if __name__ == "__main__":
+    main()
