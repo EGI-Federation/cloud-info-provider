@@ -1,6 +1,8 @@
 import os
 import sys
 
+import providers
+
 def env(*args, **kwargs):
     """
     returns the first environment variable set
@@ -12,7 +14,8 @@ def env(*args, **kwargs):
             return value
     return kwargs.get('default', '')
 
-class OpenStackProvider(object):
+
+class OpenStackProvider(providers.BaseProvider):
     def __init__(self, opts):
         try:
             import novaclient.client

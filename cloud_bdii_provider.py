@@ -3,6 +3,7 @@
 import argparse
 
 import providers.openstack
+import providers.static
 
 interface = {
     'IaaS_api': 'OCCI',
@@ -53,80 +54,6 @@ provider['iaas_endpoints'] = (
         'interface_version': interface['IaaS_api_version'],
         'endpoint_technology': interface['IaaS_api_endpoint_technology'],
         'auth_method': interface['IaaS_api_authorization_method']
-    },
-)
-
-
-provider['os_tpl'] = (
-    {
-        'image_name': 'SL64-x86_64',
-        'image_version': '1.0',
-        'marketplace_id': ('http://appdb.egi.eu/store/vm/image/'
-                           '2c24de6c-e385-49f1-b64f-f9ff35e70f43:9/xml'),
-        'occi_id': 'os#ef13c0be-4de6-428f-ad5b-8f32b31a54a1',
-        'os_family': 'linux',
-        'os_name': 'SL',
-        'os_version': '6.4',
-        'platform': 'amd64'
-    },
-    {
-        'image_name': 'ubuntu-precise-server-amd64',
-        'image_version': '1.0',
-        'marketplace_id': ('http://appdb.egi.eu/store/vm/image/'
-                           '703157c0-e509-44c8-8371-58beb44d80d6:8/xml'),
-        'occi_id': 'os#c0a2f9e0-081a-419c-b9a5-8cb03b1decb5',
-        'os_family': 'linux',
-        'os_name': 'Ubuntu',
-        'os_version': '12.04',
-        'platform': 'amd64'
-    },
-    {
-        'image_name': 'CernVM3',
-        'image_version': '3.1.1.7',
-        'marketplace_id': ('http://appdb.egi.eu/store/vm/image/'
-                           'dfb2f33e-ba3f-4c5a-a387-6257e8558ba1:24/xml'),
-        'occi_id': 'os#5364f77a-e1cb-4a6c-862e-96dc79c4ef67',
-        'os_family': 'linux',
-        'os_name': 'SL',
-        'os_version': '6.4',
-        'platform': 'amd64'
-    },
-)
-
-provider['resource_tpl'] = (
-    {
-        'occi_id': 'resource#tiny-with-disk',
-        'memory': '512',
-        'cpu': '1',
-        'platform': 'amd64',
-        'network': 'public'
-    },
-    {
-        'occi_id': 'resource#small',
-        'memory': '1024',
-        'cpu': '1',
-        'platform': 'amd64',
-        'network': 'public'
-    },
-    {
-        'occi_id': 'resource#medium',
-        'memory': '4096',
-        'cpu': '2',
-        'platform': 'amd64',
-        'network': 'public'
-    },
-    {
-        'occi_id': 'resource#large',
-        'memory': '8196',
-        'cpu': '4',
-        'platform': 'amd64',
-        'network': 'public'},
-    {
-        'occi_id': 'resource#extra_large',
-        'memory': '16384',
-        'cpu': '8',
-        'platform': 'amd64',
-        'network': 'public'
     },
 )
 
@@ -236,6 +163,7 @@ class CloudBDII(BaseBDII):
 
 SUPPORTED_MIDDLEWARE = {
     'OpenStack': providers.openstack.OpenStackProvider,
+    'static': providers.static.StaticProvider
 }
 
 
@@ -262,14 +190,15 @@ def parse_args():
 def main():
     args = parse_args()
 
-    if args.middleware:
-        dynamic_provider = SUPPORTED_MIDDLEWARE[args.middleware](args)
-        images = dynamic_provider.get_images()
-        if images:
-            provider["os_tpl"] = images
-        flavors = dynamic_provider.get_templates()
-        if flavors:
-            provider['resource_tpl'] = flavors
+    dynamic_provider = SUPPORTED_MIDDLEWARE.get(
+        args.middleware, SUPPORTED_MIDDLEWARE['static'])(args)
+
+    images = dynamic_provider.get_images()
+    if images:
+        provider["os_tpl"] = images
+    flavors = dynamic_provider.get_templates()
+    if flavors:
+        provider['resource_tpl'] = flavors
 
     bdii = CloudBDII(provider)
     print bdii.render()
