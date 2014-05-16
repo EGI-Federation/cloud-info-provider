@@ -4,7 +4,7 @@ objectClass: GLUE2ApplicationEnvironment
 GLUE2ApplicationEnvironmentAppName: %(image_name)s
 GLUE2ApplicationEnvironmentAppVersion: %(image_version)s
 GLUE2ApplicationEnvironmentRepository: %(marketplace_id)s
-GLUE2ApplicationEnvironmentDescription: %(image_name)s version %(image_version)s on %(os_family)s %(os_name)s %(os_version)s %(platform)s
+GLUE2ApplicationEnvironmentDescription: %(image_description)s
 GLUE2EntityName: %(occi_id)s
 GLUE2ApplicationEnvironmentComputingManagerForeignKey: cloud.compute.%(site_name)s_manager
 creatorsName: o=glue
