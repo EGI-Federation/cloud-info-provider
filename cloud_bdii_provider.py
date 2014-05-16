@@ -284,6 +284,22 @@ class OpenStackProvider(object):
 
         self.api.authenticate()
 
+    def get_templates(self):
+        flavors = []
+
+        for flavor in self.api.flavors.list(detailed=True):
+            if not flavor.is_public:
+                continue
+            aux = {
+                'occi_id': 'resource#%s' % flavor.name,
+                'memory': flavor.ram,
+                'cpu': flavor.vcpus,
+                'network': 'public',
+                'platform': None,
+            }
+            flavors.append(aux)
+        return flavors
+
     def get_images(self):
         images = []
 
@@ -399,8 +415,10 @@ def main():
         images = dynamic_provider.get_images()
         if images:
             provider["os_tpl"] = images
-#        import pprint
-#        pprint.pprint(images)
+        flavors = dynamic_provider.get_templates()
+        if flavors:
+            provider['resource_tpl'] = flavors
+
     bdii = CloudBDII(provider)
     print bdii.render()
 
