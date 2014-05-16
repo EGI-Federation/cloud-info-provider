@@ -98,9 +98,16 @@ class OpenStackProvider(providers.BaseProvider):
 
         for image in self.api.images.list(detailed=True):
             aux = template.copy()
+            for link in image.links:
+                # FIXME(aloga): Check if this is the needed parameter
+                if link.get("type",
+                            None) == "application/vnd.openstack.image":
+                    link = link["href"]
+                    break
             aux.update({'image_name': image.name,
                         'occi_id': 'os#%s' % image.id,
                         'image_description': image.name,
+                        'marketplace_id': link,
             })
             image.metadata.pop("image_name", None)
             image.metadata.pop("occi_id", None)
