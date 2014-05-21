@@ -243,13 +243,7 @@ GLUE2ServiceID: cloud.compute.%s_service
 GLUE2ServiceQualityLevel: %s
 GLUE2ServiceType: %s
 GLUE2ServiceCapability: %s
-creatorsName: o=glue
-entryDN: GLUE2ServiceID=cloud.compute.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-hasSubordinates: TRUE
-modifiersName: o=glue
-structuralObjectClass: GLUE2Service
-subschemaSubentry: cn=Subschema 
-"""%(site_name,site_name,site_name,site_name, production_level, 'IaaS',capabilities,site_name,site_name)
+"""%(site_name,site_name,site_name,site_name, production_level, 'IaaS',capabilities)
 
     return text
 
@@ -268,19 +262,12 @@ GLUE2EntityName: Cloud Manager at %s
 GLUE2ManagerProductVersion: %s
 GLUE2ComputingManagerTotalLogicalCPUs: %s
 GLUE2ComputingManagerWorkingAreaTotal: %s
-creatorsName: o=glue
-entryDN: GLUE2ManagerID=cloud.compute.%s_manager,GLUE2ServiceID=cloud.compute.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-hasSubordinates: FALSE
-modifiersName: o=glue
-structuralObjectClass: GLUE2Manager
-subschemaSubentry: cn=Subschema
-"""%(site_name,site_name,site_name,site_name,vm_name,site_name,site_name,site_name,vm_version,total_cpus,total_ram,site_name,site_name,site_name)
+"""%(site_name,site_name,site_name,site_name,vm_name,site_name,site_name,site_name,vm_version,total_cpus,total_ram)
   return text
 
 def computing_endpoint (site_name,endpoint_url,endpoint_interface,capabilities,service_type_name,service_type_version,service_type_developer,interface_version,endpoint_technology, auth_method):
     ''' '''
-    text = """
-dn: GLUE2EndpointID=%s_%s_%s_%s,GLUE2ServiceID=cloud.compute.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
+    text = """dn: GLUE2EndpointID=%s_%s_%s_%s,GLUE2ServiceID=cloud.compute.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
 objectClass: GLUE2Entity
 objectClass: GLUE2Endpoint
 objectClass: GLUE2ComputingEndpoint
@@ -303,14 +290,8 @@ GLUE2EndpointInterfaceVersion: %s
 #GLUE2EndpointSemantics: 
 #GLUE2EndpointSupportedProfile: 
 GLUE2EntityOtherInfo: Authn=%s
-GLUE2EndpointTechnology: %s"""%(interface_version,auth_method, endpoint_technology)
-    text +="""
-entryDN: GLUE2EndpointID=%s_%s_%s_%s,GLUE2ServiceID=cloud.compute.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-hasSubordinates: TRUE
-modifiersName: o=glue
-structuralObjectClass: GLUE2Endpoint
-subschemaSubentry: cn=Subschema
-"""%(endpoint_url,endpoint_interface,interface_version, auth_method,site_name,site_name)
+GLUE2EndpointTechnology: %s
+"""%(interface_version,auth_method, endpoint_technology)
     return text
 
 def execution_environment (site_name,memory,occi_id,platform,cpu,network):
@@ -333,13 +314,7 @@ GLUE2ExecutionEnvironmentCPUMultiplicity: multicpu-multicore
 GLUE2ExecutionEnvironmentCPUVendor: %s
 GLUE2ExecutionEnvironmentLogicalCPUs: %s
 GLUE2ExecutionEnvironmentPhysicalCPUs: %s
-creatorsName: o=glue
-entryDN: GLUE2ResourceID=%s,GLUE2ServiceID=cloud.compute.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-hasSubordinates: TRUE
-modifiersName: o=glue
-structuralObjectClass: GLUE2Resource
-subschemaSubentry: cn=Subschema
-"""%(site_name,occi_id,site_name,site_name,memory,platform,site_name,occi_id,site_name,'virtual model','virtual vendor',cpu,cpu,site_name,site_name,site_name)
+"""%(site_name,occi_id,site_name,site_name,memory,platform,site_name,occi_id,site_name,'virtual model','virtual vendor',cpu,cpu)
     return text
 	
 def application_environment (site_name,image_name,image_version,os_family,os_name,os_version,platform,occi_id,marketplaceid):
@@ -353,13 +328,7 @@ GLUE2ApplicationEnvironmentRepository: %s
 GLUE2ApplicationEnvironmentDescription: %s version %s on %s %s %s %s
 GLUE2EntityName: %s
 GLUE2ApplicationEnvironmentComputingManagerForeignKey: cloud.compute.%s_manager
-creatorsName: o=glue
-entryDN: GLUE2ApplicationEnvironmentID=%s,GLUE2ServiceID=cloud.compute.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-hasSubordinates: TRUE
-modifiersName: o=glue
-structuralObjectClass: GLUE2ApplicationEnvironment
-subschemaSubentry: cn=Subschema
-"""%(site_name,occi_id,site_name,site_name,image_name,image_version,marketplaceid,image_name,image_version,os_family,os_name,os_version,platform,occi_id,site_name,site_name,site_name,site_name)
+"""%(site_name,occi_id,site_name,site_name,image_name,image_version,marketplaceid,image_name,image_version,os_family,os_name,os_version,platform,occi_id,site_name)
     return text
 
 def storage_service(site_name,production_level,service_type,capabilities):
@@ -377,13 +346,7 @@ GLUE2ServiceID: cloud.storage.%s_service
 GLUE2ServiceQualityLevel: %s
 GLUE2ServiceType: %s
 GLUE2ServiceCapability: %s
-creatorsName: o=glue
-entryDN: GLUE2ServiceID=cloud.storage.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-hasSubordinates: TRUE
-modifiersName: o=glue
-structuralObjectClass: GLUE2Service
-subschemaSubentry: cn=Subschema
-"""%(site_name,site_name,site_name,site_name, production_level, 'STaaS',capabilities,site_name,site_name)
+"""%(site_name,site_name,site_name,site_name, production_level, 'STaaS',capabilities)
     return text
 
 def storage_manager(site_name,product_name,product_version,total_storage):
@@ -399,19 +362,12 @@ GLUE2ManagerServiceForeignKey: cloud.storage.%s_service
 GLUE2StorageManagerStorageServiceForeignKey: cloud.storage.%s_service
 GLUE2EntityName: Cloud Storage Manager at %s
 GLUE2ManagerProductVersion: %s
-creatorsName: o=glue
-entryDN: GLUE2ManagerID=cloud.storage.%s_manager,GLUE2ServiceID=cloud.storage.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-hasSubordinates: FALSE
-modifiersName: o=glue
-structuralObjectClass: GLUE2Manager
-subschemaSubentry: cn=Subschema
-"""%(site_name,site_name,site_name,site_name,product_name,site_name,site_name,site_name,product_version,site_name,site_name,site_name)
+"""%(site_name,site_name,site_name,site_name,product_name,site_name,site_name,site_name,product_version)
   return text
 
 def storage_endpoint (site_name,endpoint_url,endpoint_interface,capabilities,service_type_name,service_type_version,service_type_developer,interface_version,endpoint_technology, auth_method):
     ''' '''
-    text = """
-dn: GLUE2EndpointID=%s_%s_%s_%s,GLUE2ServiceID=cloud.storage.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
+    text = """dn: GLUE2EndpointID=%s_%s_%s_%s,GLUE2ServiceID=cloud.storage.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
 objectClass: GLUE2Entity
 objectClass: GLUE2Endpoint
 objectClass: GLUE2StorageEndpoint
@@ -432,14 +388,8 @@ GLUE2EndpointImplementor: %s"""%(site_name,capabilities,service_type_name,servic
     text += """
 GLUE2EndpointInterfaceVersion: %s
 GLUE2EntityOtherInfo: Authn=%s
-GLUE2EndpointTechnology: %s"""%(interface_version,auth_method, endpoint_technology)
-    text +="""
-entryDN: GLUE2EndpointID=%s_%s_%s_%s,GLUE2ServiceID=cloud.storage.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-hasSubordinates: TRUE
-modifiersName: o=glue
-structuralObjectClass: GLUE2Endpoint
-subschemaSubentry: cn=Subschema
-"""%(endpoint_url,endpoint_interface,interface_version, auth_method,site_name,site_name)
+GLUE2EndpointTechnology: %s
+"""%(interface_version,auth_method, endpoint_technology)
     return text
 
 def storage_capacity (site_name,total_storage):
@@ -452,12 +402,7 @@ GLUE2StorageServiceCapacityID: cloud.storage.%s_capacity
 GLUE2StorageServiceCapacityType: online
 GLUE2StorageServiceCapacityStorageServiceForeignKey: cloud.storage.%s_service
 GLUE2StorageServiceCapacityTotalSize: %s
-entryDN: GLUE2StorageServiceCapacityID=cloud.storage.%s_capacity,GLUE2ServiceID=cloud.storage.%s_service,GLUE2GroupID=cloud,GLUE2DomainID=%s,o=glue
-hasSubordinates: TRUE
-modifiersName: o=glue
-structuralObjectClass: GLUE2StorageServiceCapacity
-subschemaSubentry: cn=Subschema
-"""%(site_name,site_name,site_name,site_name,site_name,total_storage,site_name,site_name,site_name)
+"""%(site_name,site_name,site_name,site_name,site_name,total_storage)
     return text
 
 #### OUTPUT
