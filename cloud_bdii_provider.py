@@ -5,6 +5,11 @@ import argparse
 import providers.openstack
 import providers.static
 
+SUPPORTED_MIDDLEWARE = {
+    'OpenStack': providers.openstack.OpenStackProvider,
+    'static': providers.static.StaticProvider,
+}
+
 
 class BaseBDII(object):
     templates = ()
@@ -12,8 +17,9 @@ class BaseBDII(object):
     def __init__(self, opts):
         self.opts = opts
 
-        if opts.middleware != "static" and opts.middleware in SUPPORTED_MIDDLEWARE:
-            self.dynamic_provider = SUPPORTED_MIDDLEWARE.get(opts.middleware)(opts)
+        if (opts.middleware != "static" and
+                opts.middleware in SUPPORTED_MIDDLEWARE):
+            self.dynamic_provider = SUPPORTED_MIDDLEWARE[opts.middleware](opts)
         else:
             self.dynamic_provider = None
 
@@ -89,7 +95,8 @@ class IaaSBDII(BaseBDII):
 
         static_iaas_info = dict(iaas_endpoints, **site_info)
 
-        output.append(self._format_template("compute_service", static_iaas_info))
+        output.append(self._format_template("compute_service",
+                                            static_iaas_info))
 
         for endpoint in iaas_endpoints["endpoints"]:
             output.append(self._format_template("compute_endpoint",
@@ -130,12 +137,6 @@ class CloudBDII(BaseBDII):
             output.append(self._format_template(tpl, info))
 
         return "\n".join(output)
-
-
-SUPPORTED_MIDDLEWARE = {
-    'OpenStack': providers.openstack.OpenStackProvider,
-    'static': providers.static.StaticProvider,
-}
 
 
 def parse_opts():
