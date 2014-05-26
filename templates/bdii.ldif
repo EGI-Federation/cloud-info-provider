@@ -2,7 +2,7 @@ dn: GLUE2ServiceID=%(site_name)s_sitebdii,GLUE2GroupID=resource,o=glue
 objectClass: GLUE2Service
 GLUE2ServiceAdminDomainForeignKey: %(site_name)s
 GLUE2ServiceID: %(site_name)s_sitebdii
-GLUE2ServiceQualityLevel: %(production_level)s
+GLUE2ServiceQualityLevel: %(site_production_level)s
 GLUE2ServiceType: bdii_site
 GLUE2EntityName: %(site_name)s_sitebdii
 GLUE2ServiceCapability: information.model
@@ -15,9 +15,9 @@ objectClass: GLUE2Endpoint
 GLUE2EndpointHealthState: ok
 GLUE2EndpointID: %(site_bdii_host)s:%(site_bdii_port)s_sitebdii_endpoint
 GLUE2EndpointInterfaceName: bdii_site
-GLUE2EndpointQualityLevel: %(production_level)s
+GLUE2EndpointQualityLevel: %(site_production_level)s
 GLUE2EndpointServiceForeignKey: %(site_name)s_sitebdii
-GLUE2EndpointServingState: %(production_level)s
+GLUE2EndpointServingState: %(site_production_level)s
 GLUE2EndpointURL: ldap://%(site_bdii_host)s:%(site_bdii_port)s/GLUE2DomainID=%(site_name)s,o=glue
 GLUE2EndpointCapability: information.model
 GLUE2EndpointCapability: information.discovery
@@ -39,7 +39,7 @@ dn: GLUE2ServiceID=%(site_name)s_sitebdii,GLUE2GroupID=resource,GLUE2DomainID=%(
 objectClass: GLUE2Service
 GLUE2ServiceAdminDomainForeignKey: %(site_name)s
 GLUE2ServiceID: %(site_name)s_sitebdii
-GLUE2ServiceQualityLevel: %(production_level)s
+GLUE2ServiceQualityLevel: %(site_production_level)s
 GLUE2ServiceType: bdii_site
 GLUE2EntityName: %(site_name)s_sitebdii
 GLUE2ServiceCapability: information.model
@@ -52,9 +52,9 @@ objectClass: GLUE2Endpoint
 GLUE2EndpointHealthState: ok
 GLUE2EndpointID: %(site_bdii_host)s:%(site_bdii_port)s_sitebdii_endpoint
 GLUE2EndpointInterfaceName: bdii_site
-GLUE2EndpointQualityLevel: %(production_level)s
+GLUE2EndpointQualityLevel: %(site_production_level)s
 GLUE2EndpointServiceForeignKey: %(site_name)s_sitebdii
-GLUE2EndpointServingState: %(production_level)s
+GLUE2EndpointServingState: %(site_production_level)s
 GLUE2EndpointURL: ldap://%(site_bdii_host)s:%(site_bdii_port)s/GLUE2DomainID=%(site_name)s,o=glue
 GLUE2EndpointCapability: information.model
 GLUE2EndpointCapability: information.discovery

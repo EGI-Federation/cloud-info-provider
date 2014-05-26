@@ -4,4 +4,4 @@ objectClass: GLUE2StorageServiceCapacity
 GLUE2StorageServiceCapacityID: cloud.storage.%(site_name)s_capacity
 GLUE2StorageServiceCapacityType: online
 GLUE2StorageServiceCapacityStorageServiceForeignKey: cloud.storage.%(site_name)s_service
-GLUE2StorageServiceCapacityTotalSize: %(site_total_storage_gb)s
+GLUE2StorageServiceCapacityTotalSize: %(staas_total_storage)s

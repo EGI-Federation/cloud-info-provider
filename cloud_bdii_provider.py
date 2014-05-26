@@ -48,17 +48,25 @@ class StaaSBDII(BaseBDII):
     def render(self):
         output = []
 
-        static_info = self._get_info_from_providers("get_site_info")
+        endpoints = self._get_info_from_providers("get_staas_endpoints")
 
-        output.append(self._format_template("storage_service", static_info))
+        if not endpoints:
+            return ""
 
-        for endpoint in self._get_info_from_providers('get_staas_endpoints'):
+        site_info = self._get_info_from_providers("get_site_info")
+        staas_endpoints = self._get_info_from_providers("get_staas_endpoints")
+        static_staas_info = dict(staas_endpoints, **site_info)
+
+        output.append(self._format_template("storage_service",
+                                            static_staas_info))
+
+        for endpoint in staas_endpoints["endpoints"]:
             output.append(self._format_template("storage_endpoint",
-                                                static_info,
-                                                extra=endpoint))
+                                                endpoint,
+                                                extra=static_staas_info))
 
         output.append(self._format_template("storage_capacity",
-                                            static_info))
+                                            static_staas_info))
 
         return "\n".join(output)
 
@@ -70,20 +78,28 @@ class IaaSBDII(BaseBDII):
     def render(self):
         output = []
 
-        static_info = self._get_info_from_providers("get_site_info")
-
-        output.append(self._format_template("compute_service", static_info))
-
         endpoints = self._get_info_from_providers("get_iaas_endpoints")
-        for endpoint in endpoints:
+
+        if not endpoints:
+            return ""
+
+        site_info = self._get_info_from_providers("get_site_info")
+
+        iaas_endpoints = self._get_info_from_providers("get_iaas_endpoints")
+
+        static_iaas_info = dict(iaas_endpoints, **site_info)
+
+        output.append(self._format_template("compute_service", static_iaas_info))
+
+        for endpoint in iaas_endpoints["endpoints"]:
             output.append(self._format_template("compute_endpoint",
-                                                static_info,
-                                                extra=endpoint))
+                                                endpoint,
+                                                extra=static_iaas_info))
 
         for ex_env in self._get_info_from_providers('get_templates'):
             output.append(self._format_template("execution_environment",
-                                                static_info,
-                                                extra=ex_env))
+                                                ex_env,
+                                                extra=site_info))
 
         for app_env in self._get_info_from_providers('get_images'):
             app_env.setdefault("image_description",
@@ -91,8 +107,8 @@ class IaaSBDII(BaseBDII):
                                 "%(os_family)s %(os_name)s %(os_version)s "
                                 "%(platform)s" % app_env))
             output.append(self._format_template("application_environment",
-                                                static_info,
-                                                extra=app_env))
+                                                app_env,
+                                                extra=site_info))
 
         return "\n".join(output)
 
@@ -124,7 +140,8 @@ SUPPORTED_MIDDLEWARE = {
 
 def parse_opts():
     parser = parser = argparse.ArgumentParser(
-        description='Cloud BDII provider')
+        description='Cloud BDII provider',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('--full-bdii-ldif',
         action='store_true',

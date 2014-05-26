@@ -4,7 +4,7 @@ objectClass: GLUE2Service
 objectClass: GLUE2StorageService
 GLUE2ServiceAdminDomainForeignKey: %(site_name)s
 GLUE2ServiceID: cloud.storage.%(site_name)s_service
-GLUE2ServiceQualityLevel: %(production_level)s
+GLUE2ServiceQualityLevel: %(site_production_level)s
 GLUE2ServiceType: STaaS
 GLUE2ServiceCapability: %(staas_capabilities)s
 

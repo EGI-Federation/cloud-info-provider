@@ -1,66 +1,10 @@
+import argparse
+import socket
+import sys
+
 import providers
 
-interface = {
-    'IaaS_api': 'OCCI',
-    'IaaS_api_version': '1.1',
-    'IaaS_api_endpoint_technology': 'REST',
-    'IaaS_api_authorization_method': 'X509-VOMS',
-    'STaaS_api': 'CDMI',
-    'STaaS_api_version': '1.0.1',
-    'STaaS_api_endpoint_technology': 'REST',
-    'STaaS_api_authorization_method': 'X509-VOMS',
-}
-
-
-site_info = {
-    'site_name': 'PRISMA-INFN-BARI',
-    'www': 'http://recas-pon.ba.infn.it/',
-    'country': 'IT',
-    'site_longitude': '16.88',
-    'site_latitude': '41.11',
-    'affiliated_ngi': 'NGI_IT',
-    'user_support_contact': 'prisma-iaas-open-support@lists.ba.infn.it',
-    'general_contact': 'prisma-iaas-open-support@lists.ba.infn.it',
-    'sysadmin_contact': 'prisma-iaas-open-support@lists.ba.infn.it',
-    'security_contact': 'prisma-iaas-open-support@lists.ba.infn.it',
-    'production_level': 'production',
-    'site_bdii_host': 'prisma-cloud.ba.infn.it',
-    'site_bdii_port': '2170',
-
-
-    'site_total_cpu_cores': '300',
-    'site_total_ram_gb': '600',
-    'site_total_storage_gb': '51200',
-
-    'iaas_middleware': 'OpenStack Nova',
-    'iaas_middleware_version': 'havana',
-    'iaas_middleware_developer': 'OpenStack',
-    'iaas_hypervisor': 'KVM',
-    'iaas_hypervisor_version': '1.5.0',
-    'iaas_capabilities': ('cloud.managementSystem', 'cloud.vm.uploadImage'),
-
-    'staas_middleware': 'OpenStack Swift',
-    'staas_middleware_version': 'havana',
-    'staas_middleware_developer': 'OpenStack',
-    'staas_capabilities': 'cloud.data.upload',
-}
-
 static_info = {}
-static_info.update(site_info)
-
-static_info['iaas_endpoints'] = (
-    {
-        'endpoint_url': 'https://prisma-cloud.ba.infn.it:8787',
-        'endpoint_interface': interface['IaaS_api'],
-        'service_type_name': static_info['iaas_middleware'],
-        'service_type_version': static_info['iaas_middleware_version'],
-        'service_type_developer': static_info['iaas_middleware_developer'],
-        'interface_version': interface['IaaS_api_version'],
-        'endpoint_technology': interface['IaaS_api_endpoint_technology'],
-        'auth_method': interface['IaaS_api_authorization_method']
-    },
-)
-
 
 static_info['os_tpl'] = (
     {
@@ -135,36 +79,273 @@ static_info['resource_tpl'] = (
     },
 )
 
-static_info['staas_endpoints'] = (
-    {
-        'endpoint_url': 'https://prisma-swift.ba.infn.it:8080',
-        'endpoint_interface': interface['STaaS_api'],
-        'service_type_name': static_info['staas_middleware'],
-        'service_type_version': static_info['staas_middleware_version'],
-        'service_type_developer': static_info['staas_middleware_developer'],
-        'interface_version': interface['STaaS_api_version'],
-        'endpoint_technology': interface['STaaS_api_endpoint_technology'],
-        'auth_method': interface['STaaS_api_authorization_method']
-    },
-)
 
 class StaticProvider(providers.BaseProvider):
     def __init__(self, *args):
         super(StaticProvider, self).__init__(*args)
+        self._load_site_info()
 
-        self.site_info = site_info
+        self._load_iaas_endpoint_info()
+
+        self._load_staas_endpoint_info()
+
+    def _load_site_info(self):
+        self.site_info = {
+            "site_name": self.opts.site_name,
+            "site_production_level": self.opts.site_production_level,
+        }
+
+        if self.opts.full_bdii_ldif:
+            needed_opts = ('site_url', 'site_ngi', 'site_country',
+                           'site_latitude', 'site_longitude',
+                           'site_general_contact', 'site_sysadmin_contact',
+                           'site_security_contact',
+                           'site_user_support_contact',
+                           'site_bdii_host', 'site_bdii_port')
+
+            self._parse_needed_opts(self.site_info,
+                                    needed_opts,
+                                    "full-bdii-ldif")
+
+    def _load_staas_endpoint_info(self):
+        aux = {}
+        if self.opts.staas_endpoint:
+            needed_opts = ('staas_capability', 'staas_middleware',
+                           'staas_api_type', 'staas_api_version',
+                           'staas_api_endpoint_technology',
+                           'staas_api_authn_method',
+                           'staas_middleware_version',
+                           'staas_middleware_developer',
+                           'staas_total_storage')
+            self._parse_needed_opts(aux, needed_opts, "staas-endpoint")
+            aux["staas_capabilities"] = tuple(aux.pop("staas_capability"))
+            aux["endpoints"] = []
+            for e in self.opts.iaas_endpoint:
+                endpoint = {}
+                endpoint["endpoint_url"] = e
+                aux["endpoints"].append(endpoint)
+
+        self.staas_endpoints = aux
+
+    def _load_iaas_endpoint_info(self):
+        aux = {}
+        if self.opts.iaas_endpoint:
+            needed_opts = ('iaas_capability', 'iaas_hypervisor',
+                           'iaas_hypervisor_version', 'iaas_total_cores',
+                           'iaas_total_ram', 'iaas_api_type',
+                           'iaas_api_version', 'iaas_api_endpoint_technology',
+                           'iaas_api_authn_method', 'iaas_middleware',
+                           'iaas_middleware_version',
+                           'iaas_middleware_developer')
+            self._parse_needed_opts(aux, needed_opts, "iaas-endpoint")
+
+            aux["iaas_capabilities"] = tuple(aux.pop("iaas_capability"))
+            aux["endpoints"] = []
+            for e in self.opts.iaas_endpoint:
+                endpoint = {}
+                endpoint["endpoint_url"] = e
+                aux["endpoints"].append(endpoint)
+
+            # This are only used if we have an endpoint
+            self._load_flavors()
+            self._load_images()
+
+        self.iaas_endpoints = aux
+
+    def _load_flavors(self):
+        self.flavors = static_info.get("resource_tpl", [])
+
+    def _load_images(self):
+        self.images = static_info.get("os_tpl", [])
+
+    def _parse_needed_opts(self, store_in, needed_opts, flag):
+        for opt in needed_opts:
+            value = getattr(self.opts, opt)
+            if value is None:
+                # TODO(aloga): use an exception here
+                opt = opt.replace("_", "-")
+                print >> sys.stderr, ('ERROR: Missing option "--%s" is '
+                                      'mandatory with "%s"' %
+                                      (opt, flag))
+                sys.exit(1)
+
+            store_in[opt] = value
 
     def get_site_info(self):
         return self.site_info
 
     def get_images(self):
-        return static_info.get("os_tpl", [])
+        return self.images
 
     def get_templates(self):
-        return static_info.get("resource_tpl", [])
+        return self.flavors
 
     def get_iaas_endpoints(self):
-        return static_info.get("iaas_endpoints", [])
+        return self.iaas_endpoints
 
     def get_staas_endpoints(self):
-        return static_info.get("staas_endpoints", [])
+        return self.staas_endpoints
+
+    @staticmethod
+    def populate_parser(parser):
+        """Populate the argparser 'parser' with the needed options."""
+
+        # Site info
+        parser.add_argument('--site-name',
+            required=True,
+            help='Site name.')
+
+        parser.add_argument('--site-url',
+            metavar='URL',
+            help='Site URL.')
+
+        parser.add_argument('--site-ngi',
+            metavar='NGI',
+            help='Site NGI.')
+
+        parser.add_argument('--site-country',
+            help='Site Country.')
+
+        parser.add_argument('--site-latitude',
+            metavar='LATITUDE',
+            type=float,
+            help='Site Latitude.')
+
+        parser.add_argument('--site-longitude',
+            metavar='LONGITUDE',
+            type=float,
+            help='Site Longitude.')
+
+        parser.add_argument('--site-general-contact',
+            metavar='EMAIL',
+            help='Site general contact email.')
+
+        parser.add_argument('--site-sysadmin-contact',
+            metavar='EMAIL',
+            help='Site sysadmin contact email.')
+
+        parser.add_argument('--site-security-contact',
+            metavar='EMAIL',
+            help='Site security contact email.')
+
+        parser.add_argument('--site-user-support-contact',
+            metavar='EMAIL',
+            help='Site user-support contact email.')
+
+        parser.add_argument('--site-production-level',
+            default='production',
+            help='Site production level.')
+
+        parser.add_argument('--site-bdii-host',
+            metavar='HOSTNAME',
+            default=socket.getfqdn(),
+            help='Site BDII hostname.')
+
+        parser.add_argument('--site-bdii-port',
+            metavar='PORT',
+            type=int,
+            default=2170,
+            help='Site BDII hostname.')
+
+        # IaaS
+        parser.add_argument('--iaas-endpoint',
+            metavar='URL',
+            default=[],
+            action='append',
+            help=('IaaS endpoints. Can be used severail times to specify'
+                  'a list of endpoints'))
+
+        parser.add_argument('--iaas-capability',
+            metavar='CAPABILITY',
+            action='append',
+            default=['cloud.managementSystem', 'cloud.vm.uploadImage'],
+            help=('IaaS capability. Can be used several times to specify '
+                  'a list of capabilities'))
+
+        parser.add_argument('--iaas-hypervisor',
+            metavar='HYPERVISOR',
+            help='Hypervisor used (i.e. "KVM", "Xen", etc.)')
+
+        parser.add_argument('--iaas-hypervisor-version',
+            metavar='VERSION',
+            help='Hypervisor version.')
+
+        parser.add_argument('--iaas-total-ram',
+            metavar='RAM',
+            type=float,
+            help='Total RAM available in GB.')
+
+        parser.add_argument('--iaas-total-cores',
+            metavar='CORES',
+            type=int,
+            help='Total number of cores.')
+
+        parser.add_argument('--iaas-middleware',
+            help='Name of the middleware used.')
+
+        parser.add_argument('--iaas-middleware-version',
+            help='Middleware version.')
+
+        parser.add_argument('--iaas-middleware-developer',
+            help='Middleware developer.')
+
+        parser.add_argument('--iaas-api-type',
+            metavar='API_TYPE',
+            default='OCCI',
+            help="IaaS API Type")
+        parser.add_argument('--iaas-api-version',
+            metavar='API_VERSION',
+            default='1.1',
+            help="IaaS API version")
+        parser.add_argument('--iaas-api-endpoint-technology',
+            metavar='API_TECHNOLOGY',
+            default='REST',
+            help=argparse.SUPPRESS)
+        parser.add_argument('--iaas-api-authn-method',
+            default='X509-VOMS',
+            help=argparse.SUPPRESS)
+
+        # Staas
+        parser.add_argument('--staas-endpoint',
+            metavar='URL',
+            default=[],
+            action='append',
+            help=('StaaS endpoints. Can be used severail times to specify'
+                  'a list of endpoints'))
+
+        parser.add_argument('--staas-capability',
+            metavar='CAPABILITY',
+            action='append',
+            default=['cloud.data.upload'],
+            help=('StaaS capability. Can be used several times to specify '
+                  'a list of capabilities'))
+
+        parser.add_argument('--staas-total-storage',
+            metavar='STORAGE_SIZE',
+            type=float,
+            help='Total storage available in GB.')
+
+        parser.add_argument('--staas-middleware',
+            help='Name of the middleware used.')
+
+        parser.add_argument('--staas-middleware-version',
+            help='Middleware version.')
+
+        parser.add_argument('--staas-middleware-developer',
+            help='Middleware developer.')
+
+        parser.add_argument('--staas-api-type',
+            metavar='API_TYPE',
+            default='CDMI',
+            help="StaaS API Type")
+        parser.add_argument('--staas-api-version',
+            metavar='API_VERSION',
+            default='1.0.1',
+            help="StaaS API version")
+        parser.add_argument('--staas-api-endpoint-technology',
+            metavar='API_TECHNOLOGY',
+            default='REST',
+            help=argparse.SUPPRESS)
+        parser.add_argument('--staas-api-authn-method',
+            default='X509-VOMS',
+            help=argparse.SUPPRESS)

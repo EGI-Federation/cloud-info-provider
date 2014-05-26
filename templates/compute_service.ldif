@@ -4,7 +4,7 @@ objectClass: GLUE2Service
 objectClass: GLUE2ComputingService
 GLUE2ServiceAdminDomainForeignKey: %(site_name)s
 GLUE2ServiceID: cloud.compute.%(site_name)s_service
-GLUE2ServiceQualityLevel: %(production_level)s
+GLUE2ServiceQualityLevel: %(site_production_level)s
 GLUE2ServiceType: IaaS
 GLUE2ServiceCapability: %(iaas_capabilities)s
 
@@ -18,5 +18,5 @@ GLUE2ManagerServiceForeignKey: cloud.compute.%(site_name)s_service
 GLUE2ComputingManagerComputingServiceForeignKey: cloud.compute.%(site_name)s_service
 GLUE2EntityName: Cloud Manager at %(site_name)s
 GLUE2ManagerProductVersion: %(iaas_hypervisor_version)s
-GLUE2ComputingManagerTotalLogicalCPUs: %(site_total_cpu_cores)s
-GLUE2ComputingManagerWorkingAreaTotal: %(site_total_ram_gb)s
+GLUE2ComputingManagerTotalLogicalCPUs: %(iaas_total_cores)s
+GLUE2ComputingManagerWorkingAreaTotal: %(iaas_total_ram)s
