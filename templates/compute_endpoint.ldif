@@ -5,7 +5,7 @@ objectClass: GLUE2ComputingEndpoint
 GLUE2EndpointHealthState: ok
 GLUE2EndpointID: %(endpoint_url)s_%(iaas_api_type)s_%(iaas_api_version)s_%(iaas_api_authn_method)s
 GLUE2EndpointInterfaceName: %(iaas_api_type)s
-GLUE2EndpointQualityLevel:  %(site_production_level)s
+GLUE2EndpointQualityLevel: %(site_production_level)s
 GLUE2EndpointServiceForeignKey: cloud.compute.%(site_name)s_service
 GLUE2EndpointServingState:  %(site_production_level)s
 GLUE2EndpointURL: %(endpoint_url)s

@@ -120,7 +120,7 @@ class StaticProvider(providers.BaseProvider):
             self._parse_needed_opts(aux, needed_opts, "staas-endpoint")
             aux["staas_capabilities"] = tuple(aux.pop("staas_capability"))
             aux["endpoints"] = []
-            for e in self.opts.iaas_endpoint:
+            for e in self.opts.staas_endpoint:
                 endpoint = {}
                 endpoint["endpoint_url"] = e
                 aux["endpoints"].append(endpoint)

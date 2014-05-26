@@ -141,7 +141,8 @@ SUPPORTED_MIDDLEWARE = {
 def parse_opts():
     parser = parser = argparse.ArgumentParser(
         description='Cloud BDII provider',
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+        fromfile_prefix_chars='@')
 
     parser.add_argument('--full-bdii-ldif',
         action='store_true',
@@ -167,7 +168,6 @@ def parse_opts():
 
 def main():
     opts = parse_opts()
-
     for cls_ in (CloudBDII, IaaSBDII, StaaSBDII):
         bdii = cls_(opts)
         print bdii.render()
