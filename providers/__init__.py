@@ -1,6 +1,6 @@
 class BaseProvider(object):
     def __init__(self, opts):
-        pass
+        self.opts = opts
 
     @staticmethod
     def populate_parser(parser):

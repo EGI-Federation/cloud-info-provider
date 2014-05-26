@@ -17,6 +17,8 @@ def env(*args, **kwargs):
 
 class OpenStackProvider(providers.BaseProvider):
     def __init__(self, opts):
+        super(OpenStackProvider, self).__init__(opts)
+
         try:
             import novaclient.client
         except ImportError:
