@@ -5,85 +5,19 @@ import argparse
 import providers.openstack
 import providers.static
 
-interface = {
-    'IaaS_api': 'OCCI',
-    'IaaS_api_version': '1.1',
-    'IaaS_api_endpoint_technology': 'REST',
-    'IaaS_api_authorization_method': 'X509-VOMS',
-    'STaaS_api': 'CDMI',
-    'STaaS_api_version': '1.0.1',
-    'STaaS_api_endpoint_technology': 'REST',
-    'STaaS_api_authorization_method': 'X509-VOMS',
-}
-
-provider = {
-    'site_name': 'PRISMA-INFN-BARI',
-    'www': 'http://recas-pon.ba.infn.it/',
-    'country': 'IT',
-    'site_longitude': '16.88',
-    'site_latitude': '41.11',
-    'affiliated_ngi': 'NGI_IT',
-    'user_support_contact': 'prisma-iaas-open-support@lists.ba.infn.it',
-    'general_contact': 'prisma-iaas-open-support@lists.ba.infn.it',
-    'sysadmin_contact': 'prisma-iaas-open-support@lists.ba.infn.it',
-    'security_contact': 'prisma-iaas-open-support@lists.ba.infn.it',
-    'production_level': 'production',
-    'site_bdii_host': 'prisma-cloud.ba.infn.it',
-    'site_bdii_port': '2170',
-
-
-    'site_total_cpu_cores': '300',
-    'site_total_ram_gb': '600',
-    'site_total_storage_gb': '51200',
-
-    'iaas_middleware': 'OpenStack Nova',
-    'iaas_middleware_version': 'havana',
-    'iaas_middleware_developer': 'OpenStack',
-    'iaas_hypervisor': 'KVM',
-    'iaas_hypervisor_version': '1.5.0',
-    'iaas_capabilities': ('cloud.managementSystem', 'cloud.vm.uploadImage'),
-}
-
-provider['iaas_endpoints'] = (
-    {
-        'endpoint_url': 'https://prisma-cloud.ba.infn.it:8787',
-        'endpoint_interface': interface['IaaS_api'],
-        'service_type_name': provider['iaas_middleware'],
-        'service_type_version': provider['iaas_middleware_version'],
-        'service_type_developer': provider['iaas_middleware_developer'],
-        'interface_version': interface['IaaS_api_version'],
-        'endpoint_technology': interface['IaaS_api_endpoint_technology'],
-        'auth_method': interface['IaaS_api_authorization_method']
-    },
-)
-
-provider['staas_middleware'] = 'OpenStack Swift'
-provider['staas_middleware_version'] = 'havana'
-provider['staas_middleware_developer'] = 'OpenStack'
-provider['staas_capabilities'] = 'cloud.data.upload'
-
-provider['staas_endpoints'] = (
-    {
-        'endpoint_url': 'https://prisma-swift.ba.infn.it:8080',
-        'endpoint_interface': interface['STaaS_api'],
-        'service_type_name': provider['staas_middleware'],
-        'service_type_version': provider['staas_middleware_version'],
-        'service_type_developer': provider['staas_middleware_developer'],
-        'interface_version': interface['STaaS_api_version'],
-        'endpoint_technology': interface['STaaS_api_endpoint_technology'],
-        'auth_method': interface['STaaS_api_authorization_method']
-    },
-)
-
 
 class BaseBDII(object):
     templates = ()
 
-    def __init__(self, dynamic_provider, static_provider):
+    def __init__(self, opts):
+        self.opts = opts
+
         if opts.middleware != "static" and opts.middleware in SUPPORTED_MIDDLEWARE:
             self.dynamic_provider = SUPPORTED_MIDDLEWARE.get(opts.middleware)(opts)
         else:
             self.dynamic_provider = None
+
+        self.static_provider = providers.static.StaticProvider(opts)
 
         self.ldif = {}
         for tpl in self.templates:
@@ -164,10 +98,13 @@ class IaaSBDII(BaseBDII):
 
 
 class CloudBDII(BaseBDII):
-    templates = ("headers", "domain", "bdii")
+    templates = ("headers", "domain", "bdii", "clouddomain")
 
     def __init__(self, *args):
         super(CloudBDII, self).__init__(*args)
+
+        if not self.opts.full_bdii_ldif:
+            self.templates = ("clouddomain",)
 
     def render(self):
         output = []
@@ -185,9 +122,15 @@ SUPPORTED_MIDDLEWARE = {
 }
 
 
-def parse_args():
+def parse_opts():
     parser = parser = argparse.ArgumentParser(
         description='Cloud BDII provider')
+
+    parser.add_argument('--full-bdii-ldif',
+        action='store_true',
+        default=False,
+        help=('Whether to generate a LDIF containing all the '
+              'BDII information, or just this node\'s information'))
 
     parser.add_argument('--middleware',
         metavar='MIDDLEWARE',
@@ -206,17 +149,10 @@ def parse_args():
 
 
 def main():
-    args = parse_args()
-
-    if args.middleware in SUPPORTED_MIDDLEWARE:
-        dynamic_provider = SUPPORTED_MIDDLEWARE.get(args.middleware)(args)
-    else:
-        dynamic_provider = None
-
-    static_provider = providers.static.StaticProvider(args)
+    opts = parse_opts()
 
     for cls_ in (CloudBDII, IaaSBDII, StaaSBDII):
-        bdii = cls_(dynamic_provider, static_provider)
+        bdii = cls_(opts)
         print bdii.render()
 
 

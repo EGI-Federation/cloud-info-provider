@@ -17,8 +17,3 @@ GLUE2EndpointImplementor: %(service_type_developer)s
 GLUE2EndpointInterfaceVersion: %(interface_version)s
 GLUE2EntityOtherInfo: Authn=%(auth_method)s
 GLUE2EndpointTechnology: %(endpoint_technology)s
-entryDN: GLUE2EndpointID=%(endpoint_url)s_%(endpoint_interface)s_%(interface_version)s_%(auth_method)s,GLUE2ServiceID=cloud.storage.%(site_name)s_service,GLUE2GroupID=cloud,GLUE2DomainID=%(site_name)s,o=glue
-hasSubordinates: TRUE
-modifiersName: o=glue
-structuralObjectClass: GLUE2Endpoint
-subschemaSubentry: cn=Subschema

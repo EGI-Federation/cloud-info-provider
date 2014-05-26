@@ -42,10 +42,6 @@ GLUE2ContactID: usersupport.contact.%(site_name)s
 GLUE2ContactType: usersupport
 GLUE2ContactDomainForeignKey: %(site_name)s
 
-dn: GLUE2GroupID=cloud,GLUE2DomainID=%(site_name)s,o=glue
-objectClass: GLUE2Group
-GLUE2GroupID: cloud
-
 dn: GLUE2GroupID=resource,GLUE2DomainID=%(site_name)s,o=glue
 objectClass: GLUE2Group
 GLUE2GroupID: resource
