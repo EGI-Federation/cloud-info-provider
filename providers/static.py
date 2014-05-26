@@ -11,7 +11,8 @@ interface = {
     'STaaS_api_authorization_method': 'X509-VOMS',
 }
 
-static_info = {
+
+site_info = {
     'site_name': 'PRISMA-INFN-BARI',
     'www': 'http://recas-pon.ba.infn.it/',
     'country': 'IT',
@@ -37,7 +38,15 @@ static_info = {
     'iaas_hypervisor': 'KVM',
     'iaas_hypervisor_version': '1.5.0',
     'iaas_capabilities': ('cloud.managementSystem', 'cloud.vm.uploadImage'),
+
+    'staas_middleware': 'OpenStack Swift',
+    'staas_middleware_version': 'havana',
+    'staas_middleware_developer': 'OpenStack',
+    'staas_capabilities': 'cloud.data.upload',
 }
+
+static_info = {}
+static_info.update(site_info)
 
 static_info['iaas_endpoints'] = (
     {
@@ -126,11 +135,6 @@ static_info['resource_tpl'] = (
     },
 )
 
-static_info['staas_middleware'] = 'OpenStack Swift'
-static_info['staas_middleware_version'] = 'havana'
-static_info['staas_middleware_developer'] = 'OpenStack'
-static_info['staas_capabilities'] = 'cloud.data.upload'
-
 static_info['staas_endpoints'] = (
     {
         'endpoint_url': 'https://prisma-swift.ba.infn.it:8080',
@@ -145,8 +149,22 @@ static_info['staas_endpoints'] = (
 )
 
 class StaticProvider(providers.BaseProvider):
+    def __init__(self, *args):
+        super(StaticProvider, self).__init__(*args)
+
+        self.site_info = site_info
+
+    def get_site_info(self):
+        return self.site_info
+
     def get_images(self):
-        return static_info["os_tpl"]
+        return static_info.get("os_tpl", [])
 
     def get_templates(self):
-        return static_info["resource_tpl"]
+        return static_info.get("resource_tpl", [])
+
+    def get_iaas_endpoints(self):
+        return static_info.get("iaas_endpoints", [])
+
+    def get_staas_endpoints(self):
+        return static_info.get("staas_endpoints", [])

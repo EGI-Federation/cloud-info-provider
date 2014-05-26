@@ -77,93 +77,111 @@ provider['staas_endpoints'] = (
 
 
 class BaseBDII(object):
-    def __init__(self, templates, info):
-        self.info = info
+    templates = ()
+
+    def __init__(self, dynamic_provider, static_provider):
+        if opts.middleware != "static" and opts.middleware in SUPPORTED_MIDDLEWARE:
+            self.dynamic_provider = SUPPORTED_MIDDLEWARE.get(opts.middleware)(opts)
+        else:
+            self.dynamic_provider = None
+
         self.ldif = {}
-        self.templates = templates
         for tpl in self.templates:
             with open('templates/%s.ldif' % tpl, 'r') as f:
                 self.ldif[tpl] = f.read()
 
-    def _format_template(self, template, info=None, extra={}):
-        if not info:
-            info = self.info
-        fd = info.copy()
-        fd.update(extra)
-        return self.ldif.get(template, "") % fd
+    def _get_info_from_providers(self, method):
+        info = None
+        for i in (self.static_provider, self.dynamic_provider):
+            if not i:
+                continue
+            result = getattr(i, method)()
+            if isinstance(info, dict):
+                info.update(result)
+            else:
+                info = result
+        return info
+
+    def _format_template(self, template, info, extra={}):
+        info = info.copy()
+        info.update(extra)
+        return self.ldif.get(template, "") % info
 
 
 class StaaSBDII(BaseBDII):
-    def __init__(self, provider):
-        templates = ("storage_service", "storage_endpoint", "storage_capacity")
-        super(StaaSBDII, self).__init__(templates, provider)
+    templates = ("storage_service", "storage_endpoint", "storage_capacity")
 
     def render(self):
         output = []
-        output.append(self._format_template("storage_service"))
 
-        for endpoint in provider['staas_endpoints']:
+        static_info = self._get_info_from_providers("get_site_info")
+
+        output.append(self._format_template("storage_service", static_info))
+
+        for endpoint in self._get_info_from_providers('get_staas_endpoints'):
             output.append(self._format_template("storage_endpoint",
+                                                static_info,
                                                 extra=endpoint))
 
-        output.append(self._format_template("storage_capacity"))
+        output.append(self._format_template("storage_capacity",
+                                            static_info))
 
         return "\n".join(output)
 
 
 class IaaSBDII(BaseBDII):
-    def __init__(self, provider):
-        templates = ("compute_service", "compute_endpoint",
-                     "execution_environment", "application_environment")
-        super(IaaSBDII, self).__init__(templates, provider)
+    templates = ("compute_service", "compute_endpoint",
+                 "execution_environment", "application_environment")
 
     def render(self):
         output = []
-        output.append(self._format_template("compute_service"))
 
-        for endpoint in provider['iaas_endpoints']:
+        static_info = self._get_info_from_providers("get_site_info")
+
+        output.append(self._format_template("compute_service", static_info))
+
+        endpoints = self._get_info_from_providers("get_iaas_endpoints")
+        for endpoint in endpoints:
             output.append(self._format_template("compute_endpoint",
+                                                static_info,
                                                 extra=endpoint))
 
-        for ex_env in provider['resource_tpl']:
+        for ex_env in self._get_info_from_providers('get_templates'):
             output.append(self._format_template("execution_environment",
+                                                static_info,
                                                 extra=ex_env))
 
-        for app_env in provider['os_tpl']:
+        for app_env in self._get_info_from_providers('get_images'):
             app_env.setdefault("image_description",
                                ("%(image_name)s version %(image_version)s on "
                                 "%(os_family)s %(os_name)s %(os_version)s "
                                 "%(platform)s" % app_env))
             output.append(self._format_template("application_environment",
+                                                static_info,
                                                 extra=app_env))
 
         return "\n".join(output)
 
 
 class CloudBDII(BaseBDII):
-    def __init__(self, provider):
-        self.services = []
-        if provider.get('iaas_endpoints', None):
-            self.services.append(IaaSBDII(provider))
+    templates = ("headers", "domain", "bdii")
 
-        if provider.get('staas_endpoints', None):
-            self.services.append(StaaSBDII(provider))
-
-        self.templates = ("headers", "domain", "bdii")
-        super(CloudBDII, self).__init__(self.templates, provider)
+    def __init__(self, *args):
+        super(CloudBDII, self).__init__(*args)
 
     def render(self):
         output = []
+        info = self._get_info_from_providers("get_site_info")
+
         for tpl in self.templates:
-            output.append(self._format_template(tpl))
-        for i in self.services:
-            output.append(i.render())
+            output.append(self._format_template(tpl, info))
+
         return "\n".join(output)
 
 
 SUPPORTED_MIDDLEWARE = {
     'OpenStack': providers.openstack.OpenStackProvider,
-    'static': providers.static.StaticProvider
+    'static': providers.static.StaticProvider,
 }
 
 
@@ -190,18 +208,16 @@ def parse_args():
 def main():
     args = parse_args()
 
-    dynamic_provider = SUPPORTED_MIDDLEWARE.get(
-        args.middleware, SUPPORTED_MIDDLEWARE['static'])(args)
+    if args.middleware in SUPPORTED_MIDDLEWARE:
+        dynamic_provider = SUPPORTED_MIDDLEWARE.get(args.middleware)(args)
+    else:
+        dynamic_provider = None
 
-    images = dynamic_provider.get_images()
-    if images:
-        provider["os_tpl"] = images
-    flavors = dynamic_provider.get_templates()
-    if flavors:
-        provider['resource_tpl'] = flavors
+    static_provider = providers.static.StaticProvider(args)
 
-    bdii = CloudBDII(provider)
-    print bdii.render()
+    for cls_ in (CloudBDII, IaaSBDII, StaaSBDII):
+        bdii = cls_(dynamic_provider, static_provider)
+        print bdii.render()
 
 
 if __name__ == "__main__":
