@@ -1,21 +1,21 @@
-dn: GLUE2EndpointID=%(endpoint_url)s_%(iaas_api_type)s_%(iaas_api_version)s_%(iaas_api_authn_method)s,GLUE2ServiceID=cloud.compute.%(site_name)s_service,GLUE2GroupID=cloud,GLUE2DomainID=%(site_name)s,o=glue
+dn: GLUE2EndpointID=%(endpoint_url)s_%(compute_api_type)s_%(compute_api_version)s_%(compute_api_authn_method)s,GLUE2ServiceID=cloud.compute.%(site_name)s_service,GLUE2GroupID=cloud,GLUE2DomainID=%(site_name)s,o=glue
 objectClass: GLUE2Entity
 objectClass: GLUE2Endpoint
 objectClass: GLUE2ComputingEndpoint
 GLUE2EndpointHealthState: ok
-GLUE2EndpointID: %(endpoint_url)s_%(iaas_api_type)s_%(iaas_api_version)s_%(iaas_api_authn_method)s
-GLUE2EndpointInterfaceName: %(iaas_api_type)s
+GLUE2EndpointID: %(endpoint_url)s_%(compute_api_type)s_%(compute_api_version)s_%(compute_api_authn_method)s
+GLUE2EndpointInterfaceName: %(compute_api_type)s
 GLUE2EndpointQualityLevel: %(site_production_level)s
 GLUE2EndpointServiceForeignKey: cloud.compute.%(site_name)s_service
-GLUE2EndpointServingState:  %(site_production_level)s
+GLUE2EndpointServingState: %(site_production_level)s
 GLUE2EndpointURL: %(endpoint_url)s
 GLUE2ComputingEndpointComputingServiceForeignKey: cloud.compute.%(site_name)s_service
-GLUE2EndpointCapability: %(iaas_capabilities)s
-GLUE2EndpointImplementationName: %(iaas_middleware)s
-GLUE2EndpointImplementationVersion: %(iaas_middleware_version)s
-GLUE2EndpointImplementor: %(iaas_middleware_developer)s
-GLUE2EndpointInterfaceVersion: %(iaas_api_version)s
+GLUE2EndpointCapability: %(compute_capabilities)s
+GLUE2EndpointImplementationName: %(compute_middleware)s
+GLUE2EndpointImplementationVersion: %(compute_middleware_version)s
+GLUE2EndpointImplementor: %(compute_middleware_developer)s
+GLUE2EndpointInterfaceVersion: %(compute_api_version)s
 #GLUE2EndpointSemantics:
 #GLUE2EndpointSupportedProfile:
-GLUE2EntityOtherInfo: Authn=%(iaas_api_authn_method)s
-GLUE2EndpointTechnology: %(iaas_api_endpoint_technology)s
+GLUE2EntityOtherInfo: Authn=%(compute_api_authn_method)s
+GLUE2EndpointTechnology: %(compute_api_endpoint_technology)s

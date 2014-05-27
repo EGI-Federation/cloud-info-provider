@@ -48,60 +48,58 @@ class BaseBDII(object):
         return self.ldif.get(template, "") % info
 
 
-class StaaSBDII(BaseBDII):
+class StorageBDII(BaseBDII):
     templates = ("storage_service", "storage_endpoint", "storage_capacity")
 
     def render(self):
         output = []
 
-        endpoints = self._get_info_from_providers("get_staas_endpoints")
+        endpoints = self._get_info_from_providers("get_storage_endpoints")
 
         if not endpoints:
             return ""
 
         site_info = self._get_info_from_providers("get_site_info")
-        staas_endpoints = self._get_info_from_providers("get_staas_endpoints")
-        static_staas_info = dict(staas_endpoints, **site_info)
+        static_storage_info = dict(endpoints, **site_info)
+        static_storage_info.pop("endpoints")
 
         output.append(self._format_template("storage_service",
-                                            static_staas_info))
+                                            static_storage_info))
 
-        for endpoint in staas_endpoints["endpoints"]:
+        for endpoint in endpoints["endpoints"].values():
             output.append(self._format_template("storage_endpoint",
                                                 endpoint,
-                                                extra=static_staas_info))
+                                                extra=static_storage_info))
 
         output.append(self._format_template("storage_capacity",
-                                            static_staas_info))
+                                            static_storage_info))
 
         return "\n".join(output)
 
 
-class IaaSBDII(BaseBDII):
+class ComputeBDII(BaseBDII):
     templates = ("compute_service", "compute_endpoint",
                  "execution_environment", "application_environment")
 
     def render(self):
         output = []
 
-        endpoints = self._get_info_from_providers("get_iaas_endpoints")
+        endpoints = self._get_info_from_providers("get_compute_endpoints")
 
         if not endpoints:
             return ""
 
         site_info = self._get_info_from_providers("get_site_info")
-
-        iaas_endpoints = self._get_info_from_providers("get_iaas_endpoints")
-
-        static_iaas_info = dict(iaas_endpoints, **site_info)
+        static_compute_info = dict(endpoints, **site_info)
+        static_compute_info.pop("endpoints")
 
         output.append(self._format_template("compute_service",
-                                            static_iaas_info))
+                                            static_compute_info))
 
-        for endpoint in iaas_endpoints["endpoints"]:
+        for endpoint in endpoints["endpoints"].values():
             output.append(self._format_template("compute_endpoint",
                                                 endpoint,
-                                                extra=static_iaas_info))
+                                                extra=static_compute_info))
 
         for ex_env in self._get_info_from_providers('get_templates'):
             output.append(self._format_template("execution_environment",
@@ -169,7 +167,7 @@ def parse_opts():
 
 def main():
     opts = parse_opts()
-    for cls_ in (CloudBDII, IaaSBDII, StaaSBDII):
+    for cls_ in (CloudBDII, ComputeBDII, StorageBDII):
         bdii = cls_(opts)
         print bdii.render()
 

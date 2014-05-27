@@ -1,0 +1,48 @@
+site:
+    name: SZTAKI
+    production_level: production
+    url: http://recas-pon.ba.infn.it/
+    country: IT
+    longitude: 16.88
+    latitude: 41.11
+    ngi: NGI_IT
+    user_support_contact: prisma-iaas-open-support@lists.ba.infn.it
+    general_contact: prisma-iaas-open-support@lists.ba.infn.it
+    sysadmin_contact: prisma-iaas-open-support@lists.ba.infn.it
+    security_contact: prisma-iaas-open-support@lists.ba.infn.it
+    bdii_host: prisma-cloud.ba.infn.it
+    bdii_port: 2170
+
+compute:
+    total_cores: 300
+    total_ram: 600
+    hypervisor: KVM
+    hypervisor_version: 1.5.0
+    middleware: OpenStack Nova
+    middleware_version: havana
+    middleware_developer: OpenStack
+    capabilities:
+        - cloud.managementSystem
+        - cloud.vm.uploadImage
+
+    endpoints:
+        https://prisma-cloud.ba.infn.it:8787:
+            api_type: OCCI
+            api_version: 1.1
+            api_endpoint_technology: REST
+            api_authn_method: X509-VOMS
+
+storage:
+    total_storage: 51200
+    middleware: OpenStack Swift
+    middleware_version: havana
+    middleware_developer: OpenStack
+    capabilities:
+        - cloud.data.upload
+
+    endpoints:
+        https://prisma-swift.ba.infn.it:8080:
+            api_type: CDMI
+            api_version: 1.0.1
+            api_endpoint_technology: REST
+            api_authn_method: X509-VOMS

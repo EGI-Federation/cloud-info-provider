@@ -11,10 +11,10 @@ class BaseProvider(object):
     def get_templates(self):
         return []
 
-    def get_iaas_endpoints(self):
+    def get_compute_endpoints(self):
         return []
 
-    def get_staas_endpoints(self):
+    def get_storage_endpoints(self):
         return []
 
     @staticmethod

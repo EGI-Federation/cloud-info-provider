@@ -1,6 +1,6 @@
-import argparse
-import socket
 import sys
+
+import yaml
 
 import providers
 
@@ -83,93 +83,108 @@ static_info['resource_tpl'] = (
 class StaticProvider(providers.BaseProvider):
     def __init__(self, *args):
         super(StaticProvider, self).__init__(*args)
+
+        # FIXME(aloga): this is hardcoded
+        self._load_yaml("bdii.yaml")
+
+        self.site_info = {}
+        self.compute_endpoints = {}
+        self.storage_endpoints = {}
+        self.flavors = {}
+        self.images = {}
+
         self._load_site_info()
+        self._load_compute_endpoint_info()
 
-        self._load_iaas_endpoint_info()
+        self._load_storage_endpoint_info()
 
-        self._load_staas_endpoint_info()
+    def _load_yaml(self, yaml_file):
+        with open(yaml_file, "r") as f:
+            self.yaml = yaml.safe_load(f)
+
+    def _format_fields_with_prefix(self, fields, prefix, ydata):
+        if ydata is None:
+            ydata = self.yaml
+
+        ret = {}
+        for field in fields:
+            if field not in ydata:
+                print >> sys.stderr, ('ERROR: missing field %s on '
+                                      '"%s" section' % (field, prefix))
+                sys.exit(1)
+
+            ret["%s%s" % (prefix, field)] = ydata[field]
+        return ret
 
     def _load_site_info(self):
-        self.site_info = {
-            "site_name": self.opts.site_name,
-            "site_production_level": self.opts.site_production_level,
-        }
+        fields = ("name", "production_level")
+        r = self._format_fields_with_prefix(fields, "site_",
+                                            self.yaml["site"])
+        self.site_info.update(r)
 
         if self.opts.full_bdii_ldif:
-            needed_opts = ('site_url', 'site_ngi', 'site_country',
-                           'site_latitude', 'site_longitude',
-                           'site_general_contact', 'site_sysadmin_contact',
-                           'site_security_contact',
-                           'site_user_support_contact',
-                           'site_bdii_host', 'site_bdii_port')
+            fields = ('url', 'ngi', 'country', 'latitude', 'longitude',
+                      'general_contact', 'sysadmin_contact',
+                      'security_contact', 'user_support_contact',
+                      'bdii_host', 'bdii_port')
+            r = self._format_fields_with_prefix(fields, "site_",
+                                                self.yaml["site"])
+            self.site_info.update(r)
 
-            self._parse_needed_opts(self.site_info,
-                                    needed_opts,
-                                    "full-bdii-ldif")
+    def _load_storage_endpoint_info(self):
+        if "storage" not in self.yaml:
+            return
 
-    def _load_staas_endpoint_info(self):
-        aux = {}
-        if self.opts.staas_endpoint:
-            needed_opts = ('staas_capability', 'staas_middleware',
-                           'staas_api_type', 'staas_api_version',
-                           'staas_api_endpoint_technology',
-                           'staas_api_authn_method',
-                           'staas_middleware_version',
-                           'staas_middleware_developer',
-                           'staas_total_storage')
-            self._parse_needed_opts(aux, needed_opts, "staas-endpoint")
-            aux["staas_capabilities"] = tuple(aux.pop("staas_capability"))
-            aux["endpoints"] = []
-            for e in self.opts.staas_endpoint:
-                endpoint = {}
-                endpoint["endpoint_url"] = e
-                aux["endpoints"].append(endpoint)
+        self.storage_endpoints["endpoints"] = {}
 
-        self.staas_endpoints = aux
+        fields = ('total_storage', 'capabilities', 'middleware',
+                  'middleware_version', 'middleware_developer')
+        r = self._format_fields_with_prefix(fields, "storage_",
+                                            self.yaml["storage"])
+        self.storage_endpoints.update(r)
 
-    def _load_iaas_endpoint_info(self):
-        aux = {}
-        if self.opts.iaas_endpoint:
-            needed_opts = ('iaas_capability', 'iaas_hypervisor',
-                           'iaas_hypervisor_version', 'iaas_total_cores',
-                           'iaas_total_ram', 'iaas_api_type',
-                           'iaas_api_version', 'iaas_api_endpoint_technology',
-                           'iaas_api_authn_method', 'iaas_middleware',
-                           'iaas_middleware_version',
-                           'iaas_middleware_developer')
-            self._parse_needed_opts(aux, needed_opts, "iaas-endpoint")
+        if "endpoints" in self.yaml["storage"]:
+            for e, e_data in self.yaml["storage"]["endpoints"].iteritems():
+                fields = ('api_type', 'api_version',
+                          'api_endpoint_technology', 'api_authn_method')
+                r = self._format_fields_with_prefix(fields,
+                                                    "storage_",
+                                                    e_data)
+                r["endpoint_url"] = e
+                self.storage_endpoints["endpoints"][e] = r
 
-            aux["iaas_capabilities"] = tuple(aux.pop("iaas_capability"))
-            aux["endpoints"] = []
-            for e in self.opts.iaas_endpoint:
-                endpoint = {}
-                endpoint["endpoint_url"] = e
-                aux["endpoints"].append(endpoint)
+    def _load_compute_endpoint_info(self):
+        if "compute" not in self.yaml:
+            return
 
-            # This are only used if we have an endpoint
-            self._load_flavors()
-            self._load_images()
+        self.compute_endpoints["endpoints"] = {}
 
-        self.iaas_endpoints = aux
+        fields = ('total_ram','total_cores', 'capabilities', 'hypervisor',
+                  'hypervisor_version', 'middleware', 'middleware_version',
+                  'middleware_developer')
+        r = self._format_fields_with_prefix(fields,
+                                            "compute_",
+                                            self.yaml["compute"])
+        self.compute_endpoints.update(r)
+
+        if "endpoints" in self.yaml["compute"]:
+            for e, e_data in self.yaml["compute"]["endpoints"].iteritems():
+                fields = ('api_type', 'api_version', 'api_endpoint_technology',
+                          'api_authn_method')
+                r = self._format_fields_with_prefix(fields,
+                                                    "compute_",
+                                                    e_data)
+                r["endpoint_url"] = e
+                self.compute_endpoints["endpoints"][e] = r
+
+        self._load_flavors()
+        self._load_images()
 
     def _load_flavors(self):
         self.flavors = static_info.get("resource_tpl", [])
 
     def _load_images(self):
         self.images = static_info.get("os_tpl", [])
-
-    def _parse_needed_opts(self, store_in, needed_opts, flag):
-        for opt in needed_opts:
-            value = getattr(self.opts, opt)
-            if value is None:
-                # TODO(aloga): use an exception here
-                opt = opt.replace("_", "-")
-                print >> sys.stderr, ('ERROR: Missing option "--%s" is '
-                                      'mandatory with "%s"' %
-                                      (opt, flag))
-                sys.exit(1)
-
-            store_in[opt] = value
 
     def get_site_info(self):
         return self.site_info
@@ -180,172 +195,8 @@ class StaticProvider(providers.BaseProvider):
     def get_templates(self):
         return self.flavors
 
-    def get_iaas_endpoints(self):
-        return self.iaas_endpoints
+    def get_compute_endpoints(self):
+        return self.compute_endpoints
 
-    def get_staas_endpoints(self):
-        return self.staas_endpoints
-
-    @staticmethod
-    def populate_parser(parser):
-        """Populate the argparser 'parser' with the needed options."""
-
-        # Site info
-        parser.add_argument('--site-name',
-            required=True,
-            help='Site name.')
-
-        parser.add_argument('--site-url',
-            metavar='URL',
-            help='Site URL.')
-
-        parser.add_argument('--site-ngi',
-            metavar='NGI',
-            help='Site NGI.')
-
-        parser.add_argument('--site-country',
-            help='Site Country.')
-
-        parser.add_argument('--site-latitude',
-            metavar='LATITUDE',
-            type=float,
-            help='Site Latitude.')
-
-        parser.add_argument('--site-longitude',
-            metavar='LONGITUDE',
-            type=float,
-            help='Site Longitude.')
-
-        parser.add_argument('--site-general-contact',
-            metavar='EMAIL',
-            help='Site general contact email.')
-
-        parser.add_argument('--site-sysadmin-contact',
-            metavar='EMAIL',
-            help='Site sysadmin contact email.')
-
-        parser.add_argument('--site-security-contact',
-            metavar='EMAIL',
-            help='Site security contact email.')
-
-        parser.add_argument('--site-user-support-contact',
-            metavar='EMAIL',
-            help='Site user-support contact email.')
-
-        parser.add_argument('--site-production-level',
-            default='production',
-            help='Site production level.')
-
-        parser.add_argument('--site-bdii-host',
-            metavar='HOSTNAME',
-            default=socket.getfqdn(),
-            help='Site BDII hostname.')
-
-        parser.add_argument('--site-bdii-port',
-            metavar='PORT',
-            type=int,
-            default=2170,
-            help='Site BDII hostname.')
-
-        # IaaS
-        parser.add_argument('--iaas-endpoint',
-            metavar='URL',
-            default=[],
-            action='append',
-            help=('IaaS endpoints. Can be used severail times to specify'
-                  'a list of endpoints'))
-
-        parser.add_argument('--iaas-capability',
-            metavar='CAPABILITY',
-            action='append',
-            default=['cloud.managementSystem', 'cloud.vm.uploadImage'],
-            help=('IaaS capability. Can be used several times to specify '
-                  'a list of capabilities'))
-
-        parser.add_argument('--iaas-hypervisor',
-            metavar='HYPERVISOR',
-            help='Hypervisor used (i.e. "KVM", "Xen", etc.)')
-
-        parser.add_argument('--iaas-hypervisor-version',
-            metavar='VERSION',
-            help='Hypervisor version.')
-
-        parser.add_argument('--iaas-total-ram',
-            metavar='RAM',
-            type=float,
-            help='Total RAM available in GB.')
-
-        parser.add_argument('--iaas-total-cores',
-            metavar='CORES',
-            type=int,
-            help='Total number of cores.')
-
-        parser.add_argument('--iaas-middleware',
-            help='Name of the middleware used.')
-
-        parser.add_argument('--iaas-middleware-version',
-            help='Middleware version.')
-
-        parser.add_argument('--iaas-middleware-developer',
-            help='Middleware developer.')
-
-        parser.add_argument('--iaas-api-type',
-            metavar='API_TYPE',
-            default='OCCI',
-            help="IaaS API Type")
-        parser.add_argument('--iaas-api-version',
-            metavar='API_VERSION',
-            default='1.1',
-            help="IaaS API version")
-        parser.add_argument('--iaas-api-endpoint-technology',
-            metavar='API_TECHNOLOGY',
-            default='REST',
-            help=argparse.SUPPRESS)
-        parser.add_argument('--iaas-api-authn-method',
-            default='X509-VOMS',
-            help=argparse.SUPPRESS)
-
-        # Staas
-        parser.add_argument('--staas-endpoint',
-            metavar='URL',
-            default=[],
-            action='append',
-            help=('StaaS endpoints. Can be used severail times to specify'
-                  'a list of endpoints'))
-
-        parser.add_argument('--staas-capability',
-            metavar='CAPABILITY',
-            action='append',
-            default=['cloud.data.upload'],
-            help=('StaaS capability. Can be used several times to specify '
-                  'a list of capabilities'))
-
-        parser.add_argument('--staas-total-storage',
-            metavar='STORAGE_SIZE',
-            type=float,
-            help='Total storage available in GB.')
-
-        parser.add_argument('--staas-middleware',
-            help='Name of the middleware used.')
-
-        parser.add_argument('--staas-middleware-version',
-            help='Middleware version.')
-
-        parser.add_argument('--staas-middleware-developer',
-            help='Middleware developer.')
-
-        parser.add_argument('--staas-api-type',
-            metavar='API_TYPE',
-            default='CDMI',
-            help="StaaS API Type")
-        parser.add_argument('--staas-api-version',
-            metavar='API_VERSION',
-            default='1.0.1',
-            help="StaaS API version")
-        parser.add_argument('--staas-api-endpoint-technology',
-            metavar='API_TECHNOLOGY',
-            default='REST',
-            help=argparse.SUPPRESS)
-        parser.add_argument('--staas-api-authn-method',
-            default='X509-VOMS',
-            help=argparse.SUPPRESS)
+    def get_storage_endpoints(self):
+        return self.storage_endpoints
