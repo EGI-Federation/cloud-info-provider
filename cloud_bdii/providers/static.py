@@ -32,7 +32,7 @@ class StaticProvider(providers.BaseProvider):
             ret["%s%s" % (prefix, field)] = d[field]
         return ret
 
-    def _get_what(self, what, which, global_fields, endpoint_fields, prefix=None):
+    def _get_what(self, what, which, g_fields, fields, prefix=None):
         if what not in self.yaml:
             return {}
 
@@ -42,8 +42,8 @@ class StaticProvider(providers.BaseProvider):
         ret = {which: {}}
 
         data = self.yaml[what]
-        if global_fields is not None:
-            r = self._get_fields_and_prefix(global_fields, "%s_" % what, data)
+        if g_fields is not None:
+            r = self._get_fields_and_prefix(g_fields, "%s_" % what, data)
             ret.update(r)
 
         if which in data:
@@ -51,7 +51,7 @@ class StaticProvider(providers.BaseProvider):
             for e, e_data in data[which].iteritems():
                 if e == "defaults":
                     continue
-                r = self._get_fields_and_prefix(endpoint_fields,
+                r = self._get_fields_and_prefix(fields,
                                                 prefix,
                                                 e_data,
                                                 defaults=defaults)
@@ -79,31 +79,47 @@ class StaticProvider(providers.BaseProvider):
     def get_images(self):
         fields = ("name", "version", "marketplace_id", "os_family", "os_name",
                   "os_version", "platform")
-        images = self._get_what("compute", "images", None, fields, prefix="image_")
+        images = self._get_what("compute",
+                                "images",
+                                None,
+                                fields,
+                                prefix="image_")
         return images["images"]
 
     def get_templates(self):
         fields = ("platform", "network", "memory", "cpu")
-        templates = self._get_what("compute", "templates", None, fields, prefix="template_")
+        templates = self._get_what("compute",
+                                   "templates",
+                                   None,
+                                   fields,
+                                   prefix="template_")
 
         return templates["templates"]
 
     def get_compute_endpoints(self):
-        global_fields = ('total_ram','total_cores', 'capabilities', 'hypervisor',
-                         'hypervisor_version', 'middleware', 'middleware_version',
+        global_fields = ('total_ram', 'total_cores', 'capabilities',
+                         'hypervisor', 'hypervisor_version',
+                         'middleware', 'middleware_version',
                          'middleware_developer')
-        endpoint_fields = ('api_type', 'api_version', 'api_endpoint_technology',
-                           'api_authn_method')
-        endpoints = self._get_what("compute", "endpoints", global_fields, endpoint_fields)
+        endpoint_fields = ('api_type', 'api_version',
+                           'api_endpoint_technology', 'api_authn_method')
+        endpoints = self._get_what("compute",
+                                   "endpoints",
+                                   global_fields,
+                                   endpoint_fields)
         return endpoints
 
     def get_storage_endpoints(self):
         global_fields = ('total_storage', 'capabilities', 'middleware',
                          'middleware_version', 'middleware_developer')
-        endpoint_fields = ('api_type', 'api_version', 'api_endpoint_technology',
+        endpoint_fields = ('api_type', 'api_version',
+                           'api_endpoint_technology',
                            'api_authn_method')
 
-        endpoints = self._get_what("storage", "endpoints", global_fields, endpoint_fields)
+        endpoints = self._get_what("storage",
+                                   "endpoints",
+                                   global_fields,
+                                   endpoint_fields)
         return endpoints
 
     def _get_defaults(self, what, which):
