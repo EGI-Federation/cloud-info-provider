@@ -34,15 +34,12 @@ class BaseBDII(object):
                 self.ldif[tpl] = f.read()
 
     def _get_info_from_providers(self, method):
-        info = None
+        info = {}
         for i in (self.static_provider, self.dynamic_provider):
             if not i:
                 continue
             result = getattr(i, method)()
-            if isinstance(info, dict):
-                info.update(result)
-            else:
-                info = result
+            info.update(result)
         return info
 
     def _format_template(self, template, info, extra={}):
@@ -90,7 +87,7 @@ class ComputeBDII(BaseBDII):
 
         endpoints = self._get_info_from_providers('get_compute_endpoints')
 
-        if not endpoints:
+        if not endpoints['endpoints']:
             return ''
 
         site_info = self._get_info_from_providers('get_site_info')

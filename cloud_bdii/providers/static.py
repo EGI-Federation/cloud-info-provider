@@ -26,9 +26,10 @@ class StaticProvider(providers.BaseProvider):
 
         for field in fields:
             if field not in d:
-                print >> sys.stderr, ('ERROR: missing field %s on '
-                                      '"%s" section' % (field, prefix))
-                sys.exit(1)
+# This should not be a fatail error, but a warning
+#                print >> sys.stderr, ('ERROR: missing field %s on '
+#                                      '"%s" section' % (field, prefix))
+                d[field] = None
             ret['%s%s' % (prefix, field)] = d[field]
         return ret
 
@@ -122,24 +123,36 @@ class StaticProvider(providers.BaseProvider):
                                    endpoint_fields)
         return endpoints
 
-    def _get_defaults(self, what, which):
+    def _get_defaults(self, what, which, prefix=''):
         try:
             defaults = self.yaml[what][which]['defaults']
         except KeyError:
             return {}
-        else:
-            if defaults is None:
-                return {}
-            return copy.deepcopy(defaults)
 
-    def get_image_defaults(self):
-        return self._get_defaults('compute', 'images')
+        if defaults is None:
+            return {}
 
-    def get_template_defaults(self):
-        return self._get_defaults('compute', 'templates')
+        if prefix:
+            aux = {}
+            for k, v in defaults.iteritems():
+                key = '%s%s' % (prefix, k)
+                aux[key] = v
+            defaults = aux
 
-    def get_compute_endpoint_defaults(self):
-        return self._get_defaults('compute', 'endpoint')
+        return copy.deepcopy(defaults)
 
-    def get_storage_endpoint_defaults(self):
-        return self._get_defaults('storage', 'endpoint')
+    def get_image_defaults(self, prefix=False):
+        prefix = 'image_' if prefix else ''
+        return self._get_defaults('compute', 'images', prefix=prefix)
+
+    def get_template_defaults(self, prefix=False):
+        prefix = 'template_' if prefix else ''
+        return self._get_defaults('compute', 'templates', prefix=prefix)
+
+    def get_compute_endpoint_defaults(self, prefix=False):
+        prefix = 'compute_' if prefix else ''
+        return self._get_defaults('compute', 'endpoints', prefix=prefix)
+
+    def get_storage_endpoint_defaults(self, prefix=False):
+        prefix = 'storage_' if prefix else ''
+        return self._get_defaults('storage', 'endpoints', prefix=prefix)

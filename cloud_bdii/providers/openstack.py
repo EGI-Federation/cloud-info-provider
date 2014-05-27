@@ -22,7 +22,7 @@ class OpenStackProvider(providers.BaseProvider):
         try:
             import novaclient.client
         except ImportError:
-            print >> sys.stderr, 'ERROR: Cannot import nova module.'
+            print >> sys.stderr, 'ERROR: Cannot import novaclient module.'
             sys.exit(1)
 
         (os_username, os_password, os_tenant_name, os_tenant_id,
@@ -67,45 +67,85 @@ class OpenStackProvider(providers.BaseProvider):
 
         self.api.authenticate()
 
+        self.static = providers.static.StaticProvider(opts)
+
+    def get_compute_endpoints(self):
+        ret = {
+            'endpoints': {},
+            'compute_middleware_developer': 'OpenStack',
+            'compute_middleware': 'OpenStack Nova',
+        }
+
+        defaults = self.static.get_compute_endpoint_defaults(prefix=True)
+        catalog = self.api.client.service_catalog.catalog
+        endpoints = catalog['access']['serviceCatalog']
+        for endpoint in endpoints:
+            if endpoint['type'] == 'occi' :
+                e_type = 'OCCI'
+                e_version = defaults.get('endpoint_occi_api_version', '1.1')
+            elif endpoint['type'] == 'compute':
+                e_type = 'OpenStack'
+                e_version = defaults.get('endpoint_openstack_api_version', '2')
+            else:
+                continue
+
+            for ept in endpoint['endpoints']:
+                e_id = ept['id']
+                e_url = ept['publicURL']
+
+                e = defaults.copy()
+                e.update({'endpoint_url': e_url,
+                          'compute_api_type': e_type,
+                          'compute_api_version': e_version})
+
+                ret['endpoints'][e_id] = e
+
+        return ret
+
     def get_templates(self):
-        flavors = []
+        flavors = {}
+
+        defaults = {"platform": "amd64", "network": "private"}
+        defaults.update(self.static.get_template_defaults(prefix=True))
 
         for flavor in self.api.flavors.list(detailed=True):
             if not flavor.is_public:
                 continue
-            aux = {
-                'occi_id': 'resource#%s' % flavor.name,
-                'memory': flavor.ram,
-                'cpu': flavor.vcpus,
-                'network': 'public',
-                'platform': None,
-            }
-            flavors.append(aux)
+
+            aux = defaults.copy()
+            aux.update({'template_id': 'resource#%s' % flavor.name,
+                        'template_memory': flavor.ram,
+                        'template_cpu': flavor.vcpus})
+            flavors[flavor.id] = aux
         return flavors
 
     def get_images(self):
-        images = []
+        images = {}
 
         template = {
             'image_name': None,
             'image description': None,
             'image_version': None,
-            'marketplace_id': None,
-            'occi_id': None,
-            'os_family': None,
-            'os_name': None,
-            'os_version': None,
-            'platform': None,
+            'image_marketplace_id': None,
+            'image_occi_id': None,
+            'image_os_family': None,
+            'image_os_name': None,
+            'image_os_version': None,
+            'image_platform': "amd64",
         }
+        defaults = self.static.get_image_defaults(prefix=True)
 
         for image in self.api.images.list(detailed=True):
             aux = template.copy()
+            aux.update(defaults)
             for link in image.links:
-                # FIXME(aloga): Check if this is the needed parameter
+                # TODO(aloga): Check if this is the needed parameter
                 if link.get('type',
                             None) == 'application/vnd.openstack.image':
                     link = link['href']
                     break
+            # FIXME(aloga): we need to add the version, etc from
+            # metadata
             aux.update({'image_name': image.name,
                         'occi_id': 'os#%s' % image.id,
                         'image_description': image.name,
@@ -114,7 +154,7 @@ class OpenStackProvider(providers.BaseProvider):
             image.metadata.pop('image_name', None)
             image.metadata.pop('occi_id', None)
             aux.update(image.metadata)
-            images.append(aux)
+            images[image.id] = aux
         return images
 
     @staticmethod

@@ -1,0 +1,112 @@
+site:
+    # Your site name, asn in GODCB
+    name: SITE_NAME
+    # Options below are only needed if you want to produce
+    # a full BDII ldif. If you're running a site, BDII, skip 
+    # these.
+
+    # Production level (testing, candidate, production...)
+    production_level: production
+    # Site url
+    url: http://site.url.example.org/
+    # Two digit country code
+    country: ES
+    longitude: 0.0
+    latitude: 0.0
+    # Your affiliated NGI
+    ngi: NGI_FOO
+    user_support_contact: user-support@example.org
+    general_contact: general-support@example.org
+    sysadmin_contact: support@example.org
+    security_contact: security-support@example.org
+    bdii_host: site.bdii.example.org
+    bdii_port: 2170
+
+compute:
+    # Total number of cores available
+    total_cores: 0
+    # Total RAM available (GB)
+    total_ram: 0
+    # Hypervisor name (e.g. KVM, Xen, etc.)
+    hypervisor: Foo Hypervisor
+    # Hypervisor version
+    hypervisor_version: 0.0.0
+    # Middleware used (e.g. OpenNebula, CloudStack, OpenStack, etc)
+    middleware: A Middleware
+    # Middleware version
+    middleware_version: v1.0
+    # Middleware developer
+    middleware_developer: Middleware Developer
+    capabilities:
+        - cloud.managementSystem
+        - cloud.vm.uploadImage
+
+    endpoints:
+        defaults:
+            api_type: OCCI
+            api_version: 1.1
+            api_endpoint_technology: REST
+            api_authn_method: X509-VOMS
+
+        https://cloud-service01.example.org:8787:
+
+        https://cloud-service02.example.org:8787:
+            api_authn_method: X509
+
+        https://cloud-service03.example.org:8787:
+            api_authn_method: User/Password
+
+    templates:
+        defaults:
+            platform: amd64
+            network: public
+
+        resource#small:
+            memory: 1024
+            cpu: 1
+
+        resource#medium:
+            memory: 4096
+            cpu: 2
+        
+        resource#large:
+            memory: 8196
+            cpu: 4
+        
+        resource#extra_large:
+            memory: 16384
+            cpu: 8
+
+    images:
+        defaults:
+            platform: amd64
+
+        os#foobarid:
+            name: Foo Image
+            version: 1.0
+            marketplace_id: http://url.to.marketplace.id.example.org/foo/bar
+            os_family: linux
+            os_name: Cirros
+            os_version: 1.0
+
+storage:
+    total_storage: 0
+    # Middleware used (e.g. OpenNebula, CloudStack, OpenStack, etc)
+    middleware: A Middleware
+    # Middleware version
+    middleware_version: v1.0
+    # Middleware developer
+    middleware_developer: Middleware Developer
+    capabilities:
+        - cloud.data.upload
+
+    endpoints:
+        defaults:
+            api_type: CDMI
+            api_version: 1.0.1
+            api_endpoint_technology: REST
+            api_authn_method: X509-VOMS
+
+        https://storage-service01.example.org:8080:
+
+        https://storage-service02.example.org:8080:
