@@ -27,10 +27,12 @@ compute:
 
     endpoints:
         https://prisma-cloud.ba.infn.it:8787:
-            api_type: OCCI
-            api_version: 1.1
-            api_endpoint_technology: REST
-            api_authn_method: X509-VOMS
+
+    defaults:
+        api_type: OCCI
+        api_version: 1.1
+        api_endpoint_technology: REST
+        api_authn_method: X509-VOMS
 
 storage:
     total_storage: 51200
@@ -40,9 +42,11 @@ storage:
     capabilities:
         - cloud.data.upload
 
+    defaults:
+        api_type: CDMI
+        api_version: 1.0.1
+        api_endpoint_technology: REST
+        api_authn_method: X509-VOMS
+
     endpoints:
         https://prisma-swift.ba.infn.it:8080:
-            api_type: CDMI
-            api_version: 1.0.1
-            api_endpoint_technology: REST
-            api_authn_method: X509-VOMS
