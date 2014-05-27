@@ -28,11 +28,65 @@ compute:
     endpoints:
         https://prisma-cloud.ba.infn.it:8787:
 
-    defaults:
-        api_type: OCCI
-        api_version: 1.1
-        api_endpoint_technology: REST
-        api_authn_method: X509-VOMS
+        defaults:
+            api_type: OCCI
+            api_version: 1.1
+            api_endpoint_technology: REST
+            api_authn_method: X509-VOMS
+
+    templates:
+        defaults:
+            platform: amd64
+            network: public
+
+        resource#tiny-with-disk:
+            memory: 512
+            cpu: 1
+                
+        resource#small:
+            memory: 1024
+            cpu: 1
+
+        resource#medium:
+            memory: 4096
+            cpu: 2
+        
+        resource#large:
+            memory: 8196
+            cpu: 4
+        
+        resource#extra_large:
+            memory: 16384
+            cpu: 8
+
+    images:
+        defaults:
+        os#ef13c0be-4de6-428f-ad5b-8f32b31a54a1:
+            name: SL64-x86_64
+            version: 1.0
+            marketplace_id: http://appdb.egi.eu/store/vm/image/2c24de6c-e385-49f1-b64f-f9ff35e70f43:9/xml
+            os_family: linux
+            os_name: SL
+            os_version: 6.4
+            platform: amd64
+
+        os#c0a2f9e0-081a-419c-b9a5-8cb03b1decb5:
+            name: ubuntu-precise-server-amd64
+            version: 1.0
+            marketplace_id: http://appdb.egi.eu/store/vm/image/703157c0-e509-44c8-8371-58beb44d80d6:8/xml
+            os_family: linux
+            os_name: Ubuntu
+            os_version: 12.04
+            platform: amd64
+
+        os#5364f77a-e1cb-4a6c-862e-96dc79c4ef67:
+            name: CernVM3
+            version: 3.1.1.7
+            marketplace_id: http://appdb.egi.eu/store/vm/image/dfb2f33e-ba3f-4c5a-a387-6257e8558ba1:24/xml
+            os_family: linux
+            os_name: SL
+            os_version: 6.4
+            platform: amd64
 
 storage:
     total_storage: 51200
@@ -42,11 +96,11 @@ storage:
     capabilities:
         - cloud.data.upload
 
-    defaults:
-        api_type: CDMI
-        api_version: 1.0.1
-        api_endpoint_technology: REST
-        api_authn_method: X509-VOMS
-
     endpoints:
         https://prisma-swift.ba.infn.it:8080:
+
+        defaults:
+            api_type: CDMI
+            api_version: 1.0.1
+            api_endpoint_technology: REST
+            api_authn_method: X509-VOMS

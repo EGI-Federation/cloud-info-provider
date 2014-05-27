@@ -69,7 +69,8 @@ class StorageBDII(BaseBDII):
         output.append(self._format_template("storage_service",
                                             static_storage_info))
 
-        for endpoint in endpoints["endpoints"].values():
+        for url, endpoint in endpoints["endpoints"].iteritems():
+            endpoint["endpoint_url"] = url
             output.append(self._format_template("storage_endpoint",
                                                 endpoint,
                                                 extra=static_storage_info))
@@ -99,21 +100,28 @@ class ComputeBDII(BaseBDII):
         output.append(self._format_template("compute_service",
                                             static_compute_info))
 
-        for endpoint in endpoints["endpoints"].values():
+        for url, endpoint in endpoints["endpoints"].iteritems():
+            endpoint["endpoint_url"] = url
             output.append(self._format_template("compute_endpoint",
                                                 endpoint,
                                                 extra=static_compute_info))
 
-        for ex_env in self._get_info_from_providers('get_templates'):
+        templates = self._get_info_from_providers('get_templates')
+        for tid, ex_env in templates.iteritems():
+            ex_env["template_id"] = tid
             output.append(self._format_template("execution_environment",
                                                 ex_env,
                                                 extra=site_info))
 
-        for app_env in self._get_info_from_providers('get_images'):
+        images = self._get_info_from_providers('get_images')
+        for iid, app_env in images.iteritems():
+            app_env["image_id"] = iid
             app_env.setdefault("image_description",
-                               ("%(image_name)s version %(image_version)s on "
-                                "%(os_family)s %(os_name)s %(os_version)s "
-                                "%(platform)s" % app_env))
+                               ("%(image_name)s version "
+                                "%(image_version)s on "
+                                "%(image_os_family)s %(image_os_name)s "
+                                "%(image_os_version)s "
+                                "%(image_platform)s" % app_env))
             output.append(self._format_template("application_environment",
                                                 app_env,
                                                 extra=site_info))
