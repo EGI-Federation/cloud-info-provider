@@ -19,4 +19,4 @@ class BaseProvider(object):
 
     @staticmethod
     def populate_parser(parser):
-        """Populate the argparser 'parser' with the needed options."""
+        '''Populate the argparser 'parser' with the needed options.'''

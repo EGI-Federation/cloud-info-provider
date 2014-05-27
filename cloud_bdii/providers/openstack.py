@@ -4,10 +4,10 @@ import sys
 from cloud_bdii import providers
 
 def env(*args, **kwargs):
-    """
+    '''
     returns the first environment variable set
     if none are non-empty, defaults to '' or keyword arg default
-    """
+    '''
     for arg in args:
         value = os.environ.get(arg, None)
         if value:
@@ -22,7 +22,7 @@ class OpenStackProvider(providers.BaseProvider):
         try:
             import novaclient.client
         except ImportError:
-            print >> sys.stderr, "ERROR: Cannot import nova module."
+            print >> sys.stderr, 'ERROR: Cannot import nova module.'
             sys.exit(1)
 
         (os_username, os_password, os_tenant_name, os_tenant_id,
@@ -32,31 +32,31 @@ class OpenStackProvider(providers.BaseProvider):
                 opts.os_auth_url, opts.os_cacert, opts.insecure)
 
         if not os_username:
-            print >> sys.stderr, ("ERROR, You must provide a username "
-                                  "via either --os-username or "
-                                  "env[OS_USERNAME]")
+            print >> sys.stderr, ('ERROR, You must provide a username '
+                                  'via either --os-username or '
+                                  'env[OS_USERNAME]')
             sys.exit(1)
 
         if not os_password:
-            print >> sys.stderr, ("ERROR, You must provide a password "
-                                  "via either --os-password or "
-                                  "env[OS_PASSWORD]")
+            print >> sys.stderr, ('ERROR, You must provide a password '
+                                  'via either --os-password or '
+                                  'env[OS_PASSWORD]')
             sys.exit(1)
 
         if not os_tenant_name and not os_tenant_id:
-            print >> sys.stderr, ("You must provide a tenant name "
-                                  "or tenant id via --os-tenant-name, "
-                                  "--os-tenant-id, env[OS_TENANT_NAME] "
-                                  "or env[OS_TENANT_ID]")
+            print >> sys.stderr, ('You must provide a tenant name '
+                                  'or tenant id via --os-tenant-name, '
+                                  '--os-tenant-id, env[OS_TENANT_NAME] '
+                                  'or env[OS_TENANT_ID]')
             sys.exit(1)
 
         if not os_auth_url:
-            print >> sys.stderr, ("You must provide an auth url "
-                                  "via either --os-auth-url or "
-                                  "env[OS_AUTH_URL] ")
+            print >> sys.stderr, ('You must provide an auth url '
+                                  'via either --os-auth-url or '
+                                  'env[OS_AUTH_URL] ')
             sys.exit(1)
 
-        client_cls = novaclient.client.get_client_class("2")
+        client_cls = novaclient.client.get_client_class('2')
         self.api = client_cls(os_username,
                               os_password,
                               os_tenant_name,
@@ -102,17 +102,17 @@ class OpenStackProvider(providers.BaseProvider):
             aux = template.copy()
             for link in image.links:
                 # FIXME(aloga): Check if this is the needed parameter
-                if link.get("type",
-                            None) == "application/vnd.openstack.image":
-                    link = link["href"]
+                if link.get('type',
+                            None) == 'application/vnd.openstack.image':
+                    link = link['href']
                     break
             aux.update({'image_name': image.name,
                         'occi_id': 'os#%s' % image.id,
                         'image_description': image.name,
                         'marketplace_id': link,
             })
-            image.metadata.pop("image_name", None)
-            image.metadata.pop("occi_id", None)
+            image.metadata.pop('image_name', None)
+            image.metadata.pop('occi_id', None)
             aux.update(image.metadata)
             images.append(aux)
         return images
@@ -154,8 +154,8 @@ class OpenStackProvider(providers.BaseProvider):
         parser.add_argument('--insecure',
             default=env('NOVACLIENT_INSECURE', default=False),
             action='store_true',
-            help="Explicitly allow novaclient to perform \"insecure\" "
-                 "SSL (https) requests. The server's certificate will "
-                 "not be verified against any certificate authorities. "
-                 "This option should be used with caution.")
+            help='Explicitly allow novaclient to perform "insecure" '
+                 'SSL (https) requests. The server\'s certificate will '
+                 'not be verified against any certificate authorities. '
+                 'This option should be used with caution.')
 

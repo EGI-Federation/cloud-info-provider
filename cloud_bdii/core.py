@@ -18,18 +18,18 @@ class BaseBDII(object):
     def __init__(self, opts):
         self.opts = opts
 
-        if (opts.middleware != "static" and
+        if (opts.middleware != 'static' and
                 opts.middleware in SUPPORTED_MIDDLEWARE):
             self.dynamic_provider = SUPPORTED_MIDDLEWARE[opts.middleware](opts)
         else:
             self.dynamic_provider = None
 
-        self.static_provider = SUPPORTED_MIDDLEWARE["static"](opts)
+        self.static_provider = SUPPORTED_MIDDLEWARE['static'](opts)
 
         self.ldif = {}
         for tpl in self.templates:
             template_file = os.path.join(self.opts.template_dir,
-                                         "%s.ldif" % tpl)
+                                         '%s.ldif' % tpl)
             with open(template_file, 'r') as f:
                 self.ldif[tpl] = f.read()
 
@@ -48,104 +48,104 @@ class BaseBDII(object):
     def _format_template(self, template, info, extra={}):
         info = info.copy()
         info.update(extra)
-        return self.ldif.get(template, "") % info
+        return self.ldif.get(template, '') % info
 
 
 class StorageBDII(BaseBDII):
-    templates = ("storage_service", "storage_endpoint", "storage_capacity")
+    templates = ('storage_service', 'storage_endpoint', 'storage_capacity')
 
     def render(self):
         output = []
 
-        endpoints = self._get_info_from_providers("get_storage_endpoints")
+        endpoints = self._get_info_from_providers('get_storage_endpoints')
 
         if not endpoints:
-            return ""
+            return ''
 
-        site_info = self._get_info_from_providers("get_site_info")
+        site_info = self._get_info_from_providers('get_site_info')
         static_storage_info = dict(endpoints, **site_info)
-        static_storage_info.pop("endpoints")
+        static_storage_info.pop('endpoints')
 
-        output.append(self._format_template("storage_service",
+        output.append(self._format_template('storage_service',
                                             static_storage_info))
 
-        for url, endpoint in endpoints["endpoints"].iteritems():
-            endpoint.setdefault("endpoint_url", url)
-            output.append(self._format_template("storage_endpoint",
+        for url, endpoint in endpoints['endpoints'].iteritems():
+            endpoint.setdefault('endpoint_url', url)
+            output.append(self._format_template('storage_endpoint',
                                                 endpoint,
                                                 extra=static_storage_info))
 
-        output.append(self._format_template("storage_capacity",
+        output.append(self._format_template('storage_capacity',
                                             static_storage_info))
 
-        return "\n".join(output)
+        return '\n'.join(output)
 
 
 class ComputeBDII(BaseBDII):
-    templates = ("compute_service", "compute_endpoint",
-                 "execution_environment", "application_environment")
+    templates = ('compute_service', 'compute_endpoint',
+                 'execution_environment', 'application_environment')
 
     def render(self):
         output = []
 
-        endpoints = self._get_info_from_providers("get_compute_endpoints")
+        endpoints = self._get_info_from_providers('get_compute_endpoints')
 
         if not endpoints:
-            return ""
+            return ''
 
-        site_info = self._get_info_from_providers("get_site_info")
+        site_info = self._get_info_from_providers('get_site_info')
         static_compute_info = dict(endpoints, **site_info)
-        static_compute_info.pop("endpoints")
+        static_compute_info.pop('endpoints')
 
-        output.append(self._format_template("compute_service",
+        output.append(self._format_template('compute_service',
                                             static_compute_info))
 
-        for url, endpoint in endpoints["endpoints"].iteritems():
-            endpoint.setdefault("endpoint_url", url)
-            output.append(self._format_template("compute_endpoint",
+        for url, endpoint in endpoints['endpoints'].iteritems():
+            endpoint.setdefault('endpoint_url', url)
+            output.append(self._format_template('compute_endpoint',
                                                 endpoint,
                                                 extra=static_compute_info))
 
         templates = self._get_info_from_providers('get_templates')
         for tid, ex_env in templates.iteritems():
-            ex_env.setdefault("template_id", tid)
-            output.append(self._format_template("execution_environment",
+            ex_env.setdefault('template_id', tid)
+            output.append(self._format_template('execution_environment',
                                                 ex_env,
                                                 extra=site_info))
 
         images = self._get_info_from_providers('get_images')
         for iid, app_env in images.iteritems():
-            app_env.setdefault("image_id", iid)
-            app_env.setdefault("image_description",
-                               ("%(image_name)s version "
-                                "%(image_version)s on "
-                                "%(image_os_family)s %(image_os_name)s "
-                                "%(image_os_version)s "
-                                "%(image_platform)s" % app_env))
-            output.append(self._format_template("application_environment",
+            app_env.setdefault('image_id', iid)
+            app_env.setdefault('image_description',
+                               ('%(image_name)s version '
+                                '%(image_version)s on '
+                                '%(image_os_family)s %(image_os_name)s '
+                                '%(image_os_version)s '
+                                '%(image_platform)s' % app_env))
+            output.append(self._format_template('application_environment',
                                                 app_env,
                                                 extra=site_info))
 
-        return "\n".join(output)
+        return '\n'.join(output)
 
 
 class CloudBDII(BaseBDII):
-    templates = ("headers", "domain", "bdii", "clouddomain")
+    templates = ('headers', 'domain', 'bdii', 'clouddomain')
 
     def __init__(self, *args):
         super(CloudBDII, self).__init__(*args)
 
         if not self.opts.full_bdii_ldif:
-            self.templates = ("clouddomain",)
+            self.templates = ('clouddomain',)
 
     def render(self):
         output = []
-        info = self._get_info_from_providers("get_site_info")
+        info = self._get_info_from_providers('get_site_info')
 
         for tpl in self.templates:
             output.append(self._format_template(tpl, info))
 
-        return "\n".join(output)
+        return '\n'.join(output)
 
 
 def parse_opts():
@@ -164,7 +164,7 @@ def parse_opts():
 
     parser.add_argument('--template-dir',
         default='etc/templates',
-        help=("Path to the directory containing the needed templates"))
+        help=('Path to the directory containing the needed templates'))
 
     parser.add_argument('--full-bdii-ldif',
         action='store_true',
@@ -181,7 +181,7 @@ def parse_opts():
               'values will be used.' % SUPPORTED_MIDDLEWARE.keys()))
 
     for provider_name, provider in SUPPORTED_MIDDLEWARE.items():
-        group = parser.add_argument_group("%s provider options" %
+        group = parser.add_argument_group('%s provider options' %
                                           provider_name)
         provider.populate_parser(group)
 
@@ -195,5 +195,5 @@ def main():
         print bdii.render()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
