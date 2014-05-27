@@ -2,7 +2,7 @@ import sys
 
 import yaml
 
-import providers
+from cloud_bdii import providers
 
 static_info = {}
 
@@ -85,7 +85,7 @@ class StaticProvider(providers.BaseProvider):
         super(StaticProvider, self).__init__(*args)
 
         # FIXME(aloga): this is hardcoded
-        self._load_yaml("bdii.yaml")
+        self._load_yaml(self.opts.yaml_file)
 
         self.site_info = {}
         self.compute_endpoints = {}

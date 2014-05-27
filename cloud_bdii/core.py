@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 
 import argparse
+import os.path
 
-import providers.openstack
-import providers.static
+import cloud_bdii.providers.openstack
+import cloud_bdii.providers.static
 
 SUPPORTED_MIDDLEWARE = {
-    'OpenStack': providers.openstack.OpenStackProvider,
-    'static': providers.static.StaticProvider,
+    'OpenStack': cloud_bdii.providers.openstack.OpenStackProvider,
+    'static': cloud_bdii.providers.static.StaticProvider,
 }
 
 
@@ -23,11 +24,13 @@ class BaseBDII(object):
         else:
             self.dynamic_provider = None
 
-        self.static_provider = providers.static.StaticProvider(opts)
+        self.static_provider = SUPPORTED_MIDDLEWARE["static"](opts)
 
         self.ldif = {}
         for tpl in self.templates:
-            with open('templates/%s.ldif' % tpl, 'r') as f:
+            template_file = os.path.join(self.opts.template_dir,
+                                         "%s.ldif" % tpl)
+            with open(template_file, 'r') as f:
                 self.ldif[tpl] = f.read()
 
     def _get_info_from_providers(self, method):
@@ -142,6 +145,18 @@ def parse_opts():
         description='Cloud BDII provider',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
         fromfile_prefix_chars='@')
+
+    parser.add_argument('--yaml-file',
+        default='etc/bdii.yaml',
+        help=('Path to the YAML file containing static values. '
+              'This file will be used to populate the information '
+              'to the static provider. These values will be used whenever '
+              'a dynamic provider is used and it is not able to produce any '
+              'of the required values, or when using the static provider. '))
+
+    parser.add_argument('--template-dir',
+        default='etc/templates',
+        help=("Path to the directory containing the needed templates"))
 
     parser.add_argument('--full-bdii-ldif',
         action='store_true',

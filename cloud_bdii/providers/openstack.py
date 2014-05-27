@@ -1,7 +1,7 @@
 import os
 import sys
 
-import providers
+from cloud_bdii import providers
 
 def env(*args, **kwargs):
     """
