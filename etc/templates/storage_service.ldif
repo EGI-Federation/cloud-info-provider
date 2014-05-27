@@ -1,0 +1,20 @@
+dn: GLUE2ServiceID=cloud.storage.%(site_name)s_service,GLUE2GroupID=cloud,GLUE2DomainID=%(site_name)s,o=glue
+objectClass: GLUE2Entity
+objectClass: GLUE2Service
+objectClass: GLUE2StorageService
+GLUE2ServiceAdminDomainForeignKey: %(site_name)s
+GLUE2ServiceID: cloud.storage.%(site_name)s_service
+GLUE2ServiceQualityLevel: %(site_production_level)s
+GLUE2ServiceType: STaaS
+GLUE2ServiceCapability: %(storage_capabilities)s
+
+dn: GLUE2ManagerID=cloud.storage.%(site_name)s_manager,GLUE2ServiceID=cloud.storage.%(site_name)s_service,GLUE2GroupID=cloud,GLUE2DomainID=%(site_name)s,o=glue
+objectClass: GLUE2Entity
+objectClass: GLUE2Manager
+objectClass: GLUE2StorageManager
+GLUE2ManagerID: cloud.storage.%(site_name)s_manager
+GLUE2ManagerProductName: %(storage_middleware)s
+GLUE2ManagerServiceForeignKey: cloud.storage.%(site_name)s_service
+GLUE2StorageManagerStorageServiceForeignKey: cloud.storage.%(site_name)s_service
+GLUE2EntityName: Cloud Storage Manager at %(site_name)s
+GLUE2ManagerProductVersion: %(storage_middleware_version)s

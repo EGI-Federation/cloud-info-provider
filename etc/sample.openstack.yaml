@@ -1,0 +1,81 @@
+site:
+    # Your site name, asn in GODCB
+    name: SITE_NAME
+    # Production level (testing, candidate, production...)
+    production_level: production
+
+    # Options below are only needed if you want to produce
+    # a full BDII ldif. If you're running a site, BDII, skip 
+    # these.
+
+    # Site url
+    url: http://site.url.example.org/
+    # Two digit country code
+    country: ES
+    longitude: 0.0
+    latitude: 0.0
+    # Your affiliated NGI
+    ngi: NGI_FOO
+    user_support_contact: user-support@example.org
+    general_contact: general-support@example.org
+    sysadmin_contact: support@example.org
+    security_contact: security-support@example.org
+    bdii_host: site.bdii.example.org
+    bdii_port: 2170
+
+compute:
+    # Total number of cores available
+    total_cores: 0
+    # Total RAM available (GB)
+    total_ram: 0
+    # Hypervisor name
+    hypervisor: Foo Hypervisor
+    # Hypervisor version
+    hypervisor_version: 0.0.0
+    # OpenStack version
+    middleware_version: havana
+    capabilities:
+        - cloud.managementSystem
+        - cloud.vm.uploadImage
+
+    endpoints:
+        # Default values for the endpoints. We will
+        # produce entries for two kind of endpoints if they
+        # are in the catalog: occi and openstack. So as to 
+        # specify a version, set the two options below.
+        defaults:
+            openstack_api_version: v2
+            occi_api_version: 1.1
+            api_endpoint_technology: REST
+            api_authn_method: X509-VOMS
+
+    templates:
+        defaults:
+            platform: amd64
+            network: public
+
+    images:
+        defaults:
+            platform: amd64
+
+# There's no dynamic provider for Swift, so this needs to be filled
+storage:
+    total_storage: 0
+    middleware: OpenStack Swift
+    # Middleware version
+    middleware_version: version
+    # Middleware developer
+    middleware_developer: OpenStack Foundation
+    capabilities:
+        - cloud.data.upload
+
+    endpoints:
+        defaults:
+            api_type: CDMI
+            api_version: 1.0.1
+            api_endpoint_technology: REST
+            api_authn_method: X509-VOMS
+
+        https://storage-service01.example.org:8080:
+
+        https://storage-service02.example.org:8080:

@@ -1,0 +1,11 @@
+*.egg*
+*.log
+*.mo
+*.pyc
+*.swo
+*.swp
+*~
+.venv
+build/*
+dist/*
+etc/test.conf
