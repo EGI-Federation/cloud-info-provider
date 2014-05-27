@@ -1,12 +1,13 @@
 site:
     # Your site name, asn in GODCB
     name: SITE_NAME
+    # Production level (testing, candidate, production...)
+    production_level: production
+
     # Options below are only needed if you want to produce
     # a full BDII ldif. If you're running a site, BDII, skip 
     # these.
 
-    # Production level (testing, candidate, production...)
-    production_level: production
     # Site url
     url: http://site.url.example.org/
     # Two digit country code
