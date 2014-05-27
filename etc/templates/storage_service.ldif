@@ -1,4 +1,4 @@
-dn: GLUE2ServiceID=cloud.storage.%(site_name)s_service,GLUE2GroupID=cloud,GLUE2DomainID=%(site_name)s,o=glue
+dn: GLUE2ServiceID=cloud.storage.%(site_name)s_service,GLUE2GroupID=resource,GLUE2DomainID=%(site_name)s,o=glue
 objectClass: GLUE2Entity
 objectClass: GLUE2Service
 objectClass: GLUE2StorageService
@@ -8,7 +8,7 @@ GLUE2ServiceQualityLevel: %(site_production_level)s
 GLUE2ServiceType: STaaS
 GLUE2ServiceCapability: %(storage_capabilities)s
 
-dn: GLUE2ManagerID=cloud.storage.%(site_name)s_manager,GLUE2ServiceID=cloud.storage.%(site_name)s_service,GLUE2GroupID=cloud,GLUE2DomainID=%(site_name)s,o=glue
+dn: GLUE2ManagerID=cloud.storage.%(site_name)s_manager,GLUE2ServiceID=cloud.storage.%(site_name)s_service,GLUE2GroupID=resource,GLUE2DomainID=%(site_name)s,o=glue
 objectClass: GLUE2Entity
 objectClass: GLUE2Manager
 objectClass: GLUE2StorageManager

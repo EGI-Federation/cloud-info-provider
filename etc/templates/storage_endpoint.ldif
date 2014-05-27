@@ -1,4 +1,4 @@
-dn: GLUE2EndpointID=%(endpoint_url)s_%(storage_api_type)s_%(storage_api_version)s_%(storage_api_authn_method)s,GLUE2ServiceID=cloud.storage.%(site_name)s_service,GLUE2GroupID=cloud,GLUE2DomainID=%(site_name)s,o=glue
+dn: GLUE2EndpointID=%(endpoint_url)s_%(storage_api_type)s_%(storage_api_version)s_%(storage_api_authn_method)s,GLUE2ServiceID=cloud.storage.%(site_name)s_service,GLUE2GroupID=resource,GLUE2DomainID=%(site_name)s,o=glue
 objectClass: GLUE2Entity
 objectClass: GLUE2Endpoint
 objectClass: GLUE2StorageEndpoint
