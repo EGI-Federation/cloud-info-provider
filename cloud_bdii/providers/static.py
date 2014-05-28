@@ -66,6 +66,7 @@ class StaticProvider(providers.BaseProvider):
 
         fields = ('name', 'production_level')
         site_info = self._get_fields_and_prefix(fields, 'site_', data)
+        site_info['suffix'] = 'o=glue'
 
         if self.opts.full_bdii_ldif:
             fields = ('url', 'ngi', 'country', 'latitude', 'longitude',
@@ -73,6 +74,8 @@ class StaticProvider(providers.BaseProvider):
                       'security_contact', 'user_support_contact',
                       'bdii_host', 'bdii_port')
             r = self._get_fields_and_prefix(fields, 'site_', data)
+            r['suffix'] = ('GLUE2DomainID=%(site_name)s,o=glue' %
+                           {'site_name': site_info['site_name']})
             site_info.update(r)
 
         return site_info
