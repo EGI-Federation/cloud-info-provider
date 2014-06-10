@@ -1,4 +1,4 @@
-dn: GLUE2StorageServiceCapacityID=cloud.storage.%(site_name)s_capacity,GLUE2ServiceID=cloud.storage.%(site_name)s_service,GLUE2GroupID=cloud,GLUE2DomainID=%(site_name)s,o=glue
+dn: GLUE2StorageServiceCapacityID=cloud.storage.%(site_name)s_capacity,GLUE2ServiceID=cloud.storage.%(site_name)s_service,GLUE2GroupID=resource,%(suffix)s
 objectClass: GLUE2Entity
 objectClass: GLUE2StorageServiceCapacity
 GLUE2StorageServiceCapacityID: cloud.storage.%(site_name)s_capacity
