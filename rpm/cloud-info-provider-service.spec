@@ -1,5 +1,5 @@
 Name:           cloud-info-provider-service
-Version:        0.1
+Version:        0.2
 Release:        1%{?dist}
 Summary:        Information provider for Cloud Compute and Cloud Storage services for BDII.
 
