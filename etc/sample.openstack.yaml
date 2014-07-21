@@ -19,9 +19,9 @@ opts:
 # Site options below are only needed if you want to produce
 # a full BDII ldif. If you're running a site, BDII, skip these.
 
-site:
+#site:
      # Your site name, asn in GODCB (if omitted or set to None, this value is retreived from /etc/glite-info-static/site/site.cfg )
-     name: MySite
+     #name: MySite
 
      # Site url
      #url: http://site.url.example.org/
