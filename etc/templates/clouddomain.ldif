@@ -1,3 +1,3 @@
-dn: GLUE2GroupID=resource,%(suffix)s
+dn: GLUE2GroupID=cloud,%(suffix)s
 objectClass: GLUE2Group
 GLUE2GroupID: cloud

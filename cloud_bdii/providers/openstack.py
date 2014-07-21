@@ -25,10 +25,10 @@ class OpenStackProvider(providers.BaseProvider):
             print >> sys.stderr, 'ERROR: Cannot import novaclient module.'
             sys.exit(1)
 
-        (os_username, os_password, os_tenant_name, os_tenant_id,
+        (os_username, os_password, os_tenant_name, 
             os_auth_url, cacert, insecure) = (
                 opts.os_username, opts.os_password,
-                opts.os_tenant_name, opts.os_tenant_id,
+                opts.os_tenant_name,
                 opts.os_auth_url, opts.os_cacert, opts.insecure)
 
         if not os_username:
@@ -43,11 +43,10 @@ class OpenStackProvider(providers.BaseProvider):
                                   'env[OS_PASSWORD]')
             sys.exit(1)
 
-        if not os_tenant_name and not os_tenant_id:
+        if not os_tenant_name:
             print >> sys.stderr, ('You must provide a tenant name '
-                                  'or tenant id via --os-tenant-name, '
-                                  '--os-tenant-id, env[OS_TENANT_NAME] '
-                                  'or env[OS_TENANT_ID]')
+                                  'via either --os-tenant-name or '
+                                  'env[OS_TENANT_NAME]')
             sys.exit(1)
 
         if not os_auth_url:
@@ -57,10 +56,16 @@ class OpenStackProvider(providers.BaseProvider):
             sys.exit(1)
 
         client_cls = novaclient.client.get_client_class('2')
-        self.api = client_cls(os_username,
+	if insecure:
+          self.api = client_cls(os_username,
                               os_password,
                               os_tenant_name,
-                              tenant_id=os_tenant_id,
+                              auth_url=os_auth_url,
+                              insecure=insecure)
+        else:
+          self.api = client_cls(os_username,
+                              os_password,
+                              os_tenant_name,
                               auth_url=os_auth_url,
                               insecure=insecure,
                               cacert=cacert)
@@ -113,7 +118,7 @@ class OpenStackProvider(providers.BaseProvider):
                 continue
 
             aux = defaults.copy()
-            aux.update({'template_id': 'resource#%s' % flavor.name,
+            aux.update({'template_id': 'resource_tpl#%s' % flavor.name,
                         'template_memory': flavor.ram,
                         'template_cpu': flavor.vcpus})
             flavors[flavor.id] = aux
@@ -147,13 +152,18 @@ class OpenStackProvider(providers.BaseProvider):
             # FIXME(aloga): we need to add the version, etc from
             # metadata
             aux.update({'image_name': image.name,
-                        'occi_id': 'os#%s' % image.id,
-                        'image_description': image.name,
-                        'marketplace_id': link,
-            })
-            image.metadata.pop('image_name', None)
-            image.metadata.pop('occi_id', None)
-            aux.update(image.metadata)
+                        'image_id': 'os_tpl#%s' % image.id })
+            if 'vmcatcher_event_dc_description' in image.metadata:
+               aux.update({'image_description': image.metadata['vmcatcher_event_dc_description']})
+            elif 'vmcatcher_event_dc_title' in image.metadata:
+               aux.update({'image_description': image.metadata['vmcatcher_event_dc_title']})
+            if 'vmcatcher_event_ad_mpuri' in image.metadata:
+               aux.update({'image_marketplace_id' : image.metadata['vmcatcher_event_ad_mpuri']})
+            else:
+               aux.update({'image_marketplace_id': link})
+            #image.metadata.pop('image_name', None)
+            #image.metadata.pop('occi_id', None)
+            #aux.update(image.metadata)
             images[image.id] = aux
         return images
 
@@ -173,11 +183,6 @@ class OpenStackProvider(providers.BaseProvider):
             metavar='<auth-tenant-name>',
             default=env('OS_TENANT_NAME', 'NOVA_PROJECT_ID'),
             help='Defaults to env[OS_TENANT_NAME].')
-
-        parser.add_argument('--os-tenant-id',
-            metavar='<auth-tenant-id>',
-            default=env('OS_TENANT_ID'),
-            help='Defaults to env[OS_TENANT_ID].')
 
         parser.add_argument('--os-auth-url',
             metavar='<auth-url>',

@@ -1,5 +1,7 @@
 import copy
 import sys
+import re
+import os
 
 import yaml
 
@@ -62,14 +64,30 @@ class StaticProvider(providers.BaseProvider):
         return ret
 
     def get_site_info(self):
-        data = self.yaml['site']
+        if 'site' in self.yaml:
+	   data = self.yaml['site']
+	else:
+           data = {'name': None }
 
-        fields = ('name', 'production_level')
+        fields = ('name', )
         site_info = self._get_fields_and_prefix(fields, 'site_', data)
-        site_info['suffix'] = 'o=glue'
+
+        #Resolve site name from BDII configuration
+        if site_info['site_name'] is None:
+           if os.path.isfile('/etc/glite-info-static/site/site.cfg'):
+            file=open('/etc/glite-info-static/site/site.cfg','r')
+            while True:
+             x=file.readline()
+             if x is None: break
+             m=re.search('^SITE_NAME *= *(.*)$',x)
+             if m:
+               site_info['site_name'] = m.group(1)
+               break
+
+        site_info['suffix'] = 'GLUE2DomainID='+site_info['site_name']+',o=glue'
 
         if self.opts.full_bdii_ldif:
-            fields = ('url', 'ngi', 'country', 'latitude', 'longitude',
+            fields = ('production_level', 'url', 'ngi', 'country', 'latitude', 'longitude',
                       'general_contact', 'sysadmin_contact',
                       'security_contact', 'user_support_contact',
                       'bdii_host', 'bdii_port')
@@ -77,6 +95,9 @@ class StaticProvider(providers.BaseProvider):
             r['suffix'] = ('GLUE2DomainID=%(site_name)s,o=glue' %
                            {'site_name': site_info['site_name']})
             site_info.update(r)
+
+	if site_info['site_name'] is None:
+	    raise Exception('Cannot find site name. Specify one in the YAML site configuration or be sure the file /etc/glite-info-static/site/site.cfg is accessible and readable')
 
         return site_info
 
@@ -101,11 +122,11 @@ class StaticProvider(providers.BaseProvider):
         return templates['templates']
 
     def get_compute_endpoints(self):
-        global_fields = ('total_ram', 'total_cores', 'capabilities',
+        global_fields = ('service_production_level','total_ram', 'total_cores', 'capabilities',
                          'hypervisor', 'hypervisor_version',
                          'middleware', 'middleware_version',
                          'middleware_developer')
-        endpoint_fields = ('api_type', 'api_version',
+        endpoint_fields = ('production_level', 'api_type', 'api_version',
                            'api_endpoint_technology', 'api_authn_method')
         endpoints = self._get_what('compute',
                                    'endpoints',
@@ -114,9 +135,9 @@ class StaticProvider(providers.BaseProvider):
         return endpoints
 
     def get_storage_endpoints(self):
-        global_fields = ('total_storage', 'capabilities', 'middleware',
+        global_fields = ('service_production_level','total_storage', 'capabilities', 'middleware',
                          'middleware_version', 'middleware_developer')
-        endpoint_fields = ('api_type', 'api_version',
+        endpoint_fields = ('production_level', 'api_type', 'api_version',
                            'api_endpoint_technology',
                            'api_authn_method')
 

@@ -8,29 +8,29 @@ opts:
     on_auth: 'oneadmin:opennebula'
     on_rpcxml_endpoint: 'http://192.168.56.103:2633/RPC2'
 
-# Options below are only needed if you want to produce
+# Site options below are only needed if you want to produce
 # a full BDII ldif. If you're running a site, BDII, skip these.
 
-site:
-#    # Your site name, asn in GODCB (if set to none, this value is retreived from /etc/glite-info-static/site/site.cfg )
-    name: MySite
-#    # Production level (testing, candidate, production...)
-#    production_level: production
-#
-#    # Site url
-#    url: http://site.url.example.org/
-#    # Two digit country code
-#    country: ES
-#    longitude: 0.0
-#    latitude: 0.0
-#    # Your affiliated NGI
-#    ngi: NGI_FOO
-#    user_support_contact: user-support@example.org
-#    general_contact: general-support@example.org
-#    sysadmin_contact: support@example.org
-#    security_contact: security-support@example.org
-#    bdii_host: site.bdii.example.org
-#    bdii_port: 2170
+#site:
+     # Your site name, asn in GODCB (if omitted or set to None, this value is retreived from /etc/glite-info-static/site/site.cfg )
+     #name: MySite
+
+     # Site url
+     #url: http://site.url.example.org/
+     # BDII Production level (testing, candidate, production)
+     #production_level: production
+     # Two digit country code
+     #country: ES
+     #longitude: 0.0
+     #latitude: 0.0
+     # Your affiliated NGI
+     #ngi: NGI_FOO
+     #user_support_contact: user-support@example.org
+     #general_contact: general-support@example.org
+     #sysadmin_contact: support@example.org
+     #security_contact: security-support@example.org
+     #bdii_host: site.bdii.example.org
+     #bdii_port: 2170
 
 compute:
     # Total number of cores available
@@ -67,7 +67,7 @@ compute:
             api_type: Sunstone GUI
             api_version: 4.6
 
-    #Comment the line below if you do not have access to the rOCCI templates directory. In this case, you need to specify the templates staticalyl from the lines below
+    #Comment the line below if you do not have access to the rOCCI templates directory. In this case, you need to specify the templates staticaly from the lines below
     template_dir: /opt/occi-server/embedded/app/rOCCI-server/etc/backends/opennebula/fixtures/resource_tpl/
 
     templates:

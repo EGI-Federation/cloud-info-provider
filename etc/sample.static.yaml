@@ -1,27 +1,33 @@
-site:
-    # Your site name, asn in GODCB
-    name: SITE_NAME
-    # Production level (testing, candidate, production...)
-    production_level: production
+opts:
+    #You can set here all the command line options of the provider. These will override command line options
+    #Middleware in use (static means no dynamic data is extracted)
+    middleware: static
+    #Disable full BDII LDIF production. This can create problems with the 
+    full_bdii_ldif: False
 
-    # Options below are only needed if you want to produce
-    # a full BDII ldif. If you're running a site, BDII, skip 
-    # these.
+# Site options below are only needed if you want to produce
+# a full BDII ldif. If you're running a site, BDII, skip these.
 
-    # Site url
-    url: http://site.url.example.org/
-    # Two digit country code
-    country: ES
-    longitude: 0.0
-    latitude: 0.0
-    # Your affiliated NGI
-    ngi: NGI_FOO
-    user_support_contact: user-support@example.org
-    general_contact: general-support@example.org
-    sysadmin_contact: support@example.org
-    security_contact: security-support@example.org
-    bdii_host: site.bdii.example.org
-    bdii_port: 2170
+#site:
+     # Your site name, asn in GODCB (if omitted or set to None, this value is retreived from /etc/glite-info-static/site/site.cfg )
+     #name: MySite
+
+     # Site url
+     #url: http://site.url.example.org/
+     # BDII Production level (testing, candidate, production)
+     #production_level: production
+     # Two digit country code
+     #country: ES
+     #longitude: 0.0
+     #latitude: 0.0
+     # Your affiliated NGI
+     #ngi: NGI_FOO
+     #user_support_contact: user-support@example.org
+     #general_contact: general-support@example.org
+     #sysadmin_contact: support@example.org
+     #security_contact: security-support@example.org
+     #bdii_host: site.bdii.example.org
+     #bdii_port: 2170
 
 compute:
     # Total number of cores available
@@ -38,6 +44,9 @@ compute:
     middleware_version: v1.0
     # Middleware developer
     middleware_developer: Middleware Developer
+    # Service Production level (testing, candidate, production...)
+    service_production_level: production
+    # Service capabilities
     capabilities:
         - cloud.managementSystem
         - cloud.vm.uploadImage
@@ -48,11 +57,13 @@ compute:
             api_version: 1.1
             api_endpoint_technology: REST
             api_authn_method: X509-VOMS
+            production_level: unknown
 
         https://cloud-service01.example.org:8787:
 
         https://cloud-service02.example.org:8787:
             api_authn_method: X509
+            production_level: testing
 
         https://cloud-service03.example.org:8787:
             api_authn_method: User/Password
@@ -62,19 +73,19 @@ compute:
             platform: amd64
             network: public
 
-        resource#small:
+        resource_tpl#small:
             memory: 1024
             cpu: 1
 
-        resource#medium:
+        resource_tpl#medium:
             memory: 4096
             cpu: 2
         
-        resource#large:
+        resource_tpl#large:
             memory: 8196
             cpu: 4
         
-        resource#extra_large:
+        resource_tpl#extra_large:
             memory: 16384
             cpu: 8
 
@@ -82,7 +93,7 @@ compute:
         defaults:
             platform: amd64
 
-        os#foobarid:
+        os_tpl#foobarid:
             name: Foo Image
             version: 1.0
             marketplace_id: http://url.to.marketplace.id.example.org/foo/bar
@@ -98,6 +109,9 @@ storage:
     middleware_version: v1.0
     # Middleware developer
     middleware_developer: Middleware Developer
+    # Service Production level (testing, candidate, production...)
+    service_production_level: production
+    #Service capabilities
     capabilities:
         - cloud.data.upload
 
@@ -107,7 +121,9 @@ storage:
             api_version: 1.0.1
             api_endpoint_technology: REST
             api_authn_method: X509-VOMS
+            production_level: production
 
         https://storage-service01.example.org:8080:
 
         https://storage-service02.example.org:8080:
+            production_level: testing

@@ -1,3 +1,15 @@
+dn: o=glue
+objectClass: organization
+o: glue
+
+dn: GLUE2GroupID=grid,o=glue
+objectClass: GLUE2Group
+GLUE2GroupID: grid
+
+dn: GLUE2GroupID=resource,o=glue
+objectClass: GLUE2Group
+GLUE2GroupID: resource
+
 dn: GLUE2ServiceID=%(site_name)s_sitebdii,GLUE2GroupID=resource,o=glue
 objectClass: GLUE2Service
 GLUE2ServiceAdminDomainForeignKey: %(site_name)s

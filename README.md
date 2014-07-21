@@ -2,7 +2,10 @@
 
 ## Installation
 
+From source:
     pip install -e .
+
+From repository:
 
 ## Usage
 

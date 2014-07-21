@@ -2,12 +2,17 @@
 
 import argparse
 import os.path
+import yaml
 
 import cloud_bdii.providers.openstack
+import cloud_bdii.providers.opennebula
+import cloud_bdii.providers.opennebularocci
 import cloud_bdii.providers.static
 
 SUPPORTED_MIDDLEWARE = {
-    'OpenStack': cloud_bdii.providers.openstack.OpenStackProvider,
+    'openstack': cloud_bdii.providers.openstack.OpenStackProvider,
+    'opennebula': cloud_bdii.providers.opennebula.OpenNebulaProvider,
+    'opennebularocci': cloud_bdii.providers.opennebularocci.OpenNebulaROCCIProvider,
     'static': cloud_bdii.providers.static.StaticProvider,
 }
 
@@ -133,7 +138,7 @@ class CloudBDII(BaseBDII):
         super(CloudBDII, self).__init__(*args)
 
         if not self.opts.full_bdii_ldif:
-            self.templates = ('headers', )
+            self.templates = ('clouddomain', )
 
     def render(self):
         output = []
@@ -153,7 +158,7 @@ def parse_opts():
 
     parser.add_argument('--yaml-file',
         default='etc/bdii.yaml',
-        help=('Path to the YAML file containing static values. '
+        help=('Path to the YAML file containing configuration static values. '
               'This file will be used to populate the information '
               'to the static provider. These values will be used whenever '
               'a dynamic provider is used and it is not able to produce any '
@@ -172,7 +177,7 @@ def parse_opts():
     parser.add_argument('--middleware',
         metavar='MIDDLEWARE',
         choices=SUPPORTED_MIDDLEWARE,
-        default=None,
+        default='static',
         help=('Middleware used. Only the following middlewares are '
               'supported: %s. If you do not specify anything, static '
               'values will be used.' % SUPPORTED_MIDDLEWARE.keys()))
@@ -187,10 +192,19 @@ def parse_opts():
 
 def main():
     opts = parse_opts()
+
+    #Load options from YAML file, if any they override command line options
+    with open(opts.yaml_file, 'r') as f:
+        yml = yaml.safe_load(f)
+        if 'opts' in yml:
+		yml = yml['opts']
+		for a in yml:
+			if a in opts.__dict__:
+				opts.__dict__[a]=yml[a]
+
     for cls_ in (CloudBDII, ComputeBDII, StorageBDII):
         bdii = cls_(opts)
         print bdii.render()
-
 
 if __name__ == '__main__':
     main()
