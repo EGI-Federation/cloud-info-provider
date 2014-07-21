@@ -1,0 +1,115 @@
+opts:
+    #You can set here all the command line options of the provider. These will override command line options
+    #Middleware in use (static means no dynamic data is extracted)
+    middleware: opennebula
+    #Disable full BDII LDIF production. This can create problems with the 
+    full_bdii_ldif: False
+    #OpenNebula middleware options
+    on_auth: 'oneadmin:opennebula'
+    on_rpcxml_endpoint: 'http://192.168.56.103:2633/RPC2'
+
+# Options below are only needed if you want to produce
+# a full BDII ldif. If you're running a site, BDII, skip these.
+
+site:
+#    # Your site name, asn in GODCB (if set to none, this value is retreived from /etc/glite-info-static/site/site.cfg )
+    name: MySite
+#    # Production level (testing, candidate, production...)
+#    production_level: production
+#
+#    # Site url
+#    url: http://site.url.example.org/
+#    # Two digit country code
+#    country: ES
+#    longitude: 0.0
+#    latitude: 0.0
+#    # Your affiliated NGI
+#    ngi: NGI_FOO
+#    user_support_contact: user-support@example.org
+#    general_contact: general-support@example.org
+#    sysadmin_contact: support@example.org
+#    security_contact: security-support@example.org
+#    bdii_host: site.bdii.example.org
+#    bdii_port: 2170
+
+compute:
+    # Total number of cores available
+    total_cores: 0
+    # Total RAM available (GB)
+    total_ram: 0
+    # Hypervisor name (e.g. KVM, Xen, etc.)
+    hypervisor: Foo Hypervisor
+    # Hypervisor version
+    hypervisor_version: 0.0.0
+    # Middleware used (e.g. OpenNebula, CloudStack, OpenStack, etc)
+    middleware: OpenNebula
+    # Middleware version
+    middleware_version: 4.6
+    # Middleware developer
+    middleware_developer: OpenNebula Team
+    # Service Production level (testing, candidate, production...)
+    service_production_level: production
+    #Service capabilities
+    capabilities:
+        - cloud.managementSystem
+
+    endpoints:
+        defaults:
+            api_authn_method: User/Password
+            production_level: production
+
+        https://cloud-service01.example.org:2633/RPC2:
+            api_type: ON-XML-RPC
+            api_version: 2
+            api_endpoint_technology: REST
+
+        https://cloud-service02.example.org:9869:
+            api_type: Sunstone GUI
+            api_version: 4.6
+
+    templates:
+        defaults:
+            platform: amd64
+            network: public
+
+        resource_tpl#small:
+            memory: 1024
+            cpu: 1
+
+        resource_tpl#medium:
+            memory: 4096
+            cpu: 2
+        
+        resource_tpl#large:
+            memory: 8196
+            cpu: 4
+        
+        resource_tpl#extra_large:
+            memory: 16384
+            cpu: 8
+
+    #Images are retreived automatically by the endpoint
+    images:
+        defaults:
+            platform: amd64
+
+#No STorage-as-a-Service is provided by OpenNebula. Information coming from other STaaS may be included here or put into a separate YAML
+#storage:
+#    total_storage: 0
+#    middleware: A Middleware
+#    middleware_version: v1.0
+#    middleware_developer: Middleware Developer
+#    service_production_level: production
+#    capabilities:
+#        - cloud.data.upload
+#
+#    endpoints:
+#        defaults:
+#            api_type: CDMI
+#            api_version: 1.0.1
+#            api_endpoint_technology: REST
+#            api_authn_method: X509-VOMS
+#            production_level: production
+#
+#        https://storage-service01.example.org:8080:
+#            production_level: testing
