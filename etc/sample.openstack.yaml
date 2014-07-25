@@ -82,7 +82,7 @@ compute:
             #all the images installed in the site (also snapshots). Otherwise
             #only images with a valid marketplace ID (set by the marketplace
             #custom property) are shown
-            require_markeplace_id: true
+            require_marketplace_id: true
             platform: amd64
 
 # There's no dynamic provider for Swift, so this needs to be filled
