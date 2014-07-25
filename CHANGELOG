@@ -1,11 +1,11 @@
-* Tue Jul 15 2014 Release 0.2 - Salvatore Pinto
+* Tue Jul 25 2014 Release 0.2 - Salvatore Pinto
 - Added rpm packaging and bin wrapper
 - Added possibility to setup options via YAML
 - Added retreival of Site name from BDII configuration
 - Moved production_level to service and endpoint objects
 - Changed basic tree for cloud services to GLUE2GroupID=cloud
 - Added OpenNebula and OpenNebulaROCCI drivers
-- Small changes to OpenStack driver (Marketplace information from glancepush and rewritten template)
+- Small changes to OpenStack driver (Marketplace information from glancepush, rewritten template, possibility to filter images without marketplace ID)
 - Removed support for Tenant ID (insthead of Tenant name) for retro-compatibility with older versions of novaclient libraries
 * Wed May 28 2014 Release 0.1 - Alvaro Lopez Garcia
 - First release

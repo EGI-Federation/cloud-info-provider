@@ -70,14 +70,18 @@ compute:
             api_authn_method: X509-VOMS
             production_level: production
 
-        http://192.168.56.103:8787/:
-
     templates:
         defaults:
             platform: amd64
             network: public
 
     images:
+        #Set to False or uncomment the line below if you want to show
+        #all the images installed in the site (also snapshots). Otherwise
+        #only images with a valid marketplace ID (set by the marketplace
+        #custom property) are shown
+        require_markeplace_id: true
+
         defaults:
             platform: amd64
 
