@@ -160,12 +160,11 @@ def parse_opts():
     parser.add_argument(
         '--yaml-file',
         default='etc/bdii.yaml',
-        help=(
-            'Path to the YAML file containing configuration static values. '
-            'This file will be used to populate the information '
-            'to the static provider. These values will be used whenever '
-            'a dynamic provider is used and it is not able to produce any '
-            'of the required values, or when using the static provider. '))
+        help=('Path to the YAML file containing configuration static values. '
+              'This file will be used to populate the information '
+              'to the static provider. These values will be used whenever '
+              'a dynamic provider is used and it is not able to produce any '
+              'of the required values, or when using the static provider. '))
 
     parser.add_argument(
         '--template-dir',
