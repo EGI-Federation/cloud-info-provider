@@ -68,7 +68,7 @@ class StaticProvider(providers.BaseProvider):
         if 'site' in self.yaml:
             data = self.yaml['site']
         else:
-            data = {'name': None }
+            data = {'name': None}
 
         fields = ('name', )
         site_info = self._get_fields_and_prefix(fields, 'site_', data)
@@ -76,12 +76,12 @@ class StaticProvider(providers.BaseProvider):
         # Resolve site name from BDII configuration
         if site_info['site_name'] is None:
             if os.path.isfile('/etc/glite-info-static/site/site.cfg'):
-                file=open('/etc/glite-info-static/site/site.cfg','r')
+                file = open('/etc/glite-info-static/site/site.cfg', 'r')
                 while True:
-                    x=file.readline()
+                    x = file.readline()
                     if x is None:
                         break
-                    m=re.search('^SITE_NAME *= *(.*)$',x)
+                    m = re.search('^SITE_NAME *= *(.*)$', x)
                     if m:
                         site_info['site_name'] = m.group(1)
                         break
@@ -134,16 +134,10 @@ class StaticProvider(providers.BaseProvider):
         return templates['templates']
 
     def get_compute_endpoints(self):
-        global_fields = (
-            'service_production_level',
-            'total_ram',
-            'total_cores',
-            'capabilities',
-            'hypervisor',
-            'hypervisor_version',
-            'middleware',
-            'middleware_version',
-            'middleware_developer')
+        global_fields = ('service_production_level', 'total_ram', 'total_cores', 'capabilities',
+                         'hypervisor', 'hypervisor_version',
+                         'middleware', 'middleware_version',
+                         'middleware_developer')
         endpoint_fields = ('production_level', 'api_type', 'api_version',
                            'api_endpoint_technology', 'api_authn_method')
         endpoints = self._get_what('compute',
@@ -153,13 +147,8 @@ class StaticProvider(providers.BaseProvider):
         return endpoints
 
     def get_storage_endpoints(self):
-        global_fields = (
-            'service_production_level',
-            'total_storage',
-            'capabilities',
-            'middleware',
-            'middleware_version',
-            'middleware_developer')
+        global_fields = ('service_production_level', 'total_storage', 'capabilities', 'middleware',
+                         'middleware_version', 'middleware_developer')
         endpoint_fields = ('production_level', 'api_type', 'api_version',
                            'api_endpoint_technology',
                            'api_authn_method')

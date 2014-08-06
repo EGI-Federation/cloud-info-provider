@@ -161,9 +161,9 @@ class OpenStackProvider(providers.BaseProvider):
                 aux.update({'image_description': image.metadata['vmcatcher_event_dc_title']})
 
             if 'vmcatcher_event_ad_mpuri' in image.metadata:
-                aux.update({'image_marketplace_id' : image.metadata['vmcatcher_event_ad_mpuri']})
+                aux.update({'image_marketplace_id': image.metadata['vmcatcher_event_ad_mpuri']})
             elif 'marketplace' in image.metadata:
-                aux.update({'image_marketplace_id' : image.metadata['marketplace']})
+                aux.update({'image_marketplace_id': image.metadata['marketplace']})
             elif not (('image_require_marketplace_id' in defaults) and (defaults['image_require_marketplace_id'])):
                 aux.update({'image_marketplace_id': link})
             else:
