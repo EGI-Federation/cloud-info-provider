@@ -51,11 +51,6 @@ class OpenNebulaProvider(providers.BaseProvider):
 
         self.static = providers.static.StaticProvider(opts)
 
-# NOTE:
-# There are no flavours into OpenNebula. If you are using rOCCI
-# server (which defines flavours internally), then use the
-# OpenNebulaROCCI driver
-
     def get_images(self):
         images = {}
 

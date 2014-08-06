@@ -52,9 +52,8 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
         self.static = providers.static.StaticProvider(opts)
         self.onprovider = providers.opennebula.OpenNebulaProvider(opts)
 
-# These flavours are retreived directly from rOCCI-server
-# configuration files. If the script has no access to them,
-# you can set the template_dir parameter in the YAML to None.
+#    There flavours are retreived directly from rOCCI-server configuration files. If the script has no access to them,
+#    you can set the directory to None and configuration files specified in the YAML configuration.
     def get_templates(self):
 
         if (
