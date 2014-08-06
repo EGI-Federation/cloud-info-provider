@@ -1,4 +1,6 @@
-#This provider is for an OpenNebula middleware using the rOCCI server. Part of the information is retreived from OpenNebula, part of it is retreived from rOCCI directly. To retreive flavour information, rOCCI
+# This provider is for an OpenNebula middleware using the rOCCI server. Part of
+# the information is retreived from OpenNebula, part of it is retreived from
+# rOCCI directly. To retreive flavour information, rOCCI
 
 import os
 import sys
@@ -40,18 +42,21 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
             sys.exit(1)
 
         if not self.on_rpcxml_endpoint:
-            print >> sys.stderr, ('You must provide an OpenNebula RPC-XML endpoint'
-                                  'via either --on-rpcxml-endpoint or '
-                                  'env[ON_RPCXML_ENDPOINT] ')
+            print >> sys.stderr, ('You must provide an OpenNebula RPC-XML '
+                                  'endpoint via either --on-rpcxml-endpoint or'
+                                  ' env[ON_RPCXML_ENDPOINT]')
             sys.exit(1)
 
         self.static = providers.static.StaticProvider(opts)
 
-#    There flavours are retreived directly from rOCCI-server configuration files. If the script has no access to them,
-#    you can set the directory to None and configuration files specified in the YAML configuration.
+    # The flavours are retreived directly from rOCCI-server configuration
+    # files. If the script has no access to them, you can set the directory to
+    # None and configuration files specified in the YAML configuration.
     def get_templates(self):
 
-        if ('template_dir' not in self.static.yaml['compute']) or (not self.static.yaml['compute']['template_dir']) or (self.static.yaml['compute']['template_dir'] is None):
+        if (('template_dir' not in self.static.yaml['compute']) or
+                (not self.static.yaml['compute']['template_dir']) or
+                (self.static.yaml['compute']['template_dir'] is None)):
             #revert to static
             return self.static.get_templates()
 

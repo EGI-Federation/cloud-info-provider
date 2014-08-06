@@ -1,4 +1,7 @@
-#This provider is for an OpenNebula middleware. Part of the information is retreived from OpenNebula, the rest is provided via the static template. Note that this is a generic OpenNebula plugin. If you use rOCCI server on top of OpenNebula, please refer to the OpenNebulaROCCI provider
+# This provider is for an OpenNebula middleware. Part of the information is
+# retreived from OpenNebula, the rest is provided via the static template. Note
+# that this is a generic OpenNebula plugin. If you use rOCCI server on top of
+# OpenNebula, please refer to the OpenNebulaROCCI provider
 
 import os
 import sys
@@ -39,9 +42,9 @@ class OpenNebulaProvider(providers.BaseProvider):
             sys.exit(1)
 
         if not self.on_rpcxml_endpoint:
-            print >> sys.stderr, ('You must provide an OpenNebula RPC-XML endpoint'
-                                  'via either --on-rpcxml-endpoint or '
-                                  'env[ON_RPCXML_ENDPOINT] ')
+            print >> sys.stderr, ('You must provide an OpenNebula RPC-XML '
+                                  'endpoint via either --on-rpcxml-endpoint or'
+                                  ' env[ON_RPCXML_ENDPOINT] ')
             sys.exit(1)
 
         self.static = providers.static.StaticProvider(opts)
@@ -81,13 +84,18 @@ class OpenNebulaProvider(providers.BaseProvider):
                 aux = template.copy()
                 aux.update(defaults)
                 aux.update({
-                    'image_name': i.getElementsByTagName('NAME')[0].firstChild.nodeValue,
-                    'image_id': 'os_tpl#%s' % i.getElementsByTagName('NAME')[0].firstChild.nodeValue,
-                    'image_description': i.getElementsByTagName('DESCRIPTION')[0].firstChild.nodeValue
+                    'image_name': i.getElementsByTagName(
+                        'NAME')[0].firstChild.nodeValue,
+                    'image_id': 'os_tpl#%s' % i.getElementsByTagName(
+                        'NAME')[0].firstChild.nodeValue,
+                    'image_description': i.getElementsByTagName(
+                        'DESCRIPTION')[0].firstChild.nodeValue
                 })
                 tmpel = i.getElementsByTagName('VMCATCHER_EVENT_AD_MPURI')
                 if tmpel.length > 0:
-                    aux.update({'image_marketplace_id': tmpel[0].firstChild.nodeValue})
+                    aux.update({
+                        'image_marketplace_id': tmpel[0].firstChild.nodeValue
+                    })
                 images[id] = aux
                 id = id + 1
         return images
@@ -98,7 +106,9 @@ class OpenNebulaProvider(providers.BaseProvider):
             '--on-auth',
             metavar='<auth>',
             default=env('ON_AUTH'),
-            help='Specify authorization information. For core drivers, it shall be <username>:<password>. Defaults to env[ON_USERNAME] or to ONE_OUTH file.')
+            help=('Specify authorization information. For core drivers, '
+                  'it shall be <username>:<password>. '
+                  'Defaults to env[ON_USERNAME] or to ONE_OUTH file.'))
 
         parser.add_argument(
             '--on-rpcxml-endpoint',
