@@ -2,18 +2,7 @@ import os
 import sys
 
 from cloud_bdii import providers
-
-
-def env(*args, **kwargs):
-    '''
-    returns the first environment variable set
-    if none are non-empty, defaults to '' or keyword arg default
-    '''
-    for arg in args:
-        value = os.environ.get(arg, None)
-        if value:
-            return value
-    return kwargs.get('default', '')
+from cloud_bdii import utils
 
 
 class OpenStackProvider(providers.BaseProvider):
@@ -187,38 +176,38 @@ class OpenStackProvider(providers.BaseProvider):
         parser.add_argument(
             '--os-username',
             metavar='<auth-user-name>',
-            default=env('OS_USERNAME', 'NOVA_USERNAME'),
+            default=utils.env('OS_USERNAME', 'NOVA_USERNAME'),
             help='Defaults to env[OS_USERNAME].')
 
         parser.add_argument(
             '--os-password',
             metavar='<auth-password>',
-            default=env('OS_PASSWORD', 'NOVA_PASSWORD'),
+            default=utils.env('OS_PASSWORD', 'NOVA_PASSWORD'),
             help='Defaults to env[OS_PASSWORD].')
 
         parser.add_argument(
             '--os-tenant-name',
             metavar='<auth-tenant-name>',
-            default=env('OS_TENANT_NAME', 'NOVA_PROJECT_ID'),
+            default=utils.env('OS_TENANT_NAME', 'NOVA_PROJECT_ID'),
             help='Defaults to env[OS_TENANT_NAME].')
 
         parser.add_argument(
             '--os-auth-url',
             metavar='<auth-url>',
-            default=env('OS_AUTH_URL', 'NOVA_URL'),
+            default=utils.env('OS_AUTH_URL', 'NOVA_URL'),
             help='Defaults to env[OS_AUTH_URL].')
 
         parser.add_argument(
             '--os-cacert',
             metavar='<ca-certificate>',
-            default=env('OS_CACERT', default=None),
+            default=utils.env('OS_CACERT', default=None),
             help='Specify a CA bundle file to use in '
                  'verifying a TLS (https) server certificate. '
                  'Defaults to env[OS_CACERT]')
 
         parser.add_argument(
             '--insecure',
-            default=env('NOVACLIENT_INSECURE', default=False),
+            default=utils.env('NOVACLIENT_INSECURE', default=False),
             action='store_true',
             help='Explicitly allow novaclient to perform "insecure" '
                  'SSL (https) requests. The server\'s certificate will '

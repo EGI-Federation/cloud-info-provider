@@ -9,18 +9,7 @@ import urllib2
 from xml.dom import minidom
 
 from cloud_bdii import providers
-
-
-def env(*args, **kwargs):
-    '''
-    returns the first environment variable set
-    if none are non-empty, defaults to '' or keyword arg default
-    '''
-    for arg in args:
-        value = os.environ.get(arg, None)
-        if value:
-            return value
-    return kwargs.get('default', '')
+from cloud_bdii import utils
 
 
 class OpenNebulaProvider(providers.BaseProvider):
@@ -105,7 +94,7 @@ class OpenNebulaProvider(providers.BaseProvider):
         parser.add_argument(
             '--on-auth',
             metavar='<auth>',
-            default=env('ON_AUTH'),
+            default=utils.env('ON_AUTH'),
             help=('Specify authorization information. For core drivers, '
                   'it shall be <username>:<password>. '
                   'Defaults to env[ON_USERNAME] or to ONE_OUTH file.'))
@@ -113,5 +102,5 @@ class OpenNebulaProvider(providers.BaseProvider):
         parser.add_argument(
             '--on-rpcxml-endpoint',
             metavar='<auth-url>',
-            default=env('OS_RPCXML_ENDPOINT'),
+            default=utils.env('OS_RPCXML_ENDPOINT'),
             help='Defaults to env[OS_RPCXML_ENDPOINT].')
