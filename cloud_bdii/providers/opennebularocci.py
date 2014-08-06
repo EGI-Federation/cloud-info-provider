@@ -47,39 +47,6 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
 
         self.static = providers.static.StaticProvider(opts)
 
-#    def get_compute_endpoints(self):
-#        ret = {
-#            'endpoints': {},
-#            'compute_middleware_developer': 'OpenStack',
-#            'compute_middleware': 'OpenStack Nova',
-#        }
-#
-#        defaults = self.static.get_compute_endpoint_defaults(prefix=True)
-#        catalog = self.api.client.service_catalog.catalog
-#        endpoints = catalog['access']['serviceCatalog']
-#        for endpoint in endpoints:
-#            if endpoint['type'] == 'occi' :
-#                e_type = 'OCCI'
-#                e_version = defaults.get('endpoint_occi_api_version', '1.1')
-#            elif endpoint['type'] == 'compute':
-#                e_type = 'OpenStack'
-#                e_version = defaults.get('endpoint_openstack_api_version', '2')
-#            else:
-#                continue
-#
-#            for ept in endpoint['endpoints']:
-#                e_id = ept['id']
-#                e_url = ept['publicURL']
-#
-#                e = defaults.copy()
-#                e.update({'endpoint_url': e_url,
-#                          'compute_api_type': e_type,
-#                          'compute_api_version': e_version})
-#
-#                ret['endpoints'][e_id] = e
-#
-#        return ret
-
 #    There flavours are retreived directly from rOCCI-server configuration files. If the script has no access to them,
 #    you can set the directory to None and configuration files specified in the YAML configuration.
     def get_templates(self):

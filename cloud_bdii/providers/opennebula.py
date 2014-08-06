@@ -46,60 +46,6 @@ class OpenNebulaProvider(providers.BaseProvider):
 
         self.static = providers.static.StaticProvider(opts)
 
-#    def get_compute_endpoints(self):
-#        ret = {
-#            'endpoints': {},
-#            'compute_middleware_developer': 'OpenStack',
-#            'compute_middleware': 'OpenStack Nova',
-#        }
-#
-#        defaults = self.static.get_compute_endpoint_defaults(prefix=True)
-#        catalog = self.api.client.service_catalog.catalog
-#        endpoints = catalog['access']['serviceCatalog']
-#        for endpoint in endpoints:
-#            if endpoint['type'] == 'occi' :
-#                e_type = 'OCCI'
-#                e_version = defaults.get('endpoint_occi_api_version', '1.1')
-#            elif endpoint['type'] == 'compute':
-#                e_type = 'OpenStack'
-#                e_version = defaults.get('endpoint_openstack_api_version', '2')
-#            else:
-#                continue
-#
-#            for ept in endpoint['endpoints']:
-#                e_id = ept['id']
-#                e_url = ept['publicURL']
-#
-#                e = defaults.copy()
-#                e.update({'endpoint_url': e_url,
-#                          'compute_api_type': e_type,
-#                          'compute_api_version': e_version})
-#
-#                ret['endpoints'][e_id] = e
-#
-#        return ret
-
-#    There are no flavours into OpenNebula. If you are using rOCCI server (which defines flavours internally), then
-#    use the OpenNebulaROCCI driver
-#    def get_templates(self):
-#        flavors = {}
-#
-#        defaults = {"platform": "amd64", "network": "private"}
-#        defaults.update(self.static.get_template_defaults(prefix=True))
-#
-#	flavorslist
-#	exit
-#        for flavor in self.api.flavors.list(detailed=True):
-#            if not flavor.is_public:
-#                continue
-#
-#            aux = defaults.copy()
-#            aux.update({'template_id': 'resource#%s' % flavor.name,
-#                        'template_memory': flavor.ram,
-#                        'template_cpu': flavor.vcpus})
-#            flavors[flavor.id] = aux
-#        return flavors
-
     def get_images(self):
         images = {}
 
