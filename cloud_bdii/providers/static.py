@@ -75,16 +75,16 @@ class StaticProvider(providers.BaseProvider):
 
         # Resolve site name from BDII configuration
         if site_info['site_name'] is None:
-           if os.path.isfile('/etc/glite-info-static/site/site.cfg'):
-            file=open('/etc/glite-info-static/site/site.cfg','r')
-            while True:
-             x=file.readline()
-             if x is None:
-                 break
-             m=re.search('^SITE_NAME *= *(.*)$',x)
-             if m:
-               site_info['site_name'] = m.group(1)
-               break
+            if os.path.isfile('/etc/glite-info-static/site/site.cfg'):
+                file=open('/etc/glite-info-static/site/site.cfg','r')
+                while True:
+                    x=file.readline()
+                    if x is None:
+                        break
+                    m=re.search('^SITE_NAME *= *(.*)$',x)
+                    if m:
+                        site_info['site_name'] = m.group(1)
+                        break
 
         if site_info['site_name'] is None:
             raise Exception('Cannot find site name. Specify one in the YAML site configuration or be sure the file /etc/glite-info-static/site/site.cfg is accessible and readable')
