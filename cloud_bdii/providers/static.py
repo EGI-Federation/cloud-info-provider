@@ -87,25 +87,20 @@ class StaticProvider(providers.BaseProvider):
                         break
 
         if site_info['site_name'] is None:
-            raise Exception('Cannot find site name. Specify one in the YAML site configuration or be sure the file /etc/glite-info-static/site/site.cfg is accessible and readable')
+            raise Exception('Cannot find site name. '
+                            'Specify one in the YAML site configuration or be '
+                            'sure the file '
+                            '/etc/glite-info-static/site/site.cfg '
+                            'is accessible and readable')
 
         site_info['suffix'] = 'GLUE2DomainID=' + \
             site_info['site_name'] + ',o=glue'
 
         if self.opts.full_bdii_ldif:
-            fields = (
-                'production_level',
-                'url',
-                'ngi',
-                'country',
-                'latitude',
-                'longitude',
-                'general_contact',
-                'sysadmin_contact',
-                'security_contact',
-                'user_support_contact',
-                'bdii_host',
-                'bdii_port')
+            fields = ('production_level', 'url', 'ngi', 'country', 'latitude',
+                      'longitude', 'general_contact', 'sysadmin_contact',
+                      'security_contact', 'user_support_contact',
+                      'bdii_host', 'bdii_port')
             r = self._get_fields_and_prefix(fields, 'site_', data)
             r['suffix'] = ('GLUE2DomainID=%(site_name)s,o=glue' %
                            {'site_name': site_info['site_name']})
@@ -134,7 +129,8 @@ class StaticProvider(providers.BaseProvider):
         return templates['templates']
 
     def get_compute_endpoints(self):
-        global_fields = ('service_production_level', 'total_ram', 'total_cores', 'capabilities',
+        global_fields = ('service_production_level', 'total_ram',
+                         'total_cores', 'capabilities',
                          'hypervisor', 'hypervisor_version',
                          'middleware', 'middleware_version',
                          'middleware_developer')
@@ -147,7 +143,8 @@ class StaticProvider(providers.BaseProvider):
         return endpoints
 
     def get_storage_endpoints(self):
-        global_fields = ('service_production_level', 'total_storage', 'capabilities', 'middleware',
+        global_fields = ('service_production_level', 'total_storage',
+                         'capabilities', 'middleware',
                          'middleware_version', 'middleware_developer')
         endpoint_fields = ('production_level', 'api_type', 'api_version',
                            'api_endpoint_technology',
