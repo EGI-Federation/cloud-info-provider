@@ -65,9 +65,9 @@ class StaticProvider(providers.BaseProvider):
 
     def get_site_info(self):
         if 'site' in self.yaml:
-	   data = self.yaml['site']
-	else:
-           data = {'name': None }
+            data = self.yaml['site']
+        else:
+            data = {'name': None }
 
         fields = ('name', )
         site_info = self._get_fields_and_prefix(fields, 'site_', data)
@@ -84,8 +84,8 @@ class StaticProvider(providers.BaseProvider):
                site_info['site_name'] = m.group(1)
                break
 
-	if site_info['site_name'] is None:
-	    raise Exception('Cannot find site name. Specify one in the YAML site configuration or be sure the file /etc/glite-info-static/site/site.cfg is accessible and readable')
+        if site_info['site_name'] is None:
+            raise Exception('Cannot find site name. Specify one in the YAML site configuration or be sure the file /etc/glite-info-static/site/site.cfg is accessible and readable')
 
         site_info['suffix'] = 'GLUE2DomainID='+site_info['site_name']+',o=glue'
 

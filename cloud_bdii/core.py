@@ -197,10 +197,10 @@ def main():
     with open(opts.yaml_file, 'r') as f:
         yml = yaml.safe_load(f)
         if 'opts' in yml:
-		yml = yml['opts']
-		for a in yml:
-			if a in opts.__dict__:
-				opts.__dict__[a]=yml[a]
+            yml = yml['opts']
+        for a in yml:
+            if a in opts.__dict__:
+                opts.__dict__[a]=yml[a]
 
     for cls_ in (CloudBDII, ComputeBDII, StorageBDII):
         bdii = cls_(opts)

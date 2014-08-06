@@ -25,7 +25,7 @@ class OpenStackProvider(providers.BaseProvider):
             print >> sys.stderr, 'ERROR: Cannot import novaclient module.'
             sys.exit(1)
 
-        (os_username, os_password, os_tenant_name, 
+        (os_username, os_password, os_tenant_name,
             os_auth_url, cacert, insecure) = (
                 opts.os_username, opts.os_password,
                 opts.os_tenant_name,
@@ -56,8 +56,8 @@ class OpenStackProvider(providers.BaseProvider):
             sys.exit(1)
 
         client_cls = novaclient.client.get_client_class('2')
-	if insecure:
-          self.api = client_cls(os_username,
+        if insecure:
+            self.api = client_cls(os_username,
                               os_password,
                               os_tenant_name,
                               auth_url=os_auth_url,
@@ -157,7 +157,7 @@ class OpenStackProvider(providers.BaseProvider):
                aux.update({'image_description': image.metadata['vmcatcher_event_dc_description']})
             elif 'vmcatcher_event_dc_title' in image.metadata:
                aux.update({'image_description': image.metadata['vmcatcher_event_dc_title']})
-            
+
             if 'vmcatcher_event_ad_mpuri' in image.metadata:
                aux.update({'image_marketplace_id' : image.metadata['vmcatcher_event_ad_mpuri']})
             elif 'marketplace' in image.metadata:
@@ -166,7 +166,7 @@ class OpenStackProvider(providers.BaseProvider):
                aux.update({'image_marketplace_id': link})
             else:
                continue
-            
+
             images[image.id] = aux
         return images
 

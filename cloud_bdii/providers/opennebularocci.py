@@ -24,21 +24,21 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
     def __init__(self, opts):
         super(OpenNebulaROCCIProvider, self).__init__(opts)
 
-	self.on_auth = opts.on_auth
-	self.on_rpcxml_endpoint = opts.on_rpcxml_endpoint
+        self.on_auth = opts.on_auth
+        self.on_rpcxml_endpoint = opts.on_rpcxml_endpoint
 
-	if not self.on_auth or self.on_auth is None:
-	    f = open(os.path.expanduser('~')+'/.one/one_auth', 'w')
-	    self.on_auth=f.read()
+        if not self.on_auth or self.on_auth is None:
+            f = open(os.path.expanduser('~')+'/.one/one_auth', 'w')
+            self.on_auth=f.read()
             f.close()
 
-	if self.on_auth is None:
+        if self.on_auth is None:
             print >> sys.stderr, ('ERROR, You must provide a on_auth '
                                   'via either --on-auth or env[ON_AUTH]'
                                   'or ON_AUTH file')
             sys.exit(1)
 
-	if not self.on_rpcxml_endpoint:
+        if not self.on_rpcxml_endpoint:
             print >> sys.stderr, ('You must provide an OpenNebula RPC-XML endpoint'
                                   'via either --on-rpcxml-endpoint or '
                                   'env[ON_RPCXML_ENDPOINT] ')
@@ -128,27 +128,27 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
         defaults = self.static.get_image_defaults(prefix=True)
 
         #Perform request for data (Images in rOCCI are set to OpenNebula templates, so here we list the templates)
-	requestdata='<?xml version="1.0" encoding="UTF-8"?>\n<methodCall>\n<methodName>one.templatepool.info</methodName>\n<params>\n<param><value><string>'+self.on_auth+'</string></value></param>\n<param><value><i4>-2</i4></value></param>\n<param><value><i4>-1</i4></value></param>\n<param><value><i4>-1</i4></value></param>\n</params>\n</methodCall>'
+        requestdata='<?xml version="1.0" encoding="UTF-8"?>\n<methodCall>\n<methodName>one.templatepool.info</methodName>\n<params>\n<param><value><string>'+self.on_auth+'</string></value></param>\n<param><value><i4>-2</i4></value></param>\n<param><value><i4>-1</i4></value></param>\n<param><value><i4>-1</i4></value></param>\n</params>\n</methodCall>'
 
-	req = urllib2.Request(self.on_rpcxml_endpoint,requestdata)
-	response = urllib2.urlopen(req)
+        req = urllib2.Request(self.on_rpcxml_endpoint,requestdata)
+        response = urllib2.urlopen(req)
 
-	xml=response.read()
-	xmldoc = minidom.parseString(xml)
-	itemlist = xmldoc.getElementsByTagName('string')
+        xml=response.read()
+        xmldoc = minidom.parseString(xml)
+        itemlist = xmldoc.getElementsByTagName('string')
 
         id=0
         images={}
-	for s in itemlist :
-	    xmldocimage=minidom.parseString(s.firstChild.nodeValue)
-	    itemlistimage = xmldocimage.getElementsByTagName('VMTEMPLATE')
-	    for i in itemlistimage :
-	        aux = template.copy()
+        for s in itemlist :
+            xmldocimage=minidom.parseString(s.firstChild.nodeValue)
+            itemlistimage = xmldocimage.getElementsByTagName('VMTEMPLATE')
+            for i in itemlistimage :
+                aux = template.copy()
                 aux.update(defaults)
                 aux.update({'image_name': i.getElementsByTagName('NAME')[0].firstChild.nodeValue,
                         'image_id': 'os_tpl#uuid_%s_%s' % (i.getElementsByTagName('NAME')[0].firstChild.nodeValue, i.getElementsByTagName('ID')[0].firstChild.nodeValue),
                         'image_description': i.getElementsByTagName('DESCRIPTION')[0].firstChild.nodeValue
-	        })
+                })
                 #Get marketplace ID from the associated images (if any)
                 tmpdsk = i.getElementsByTagName('DISK')
                 tmpmpuri = ''
