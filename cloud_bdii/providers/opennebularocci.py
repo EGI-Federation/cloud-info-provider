@@ -28,8 +28,8 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
         self.on_rpcxml_endpoint = opts.on_rpcxml_endpoint
 
         if not self.on_auth or self.on_auth is None:
-            f = open(os.path.expanduser('~')+'/.one/one_auth', 'w')
-            self.on_auth=f.read()
+            f = open(os.path.expanduser('~') + '/.one/one_auth', 'w')
+            self.on_auth = f.read()
             f.close()
 
         if self.on_auth is None:
@@ -91,23 +91,23 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
         defaults.update(self.static.get_template_defaults(prefix=True))
 
         #Try to parse template dir
-        template_dir=self.static.yaml['compute']['template_dir']
-        dlist=os.listdir(template_dir)
-        flavors={}
-        flid=0
+        template_dir = self.static.yaml['compute']['template_dir']
+        dlist = os.listdir(template_dir)
+        flavors = {}
+        flid = 0
         for d in dlist:
-            jf=open(template_dir+'/'+d,'r')
-            jd=json.load(jf)
+            jf = open(template_dir + '/' + d, 'r')
+            jd = json.load(jf)
             jf.close()
 
             aux = defaults.copy()
             aux.update({'template_id': 'resource_tpl#%s' % jd['mixins'][0]['term'],
                         'template_memory': jd['mixins'][0]['attributes']['occi']['compute']['cores']['Default'],
                         'template_cpu': int(jd['mixins'][0]['attributes']['occi']['compute']['memory']['Default']*1024),
-                        'template_description': jd['mixins'][0]['title']  })
+                        'template_description': jd['mixins'][0]['title']})
 
             flavors[flid] = aux
-            flid=flid+1
+            flid = flid + 1
 
         return flavors
 
@@ -128,21 +128,21 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
         defaults = self.static.get_image_defaults(prefix=True)
 
         #Perform request for data (Images in rOCCI are set to OpenNebula templates, so here we list the templates)
-        requestdata='<?xml version="1.0" encoding="UTF-8"?>\n<methodCall>\n<methodName>one.templatepool.info</methodName>\n<params>\n<param><value><string>'+self.on_auth+'</string></value></param>\n<param><value><i4>-2</i4></value></param>\n<param><value><i4>-1</i4></value></param>\n<param><value><i4>-1</i4></value></param>\n</params>\n</methodCall>'
+        requestdata = '<?xml version="1.0" encoding="UTF-8"?>\n<methodCall>\n<methodName>one.templatepool.info</methodName>\n<params>\n<param><value><string>'+self.on_auth+'</string></value></param>\n<param><value><i4>-2</i4></value></param>\n<param><value><i4>-1</i4></value></param>\n<param><value><i4>-1</i4></value></param>\n</params>\n</methodCall>'
 
-        req = urllib2.Request(self.on_rpcxml_endpoint,requestdata)
+        req = urllib2.Request(self.on_rpcxml_endpoint, requestdata)
         response = urllib2.urlopen(req)
 
-        xml=response.read()
+        xml = response.read()
         xmldoc = minidom.parseString(xml)
         itemlist = xmldoc.getElementsByTagName('string')
 
-        id=0
-        images={}
-        for s in itemlist :
-            xmldocimage=minidom.parseString(s.firstChild.nodeValue)
+        id = 0
+        images = {}
+        for s in itemlist:
+            xmldocimage = minidom.parseString(s.firstChild.nodeValue)
             itemlistimage = xmldocimage.getElementsByTagName('VMTEMPLATE')
-            for i in itemlistimage :
+            for i in itemlistimage:
                 aux = template.copy()
                 aux.update(defaults)
                 aux.update({'image_name': i.getElementsByTagName('NAME')[0].firstChild.nodeValue,
@@ -153,13 +153,13 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
                 tmpdsk = i.getElementsByTagName('DISK')
                 tmpmpuri = ''
                 for d in tmpdsk:
-                    tmpel=d.getElementsByTagName('IMAGE_UNAME')
+                    tmpel = d.getElementsByTagName('IMAGE_UNAME')
                     if tmpel.length > 0:
-                        tmpmpuri=tmpmpuri+tmpel[0].firstChild.nodeValue
-                aux.update({ 'image_marketplace_id': tmpmpuri })
+                        tmpmpuri = tmpmpuri + tmpel[0].firstChild.nodeValue
+                aux.update({'image_marketplace_id': tmpmpuri})
 
                 images[id] = aux
-                id=id+1
+                id = id + 1
 
         return images
 

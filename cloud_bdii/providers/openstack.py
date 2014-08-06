@@ -85,7 +85,7 @@ class OpenStackProvider(providers.BaseProvider):
         catalog = self.api.client.service_catalog.catalog
         endpoints = catalog['access']['serviceCatalog']
         for endpoint in endpoints:
-            if endpoint['type'] == 'occi' :
+            if endpoint['type'] == 'occi':
                 e_type = 'OCCI'
                 e_version = defaults.get('endpoint_occi_api_version', '1.1')
             elif endpoint['type'] == 'compute':
@@ -152,16 +152,16 @@ class OpenStackProvider(providers.BaseProvider):
             # FIXME(aloga): we need to add the version, etc from
             # metadata
             aux.update({'image_name': image.name,
-                        'image_id': 'os_tpl#%s' % image.id })
+                        'image_id': 'os_tpl#%s' % image.id})
             if 'vmcatcher_event_dc_description' in image.metadata:
                 aux.update({'image_description': image.metadata['vmcatcher_event_dc_description']})
             elif 'vmcatcher_event_dc_title' in image.metadata:
                 aux.update({'image_description': image.metadata['vmcatcher_event_dc_title']})
 
             if 'vmcatcher_event_ad_mpuri' in image.metadata:
-                aux.update({'image_marketplace_id' : image.metadata['vmcatcher_event_ad_mpuri']})
+                aux.update({'image_marketplace_id': image.metadata['vmcatcher_event_ad_mpuri']})
             elif 'marketplace' in image.metadata:
-                aux.update({'image_marketplace_id' : image.metadata['marketplace']})
+                aux.update({'image_marketplace_id': image.metadata['marketplace']})
             elif not (('image_require_marketplace_id' in defaults) and (defaults['image_require_marketplace_id'])):
                 aux.update({'image_marketplace_id': link})
             else:

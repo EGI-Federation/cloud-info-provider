@@ -200,7 +200,7 @@ def main():
             yml = yml['opts']
         for a in yml:
             if a in opts.__dict__:
-                opts.__dict__[a]=yml[a]
+                opts.__dict__[a] = yml[a]
 
     for cls_ in (CloudBDII, ComputeBDII, StorageBDII):
         bdii = cls_(opts)
