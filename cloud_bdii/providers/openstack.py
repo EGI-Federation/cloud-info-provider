@@ -155,22 +155,32 @@ class OpenStackProvider(providers.BaseProvider):
                     break
             # FIXME(aloga): we need to add the version, etc from
             # metadata
-            aux.update({'image_name': image.name,
-                        'image_id': 'os_tpl#%s' % image.id})
-            if 'vmcatcher_event_dc_description' in image.metadata:
-                aux.update({'image_description': image.metadata['vmcatcher_event_dc_description']})
-            elif 'vmcatcher_event_dc_title' in image.metadata:
-                aux.update({'image_description': image.metadata['vmcatcher_event_dc_title']})
+            aux.update({
+                'image_name': image.name,
+                'image_id': 'os_tpl#%s' % image.id
+            })
 
+            image_descr = None
+            if 'vmcatcher_event_dc_description' in image.metadata:
+                image_descr = image.metadata['vmcatcher_event_dc_description']
+            elif 'vmcatcher_event_dc_title' in image.metadata:
+                image_descr = image.metadata['vmcatcher_event_dc_title']
+
+            marketplace_id = None
             if 'vmcatcher_event_ad_mpuri' in image.metadata:
-                aux.update({'image_marketplace_id': image.metadata['vmcatcher_event_ad_mpuri']})
+                marketplace_id = image.metadata['vmcatcher_event_ad_mpuri']
             elif 'marketplace' in image.metadata:
-                aux.update({'image_marketplace_id': image.metadata['marketplace']})
-            elif not (('image_require_marketplace_id' in defaults) and (defaults['image_require_marketplace_id'])):
-                aux.update({'image_marketplace_id': link})
+                marketplace_id = image.metadata['marketplace']
+            elif not (('image_require_marketplace_id' in defaults) and
+                      (defaults['image_require_marketplace_id'])):
+                marketplace_id = link
             else:
                 continue
 
+            if marketplace_id:
+                aux['image_marketplace_id'] = marketplace_id
+            if image_descr:
+                aux['image_description'] = image_descr
             images[image.id] = aux
         return images
 
