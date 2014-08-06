@@ -78,7 +78,8 @@ class StaticProvider(providers.BaseProvider):
             file=open('/etc/glite-info-static/site/site.cfg','r')
             while True:
              x=file.readline()
-             if x is None: break
+             if x is None:
+                 break
              m=re.search('^SITE_NAME *= *(.*)$',x)
              if m:
                site_info['site_name'] = m.group(1)

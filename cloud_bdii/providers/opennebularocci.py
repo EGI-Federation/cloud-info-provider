@@ -154,7 +154,8 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
                 tmpmpuri = ''
                 for d in tmpdsk:
                      tmpel=d.getElementsByTagName('IMAGE_UNAME')
-                     if tmpel.length > 0: tmpmpuri=tmpmpuri+tmpel[0].firstChild.nodeValue
+                     if tmpel.length > 0:
+                         tmpmpuri=tmpmpuri+tmpel[0].firstChild.nodeValue
                 aux.update({ 'image_marketplace_id': tmpmpuri })
 
                 images[id] = aux
