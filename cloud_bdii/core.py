@@ -156,7 +156,8 @@ def parse_opts():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
         fromfile_prefix_chars='@')
 
-    parser.add_argument('--yaml-file',
+    parser.add_argument(
+        '--yaml-file',
         default='etc/bdii.yaml',
         help=('Path to the YAML file containing configuration static values. '
               'This file will be used to populate the information '
@@ -164,17 +165,20 @@ def parse_opts():
               'a dynamic provider is used and it is not able to produce any '
               'of the required values, or when using the static provider. '))
 
-    parser.add_argument('--template-dir',
+    parser.add_argument(
+        '--template-dir',
         default='etc/templates',
         help=('Path to the directory containing the needed templates'))
 
-    parser.add_argument('--full-bdii-ldif',
+    parser.add_argument(
+        '--full-bdii-ldif',
         action='store_true',
         default=False,
         help=('Whether to generate a LDIF containing all the '
               'BDII information, or just this node\'s information'))
 
-    parser.add_argument('--middleware',
+    parser.add_argument(
+        '--middleware',
         metavar='MIDDLEWARE',
         choices=SUPPORTED_MIDDLEWARE,
         default='static',

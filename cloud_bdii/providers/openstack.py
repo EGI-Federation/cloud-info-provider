@@ -26,10 +26,12 @@ class OpenStackProvider(providers.BaseProvider):
             sys.exit(1)
 
         (os_username, os_password, os_tenant_name,
-            os_auth_url, cacert, insecure) = (
-                opts.os_username, opts.os_password,
-                opts.os_tenant_name,
-                opts.os_auth_url, opts.os_cacert, opts.insecure)
+            os_auth_url, cacert, insecure) = (opts.os_username,
+                                              opts.os_password,
+                                              opts.os_tenant_name,
+                                              opts.os_auth_url,
+                                              opts.os_cacert,
+                                              opts.insecure)
 
         if not os_username:
             print >> sys.stderr, ('ERROR, You must provide a username '
@@ -58,17 +60,17 @@ class OpenStackProvider(providers.BaseProvider):
         client_cls = novaclient.client.get_client_class('2')
         if insecure:
             self.api = client_cls(os_username,
-                              os_password,
-                              os_tenant_name,
-                              auth_url=os_auth_url,
-                              insecure=insecure)
+                                  os_password,
+                                  os_tenant_name,
+                                  auth_url=os_auth_url,
+                                  insecure=insecure)
         else:
             self.api = client_cls(os_username,
-                              os_password,
-                              os_tenant_name,
-                              auth_url=os_auth_url,
-                              insecure=insecure,
-                              cacert=cacert)
+                                  os_password,
+                                  os_tenant_name,
+                                  auth_url=os_auth_url,
+                                  insecure=insecure,
+                                  cacert=cacert)
 
         self.api.authenticate()
 
@@ -172,34 +174,40 @@ class OpenStackProvider(providers.BaseProvider):
 
     @staticmethod
     def populate_parser(parser):
-        parser.add_argument('--os-username',
+        parser.add_argument(
+            '--os-username',
             metavar='<auth-user-name>',
             default=env('OS_USERNAME', 'NOVA_USERNAME'),
             help='Defaults to env[OS_USERNAME].')
 
-        parser.add_argument('--os-password',
+        parser.add_argument(
+            '--os-password',
             metavar='<auth-password>',
             default=env('OS_PASSWORD', 'NOVA_PASSWORD'),
             help='Defaults to env[OS_PASSWORD].')
 
-        parser.add_argument('--os-tenant-name',
+        parser.add_argument(
+            '--os-tenant-name',
             metavar='<auth-tenant-name>',
             default=env('OS_TENANT_NAME', 'NOVA_PROJECT_ID'),
             help='Defaults to env[OS_TENANT_NAME].')
 
-        parser.add_argument('--os-auth-url',
+        parser.add_argument(
+            '--os-auth-url',
             metavar='<auth-url>',
             default=env('OS_AUTH_URL', 'NOVA_URL'),
             help='Defaults to env[OS_AUTH_URL].')
 
-        parser.add_argument('--os-cacert',
+        parser.add_argument(
+            '--os-cacert',
             metavar='<ca-certificate>',
             default=env('OS_CACERT', default=None),
             help='Specify a CA bundle file to use in '
                  'verifying a TLS (https) server certificate. '
                  'Defaults to env[OS_CACERT]')
 
-        parser.add_argument('--insecure',
+        parser.add_argument(
+            '--insecure',
             default=env('NOVACLIENT_INSECURE', default=False),
             action='store_true',
             help='Explicitly allow novaclient to perform "insecure" '

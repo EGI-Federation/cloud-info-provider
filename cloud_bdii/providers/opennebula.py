@@ -133,9 +133,10 @@ class OpenNebulaProvider(providers.BaseProvider):
             for i in itemlistimage:
                 aux = template.copy()
                 aux.update(defaults)
-                aux.update({'image_name': i.getElementsByTagName('NAME')[0].firstChild.nodeValue,
-                        'image_id': 'os_tpl#%s' % i.getElementsByTagName('NAME')[0].firstChild.nodeValue,
-                        'image_description': i.getElementsByTagName('DESCRIPTION')[0].firstChild.nodeValue
+                aux.update({
+                    'image_name': i.getElementsByTagName('NAME')[0].firstChild.nodeValue,
+                    'image_id': 'os_tpl#%s' % i.getElementsByTagName('NAME')[0].firstChild.nodeValue,
+                    'image_description': i.getElementsByTagName('DESCRIPTION')[0].firstChild.nodeValue
                 })
                 tmpel = i.getElementsByTagName('VMCATCHER_EVENT_AD_MPURI')
                 if tmpel.length > 0:
@@ -146,12 +147,14 @@ class OpenNebulaProvider(providers.BaseProvider):
 
     @staticmethod
     def populate_parser(parser):
-        parser.add_argument('--on-auth',
+        parser.add_argument(
+            '--on-auth',
             metavar='<auth>',
             default=env('ON_AUTH'),
             help='Specify authorization information. For core drivers, it shall be <username>:<password>. Defaults to env[ON_USERNAME] or to ONE_OUTH file.')
 
-        parser.add_argument('--on-rpcxml-endpoint',
+        parser.add_argument(
+            '--on-rpcxml-endpoint',
             metavar='<auth-url>',
             default=env('OS_RPCXML_ENDPOINT'),
             help='Defaults to env[OS_RPCXML_ENDPOINT].')
