@@ -7,6 +7,7 @@ from xml.dom import minidom
 
 from cloud_bdii import providers
 
+
 def env(*args, **kwargs):
     '''
     returns the first environment variable set
@@ -158,4 +159,3 @@ class OpenNebulaProvider(providers.BaseProvider):
             metavar='<auth-url>',
             default=env('OS_RPCXML_ENDPOINT'),
             help='Defaults to env[OS_RPCXML_ENDPOINT].')
-

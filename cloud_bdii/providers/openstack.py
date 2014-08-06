@@ -3,6 +3,7 @@ import sys
 
 from cloud_bdii import providers
 
+
 def env(*args, **kwargs):
     '''
     returns the first environment variable set
@@ -214,4 +215,3 @@ class OpenStackProvider(providers.BaseProvider):
                  'SSL (https) requests. The server\'s certificate will '
                  'not be verified against any certificate authorities. '
                  'This option should be used with caution.')
-

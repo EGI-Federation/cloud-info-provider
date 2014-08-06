@@ -8,6 +8,7 @@ from xml.dom import minidom
 
 from cloud_bdii import providers
 
+
 def env(*args, **kwargs):
     '''
     returns the first environment variable set
@@ -163,5 +164,3 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
                 id = id + 1
 
         return images
-
-
