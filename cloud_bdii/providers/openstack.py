@@ -170,8 +170,7 @@ class OpenStackProvider(providers.BaseProvider):
                 marketplace_id = image.metadata['vmcatcher_event_ad_mpuri']
             elif 'marketplace' in image.metadata:
                 marketplace_id = image.metadata['marketplace']
-            elif not (('image_require_marketplace_id' in defaults) and
-                      (defaults['image_require_marketplace_id'])):
+            elif not defaults.get('image_require_marketplace_id', False):
                 marketplace_id = link
             else:
                 continue
