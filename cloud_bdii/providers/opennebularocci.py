@@ -145,18 +145,10 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
                 tmpdsk = i.getElementsByTagName('DISK')
                 tmpdskl = ''
                 for d in tmpdsk:
-                    tmpel = d.getElementsByTagName('IMAGE')
-                    if tmpel.length > 0:
-                        tmpdskl = tmpel[0].firstChild.nodeValue
-                        break
-                if tmpdskl:
-                    for i in images_ON:
-                        i = images_ON[i]
-                        if i['image_name'] == tmpdskl:
-                            for v in i:
-                                if v not in aux or aux[v] is None:
-                                    aux[v] = i[v]
-                            break
+                     tmpel=d.getElementsByTagName('IMAGE_UNAME')
+                     if tmpel.length > 0:
+                         tmpmpuri=tmpmpuri+tmpel[0].firstChild.nodeValue
+                aux.update({ 'image_marketplace_id': tmpmpuri })
 
                 images[id] = aux
                 id = id + 1
