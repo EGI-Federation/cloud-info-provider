@@ -33,8 +33,8 @@ class OpenNebulaProvider(providers.BaseProvider):
         self.on_rpcxml_endpoint = opts.on_rpcxml_endpoint
 
         if not self.on_auth or self.on_auth is None:
-            f = open(os.path.expanduser('~') + '/.one/one_auth', 'w')
-            self.on_auth = f.read()
+            f = open(os.path.expanduser('~')+'/.one/one_auth', 'w')
+            self.on_auth=f.read()
             f.close()
 
         if self.on_auth is None:
@@ -44,8 +44,7 @@ class OpenNebulaProvider(providers.BaseProvider):
             sys.exit(1)
 
         if not self.on_rpcxml_endpoint:
-            print >> sys.stderr, ('You must provide an OpenNebula '
-                                  'RPC-XML endpoint'
+            print >> sys.stderr, ('You must provide an OpenNebula RPC-XML endpoint'
                                   'via either --on-rpcxml-endpoint or '
                                   'env[ON_RPCXML_ENDPOINT] ')
             sys.exit(1)
@@ -72,49 +71,31 @@ class OpenNebulaProvider(providers.BaseProvider):
             'image_platform': "amd64",
         }
         defaults = self.static.get_image_defaults(prefix=True)
-        imgsch = 'os_tpl'
-        if 'image_schema' in defaults:
-            imgsch = defaults['image_schema']
 
-        # Perform request for data
-        requestdata = '<?xml version="1.0" encoding="UTF-8"?><methodCall>' \
-            '<methodName>one.imagepool.info</methodName><params><param><value>' \
-            '<string>' + self.on_auth + '</string></value></param><param><value>' \
-            '<i4>-2</i4></value></param><param><value><i4>-1</i4></value>' \
-            '</param><param><value><i4>-1</i4></value></param></params>' \
-            '</methodCall>'
+        #Perform request for data
+        requestdata='<?xml version="1.0" encoding="UTF-8"?>\n<methodCall>\n<methodName>one.imagepool.info</methodName>\n<params>\n<param><value><string>'+self.on_auth+'</string></value></param>\n<param><value><i4>-2</i4></value></param>\n<param><value><i4>-1</i4></value></param>\n<param><value><i4>-1</i4></value></param>\n</params>\n</methodCall>'
 
-        req = urllib2.Request(self.on_rpcxml_endpoint, requestdata)
+        req = urllib2.Request(self.on_rpcxml_endpoint,requestdata)
         response = urllib2.urlopen(req)
 
-        xml = response.read()
+        xml=response.read()
         xmldoc = minidom.parseString(xml)
         itemlist = xmldoc.getElementsByTagName('string')
 
-        id = 0
-        images = {}
-        for s in itemlist:
-            xmldocimage = minidom.parseString(s.firstChild.nodeValue)
+        id=0
+        images={}
+        for s in itemlist :
+            xmldocimage=minidom.parseString(s.firstChild.nodeValue)
             itemlistimage = xmldocimage.getElementsByTagName('IMAGE')
-            for i in itemlistimage:
+            for i in itemlistimage :
                 aux = template.copy()
                 aux.update(defaults)
-                aux.update(
-                    {
-                        'image_name': i.getElementsByTagName('NAME')[0]
-                        .firstChild.nodeValue,
-                        'image_id': '%s#%s' %
-                        (imgsch,
-                         i.getElementsByTagName('NAME')[0]
-                         .firstChild.nodeValue)})
-                if i.getElementsByTagName('DESCRIPTION').length > 0:
-                    aux.update({'image_description': i.getElementsByTagName(
-                        'DESCRIPTION')[0].firstChild.nodeValue})
+                aux.update({'image_name': i.getElementsByTagName('NAME')[0].firstChild.nodeValue,
+                        'image_id': 'os_tpl#%s' % i.getElementsByTagName('NAME')[0].firstChild.nodeValue,
+                        'image_description': i.getElementsByTagName('DESCRIPTION')[0].firstChild.nodeValue
+                })
                 tmpel = i.getElementsByTagName('VMCATCHER_EVENT_AD_MPURI')
-                if tmpel.length > 0:
-                    aux.update(
-                        {'image_marketplace_id':
-                         tmpel[0].firstChild.nodeValue})
+                if tmpel.length > 0: aux.update({ 'image_marketplace_id': tmpel[0].firstChild.nodeValue })
                 images[id] = aux
                 id = id + 1
         return images

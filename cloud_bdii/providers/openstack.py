@@ -60,10 +60,10 @@ class OpenStackProvider(providers.BaseProvider):
         client_cls = novaclient.client.get_client_class('2')
         if insecure:
             self.api = client_cls(os_username,
-                                  os_password,
-                                  os_tenant_name,
-                                  auth_url=os_auth_url,
-                                  insecure=insecure)
+                              os_password,
+                              os_tenant_name,
+                              auth_url=os_auth_url,
+                              insecure=insecure)
         else:
             self.api = client_cls(os_username,
                                   os_password,
@@ -160,9 +160,7 @@ class OpenStackProvider(providers.BaseProvider):
                     {'image_description':
                      image.metadata['vmcatcher_event_dc_description']})
             elif 'vmcatcher_event_dc_title' in image.metadata:
-                aux.update(
-                    {'image_description':
-                     image.metadata['vmcatcher_event_dc_title']})
+               aux.update({'image_description': image.metadata['vmcatcher_event_dc_title']})
 
             if 'vmcatcher_event_ad_mpuri' in image.metadata:
                 aux.update(
@@ -175,7 +173,7 @@ class OpenStackProvider(providers.BaseProvider):
                       and (defaults['image_require_marketplace_id'])):
                 aux.update({'image_marketplace_id': link})
             else:
-                continue
+               continue
 
             images[image.id] = aux
         return images

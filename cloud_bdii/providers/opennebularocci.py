@@ -33,8 +33,8 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
         self.on_rpcxml_endpoint = opts.on_rpcxml_endpoint
 
         if not self.on_auth or self.on_auth is None:
-            f = open(os.path.expanduser('~') + '/.one/one_auth', 'w')
-            self.on_auth = f.read()
+            f = open(os.path.expanduser('~')+'/.one/one_auth', 'w')
+            self.on_auth=f.read()
             f.close()
 
         if self.on_auth is None:
@@ -44,9 +44,8 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
             sys.exit(1)
 
         if not self.on_rpcxml_endpoint:
-            print >> sys.stderr, ('You must provide an OpenNebula RPC-XML'
-                                  ' endpoint via either '
-                                  '--on-rpcxml-endpoint or '
+            print >> sys.stderr, ('You must provide an OpenNebula RPC-XML endpoint'
+                                  'via either --on-rpcxml-endpoint or '
                                   'env[ON_RPCXML_ENDPOINT] ')
             sys.exit(1)
 
@@ -119,58 +118,30 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
             'image_platform': "amd64",
         }
         defaults = self.static.get_image_defaults(prefix=True)
-        imgsch = 'os_tpl'
-        if 'image_schema' in defaults:
-            imgsch = defaults['image_schema']
 
-        # Perform request for data (Images in rOCCI are set to OpenNebula
-        # templates, so here we beed to list the templates. Anyway, we also
-        # need to get additional parameters from the images, so we will list
-        # the images for OpenNebula too)
-        images_ON = self.onprovider.get_images()
+        #Perform request for data (Images in rOCCI are set to OpenNebula templates, so here we list the templates)
+        requestdata='<?xml version="1.0" encoding="UTF-8"?>\n<methodCall>\n<methodName>one.templatepool.info</methodName>\n<params>\n<param><value><string>'+self.on_auth+'</string></value></param>\n<param><value><i4>-2</i4></value></param>\n<param><value><i4>-1</i4></value></param>\n<param><value><i4>-1</i4></value></param>\n</params>\n</methodCall>'
 
-        requestdata = '<?xml version="1.0" encoding="UTF-8"?><methodCall>' \
-            '<methodName>one.templatepool.info</methodName><params><param>' \
-            '<value><string>' + self.on_auth + '</string></value></param><param>' \
-            '<value><i4>-2</i4></value></param><param><value><i4>-1</i4>' \
-            '</value></param><param><value><i4>-1</i4></value></param>' \
-            '</params></methodCall>'
-
-        req = urllib2.Request(self.on_rpcxml_endpoint, requestdata)
+        req = urllib2.Request(self.on_rpcxml_endpoint,requestdata)
         response = urllib2.urlopen(req)
 
-        xml = response.read()
+        xml=response.read()
         xmldoc = minidom.parseString(xml)
         itemlist = xmldoc.getElementsByTagName('string')
 
-        id = 0
-        images = {}
-        for s in itemlist:
-            xmldocimage = minidom.parseString(s.firstChild.nodeValue)
+        id=0
+        images={}
+        for s in itemlist :
+            xmldocimage=minidom.parseString(s.firstChild.nodeValue)
             itemlistimage = xmldocimage.getElementsByTagName('VMTEMPLATE')
-            for i in itemlistimage:
+            for i in itemlistimage :
                 aux = template.copy()
                 aux.update(defaults)
-                aux.update(
-                    {'image_name':
-                     i.getElementsByTagName('NAME')[0].firstChild.nodeValue})
-                # Generate image uiid as rOCCI does
-                tmpimgid = i.getElementsByTagName(
-                    'NAME')[0].firstChild.nodeValue
-                tmpimgid = tmpimgid.lower()
-                tmpimgid = re.sub(r'(?![a-z0-9]).', '_', tmpimgid)
-                tmpimgid = re.sub(r'_+', '_', tmpimgid)
-                tmpimgid = tmpimgid.strip('_')
-                tmpimgid = '%s#uuid_%s_%s' % (
-                    imgsch, tmpimgid,
-                    i.getElementsByTagName('ID')[0].firstChild.nodeValue)
-                aux.update({'image_id': tmpimgid})
-                if i.getElementsByTagName('DESCRIPTION').length > 0:
-                    aux.update({'image_description': i.getElementsByTagName(
-                        'DESCRIPTION')[0].firstChild.nodeValue})
-                # Get additional image metadata from the first associated disk
-                # image. NOTE: If this is not the OS template, we have a
-                # problem
+                aux.update({'image_name': i.getElementsByTagName('NAME')[0].firstChild.nodeValue,
+                        'image_id': 'os_tpl#uuid_%s_%s' % (i.getElementsByTagName('NAME')[0].firstChild.nodeValue, i.getElementsByTagName('ID')[0].firstChild.nodeValue),
+                        'image_description': i.getElementsByTagName('DESCRIPTION')[0].firstChild.nodeValue
+                })
+                #Get marketplace ID from the associated images (if any)
                 tmpdsk = i.getElementsByTagName('DISK')
                 tmpdskl = ''
                 for d in tmpdsk:
