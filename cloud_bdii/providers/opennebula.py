@@ -117,4 +117,3 @@ class OpenNebulaProvider(providers.BaseProvider):
             metavar='<auth-url>',
             default=env('OS_RPCXML_ENDPOINT'),
             help='Defaults to env[OS_RPCXML_ENDPOINT].')
-
