@@ -122,9 +122,10 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
             for i in itemlistimage:
                 aux = template.copy()
                 aux.update(defaults)
-                aux.update({'image_name': i.getElementsByTagName('NAME')[0].firstChild.nodeValue,
-                        'image_id': 'os_tpl#uuid_%s_%s' % (i.getElementsByTagName('NAME')[0].firstChild.nodeValue, i.getElementsByTagName('ID')[0].firstChild.nodeValue),
-                        'image_description': i.getElementsByTagName('DESCRIPTION')[0].firstChild.nodeValue
+                aux.update({
+                    'image_name': i.getElementsByTagName('NAME')[0].firstChild.nodeValue,
+                    'image_id': 'os_tpl#uuid_%s_%s' % (i.getElementsByTagName('NAME')[0].firstChild.nodeValue, i.getElementsByTagName('ID')[0].firstChild.nodeValue),
+                    'image_description': i.getElementsByTagName('DESCRIPTION')[0].firstChild.nodeValue
                 })
                 #Get marketplace ID from the associated images (if any)
                 tmpdsk = i.getElementsByTagName('DISK')
