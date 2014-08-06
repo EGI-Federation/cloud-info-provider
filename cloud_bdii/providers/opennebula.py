@@ -95,7 +95,8 @@ class OpenNebulaProvider(providers.BaseProvider):
                         'image_description': i.getElementsByTagName('DESCRIPTION')[0].firstChild.nodeValue
                 })
                 tmpel = i.getElementsByTagName('VMCATCHER_EVENT_AD_MPURI')
-                if tmpel.length > 0: aux.update({ 'image_marketplace_id': tmpel[0].firstChild.nodeValue })
+                if tmpel.length > 0:
+                    aux.update({ 'image_marketplace_id': tmpel[0].firstChild.nodeValue })
                 images[id] = aux
                 id = id + 1
         return images
