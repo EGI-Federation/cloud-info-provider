@@ -213,6 +213,6 @@ class OpenStackProvider(providers.BaseProvider):
             default=env('NOVACLIENT_INSECURE', default=False),
             action='store_true',
             help='Explicitly allow novaclient to perform "insecure" '
-            'SSL (https) requests. The server\'s certificate will '
-            'not be verified against any certificate authorities. '
-            'This option should be used with caution.')
+                 'SSL (https) requests. The server\'s certificate will '
+                 'not be verified against any certificate authorities. '
+                 'This option should be used with caution.')
