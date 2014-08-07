@@ -36,6 +36,7 @@ class BaseBDII(object):
             template_file = os.path.join(self.opts.template_dir,
                                          '%s.ldif' % tpl)
             with open(template_file, 'r') as f:
+                print template_file
                 self.ldif[tpl] = f.read()
 
     def _get_info_from_providers(self, method):
@@ -60,6 +61,7 @@ class StorageBDII(BaseBDII):
         output = []
 
         endpoints = self._get_info_from_providers('get_storage_endpoints')
+        print endpoints
 
         if not endpoints:
             return ''
@@ -89,7 +91,6 @@ class ComputeBDII(BaseBDII):
 
     def render(self):
         output = []
-
         endpoints = self._get_info_from_providers('get_compute_endpoints')
 
         if not endpoints['endpoints']:
@@ -144,6 +145,7 @@ class CloudBDII(BaseBDII):
         output = []
         info = self._get_info_from_providers('get_site_info')
 
+        print self.templates
         for tpl in self.templates:
             output.append(self._format_template(tpl, info))
 
