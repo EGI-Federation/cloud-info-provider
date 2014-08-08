@@ -3,6 +3,7 @@ import re
 
 import yaml
 
+from cloud_bdii import exceptions
 from cloud_bdii import providers
 
 
@@ -71,19 +72,24 @@ class StaticProvider(providers.BaseProvider):
         # Resolve site name from BDII configuration
         if site_info['site_name'] is None:
             # FIXME(aloga): add exception here
-            with open(self.opts.glite_site_info_static, "r") as f:
-                for line in f.readlines():
-                    m = re.search('^SITE_NAME *= *(.*)$', line)
-                    if m:
-                        site_info['site_name'] = m.group(1)
-                        break
+            try:
+                with open(self.opts.glite_site_info_static, "r") as f:
+                    for line in f.readlines():
+                        m = re.search('^SITE_NAME *= *(.*)$', line)
+                        if m:
+                            site_info['site_name'] = m.group(1)
+                            break
+            except:
+                raise exceptions.StaticProviderException(
+                    "Cannot read %s for getting the site name" %
+                    self.opts.glite_site_info_static)
 
         if site_info['site_name'] is None:
-            raise Exception('Cannot find site name. '
-                            'Specify one in the YAML site configuration or be '
-                            'sure the file '
-                            '/etc/glite-info-static/site/site.cfg '
-                            'is accessible and readable')
+            raise exceptions.StaticProviderException(
+                'Cannot find site name. '
+                'Specify one in the YAML site configuration or be '
+                'sure the file %s is'
+                'accessible and readable' % self.opts.glite_site_info_static)
 
         site_info['suffix'] = 'o=glue'
 
