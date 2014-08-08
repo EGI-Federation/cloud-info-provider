@@ -1,4 +1,3 @@
-import os
 import sys
 
 from cloud_bdii import providers
