@@ -86,7 +86,7 @@ class OpenStackProviderTest(unittest.TestCase):
             expected_templates[f.id] = {
                 'template_memory': f.ram,
                 'template_cpu': f.vcpus,
-                'template_id': 'resource#%s' % f.name,
+                'template_id': 'resource_tpl#%s' % f.name,
                 'template_platform': 'amd64',
                 'template_network': 'private'
             }
@@ -113,7 +113,7 @@ class OpenStackProviderTest(unittest.TestCase):
             expected_templates[f.id] = {
                 'template_memory': f.ram,
                 'template_cpu': f.vcpus,
-                'template_id': 'resource#%s' % f.name,
+                'template_id': 'resource_tpl#%s' % f.name,
                 'template_platform': 'i686',
                 'template_network': 'private'
             }
@@ -136,7 +136,7 @@ class OpenStackProviderTest(unittest.TestCase):
     def test_get_images(self):
         expected_images = {
             'barid': {
-                'image_description': 'barimage',
+                'image_description': None,
                 'image_name': 'barimage',
                 'image_os_family': None,
                 'image_os_name': None,
@@ -144,10 +144,10 @@ class OpenStackProviderTest(unittest.TestCase):
                 'image_platform': 'amd64',
                 'image_version': None,
                 'image_marketplace_id': None,
-                'image_id': 'os#barid'
+                'image_id': 'os_tpl#barid'
             },
             'fooid': {
-                'image_description': 'fooimage',
+                'image_description': None,
                 'image_name': 'fooimage',
                 'image_os_family': None,
                 'image_os_name': None,
@@ -155,7 +155,7 @@ class OpenStackProviderTest(unittest.TestCase):
                 'image_platform': 'amd64',
                 'image_version': None,
                 'image_marketplace_id': 'http://example.org/',
-                'image_id': 'os#fooid'
+                'image_id': 'os_tpl#fooid'
             }
         }
 
