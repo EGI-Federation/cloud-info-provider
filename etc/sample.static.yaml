@@ -1,10 +1,3 @@
-opts:
-    #You can set here all the command line options of the provider. These will override command line options
-    #Middleware in use (static means no dynamic data is extracted)
-    middleware: static
-    #Disable full BDII LDIF production. This can create problems with the 
-    full_bdii_ldif: False
-
 # Site options below are only needed if you want to produce
 # a full BDII ldif. If you're running a site, BDII, skip these.
 

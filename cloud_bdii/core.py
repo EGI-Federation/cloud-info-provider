@@ -2,7 +2,6 @@
 
 import argparse
 import os.path
-import yaml
 
 import cloud_bdii.providers.openstack
 import cloud_bdii.providers.opennebula
@@ -199,15 +198,6 @@ def parse_opts():
 
 def main():
     opts = parse_opts()
-
-    # Load options from YAML file, if any they override command line options
-    with open(opts.yaml_file, 'r') as f:
-        yml = yaml.safe_load(f)
-        if 'opts' in yml:
-            yml = yml['opts']
-        for a in yml:
-            if a in opts.__dict__:
-                opts.__dict__[a] = yml[a]
 
     for cls_ in (CloudBDII, ComputeBDII, StorageBDII):
         bdii = cls_(opts)
