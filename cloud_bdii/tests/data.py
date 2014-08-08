@@ -7,7 +7,6 @@ class Data(object):
         return {
             'suffix': 'o=glue',
             'site_name': 'SITE_NAME',
-            'site_production_level': 'production',
         }
 
     @property

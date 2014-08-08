@@ -1,5 +1,8 @@
 import unittest
 import os.path
+import StringIO
+
+import mock
 
 from cloud_bdii.providers import static as static_provider
 from cloud_bdii.tests import data
@@ -13,6 +16,7 @@ class StaticProviderTest(unittest.TestCase):
         class Opts(object):
             yaml_file = None
             full_bdii_ldif = False
+            glite_site_info_static = "foo"
 
         cwd = os.path.dirname(__file__)
         yaml_file = os.path.join(cwd, "..", "..", "etc", "sample.static.yaml")
@@ -196,15 +200,28 @@ class StaticProviderTest(unittest.TestCase):
         expected = DATA.compute_endpoints
         self.assertEqual(expected, self.provider.get_compute_endpoints())
 
+    def test_no_site_name(self):
+        self.opts.glite_site_info_static = "This does not exist"
+        self.assertRaises(Exception, self.provider.get_site_info)
+
     def test_get_site_info_no_full_bdii(self):
+        data = StringIO.StringIO("SITE_NAME = SITE_NAME")
         expected = DATA.site_info
-        self.provider.opts.full_bdii_ldif = False
-        self.assertEqual(expected, self.provider.get_site_info())
+        with mock.patch('cloud_bdii.providers.static.open',
+                        create=True) as m_open:
+            m_open.return_value.__enter__ = lambda x: data
+            m_open.return_value.__exit__ = mock.Mock()
+            self.assertEqual(expected, self.provider.get_site_info())
 
     def test_get_site_info_full_bdii(self):
         expected = DATA.site_info_full
-        self.provider.opts.full_bdii_ldif = True
-        self.assertEqual(expected, self.provider.get_site_info())
+        data = StringIO.StringIO("SITE_NAME = SITE_NAME")
+        with mock.patch('cloud_bdii.providers.static.open',
+                        create=True) as m_open:
+            m_open.return_value.__enter__ = lambda x: data
+            m_open.return_value.__exit__ = mock.Mock()
+            self.provider.opts.full_bdii_ldif = True
+            self.assertEqual(expected, self.provider.get_site_info())
 
     def test_get_images(self):
         expected = DATA.compute_images
