@@ -8,6 +8,7 @@ DATA = data.DATA
 
 
 class StaticProviderTest(unittest.TestCase):
+    maxDiff=None
     def setUp(self):
         class Opts(object):
             yaml_file = None

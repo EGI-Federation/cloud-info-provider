@@ -37,13 +37,15 @@ class Data(object):
                     'storage_api_authn_method': 'X509-VOMS',
                     'storage_api_endpoint_technology': 'REST',
                     'storage_api_type': 'CDMI',
-                    'storage_api_version': '1.0.1'
+                    'storage_api_version': '1.0.1',
+                    'storage_production_level': 'production',
                 },
                 'https://storage-service02.example.org:8080': {
                     'storage_api_authn_method': 'X509-VOMS',
                     'storage_api_endpoint_technology': 'REST',
                     'storage_api_type': 'CDMI',
-                    'storage_api_version': '1.0.1'
+                    'storage_api_version': '1.0.1',
+                    'storage_production_level': 'testing',
                 }
             },
             'storage_capabilities': ['cloud.data.upload'],
@@ -51,6 +53,7 @@ class Data(object):
             'storage_middleware_developer': 'Middleware Developer',
             'storage_middleware_version': 'v1.0',
             'storage_total_storage': 0,
+            'storage_service_production_level': 'production',
         }
 
     @property
@@ -65,24 +68,28 @@ class Data(object):
             'compute_middleware_version': 'v1.0',
             'compute_total_cores': 0,
             'compute_total_ram': 0,
+            'compute_service_production_level': 'production',
             'endpoints': {
                 'https://cloud-service01.example.org:8787': {
                     'compute_api_authn_method': 'X509-VOMS',
                     'compute_api_endpoint_technology': 'REST',
                     'compute_api_type': 'OCCI',
-                    'compute_api_version': 1.1
+                    'compute_api_version': 1.1,
+                    'compute_production_level': 'unknown',
                 },
                 'https://cloud-service02.example.org:8787': {
                     'compute_api_authn_method': 'X509',
                     'compute_api_endpoint_technology': 'REST',
                     'compute_api_type': 'OCCI',
-                    'compute_api_version': 1.1
+                    'compute_api_version': 1.1,
+                    'compute_production_level': 'testing',
                 },
                 'https://cloud-service03.example.org:8787': {
                     'compute_api_authn_method': 'User/Password',
                     'compute_api_endpoint_technology': 'REST',
                     'compute_api_type': 'OCCI',
-                    'compute_api_version': 1.1
+                    'compute_api_version': 1.1,
+                    'compute_production_level': 'unknown',
                 }
             }
         }
@@ -90,7 +97,7 @@ class Data(object):
     @property
     def compute_images(self):
         return {
-            'os#foobarid': {
+            'os_tpl#foobarid': {
                 'image_name': 'Foo Image',
                 'image_version': 1.0,
                 'image_marketplace_id': (
@@ -106,25 +113,25 @@ class Data(object):
     @property
     def compute_templates(self):
         return {
-            'resource#extra_large': {
+            'resource_tpl#extra_large': {
                 'template_cpu': 8,
                 'template_memory': 16384,
                 'template_network': 'public',
                 'template_platform': 'amd64'
             },
-            'resource#large': {
+            'resource_tpl#large': {
                 'template_cpu': 4,
                 'template_memory': 8196,
                 'template_network': 'public',
                 'template_platform': 'amd64'
             },
-            'resource#medium': {
+            'resource_tpl#medium': {
                 'template_cpu': 2,
                 'template_memory': 4096,
                 'template_network': 'public',
                 'template_platform': 'amd64'
             },
-            'resource#small': {
+            'resource_tpl#small': {
                 'template_cpu': 1,
                 'template_memory': 1024,
                 'template_network': 'public',
