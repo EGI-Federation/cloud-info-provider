@@ -1,7 +1,5 @@
 import copy
-import sys
 import re
-import os
 
 import yaml
 
@@ -74,13 +72,10 @@ class StaticProvider(providers.BaseProvider):
 
         #Resolve site name from BDII configuration
         if site_info['site_name'] is None:
-            if os.path.isfile('/etc/glite-info-static/site/site.cfg'):
-                file = open('/etc/glite-info-static/site/site.cfg', 'r')
-                while True:
-                    x = file.readline()
-                    if x is None:
-                        break
-                    m = re.search('^SITE_NAME *= *(.*)$', x)
+            # FIXME(aloga): add exception here
+            with open(self.opts.glite_site_info_static, "r") as f:
+                for line in f.readlines():
+                    m = re.search('^SITE_NAME *= *(.*)$', line)
                     if m:
                         site_info['site_name'] = m.group(1)
                         break
@@ -93,7 +88,6 @@ class StaticProvider(providers.BaseProvider):
                             'is accessible and readable')
 
         site_info['suffix'] = 'GLUE2DomainID='+site_info['site_name']+',o=glue'
-
         if self.opts.full_bdii_ldif:
             fields = ('production_level', 'url', 'ngi', 'country', 'latitude',
                       'longitude', 'general_contact', 'sysadmin_contact',
@@ -187,3 +181,13 @@ class StaticProvider(providers.BaseProvider):
     def get_storage_endpoint_defaults(self, prefix=False):
         prefix = 'storage_' if prefix else ''
         return self._get_defaults('storage', 'endpoints', prefix=prefix)
+
+    @staticmethod
+    def populate_parser(parser):
+        parser.add_argument(
+            '--glite',
+            metavar='<glite-site-info-static>',
+            default="/etc/glite-info-static/site/site.cfg",
+            help='Fallback file where the site name is stored.')
+
+        return parser
