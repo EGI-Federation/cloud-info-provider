@@ -5,6 +5,7 @@ import sys
 
 import mock
 
+from cloud_bdii import exceptions
 from cloud_bdii.providers import openstack as os_provider
 from cloud_bdii.tests import data
 from cloud_bdii.tests import utils as test_utils
@@ -48,13 +49,14 @@ class OpenStackProviderOptionsTest(unittest.TestCase):
         for opt in ('os_username', 'os_password', 'os_auth_url'):
             o = Opts()
             setattr(o, opt, None)
-            self.assertRaises(SystemExit, provider, o)
+            self.assertRaises(exceptions.OpenStackProviderException,
+                              provider, o)
 
         # Check that either tenant id or name are there
         o = Opts()
         setattr(o, 'os_tenant_name', None)
         setattr(o, 'os_tenant_id', None)
-        self.assertRaises(SystemExit, provider, o)
+        self.assertRaises(exceptions.OpenStackProviderException, provider, o)
 
 
 class OpenStackProviderTest(unittest.TestCase):
