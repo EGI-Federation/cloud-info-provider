@@ -87,7 +87,8 @@ class StaticProvider(providers.BaseProvider):
                             '/etc/glite-info-static/site/site.cfg '
                             'is accessible and readable')
 
-        site_info['suffix'] = 'GLUE2DomainID='+site_info['site_name']+',o=glue'
+        site_info['suffix'] = 'o=glue'
+
         if self.opts.full_bdii_ldif:
             fields = ('production_level', 'url', 'ngi', 'country', 'latitude',
                       'longitude', 'general_contact', 'sysadmin_contact',
