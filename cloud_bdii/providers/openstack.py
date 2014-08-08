@@ -1,5 +1,4 @@
-import sys
-
+from cloud_bdii import exceptions
 from cloud_bdii import providers
 from cloud_bdii import utils
 
@@ -11,8 +10,8 @@ class OpenStackProvider(providers.BaseProvider):
         try:
             import novaclient.client
         except ImportError:
-            print >> sys.stderr, 'ERROR: Cannot import novaclient module.'
-            sys.exit(1)
+            msg = 'Cannot import novaclient module.'
+            raise exceptions.OpenStackProviderException(msg)
 
         (os_username, os_password, os_tenant_name,
             os_auth_url, cacert, insecure) = (opts.os_username,
@@ -23,28 +22,24 @@ class OpenStackProvider(providers.BaseProvider):
                                               opts.insecure)
 
         if not os_username:
-            print >> sys.stderr, ('ERROR, You must provide a username '
-                                  'via either --os-username or '
-                                  'env[OS_USERNAME]')
-            sys.exit(1)
+            msg = ('ERROR, You must provide a username '
+                   'via either --os-username or env[OS_USERNAME]')
+            raise exceptions.OpenStackProviderException(msg)
 
         if not os_password:
-            print >> sys.stderr, ('ERROR, You must provide a password '
-                                  'via either --os-password or '
-                                  'env[OS_PASSWORD]')
-            sys.exit(1)
+            msg = ('ERROR, You must provide a password '
+                   'via either --os-password or env[OS_PASSWORD]')
+            raise exceptions.OpenStackProviderException(msg)
 
         if not os_tenant_name:
-            print >> sys.stderr, ('You must provide a tenant name '
-                                  'via either --os-tenant-name or '
-                                  'env[OS_TENANT_NAME]')
-            sys.exit(1)
+            msg = ('You must provide a tenant name '
+                   'via either --os-tenant-name or env[OS_TENANT_NAME]')
+            raise exceptions.OpenStackProviderException(msg)
 
         if not os_auth_url:
-            print >> sys.stderr, ('You must provide an auth url '
-                                  'via either --os-auth-url or '
-                                  'env[OS_AUTH_URL] ')
-            sys.exit(1)
+            msg = ('You must provide an auth url '
+                   'via either --os-auth-url or env[OS_AUTH_URL] ')
+            raise exceptions.OpenStackProviderException(msg)
 
         client_cls = novaclient.client.get_client_class('2')
         if insecure:
