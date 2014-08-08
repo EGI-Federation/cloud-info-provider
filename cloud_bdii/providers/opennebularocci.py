@@ -62,10 +62,10 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
             jf.close()
 
             aux = defaults.copy()
-            aux.update({'template_id': 'resource_tpl#%s' % jd['mixins'][0]['term'],
-                        'template_memory': jd['mixins'][0]['attributes']['occi']['compute']['cores']['Default'],
-                        'template_cpu': int(jd['mixins'][0]['attributes']['occi']['compute']['memory']['Default']*1024),
-                        'template_description': jd['mixins'][0]['title']})
+            aux.update({'template_id': 'resource_tpl#%s' % jd['mixins'][0]['term'],  # noqa
+                        'template_memory': jd['mixins'][0]['attributes']['occi']['compute']['cores']['Default'],  # noqa
+                        'template_cpu': int(jd['mixins'][0]['attributes']['occi']['compute']['memory']['Default']*1024),  # noqa
+                        'template_description': jd['mixins'][0]['title']})  # noqa
 
             flavors[flid] = aux
             flid = flid + 1
@@ -118,9 +118,9 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
                 aux = template.copy()
                 aux.update(defaults)
                 aux.update({
-                    'image_name': i.getElementsByTagName('NAME')[0].firstChild.nodeValue,
-                    'image_id': 'os_tpl#uuid_%s_%s' % (i.getElementsByTagName('NAME')[0].firstChild.nodeValue, i.getElementsByTagName('ID')[0].firstChild.nodeValue),
-                    'image_description': i.getElementsByTagName('DESCRIPTION')[0].firstChild.nodeValue
+                    'image_name': i.getElementsByTagName('NAME')[0].firstChild.nodeValue,  # noqa
+                    'image_id': 'os_tpl#uuid_%s_%s' % (i.getElementsByTagName('NAME')[0].firstChild.nodeValue, i.getElementsByTagName('ID')[0].firstChild.nodeValue),  # noqa
+                    'image_description': i.getElementsByTagName('DESCRIPTION')[0].firstChild.nodeValue  # noqa
                 })
                 # Get marketplace ID from the associated images (if any)
                 tmpdsk = i.getElementsByTagName('DISK')
