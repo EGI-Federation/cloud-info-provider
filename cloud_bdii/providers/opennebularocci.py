@@ -48,7 +48,7 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
             # revert to static
             return self.static.get_templates()
 
-        defaults = {"platform": "amd64", "network": "private"}
+        defaults = {'platform': 'amd64', 'network': 'private'}
         defaults.update(self.static.get_template_defaults(prefix=True))
 
         # Try to parse template dir
@@ -84,13 +84,13 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
             'image_os_family': None,
             'image_os_name': None,
             'image_os_version': None,
-            'image_platform': "amd64",
+            'image_platform': 'amd64',
         }
         defaults = self.static.get_image_defaults(prefix=True)
 
         # Perform request for data (Images in rOCCI are set to OpenNebula
         # templates, so here we list the templates)
-        requestdata = '''<?xml version="1.0" encoding="UTF-8"?>
+        requestdata = '''<?xml version='1.0' encoding='UTF-8'?>
 <methodCall>
 <methodName>one.templatepool.info</methodName>
 <params>

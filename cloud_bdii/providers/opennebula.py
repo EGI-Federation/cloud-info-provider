@@ -50,12 +50,12 @@ class OpenNebulaProvider(providers.BaseProvider):
             'image_os_family': None,
             'image_os_name': None,
             'image_os_version': None,
-            'image_platform': "amd64",
+            'image_platform': 'amd64',
         }
         defaults = self.static.get_image_defaults(prefix=True)
 
         # Perform request for data
-        requestdata = '''<?xml version="1.0" encoding="UTF-8"?>
+        requestdata = '''<?xml version='1.0' encoding='UTF-8'?>
 <methodCall>
 <methodName>one.imagepool.info</methodName>
 <params>
