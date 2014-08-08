@@ -74,7 +74,7 @@ class StaticProvider(providers.BaseProvider):
         if site_info['site_name'] is None:
             # FIXME(aloga): add exception here
             try:
-                with open(self.opts.glite_site_info_static, "r") as f:
+                with open(self.opts.glite_site_info_static, 'r') as f:
                     for line in f.readlines():
                         m = re.search('^SITE_NAME *= *(.*)$', line)
                         if m:
@@ -82,7 +82,7 @@ class StaticProvider(providers.BaseProvider):
                             break
             except:
                 raise exceptions.StaticProviderException(
-                    "Cannot read %s for getting the site name" %
+                    'Cannot read %s for getting the site name' %
                     self.opts.glite_site_info_static)
 
         if site_info['site_name'] is None:
@@ -193,7 +193,7 @@ class StaticProvider(providers.BaseProvider):
         parser.add_argument(
             '--glite-site-info-static',
             metavar='<glite-site-info-static>',
-            default="/etc/glite-info-static/site/site.cfg",
+            default='/etc/glite-info-static/site/site.cfg',
             help='Fallback file where the site name is stored.')
 
         return parser

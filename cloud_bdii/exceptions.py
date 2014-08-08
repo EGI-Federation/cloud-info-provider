@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 
 
 class BaseException(Exception):
-    msg_fmt = "An unknown exception occurred."
+    msg_fmt = 'An unknown exception occurred.'
 
     def __init__(self, message=None, **kwargs):
         self.kwargs = kwargs
@@ -20,7 +20,7 @@ class BaseException(Exception):
                 # log the issue and the kwargs
                 logger.exception('Exception in string format operation')
                 for name, value in kwargs.iteritems():
-                    logger.error("%s: %s" % (name, value))
+                    logger.error('%s: %s' % (name, value))
                 raise exc_info[0], exc_info[1], exc_info[2]
 
         super(BaseException, self).__init__(message)

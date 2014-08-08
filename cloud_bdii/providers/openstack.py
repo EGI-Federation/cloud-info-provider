@@ -98,8 +98,8 @@ class OpenStackProvider(providers.BaseProvider):
     def get_templates(self):
         flavors = {}
 
-        defaults = {"template_platform": "amd64",
-                    "template_network": "private"}
+        defaults = {'template_platform': 'amd64',
+                    'template_network': 'private'}
         defaults.update(self.static.get_template_defaults(prefix=True))
 
         for flavor in self.api.flavors.list(detailed=True):
@@ -125,7 +125,7 @@ class OpenStackProvider(providers.BaseProvider):
             'image_os_family': None,
             'image_os_name': None,
             'image_os_version': None,
-            'image_platform': "amd64",
+            'image_platform': 'amd64',
         }
         defaults = self.static.get_image_defaults(prefix=True)
 
@@ -207,7 +207,7 @@ class OpenStackProvider(providers.BaseProvider):
             '--insecure',
             default=utils.env('NOVACLIENT_INSECURE', default=False),
             action='store_true',
-            help='Explicitly allow novaclient to perform "insecure" '
-                 'SSL (https) requests. The server\'s certificate will '
+            help="Explicitly allow novaclient to perform 'insecure' "
+                 "SSL (https) requests. The server's certificate will "
                  'not be verified against any certificate authorities. '
                  'This option should be used with caution.')
