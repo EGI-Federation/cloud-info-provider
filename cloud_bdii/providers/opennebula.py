@@ -55,8 +55,18 @@ class OpenNebulaProvider(providers.BaseProvider):
         }
         defaults = self.static.get_image_defaults(prefix=True)
 
-        #Perform request for data
-        requestdata = '<?xml version="1.0" encoding="UTF-8"?>\n<methodCall>\n<methodName>one.imagepool.info</methodName>\n<params>\n<param><value><string>'+self.on_auth+'</string></value></param>\n<param><value><i4>-2</i4></value></param>\n<param><value><i4>-1</i4></value></param>\n<param><value><i4>-1</i4></value></param>\n</params>\n</methodCall>'
+        # Perform request for data
+        requestdata = '''<?xml version="1.0" encoding="UTF-8"?>
+<methodCall>
+<methodName>one.imagepool.info</methodName>
+<params>
+<param><value><string>'%s'</string></value></param>
+<param><value><i4>-2</i4></value></param>
+<param><value><i4>-1</i4></value></param>
+<param><value><i4>-1</i4></value></param>
+</params>
+</methodCall>
+''' % self.on_auth
 
         req = urllib2.Request(self.on_rpcxml_endpoint, requestdata)
         response = urllib2.urlopen(req)

@@ -48,13 +48,13 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
         if (('template_dir' not in self.static.yaml['compute']) or
                 (not self.static.yaml['compute']['template_dir']) or
                 (self.static.yaml['compute']['template_dir'] is None)):
-            #revert to static
+            # revert to static
             return self.static.get_templates()
 
         defaults = {"platform": "amd64", "network": "private"}
         defaults.update(self.static.get_template_defaults(prefix=True))
 
-        #Try to parse template dir
+        # Try to parse template dir
         template_dir = self.static.yaml['compute']['template_dir']
         dlist = os.listdir(template_dir)
         flavors = {}
@@ -91,8 +91,19 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
         }
         defaults = self.static.get_image_defaults(prefix=True)
 
-        #Perform request for data (Images in rOCCI are set to OpenNebula templates, so here we list the templates)
-        requestdata = '<?xml version="1.0" encoding="UTF-8"?>\n<methodCall>\n<methodName>one.templatepool.info</methodName>\n<params>\n<param><value><string>'+self.on_auth+'</string></value></param>\n<param><value><i4>-2</i4></value></param>\n<param><value><i4>-1</i4></value></param>\n<param><value><i4>-1</i4></value></param>\n</params>\n</methodCall>'
+        # Perform request for data (Images in rOCCI are set to OpenNebula
+        # templates, so here we list the templates)
+        requestdata = '''<?xml version="1.0" encoding="UTF-8"?>
+<methodCall>
+<methodName>one.templatepool.info</methodName>
+<params>
+<param><value><string>'%s'</string></value></param>
+<param><value><i4>-2</i4></value></param>
+<param><value><i4>-1</i4></value></param>
+<param><value><i4>-1</i4></value></param>
+</params>
+</methodCall>
+''' % self.on_auth
 
         req = urllib2.Request(self.on_rpcxml_endpoint, requestdata)
         response = urllib2.urlopen(req)
@@ -114,7 +125,7 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
                     'image_id': 'os_tpl#uuid_%s_%s' % (i.getElementsByTagName('NAME')[0].firstChild.nodeValue, i.getElementsByTagName('ID')[0].firstChild.nodeValue),
                     'image_description': i.getElementsByTagName('DESCRIPTION')[0].firstChild.nodeValue
                 })
-                #Get marketplace ID from the associated images (if any)
+                # Get marketplace ID from the associated images (if any)
                 tmpdsk = i.getElementsByTagName('DISK')
                 tmpdskl = ''
                 for d in tmpdsk:
