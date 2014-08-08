@@ -1,5 +1,4 @@
 import argparse
-from collections import namedtuple
 import contextlib
 import unittest
 import sys
@@ -7,7 +6,10 @@ import sys
 import mock
 
 from cloud_bdii.providers import openstack as os_provider
+from cloud_bdii.tests import data
 from cloud_bdii.tests import utils as test_utils
+
+FAKES = data.OS_FAKES
 
 
 class OpenStackProviderOptionsTest(unittest.TestCase):
@@ -55,112 +57,6 @@ class OpenStackProviderOptionsTest(unittest.TestCase):
         self.assertRaises(SystemExit, provider, o)
 
 
-class Fakes(object):
-    def __init__(self):
-        Flavor = namedtuple('Flavor',
-                            ('id', 'name', 'ram', 'vcpus', 'is_public'))
-
-        flavors = (
-            {
-                'id': 1,
-                'name': 'foo',
-                'ram': 10,
-                'vcpus': 20,
-                'is_public': True,
-            },
-            {
-                'id': 2,
-                'name': 'bar',
-                'ram': 20,
-                'vcpus': 30,
-                'is_public': False,
-            },
-            {
-                'id': 3,
-                'name': 'baz',
-                'ram': 2,
-                'vcpus': 3,
-                'is_public': True,
-            },
-        )
-
-        self.flavors = [Flavor(**f) for f in flavors]
-
-        Image = namedtuple('Image',
-                           ('name', 'id', 'links', 'metadata'))
-
-        images = (
-            {
-                'name': 'fooimage',
-                'id': 'fooid',
-                'metadata': {},
-                'links': [{
-                    'type': 'application/vnd.openstack.image',
-                    'href': 'http://example.org/',
-                }]
-            },
-            {
-                'name': 'barimage',
-                'id': 'barid',
-                'metadata': {},
-                'links': []
-            },
-        )
-        self.images = [Image(**i) for i in images]
-
-        catalog = (
-            (
-                'nova', 'compute', '1b7f14c87d8c42ad962f4d3a5fd13a77',
-                'https://cloud.example.org:8774/v1.1/ce2d'
-            ),
-            (
-                'ceilometer', 'metering', '5acd54c66f3641fd948fa363fa5c9d0a',
-                'https://cloud.example.org:8777/'
-            ),
-            (
-                'nova-volume', 'volume', '5afb318eedd44a71ab8362cc917f929b',
-                'http://cloudvolume01.example.org:8776/v1/ce2d'
-            ),
-            (
-                'ec2', 'ec2', '93ccd85773d24f238c6f2fab802cfd06',
-                'https://cloud.example.org:8773/services/Admin'
-            ),
-            (
-                'occi', 'occi', '03e087c8fb3b495c9a360bcba3abf914',
-                'https://cloud.example.org:8787/'
-            ),
-            (
-                'keystone', 'identity', '510c45b865ba4f40997b91a85552f3e2',
-                'https://keystone.example.org:35357/v2.0'
-            ),
-            (
-                'glance', 'image', '0ceb45ad3ee84f9ca5c1809b07715d40',
-                'https://glance.example.org:9292/',
-            ),
-        )
-
-        self.catalog = {
-            'access': {
-                'serviceCatalog': [],
-            }
-        }
-
-        for name, type_, id_, url in catalog:
-            service = {
-                'endpoints': [{
-                    'adminURL': url,
-                    'publicURL': url,
-                    'internalURL': url,
-                    'id': id_,
-                    'region': 'RegionOne'
-                }],
-                'endpoints_links': [],
-                'name': name,
-                'type': type_
-            }
-            self.catalog['access']['serviceCatalog'].append(service)
-
-
 class OpenStackProviderTest(unittest.TestCase):
     def setUp(self):
         class FakeProvider(os_provider.OpenStackProvider):
@@ -169,10 +65,6 @@ class OpenStackProviderTest(unittest.TestCase):
                 self.static = mock.Mock()
 
         self.provider = FakeProvider(None)
-
-    def __init__(self, *args):
-        self.fakes = Fakes()
-        super(OpenStackProviderTest, self).__init__(*args)
 
     def assert_resources(self, expected, observed, template=None):
         if template:
@@ -187,7 +79,7 @@ class OpenStackProviderTest(unittest.TestCase):
 
     def test_get_templates_with_defaults(self):
         expected_templates = {}
-        for f in self.fakes.flavors:
+        for f in FAKES.flavors:
             if not f.is_public:
                 continue
 
@@ -205,7 +97,7 @@ class OpenStackProviderTest(unittest.TestCase):
         ) as (m_get_template_defaults, m_flavors_list):
             m_get_template_defaults.return_value = {}
             m_get_template_defaults.assert_called()
-            m_flavors_list.return_value = self.fakes.flavors
+            m_flavors_list.return_value = FAKES.flavors
             templates = self.provider.get_templates()
 
         self.assert_resources(expected_templates,
@@ -214,7 +106,7 @@ class OpenStackProviderTest(unittest.TestCase):
 
     def test_get_templates_with_defaults_from_static(self):
         expected_templates = {}
-        for f in self.fakes.flavors:
+        for f in FAKES.flavors:
             if not f.is_public:
                 continue
 
@@ -234,7 +126,7 @@ class OpenStackProviderTest(unittest.TestCase):
                 'template_platform': 'i686'
             }
             m_get_template_defaults.assert_called()
-            m_flavors_list.return_value = self.fakes.flavors
+            m_flavors_list.return_value = FAKES.flavors
             templates = self.provider.get_templates()
 
         self.assert_resources(expected_templates,
@@ -273,7 +165,7 @@ class OpenStackProviderTest(unittest.TestCase):
         ) as (m_get_image_defaults, m_images_list):
             m_get_image_defaults.return_value = {}
             m_get_image_defaults.assert_called()
-            m_images_list.return_value = self.fakes.images
+            m_images_list.return_value = FAKES.images
 
             images = self.provider.get_images()
 
@@ -305,8 +197,7 @@ class OpenStackProviderTest(unittest.TestCase):
                 'endpoint_openstack_api_version': '99.99',
             }
             m_get_endpoint_defaults.assert_called()
-            self.provider.api.client.service_catalog.catalog = \
-                self.fakes.catalog
+            self.provider.api.client.service_catalog.catalog = FAKES.catalog
             endpoints = self.provider.get_compute_endpoints()
 
         self.assertDictEqual(expected_endpoints, endpoints)
@@ -332,8 +223,7 @@ class OpenStackProviderTest(unittest.TestCase):
         ) as m_get_endpoint_defaults:
             m_get_endpoint_defaults.return_value = {}
             m_get_endpoint_defaults.assert_called()
-            self.provider.api.client.service_catalog.catalog = \
-                self.fakes.catalog
+            self.provider.api.client.service_catalog.catalog = FAKES.catalog
             endpoints = self.provider.get_compute_endpoints()
 
         self.assertDictEqual(expected_endpoints, endpoints)
