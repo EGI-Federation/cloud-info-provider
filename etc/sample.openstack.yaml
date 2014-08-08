@@ -1,21 +1,3 @@
-opts:
-    #You can set here all the command line options of the provider. These will override command line options
-    #Middleware to use (default is static)
-    middleware: openstack
-    #OpenStack connection options (you can set these also by command line or envrionment variables. See program help for more info)
-    #Nova access username. This user shall have read access to all the flavours and image temapltes
-    os_username: admin
-    #Password for the user account
-    os_password: devstacj
-    #Tenant name. This tenant shall have read access to all the flavours and image templates.
-    os_tenant_name: admin
-    #OpenStack API authorization endpoint (keystone)
-    os_auth_url: http://192.168.56.103:5000/v2.0/
-    #CA certificates directory (for HTTPs server certificate verification). Can be omitted if insecure is set to true
-    #os_cacert: /etc/grid-security/certificates
-    #Explicitly allow novaclient to perform "insecure" SSL (https) requests. This option should be used with caution.
-    insecure: true
-
 # Site options below are only needed if you want to produce
 # a full BDII ldif. If you're running a site, BDII, skip these.
 
