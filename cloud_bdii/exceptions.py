@@ -4,6 +4,7 @@ import sys
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+
 class BaseException(Exception):
     msg_fmt = "An unknown exception occurred."
 
@@ -26,4 +27,8 @@ class BaseException(Exception):
 
 
 class OpenStackProviderException(BaseException):
+    pass
+
+
+class StaticProviderException(BaseException):
     pass
