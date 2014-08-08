@@ -27,9 +27,7 @@ class StaticProvider(providers.BaseProvider):
 
         for field in fields:
             if field not in d:
-                # This should not be a fatail error, but a warning
-                #  print >> sys.stderr, ('ERROR: missing field %s on '
-                #  '"%s" section' % (field, prefix))
+                # This should raise a warning
                 d[field] = None
             ret['%s%s' % (prefix, field)] = d[field]
         return ret
