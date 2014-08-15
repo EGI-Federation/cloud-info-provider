@@ -92,7 +92,10 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
         defaults = self.static.get_image_defaults(prefix=True)
 
         # Perform request for data (Images in rOCCI are set to OpenNebula
-        # templates, so here we list the templates)
+        # templates, so here we need to list the templates. Anyway, we also
+        # need to get additional parameters from the images, so we will list
+        # the images for OpenNebula too)
+        images_ON = self.onprovider.get_images()
         requestdata = '''<?xml version='1.0' encoding='UTF-8'?>
 <methodCall>
 <methodName>one.templatepool.info</methodName>
@@ -108,7 +111,7 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
         req = urllib2.Request(self.on_rpcxml_endpoint, requestdata)
         response = urllib2.urlopen(req)
 
-        xml = response.read()
+        xml  = response.read()
         xmldoc = minidom.parseString(xml)
         itemlist = xmldoc.getElementsByTagName('string')
 
@@ -125,14 +128,25 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
                     'image_id': 'os_tpl#uuid_%s_%s' % (i.getElementsByTagName('NAME')[0].firstChild.nodeValue, i.getElementsByTagName('ID')[0].firstChild.nodeValue),  # noqa
                     'image_description': i.getElementsByTagName('DESCRIPTION')[0].firstChild.nodeValue  # noqa
                 })
-                # Get marketplace ID from the associated images (if any)
+                # Get additional image metadata from the first associated disk
+                # image. NOTE: If this is not the OS template,
+                # we have a problem
                 tmpdsk = i.getElementsByTagName('DISK')
                 tmpdskl = ''
                 for d in tmpdsk:
-                    tmpel = d.getElementsByTagName('IMAGE_UNAME')
+                    tmpel = d.getElementsByTagName('IMAGE')
                     if tmpel.length > 0:
-                        tmpmpuri = tmpmpuri + tmpel[0].firstChild.nodeValue
-                aux.update({'image_marketplace_id': tmpmpuri})
+                        tmpdskl = tmpel[0].firstChild.nodeValue
+                        break
+
+                if tmpdskl:
+                    for i in images_ON:
+                        i = images_ON[i]
+                        if i['image_name'] == tmpdskl:
+                            for v in i:
+                                if v not in aux or aux[v] is None:
+                                    aux[v] = i[v]
+                            break
 
                 images[id] = aux
                 id = id + 1
