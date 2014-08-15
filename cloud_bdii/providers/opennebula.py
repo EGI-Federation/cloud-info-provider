@@ -134,9 +134,10 @@ class OpenNebulaProvider(providers.BaseProvider):
 	        aux = template.copy()
                 aux.update(defaults)
                 aux.update({'image_name': i.getElementsByTagName('NAME')[0].firstChild.nodeValue,
-                        'image_id': 'os_tpl#%s' % i.getElementsByTagName('NAME')[0].firstChild.nodeValue,
-                        'image_description': i.getElementsByTagName('DESCRIPTION')[0].firstChild.nodeValue
-	        })
+                        'image_id': 'os_tpl#%s' % i.getElementsByTagName('NAME')[0].firstChild.nodeValue
+		})
+		if  i.getElementsByTagName('DESCRIPTION').length > 0:
+                        aux.update({'image_description': i.getElementsByTagName('DESCRIPTION')[0].firstChild.nodeValue})
 		tmpel = i.getElementsByTagName('VMCATCHER_EVENT_AD_MPURI')
                 if tmpel.length > 0: aux.update({ 'image_marketplace_id': tmpel[0].firstChild.nodeValue })
                 images[id] = aux
