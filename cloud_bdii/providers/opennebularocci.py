@@ -4,6 +4,7 @@ import os
 import sys
 import urllib2
 import json
+import re
 from xml.dom import minidom
 
 from cloud_bdii import providers
@@ -148,9 +149,15 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
 	    for i in itemlistimage :
 	        aux = template.copy()
                 aux.update(defaults)
-                aux.update({'image_name': i.getElementsByTagName('NAME')[0].firstChild.nodeValue,
-                        'image_id': 'os_tpl#uuid_%s_%s' % (i.getElementsByTagName('NAME')[0].firstChild.nodeValue, i.getElementsByTagName('ID')[0].firstChild.nodeValue)
-		})
+                aux.update({'image_name': i.getElementsByTagName('NAME')[0].firstChild.nodeValue})
+		#Generate image uiid as rOCCI does
+		tmpimgid=i.getElementsByTagName('NAME')[0].firstChild.nodeValue
+		tmpimgid=tmpimgid.lower()
+		tmpimgid=re.sub(r'\s[^0-9a-zA-Z]\s','_',tmpimgid)
+		tmpimgid=re.sub(r'\s_+\s','_',tmpimgid)
+		tmpimgid=tmpimgid.strip('_')
+		tmpimgid='os_tpl#uuid_%s_%s' % (tmpimgid, i.getElementsByTagName('ID')[0].firstChild.nodeValue)
+		aux.update({'image_id': tmpimgid})
 		if  i.getElementsByTagName('DESCRIPTION').length > 0:
 			aux.update({'image_description': i.getElementsByTagName('DESCRIPTION')[0].firstChild.nodeValue})
                 #Get additional image metadata from the first associated disk image. NOTE: If this is not the OS template, we have a problem
