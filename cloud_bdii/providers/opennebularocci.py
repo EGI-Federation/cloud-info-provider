@@ -1,4 +1,6 @@
-#This provider is for an OpenNebula middleware using the rOCCI server. Part of the information is retreived from OpenNebula, part of it is retreived from rOCCI directly. To retreive flavour information, rOCCI
+# This provider is for an OpenNebula middleware using the rOCCI server.
+# Part of the information is retreived from OpenNebula, part of it is
+# retreived from rOCCI directly. To retreive flavour information, rOCCI
 
 import os
 import sys
@@ -8,6 +10,7 @@ import re
 from xml.dom import minidom
 
 from cloud_bdii import providers
+
 
 def env(*args, **kwargs):
     '''
@@ -22,100 +25,82 @@ def env(*args, **kwargs):
 
 
 class OpenNebulaROCCIProvider(providers.BaseProvider):
+
     def __init__(self, opts):
         super(OpenNebulaROCCIProvider, self).__init__(opts)
 
-	self.on_auth = opts.on_auth
-	self.on_rpcxml_endpoint = opts.on_rpcxml_endpoint
+        self.on_auth = opts.on_auth
+        self.on_rpcxml_endpoint = opts.on_rpcxml_endpoint
 
-	if not self.on_auth or self.on_auth is None:
-	    f = open(os.path.expanduser('~')+'/.one/one_auth', 'w')
-	    self.on_auth=f.read()
+        if not self.on_auth or self.on_auth is None:
+            f = open(os.path.expanduser('~') + '/.one/one_auth', 'w')
+            self.on_auth = f.read()
             f.close()
 
-	if self.on_auth is None:
+        if self.on_auth is None:
             print >> sys.stderr, ('ERROR, You must provide a on_auth '
                                   'via either --on-auth or env[ON_AUTH]'
                                   'or ON_AUTH file')
             sys.exit(1)
 
-	if not self.on_rpcxml_endpoint:
-            print >> sys.stderr, ('You must provide an OpenNebula RPC-XML endpoint'
-                                  'via either --on-rpcxml-endpoint or '
+        if not self.on_rpcxml_endpoint:
+            print >> sys.stderr, ('You must provide an OpenNebula RPC-XML'
+                                  ' endpoint via either '
+                                  '--on-rpcxml-endpoint or '
                                   'env[ON_RPCXML_ENDPOINT] ')
             sys.exit(1)
 
         self.static = providers.static.StaticProvider(opts)
-	self.onprovider = providers.opennebula.OpenNebulaProvider(opts)
+        self.onprovider = providers.opennebula.OpenNebulaProvider(opts)
 
-#    def get_compute_endpoints(self):
-#        ret = {
-#            'endpoints': {},
-#            'compute_middleware_developer': 'OpenStack',
-#            'compute_middleware': 'OpenStack Nova',
-#        }
-#
-#        defaults = self.static.get_compute_endpoint_defaults(prefix=True)
-#        catalog = self.api.client.service_catalog.catalog
-#        endpoints = catalog['access']['serviceCatalog']
-#        for endpoint in endpoints:
-#            if endpoint['type'] == 'occi' :
-#                e_type = 'OCCI'
-#                e_version = defaults.get('endpoint_occi_api_version', '1.1')
-#            elif endpoint['type'] == 'compute':
-#                e_type = 'OpenStack'
-#                e_version = defaults.get('endpoint_openstack_api_version', '2')
-#            else:
-#                continue
-#
-#            for ept in endpoint['endpoints']:
-#                e_id = ept['id']
-#                e_url = ept['publicURL']
-#
-#                e = defaults.copy()
-#                e.update({'endpoint_url': e_url,
-#                          'compute_api_type': e_type,
-#                          'compute_api_version': e_version})
-#
-#                ret['endpoints'][e_id] = e
-#
-#        return ret
-
-#    There flavours are retreived directly from rOCCI-server configuration files. If the script has no access to them,
-#    you can set the directory to None and configuration files specified in the YAML configuration.
+# These flavours are retreived directly from rOCCI-server
+# configuration files. If the script has no access to them,
+# you can set the template_dir parameter in the YAML to None.
     def get_templates(self):
 
-        if ('template_dir' not in self.static.yaml['compute']) or (not self.static.yaml['compute']['template_dir']) or (self.static.yaml['compute']['template_dir'] is None):
-            #revert to static
+        if (
+            'template_dir' not in self.static.yaml['compute']) or (
+            not self.static.yaml['compute']['template_dir']) or (
+                self.static.yaml['compute']['template_dir'] is None):
+            # revert to static
             return self.static.get_templates()
 
         defaults = {"platform": "amd64", "network": "private"}
         defaults.update(self.static.get_template_defaults(prefix=True))
-	ressch=None
-	if 'template_schema' in defaults:
-		ressch=defaults['template_schema']
+        ressch = None
+        if 'template_schema' in defaults:
+            ressch = defaults['template_schema']
 
-        #Try to parse template dir
-        template_dir=self.static.yaml['compute']['template_dir']
-        dlist=os.listdir(template_dir)
-        flavors={}
-        flid=0
+        # Try to parse template dir
+        template_dir = self.static.yaml['compute']['template_dir']
+        dlist = os.listdir(template_dir)
+        flavors = {}
+        flid = 0
         for d in dlist:
-            jf=open(template_dir+'/'+d,'r')
-            jd=json.load(jf)
+            jf = open(template_dir + '/' + d, 'r')
+            jd = json.load(jf)
             jf.close()
 
             aux = defaults.copy()
-	    if ressch is None:
-	        aux.update({'template_id': '%s#%s' % (jd['mixins'][0]['scheme'].rstrip('#'),jd['mixins'][0]['term'])})
-	    else:
-	        aux.update({'template_id': '%s#%s' % (ressch,jd['mixins'][0]['term'])})
-            aux.update({'template_memory': jd['mixins'][0]['attributes']['occi']['compute']['cores']['Default'],
-                        'template_cpu': int(jd['mixins'][0]['attributes']['occi']['compute']['memory']['Default']*1024),
-                        'template_description': jd['mixins'][0]['title']  })
+            if ressch is None:
+                aux.update({'template_id': '%s#%s' % (
+                    jd['mixins'][0]['scheme'].rstrip('#'),
+                    jd['mixins'][0]['term'])})
+            else:
+                aux.update({'template_id': '%s#%s' %
+                            (ressch, jd['mixins'][0]['term'])})
+            aux.update(
+                {
+                    'template_memory': jd['mixins'][0]['attributes']
+                                         ['occi']['compute']['cores']
+                                         ['Default'],
+                    'template_cpu': int(
+                        jd['mixins'][0]['attributes']['occi']['compute']
+                          ['memory']['Default'] * 1024),
+                    'template_description': jd['mixins'][0]['title']})
 
             flavors[flid] = aux
-            flid=flid+1
+            flid = flid + 1
 
         return flavors
 
@@ -134,61 +119,75 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
             'image_platform': "amd64",
         }
         defaults = self.static.get_image_defaults(prefix=True)
-	imgsch='os_tpl'
-	if 'image_schema' in defaults:
-		imgsch=defaults['image_schema']
+        imgsch = 'os_tpl'
+        if 'image_schema' in defaults:
+            imgsch = defaults['image_schema']
 
-        #Perform request for data (Images in rOCCI are set to OpenNebula templates, so here we beed to list the templates. Anyway, we also need to get additional parameters from the images, so we will list the images for OpenNebula too)
-	images_ON=self.onprovider.get_images()
+        # Perform request for data (Images in rOCCI are set to OpenNebula
+        # templates, so here we beed to list the templates. Anyway, we also
+        # need to get additional parameters from the images, so we will list
+        # the images for OpenNebula too)
+        images_ON = self.onprovider.get_images()
 
-	requestdata='<?xml version="1.0" encoding="UTF-8"?>\n<methodCall>\n<methodName>one.templatepool.info</methodName>\n<params>\n<param><value><string>'+self.on_auth+'</string></value></param>\n<param><value><i4>-2</i4></value></param>\n<param><value><i4>-1</i4></value></param>\n<param><value><i4>-1</i4></value></param>\n</params>\n</methodCall>'
+        requestdata = '<?xml version="1.0" encoding="UTF-8"?><methodCall>' \
+            '<methodName>one.templatepool.info</methodName><params><param>' \
+            '<value><string>' + self.on_auth + '</string></value></param><param>' \
+            '<value><i4>-2</i4></value></param><param><value><i4>-1</i4>' \
+            '</value></param><param><value><i4>-1</i4></value></param>' \
+            '</params></methodCall>'
 
-	req = urllib2.Request(self.on_rpcxml_endpoint,requestdata)
-	response = urllib2.urlopen(req)
+        req = urllib2.Request(self.on_rpcxml_endpoint, requestdata)
+        response = urllib2.urlopen(req)
 
-	xml=response.read()
-	xmldoc = minidom.parseString(xml)
-	itemlist = xmldoc.getElementsByTagName('string')
+        xml = response.read()
+        xmldoc = minidom.parseString(xml)
+        itemlist = xmldoc.getElementsByTagName('string')
 
-        id=0
-        images={}
-	for s in itemlist :
-	    xmldocimage=minidom.parseString(s.firstChild.nodeValue)
-	    itemlistimage = xmldocimage.getElementsByTagName('VMTEMPLATE')
-	    for i in itemlistimage :
-	        aux = template.copy()
+        id = 0
+        images = {}
+        for s in itemlist:
+            xmldocimage = minidom.parseString(s.firstChild.nodeValue)
+            itemlistimage = xmldocimage.getElementsByTagName('VMTEMPLATE')
+            for i in itemlistimage:
+                aux = template.copy()
                 aux.update(defaults)
-                aux.update({'image_name': i.getElementsByTagName('NAME')[0].firstChild.nodeValue})
-		#Generate image uiid as rOCCI does
-		tmpimgid=i.getElementsByTagName('NAME')[0].firstChild.nodeValue
-		tmpimgid=tmpimgid.lower()
-		tmpimgid=re.sub(r'\s[^0-9a-zA-Z]\s','_',tmpimgid)
-		tmpimgid=re.sub(r'\s_+\s','_',tmpimgid)
-		tmpimgid=tmpimgid.strip('_')
-		tmpimgid='%s#uuid_%s_%s' % (imgsch,tmpimgid, i.getElementsByTagName('ID')[0].firstChild.nodeValue)
-		aux.update({'image_id': tmpimgid})
-		if  i.getElementsByTagName('DESCRIPTION').length > 0:
-			aux.update({'image_description': i.getElementsByTagName('DESCRIPTION')[0].firstChild.nodeValue})
-                #Get additional image metadata from the first associated disk image. NOTE: If this is not the OS template, we have a problem
+                aux.update(
+                    {'image_name':
+                     i.getElementsByTagName('NAME')[0].firstChild.nodeValue})
+                # Generate image uiid as rOCCI does
+                tmpimgid = i.getElementsByTagName(
+                    'NAME')[0].firstChild.nodeValue
+                tmpimgid = tmpimgid.lower()
+                tmpimgid = re.sub(r'\s[^0-9a-zA-Z]\s', '_', tmpimgid)
+                tmpimgid = re.sub(r'\s_+\s', '_', tmpimgid)
+                tmpimgid = tmpimgid.strip('_')
+                tmpimgid = '%s#uuid_%s_%s' % (
+                    imgsch, tmpimgid,
+                    i.getElementsByTagName('ID')[0].firstChild.nodeValue)
+                aux.update({'image_id': tmpimgid})
+                if i.getElementsByTagName('DESCRIPTION').length > 0:
+                    aux.update({'image_description': i.getElementsByTagName(
+                        'DESCRIPTION')[0].firstChild.nodeValue})
+                # Get additional image metadata from the first associated disk
+                # image. NOTE: If this is not the OS template, we have a
+                # problem
                 tmpdsk = i.getElementsByTagName('DISK')
                 tmpdskl = ''
                 for d in tmpdsk:
-                	tmpel=d.getElementsByTagName('IMAGE')
-                	if tmpel.length > 0:
-				tmpdskl=tmpel[0].firstChild.nodeValue
-				break
-		if tmpdskl:
-			for i in images_ON:
-				i=images_ON[i]
-				if i['image_name']==tmpdskl:
-					for v in i:
-						if v not in aux or aux[v]==None:
-							aux[v]=i[v]
-					break
+                    tmpel = d.getElementsByTagName('IMAGE')
+                    if tmpel.length > 0:
+                        tmpdskl = tmpel[0].firstChild.nodeValue
+                        break
+                if tmpdskl:
+                    for i in images_ON:
+                        i = images_ON[i]
+                        if i['image_name'] == tmpdskl:
+                            for v in i:
+                                if v not in aux or aux[v] is None:
+                                    aux[v] = i[v]
+                            break
 
                 images[id] = aux
-                id=id+1
+                id = id + 1
 
         return images
-
-

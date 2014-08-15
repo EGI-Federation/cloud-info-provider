@@ -12,7 +12,8 @@ import cloud_bdii.providers.static
 SUPPORTED_MIDDLEWARE = {
     'openstack': cloud_bdii.providers.openstack.OpenStackProvider,
     'opennebula': cloud_bdii.providers.opennebula.OpenNebulaProvider,
-    'opennebularocci': cloud_bdii.providers.opennebularocci.OpenNebulaROCCIProvider,
+    'opennebularocci': cloud_bdii.providers.opennebularocci
+    .OpenNebulaROCCIProvider,
     'static': cloud_bdii.providers.static.StaticProvider,
 }
 
@@ -156,31 +157,39 @@ def parse_opts():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
         fromfile_prefix_chars='@')
 
-    parser.add_argument('--yaml-file',
+    parser.add_argument(
+        '--yaml-file',
         default='etc/bdii.yaml',
-        help=('Path to the YAML file containing configuration static values. '
-              'This file will be used to populate the information '
-              'to the static provider. These values will be used whenever '
-              'a dynamic provider is used and it is not able to produce any '
-              'of the required values, or when using the static provider. '))
+        help=(
+            'Path to the YAML file containing configuration static values. '
+            'This file will be used to populate the information '
+            'to the static provider. These values will be used whenever '
+            'a dynamic provider is used and it is not able to produce any '
+            'of the required values, or when using the static provider. '))
 
-    parser.add_argument('--template-dir',
+    parser.add_argument(
+        '--template-dir',
         default='etc/templates',
         help=('Path to the directory containing the needed templates'))
 
-    parser.add_argument('--full-bdii-ldif',
+    parser.add_argument(
+        '--full-bdii-ldif',
         action='store_true',
         default=False,
-        help=('Whether to generate a LDIF containing all the '
-              'BDII information, or just this node\'s information'))
+        help=(
+            'Whether to generate a LDIF containing all the '
+            'BDII information, or just this node\'s information'))
 
-    parser.add_argument('--middleware',
+    parser.add_argument(
+        '--middleware',
         metavar='MIDDLEWARE',
         choices=SUPPORTED_MIDDLEWARE,
         default='static',
-        help=('Middleware used. Only the following middlewares are '
-              'supported: %s. If you do not specify anything, static '
-              'values will be used.' % SUPPORTED_MIDDLEWARE.keys()))
+        help=(
+            'Middleware used. Only the following middlewares are '
+            'supported: %s. If you do not specify anything, static '
+            'values will be used.' %
+            SUPPORTED_MIDDLEWARE.keys()))
 
     for provider_name, provider in SUPPORTED_MIDDLEWARE.items():
         group = parser.add_argument_group('%s provider options' %
@@ -193,14 +202,14 @@ def parse_opts():
 def main():
     opts = parse_opts()
 
-    #Load options from YAML file, if any they override command line options
+    # Load options from YAML file, if any they override command line options
     with open(opts.yaml_file, 'r') as f:
         yml = yaml.safe_load(f)
         if 'opts' in yml:
-		yml = yml['opts']
-		for a in yml:
-			if a in opts.__dict__:
-				opts.__dict__[a]=yml[a]
+            yml = yml['opts']
+            for a in yml:
+                if a in opts.__dict__:
+                    opts.__dict__[a] = yml[a]
 
     for cls_ in (CloudBDII, ComputeBDII, StorageBDII):
         bdii = cls_(opts)

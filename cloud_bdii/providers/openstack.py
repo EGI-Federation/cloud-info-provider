@@ -3,6 +3,7 @@ import sys
 
 from cloud_bdii import providers
 
+
 def env(*args, **kwargs):
     '''
     returns the first environment variable set
@@ -16,6 +17,7 @@ def env(*args, **kwargs):
 
 
 class OpenStackProvider(providers.BaseProvider):
+
     def __init__(self, opts):
         super(OpenStackProvider, self).__init__(opts)
 
@@ -25,7 +27,7 @@ class OpenStackProvider(providers.BaseProvider):
             print >> sys.stderr, 'ERROR: Cannot import novaclient module.'
             sys.exit(1)
 
-        (os_username, os_password, os_tenant_name, 
+        (os_username, os_password, os_tenant_name,
             os_auth_url, cacert, insecure) = (
                 opts.os_username, opts.os_password,
                 opts.os_tenant_name,
@@ -56,19 +58,19 @@ class OpenStackProvider(providers.BaseProvider):
             sys.exit(1)
 
         client_cls = novaclient.client.get_client_class('2')
-	if insecure:
-          self.api = client_cls(os_username,
-                              os_password,
-                              os_tenant_name,
-                              auth_url=os_auth_url,
-                              insecure=insecure)
+        if insecure:
+            self.api = client_cls(os_username,
+                                  os_password,
+                                  os_tenant_name,
+                                  auth_url=os_auth_url,
+                                  insecure=insecure)
         else:
-          self.api = client_cls(os_username,
-                              os_password,
-                              os_tenant_name,
-                              auth_url=os_auth_url,
-                              insecure=insecure,
-                              cacert=cacert)
+            self.api = client_cls(os_username,
+                                  os_password,
+                                  os_tenant_name,
+                                  auth_url=os_auth_url,
+                                  insecure=insecure,
+                                  cacert=cacert)
 
         self.api.authenticate()
 
@@ -85,7 +87,7 @@ class OpenStackProvider(providers.BaseProvider):
         catalog = self.api.client.service_catalog.catalog
         endpoints = catalog['access']['serviceCatalog']
         for endpoint in endpoints:
-            if endpoint['type'] == 'occi' :
+            if endpoint['type'] == 'occi':
                 e_type = 'OCCI'
                 e_version = defaults.get('endpoint_occi_api_version', '1.1')
             elif endpoint['type'] == 'compute':
@@ -152,58 +154,68 @@ class OpenStackProvider(providers.BaseProvider):
             # FIXME(aloga): we need to add the version, etc from
             # metadata
             aux.update({'image_name': image.name,
-                        'image_id': 'os_tpl#%s' % image.id })
+                        'image_id': 'os_tpl#%s' % image.id})
             if 'vmcatcher_event_dc_description' in image.metadata:
-               aux.update({'image_description': image.metadata['vmcatcher_event_dc_description']})
+                aux.update(
+                    {'image_description':
+                     image.metadata['vmcatcher_event_dc_description']})
             elif 'vmcatcher_event_dc_title' in image.metadata:
-               aux.update({'image_description': image.metadata['vmcatcher_event_dc_title']})
-            
+                aux.update(
+                    {'image_description':
+                     image.metadata['vmcatcher_event_dc_title']})
+
             if 'vmcatcher_event_ad_mpuri' in image.metadata:
-               aux.update({'image_marketplace_id' : image.metadata['vmcatcher_event_ad_mpuri']})
+                aux.update(
+                    {'image_marketplace_id':
+                     image.metadata['vmcatcher_event_ad_mpuri']})
             elif 'marketplace' in image.metadata:
-               aux.update({'image_marketplace_id' : image.metadata['marketplace']})
-            elif not (('image_require_marketplace_id' in defaults) and (defaults['image_require_marketplace_id'])):
-               aux.update({'image_marketplace_id': link})
+                aux.update(
+                    {'image_marketplace_id': image.metadata['marketplace']})
+            elif not (('image_require_marketplace_id' in defaults)
+                      and (defaults['image_require_marketplace_id'])):
+                aux.update({'image_marketplace_id': link})
             else:
-               continue
-            
+                continue
+
             images[image.id] = aux
         return images
 
     @staticmethod
     def populate_parser(parser):
         parser.add_argument('--os-username',
-            metavar='<auth-user-name>',
-            default=env('OS_USERNAME', 'NOVA_USERNAME'),
-            help='Defaults to env[OS_USERNAME].')
+                            metavar='<auth-user-name>',
+                            default=env('OS_USERNAME', 'NOVA_USERNAME'),
+                            help='Defaults to env[OS_USERNAME].')
 
         parser.add_argument('--os-password',
-            metavar='<auth-password>',
-            default=env('OS_PASSWORD', 'NOVA_PASSWORD'),
-            help='Defaults to env[OS_PASSWORD].')
+                            metavar='<auth-password>',
+                            default=env('OS_PASSWORD', 'NOVA_PASSWORD'),
+                            help='Defaults to env[OS_PASSWORD].')
 
         parser.add_argument('--os-tenant-name',
-            metavar='<auth-tenant-name>',
-            default=env('OS_TENANT_NAME', 'NOVA_PROJECT_ID'),
-            help='Defaults to env[OS_TENANT_NAME].')
+                            metavar='<auth-tenant-name>',
+                            default=env('OS_TENANT_NAME', 'NOVA_PROJECT_ID'),
+                            help='Defaults to env[OS_TENANT_NAME].')
 
         parser.add_argument('--os-auth-url',
-            metavar='<auth-url>',
-            default=env('OS_AUTH_URL', 'NOVA_URL'),
-            help='Defaults to env[OS_AUTH_URL].')
+                            metavar='<auth-url>',
+                            default=env('OS_AUTH_URL', 'NOVA_URL'),
+                            help='Defaults to env[OS_AUTH_URL].')
 
         parser.add_argument('--os-cacert',
-            metavar='<ca-certificate>',
-            default=env('OS_CACERT', default=None),
-            help='Specify a CA bundle file to use in '
-                 'verifying a TLS (https) server certificate. '
-                 'Defaults to env[OS_CACERT]')
+                            metavar='<ca-certificate>',
+                            default=env('OS_CACERT', default=None),
+                            help='Specify a CA bundle file to use in '
+                            'verifying a TLS (https) server certificate. '
+                            'Defaults to env[OS_CACERT]')
 
-        parser.add_argument('--insecure',
-            default=env('NOVACLIENT_INSECURE', default=False),
+        parser.add_argument(
+            '--insecure',
+            default=env(
+                'NOVACLIENT_INSECURE',
+                default=False),
             action='store_true',
             help='Explicitly allow novaclient to perform "insecure" '
-                 'SSL (https) requests. The server\'s certificate will '
-                 'not be verified against any certificate authorities. '
-                 'This option should be used with caution.')
-
+            'SSL (https) requests. The server\'s certificate will '
+            'not be verified against any certificate authorities. '
+            'This option should be used with caution.')
