@@ -126,8 +126,12 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
                 aux.update({
                     'image_name': i.getElementsByTagName('NAME')[0].firstChild.nodeValue,  # noqa
                     'image_id': 'os_tpl#uuid_%s_%s' % (i.getElementsByTagName('NAME')[0].firstChild.nodeValue, i.getElementsByTagName('ID')[0].firstChild.nodeValue),  # noqa
-                    'image_description': i.getElementsByTagName('DESCRIPTION')[0].firstChild.nodeValue  # noqa
                 })
+                if i.getElementsByTagName('DESCRIPTION').length > 0:
+                    aux.update({
+                        'image_description': i.getElementsByTagName(
+                            'DESCRIPTION')[0].firstChild.nodeValue
+                    })
                 # Get additional image metadata from the first associated disk
                 # image. NOTE: If this is not the OS template,
                 # we have a problem
