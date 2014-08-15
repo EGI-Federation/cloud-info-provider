@@ -124,17 +124,22 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
                 aux = template.copy()
                 aux.update(defaults)
                 aux.update({
-                    'image_name': i.getElementsByTagName('NAME')[0].firstChild.nodeValue,  # noqa
-                    'image_id': 'os_tpl#uuid_%s_%s' % (i.getElementsByTagName('NAME')[0].firstChild.nodeValue, i.getElementsByTagName('ID')[0].firstChild.nodeValue),  # noqa
+                    'image_name': i.getElementsByTagName(
+                        'NAME')[0].firstChild.nodeValue
                 })
+                # Generate image uiid as rOCCI does
+                tmpimgid = i.getElementsByTagName('NAME')[0].firstChild.nodeValue  # noqa
+                tmpimgid = tmpimgid.lower()
+                tmpimgid = re.sub(r'\s[^0-9a-zA-Z]\s', '_', tmpimgid)
+                tmpimgid = re.sub(r'\s_+\s', '_', tmpimgid)
+                tmpimgid = tmpimgid.strip('_')
+                tmpimgid = 'os_tpl#uuid_%s_%s' % (tmpimgid, i.getElementsByTagName('ID')[0].firstChild.nodeValue)  # noqa
+                aux.update({'image_id': tmpimgid})
                 if i.getElementsByTagName('DESCRIPTION').length > 0:
-                    aux.update({
-                        'image_description': i.getElementsByTagName(
-                            'DESCRIPTION')[0].firstChild.nodeValue
-                    })
+                    aux.update({'image_description': i.getElementsByTagName('DESCRIPTION')[0].firstChild.nodeValue})  # noqa
                 # Get additional image metadata from the first associated disk
-                # image. NOTE: If this is not the OS template,
-                # we have a problem
+                # image.
+                # NOTE: If this is not the OS template, we have a problem
                 tmpdsk = i.getElementsByTagName('DISK')
                 tmpdskl = ''
                 for d in tmpdsk:
