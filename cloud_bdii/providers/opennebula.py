@@ -54,6 +54,9 @@ class OpenNebulaProvider(providers.BaseProvider):
             'image_platform': 'amd64',
         }
         defaults = self.static.get_image_defaults(prefix=True)
+        imgsch = 'os_tpl'
+        if 'image_schema' in defaults:
+            imgsch = defaults['image_schema']
 
         # Perform request for data
         requestdata = '''<?xml version='1.0' encoding='UTF-8'?>
@@ -86,8 +89,8 @@ class OpenNebulaProvider(providers.BaseProvider):
                 aux.update({
                     'image_name': i.getElementsByTagName(
                         'NAME')[0].firstChild.nodeValue,
-                    'image_id': 'os_tpl#%s' % i.getElementsByTagName(
-                        'NAME')[0].firstChild.nodeValue,
+                    'image_id': '%s#%s' % (imgsch, i.getElementsByTagName(
+                        'NAME')[0].firstChild.nodeValue)
                 })
                 if i.getElementsByTagName('DESCRIPTION').length > 0:
                     aux.update({

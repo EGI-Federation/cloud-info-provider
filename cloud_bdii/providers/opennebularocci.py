@@ -53,6 +53,9 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
 
         defaults = {'platform': 'amd64', 'network': 'private'}
         defaults.update(self.static.get_template_defaults(prefix=True))
+        ressch = None
+        if 'template_schema' in defaults:
+            ressch = defaults['template_schema']
 
         # Try to parse template dir
         template_dir = self.static.yaml['compute']['template_dir']
@@ -65,10 +68,13 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
             jf.close()
 
             aux = defaults.copy()
-            aux.update({'template_id': 'resource_tpl#%s' % jd['mixins'][0]['term'],  # noqa
-                        'template_cpu': jd['mixins'][0]['attributes']['occi']['compute']['cores']['Default'],  # noqa
-                        'template_memory': int(jd['mixins'][0]['attributes']['occi']['compute']['memory']['Default']*1024),  # noqa
-                        'template_description': jd['mixins'][0]['title']})  # noqa
+            if ressch is None:
+                aux.update({'template_id': '%s#%s' % (jd['mixins'][0]['scheme'].rstrip('#'), jd['mixins'][0]['term'])})  # noqa
+            else:
+                aux.update({'template_id': '%s#%s' % (ressch, jd['mixins'][0]['term'])})  # noqa
+                aux.update({'template_cpu': jd['mixins'][0]['attributes']['occi']['compute']['cores']['Default'],  # noqa
+                            'template_memory': int(jd['mixins'][0]['attributes']['occi']['compute']['memory']['Default'] * 1024),  # noqa
+                            'template_description': jd['mixins'][0]['title']})
 
             flavors[flid] = aux
             flid = flid + 1
@@ -90,6 +96,9 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
             'image_platform': 'amd64',
         }
         defaults = self.static.get_image_defaults(prefix=True)
+        imgsch = 'os_tpl'
+        if 'image_schema' in defaults:
+            imgsch = defaults['image_schema']
 
         # Perform request for data (Images in rOCCI are set to OpenNebula
         # templates, so here we need to list the templates. Anyway, we also
@@ -133,7 +142,7 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
                 tmpimgid = re.sub(r'\s[^0-9a-zA-Z]\s', '_', tmpimgid)
                 tmpimgid = re.sub(r'\s_+\s', '_', tmpimgid)
                 tmpimgid = tmpimgid.strip('_')
-                tmpimgid = 'os_tpl#uuid_%s_%s' % (tmpimgid, i.getElementsByTagName('ID')[0].firstChild.nodeValue)  # noqa
+                tmpimgid = '%s#uuid_%s_%s' % (imgsch, tmpimgid, i.getElementsByTagName('ID')[0].firstChild.nodeValue)  # noqa
                 aux.update({'image_id': tmpimgid})
                 if i.getElementsByTagName('DESCRIPTION').length > 0:
                     aux.update({'image_description': i.getElementsByTagName('DESCRIPTION')[0].firstChild.nodeValue})  # noqa
