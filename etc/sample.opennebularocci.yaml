@@ -74,6 +74,8 @@ compute:
         defaults:
             platform: amd64
             network: public
+            #Uncomment the line above if you want to override the schema present in the template_dir
+            #schema: resource_tpl
 
     #Uncomment the lines below if you want to specify statically the templates
     #    resource_tpl#small:
@@ -96,6 +98,7 @@ compute:
     images:
         defaults:
             platform: amd64
+            schema: http://my.rocci.server.hostname.com/occi/infrastructure/os_tpl
 
 #No STorage-as-a-Service is provided by OpenNebula. Information coming from other STaaS may be included here or put into a separate YAML
 #storage:

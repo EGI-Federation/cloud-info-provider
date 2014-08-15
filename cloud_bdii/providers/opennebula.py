@@ -114,6 +114,9 @@ class OpenNebulaProvider(providers.BaseProvider):
             'image_platform': "amd64",
         }
         defaults = self.static.get_image_defaults(prefix=True)
+	imgsch='os_tpl'
+	if 'image_schema' in defaults:
+	    imgsch=defaults['image_schema']
 
         #Perform request for data
 	requestdata='<?xml version="1.0" encoding="UTF-8"?>\n<methodCall>\n<methodName>one.imagepool.info</methodName>\n<params>\n<param><value><string>'+self.on_auth+'</string></value></param>\n<param><value><i4>-2</i4></value></param>\n<param><value><i4>-1</i4></value></param>\n<param><value><i4>-1</i4></value></param>\n</params>\n</methodCall>'
@@ -134,7 +137,7 @@ class OpenNebulaProvider(providers.BaseProvider):
 	        aux = template.copy()
                 aux.update(defaults)
                 aux.update({'image_name': i.getElementsByTagName('NAME')[0].firstChild.nodeValue,
-                        'image_id': 'os_tpl#%s' % i.getElementsByTagName('NAME')[0].firstChild.nodeValue
+                        'image_id': '%s#%s' % (imgsch, i.getElementsByTagName('NAME')[0].firstChild.nodeValue)
 		})
 		if  i.getElementsByTagName('DESCRIPTION').length > 0:
                         aux.update({'image_description': i.getElementsByTagName('DESCRIPTION')[0].firstChild.nodeValue})

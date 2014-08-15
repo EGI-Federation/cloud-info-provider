@@ -92,6 +92,7 @@ compute:
     images:
         defaults:
             platform: amd64
+            schema: os_tpl
 
 #No STorage-as-a-Service is provided by OpenNebula. Information coming from other STaaS may be included here or put into a separate YAML
 #storage:
