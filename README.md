@@ -6,13 +6,13 @@
 
 #### For RHEL/CentOS/ScientificLinux ####
 
-    yum localinstall http://repository.egi.eu/community/software/cloud.info.provider/0.x/releases/sl/6/x86_64/RPMS/cloud-info-provider-service-0.2-1.el6.noarch.rpm
+    yum localinstall http://repository.egi.eu/community/software/cloud.info.provider/0.x/releases/sl/6/x86_64/RPMS/cloud-info-provider-service-0.3-1.el6.noarch.rpm
     
 #### For Debian/Ubuntu ####
 
     apt-get -y install python-yaml
-    wget http://repository.egi.eu/community/software/cloud.info.provider/0.x/releases/debian/dists/wheezy/main/binary-i386/cloud-info-provider-service_0.2-2_all.deb
-    dpkg -i cloud-info-provider-service_0.2-2_all.deb
+    wget http://repository.egi.eu/community/software/cloud.info.provider/0.x/releases/debian/dists/wheezy/main/binary-i386/cloud-info-provider-service_0.3-2_all.deb
+    dpkg -i cloud-info-provider-service_0.3-2_all.deb
 
 ### From Source ###
 
@@ -95,13 +95,13 @@ Setup the user build environment
     su - rpmbuild
     mkdir -p BUILD BUILDROOT LOGS RPMS SOURCES SPECS SRPMS tmp
 
-Download sources from GitHub
+Download sources from GitHub (for the latest release)
 
-    wget https://github.com/EGI-FCTF/BDIIscripts/archive/master.zip -O SOURCES/BDIIscripts-master.zip
+    wget https://github.com/EGI-FCTF/BDIIscripts/archive/0.3.zip -O SOURCES/BDIIscripts-0.3.zip
     
-Download spec file from GitHub
+Extract the spec file
 
-    wget https://raw.githubusercontent.com/EGI-FCTF/BDIIscripts/master/rpm/cloud-info-provider-service.spec -O SPECS/cloud-info-provider-service.spec
+    unzip -p SOURCES/BDIIscripts-0.3.zip BDIIscripts-0.3/rpm/cloud-info-provider-service.spec > SPECS/cloud-info-provider-service.spec   
     
 Compile rpm
 
@@ -111,4 +111,4 @@ Compile rpm
 
 For Debian/Ubuntu, you can just convert the RHEL rpm to debian using Alien
 
-    alien cloud-info-provider-service-0.2-1.el6.noarch.rpm
+    alien cloud-info-provider-service-0.3-1.el6.noarch.rpm
