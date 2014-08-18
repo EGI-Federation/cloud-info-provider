@@ -158,8 +158,8 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
                 tmpimgid = i.getElementsByTagName(
                     'NAME')[0].firstChild.nodeValue
                 tmpimgid = tmpimgid.lower()
-                tmpimgid = re.sub(r'\s[^0-9a-zA-Z]\s', '_', tmpimgid)
-                tmpimgid = re.sub(r'\s_+\s', '_', tmpimgid)
+                tmpimgid = re.sub(r'(?![a-z0-9]).', '_', tmpimgid)
+                tmpimgid = re.sub(r'_+', '_', tmpimgid)
                 tmpimgid = tmpimgid.strip('_')
                 tmpimgid = '%s#uuid_%s_%s' % (
                     imgsch, tmpimgid,
