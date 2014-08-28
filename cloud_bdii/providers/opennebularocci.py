@@ -53,9 +53,7 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
 
         defaults = {'platform': 'amd64', 'network': 'private'}
         defaults.update(self.static.get_template_defaults(prefix=True))
-        ressch = None
-        if 'template_schema' in defaults:
-            ressch = defaults['template_schema']
+        ressch = defaults.get('template_schema', None)
 
         # Try to parse template dir
         template_dir = self.static.yaml['compute']['template_dir']
