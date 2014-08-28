@@ -54,9 +54,7 @@ class OpenNebulaProvider(providers.BaseProvider):
             'image_platform': 'amd64',
         }
         defaults = self.static.get_image_defaults(prefix=True)
-        imgsch = 'os_tpl'
-        if 'image_schema' in defaults:
-            imgsch = defaults['image_schema']
+        imgsch = defaults.get('image_schema', 'os_tpl')
 
         # Perform request for data
         requestdata = '''<?xml version='1.0' encoding='UTF-8'?>
