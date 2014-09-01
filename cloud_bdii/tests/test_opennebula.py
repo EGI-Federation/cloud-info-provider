@@ -3,6 +3,7 @@ import unittest
 
 import mock
 
+from cloud_bdii import exceptions
 from cloud_bdii.providers import opennebula
 from cloud_bdii.tests import data
 
@@ -32,8 +33,7 @@ class OpenNebulaBaseProviderOptionsTest(unittest.TestCase):
         for opt in ('on_auth', 'on_rpcxml_endpoint'):
             o = Opts()
             setattr(o, opt, None)
-            # FIXME(aloga): this should be a proper exception
-            self.assertRaises(SystemExit,
+            self.assertRaises(exceptions.OpenNebulaProviderException,
                               self.provider, o)
 
 

@@ -32,3 +32,7 @@ class OpenStackProviderException(BaseException):
 
 class StaticProviderException(BaseException):
     pass
+
+
+class OpenNebulaProviderException(BaseException):
+    pass

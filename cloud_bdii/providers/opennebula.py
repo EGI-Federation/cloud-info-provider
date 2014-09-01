@@ -6,12 +6,12 @@
 import argparse
 import os
 import re
-import sys
 import urllib2
 import xml.etree.ElementTree as xee
 
 import json
 
+from cloud_bdii import exceptions
 from cloud_bdii import providers
 from cloud_bdii import utils
 
@@ -24,16 +24,17 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
         self.on_rpcxml_endpoint = opts.on_rpcxml_endpoint
 
         if self.on_auth is None:
-            print >> sys.stderr, ('ERROR, You must provide a on_auth '
-                                  'via either --on-auth or env[ON_AUTH]'
-                                  'or ON_AUTH file')
-            sys.exit(1)
+            msg = ('ERROR, You must provide a on_auth '
+                   'via either --on-auth or env[ON_AUTH]'
+                   'or ON_AUTH file')
+            raise exceptions.OpenNebulaProviderException(msg)
 
         if not self.on_rpcxml_endpoint:
-            print >> sys.stderr, ('You must provide an OpenNebula RPC-XML '
-                                  'endpoint via either --on-rpcxml-endpoint or'
-                                  ' env[ON_RPCXML_ENDPOINT] ')
-            sys.exit(1)
+            msg = ('You must provide an OpenNebula RPC-XML '
+                   'endpoint via either --on-rpcxml-endpoint or'
+                   ' env[ON_RPCXML_ENDPOINT] ')
+            raise exceptions.OpenNebulaProviderException(msg)
+
         self.static = providers.static.StaticProvider(opts)
 
     def _get_from_xml(self, what):
