@@ -5,14 +5,12 @@ import os.path
 
 import cloud_bdii.providers.openstack
 import cloud_bdii.providers.opennebula
-import cloud_bdii.providers.opennebularocci
 import cloud_bdii.providers.static
 
 SUPPORTED_MIDDLEWARE = {
     'openstack': cloud_bdii.providers.openstack.OpenStackProvider,
     'opennebula': cloud_bdii.providers.opennebula.OpenNebulaProvider,
-    'opennebularocci':
-        cloud_bdii.providers.opennebularocci.OpenNebulaROCCIProvider,
+    'opennebularocci': cloud_bdii.providers.opennebula.OpenNebulaROCCIProvider,
     'static': cloud_bdii.providers.static.StaticProvider,
 }
 

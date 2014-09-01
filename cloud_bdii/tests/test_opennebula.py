@@ -4,7 +4,6 @@ import unittest
 import mock
 
 from cloud_bdii.providers import opennebula
-from cloud_bdii.providers import opennebularocci
 from cloud_bdii.tests import data
 
 FAKES = data.ONE_FAKES
@@ -45,24 +44,13 @@ class OpenNebulaProviderOptionsTest(OpenNebulaBaseProviderOptionsTest):
 
 class OpenNebulaROCCIProviderOptionsTest(OpenNebulaBaseProviderOptionsTest):
     def setUp(self):
-        self.provider = opennebularocci.OpenNebulaROCCIProvider
+        self.provider = opennebula.OpenNebulaROCCIProvider
 
 
 class OpenNebulaBaseProviderTest(unittest.TestCase):
-    def setUp(self):
-        class FakeProvider(opennebula.OpenNebulaBaseProvider):
-            def __init__(self, opts):
-                self.on_auth = None
-                self.on_rpcxml_endpoint = "http://foo.bar.com/"
-                self.api = mock.Mock()
-                self.static = mock.Mock()
-                self.static.get_image_defaults.return_value = {}
-
-        self.provider = FakeProvider(None)
-
-    @mock.patch('urllib2.urlopen')
-    def test_get_images(self, mock_open):
-        expected_images = {
+    def __init__(self, *args, **kwargs):
+        super(OpenNebulaBaseProviderTest, self).__init__(*args, **kwargs)
+        self.expected_images = {
             '80': {
                 'image_marketplace_id': (
                     'https://appdb.egi.eu/store/vm/image/'
@@ -88,9 +76,42 @@ class OpenNebulaBaseProviderTest(unittest.TestCase):
                 'image_os_name': None,
                 'image_os_family': None},
         }
+        self.provider_class = opennebula.OpenNebulaBaseProvider
 
+    def setUp(self):
+        class FakeProvider(self.provider_class):
+            def __init__(self, opts):
+                self.on_auth = None
+                self.on_rpcxml_endpoint = "http://foo.bar.com/"
+                self.api = mock.Mock()
+                self.static = mock.Mock()
+                self.static.get_image_defaults.return_value = {}
+
+        self.provider = FakeProvider(None)
+
+    @mock.patch('urllib2.urlopen')
+    def test_get_images(self, mock_open):
         resp = mock.Mock()
         resp.read.side_effect = [FAKES.templatepool, FAKES.imagepool]
         mock_open.return_value = resp
-        self.assertDictEqual(expected_images,
+        self.assertDictEqual(self.expected_images,
                              self.provider.get_images())
+
+
+class OpenNebulaProviderTest(OpenNebulaBaseProviderTest):
+    def __init__(self, *args, **kwargs):
+        super(OpenNebulaProviderTest, self).__init__(*args, **kwargs)
+        self.provider_class = opennebula.OpenNebulaProvider
+        self.maxDiff = None
+
+
+class OpenNebulaROCCIProviderTest(OpenNebulaBaseProviderTest):
+    def __init__(self, *args, **kwargs):
+        super(OpenNebulaROCCIProviderTest, self).__init__(*args, **kwargs)
+        self.provider_class = opennebula.OpenNebulaROCCIProvider
+        self.expected_images['80']['image_id'] = (
+            'os_tpl#uuid_cernvm_3_3_0_40gb_fedcloud_dukan_80'
+        )
+        self.expected_images['86']['image_id'] = (
+            'os_tpl#uuid_ubuntu_server_14_04_lts_ht_xxl_fedcloud_dukan_86'
+        )
