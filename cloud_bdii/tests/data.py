@@ -1,4 +1,5 @@
 from collections import namedtuple
+import os.path
 
 
 class Data(object):
@@ -248,3 +249,15 @@ class OpenStackFakes(object):
             self.catalog['access']['serviceCatalog'].append(service)
 
 OS_FAKES = OpenStackFakes()
+
+
+class OpenNebulaFakes(object):
+    def __init__(self):
+        cwd = os.path.dirname(__file__)
+        with open(os.path.join(cwd, 'one.imagepool.info.xml'), 'r') as f:
+            self.imagepool = f.read()
+
+        with open(os.path.join(cwd, 'one.templatepool.info.xml'), 'r') as f:
+            self.templatepool = f.read()
+
+ONE_FAKES = OpenNebulaFakes()
