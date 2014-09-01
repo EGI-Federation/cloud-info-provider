@@ -4,7 +4,7 @@
 # OpenNebula, please refer to the OpenNebulaROCCI provider
 
 import os
-import re
+import string
 import urllib2
 import xml.etree.ElementTree as xee
 
@@ -186,11 +186,10 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
     @staticmethod
     def _gen_id(image_name, image_id, schema):
         """Generate image uiid as rOCCI does."""
-        # FIXME(aloga): clean this
-        tmpimgid = image_name
-        tmpimgid = tmpimgid.lower()
-        tmpimgid = re.sub(r'(?![a-z0-9]).', '_', tmpimgid)
-        tmpimgid = re.sub(r'_+', '_', tmpimgid)
-        tmpimgid = tmpimgid.strip('_')
-        tmpimgid = '%s#uuid_%s_%s' % (schema, tmpimgid, image_id)  # noqa
-        return tmpimgid
+        replace_punctuation = string.maketrans(
+            string.punctuation + string.whitespace,
+            '_' * len(string.punctuation + string.whitespace)
+        )
+        image_name = string.translate(image_name.lower(),
+                                      replace_punctuation).strip('_')
+        return '%s#uuid_%s_%s' % (schema, image_name, image_id)
