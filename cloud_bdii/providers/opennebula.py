@@ -3,7 +3,6 @@
 # that this is a generic OpenNebula plugin. If you use rOCCI server on top of
 # OpenNebula, please refer to the OpenNebulaROCCI provider
 
-import argparse
 import os
 import re
 import urllib2
@@ -121,24 +120,19 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
 
     @staticmethod
     def populate_parser(parser):
-        # FIXME(aloga): we should use groups so that this
-        # try ... except is not needed
-        try:
-            parser.add_argument(
-                '--on-auth',
-                metavar='<auth>',
-                default=utils.env('ON_AUTH'),
-                help=('Specify authorization information. For core drivers, '
-                      'it shall be <username>:<password>. '
-                      'Defaults to env[ON_USERNAME].'))
+        parser.add_argument(
+            '--on-auth',
+            metavar='<auth>',
+            default=utils.env('ON_AUTH'),
+            help=('Specify authorization information. For core drivers, '
+                    'it shall be <username>:<password>. '
+                    'Defaults to env[ON_USERNAME].'))
 
-            parser.add_argument(
-                '--on-rpcxml-endpoint',
-                metavar='<auth-url>',
-                default=utils.env('OS_RPCXML_ENDPOINT'),
-                help='Defaults to env[OS_RPCXML_ENDPOINT].')
-        except argparse.ArgumentError:
-            pass
+        parser.add_argument(
+            '--on-rpcxml-endpoint',
+            metavar='<auth-url>',
+            default=utils.env('OS_RPCXML_ENDPOINT'),
+            help='Defaults to env[OS_RPCXML_ENDPOINT].')
 
 
 class OpenNebulaProvider(OpenNebulaBaseProvider):
