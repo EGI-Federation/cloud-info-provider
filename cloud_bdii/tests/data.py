@@ -1,3 +1,4 @@
+import cgi
 from collections import namedtuple
 import os.path
 
@@ -252,12 +253,33 @@ OS_FAKES = OpenStackFakes()
 
 
 class OpenNebulaFakes(object):
+    response_doc = (
+        '<?xml version="1.0" encoding="UTF-8"?>'
+        '<methodResponse>'
+        '<params>'
+        '<param><value><array><data>'
+        '<value><boolean>1</boolean></value>'
+        '<value><string>'
+        '%(response)s'
+        '</string></value>'
+        '<value><i4>0</i4></value>'
+        '</data></array></value></param>'
+        '</params>'
+        '</methodResponse>'
+    )
+
     def __init__(self):
         cwd = os.path.dirname(__file__)
         with open(os.path.join(cwd, 'one.imagepool.info.xml'), 'r') as f:
             self.imagepool = f.read()
 
+        self.imagepool = cgi.escape(self.imagepool)
+        self.imagepool = self.response_doc % {'response': self.imagepool}
+
         with open(os.path.join(cwd, 'one.templatepool.info.xml'), 'r') as f:
             self.templatepool = f.read()
+
+        self.templatepool = cgi.escape(self.templatepool)
+        self.templatepool = self.response_doc % {'response': self.templatepool}
 
 ONE_FAKES = OpenNebulaFakes()
