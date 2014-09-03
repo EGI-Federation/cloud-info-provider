@@ -174,9 +174,10 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
                 aux.update({'template_id': '%s#%s' % (jd['mixins'][0]['scheme'].rstrip('#'), jd['mixins'][0]['term'])})  # noqa
             else:
                 aux.update({'template_id': '%s#%s' % (ressch, jd['mixins'][0]['term'])})  # noqa
-                aux.update({'template_memory': jd['mixins'][0]['attributes']['occi']['compute']['cores']['Default'],  # noqa
-                            'template_cpu': int(jd['mixins'][0]['attributes']['occi']['compute']['memory']['Default'] * 1024),  # noqa
-                            'template_description': jd['mixins'][0]['title']})
+
+            aux.update({'template_memory': jd['mixins'][0]['attributes']['occi']['compute']['cores']['Default'],  # noqa
+                        'template_cpu': int(jd['mixins'][0]['attributes']['occi']['compute']['memory']['Default'] * 1024),  # noqa
+                        'template_description': jd['mixins'][0]['title']})
 
             flavors[flid] = aux
             flid = flid + 1
