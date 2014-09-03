@@ -42,7 +42,7 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
                        "<methodCall>"
                        "<methodName>%s</methodName>"
                        "<params>"
-                       "<param><value><string>'%s'</string></value></param>"
+                       "<param><value><string>%s</string></value></param>"
                        "<param><value><i4>-2</i4></value></param>"
                        "<param><value><i4>-1</i4></value></param>"
                        "<param><value><i4>-1</i4></value></param>"
@@ -56,7 +56,8 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
         # NOTE(aloga): this is wrong in so may ways, but it is more or less the
         # same that was before. Leave it like that, thenrefactor it
         doc = xee.fromstring(xml)
-        doc = xee.fromstring(doc.find("params/param/value/string").text)
+        doc = doc.find("params/param/value/array/data/value/string").text
+        doc = xee.fromstring(doc)
         templates = doc.getchildren()
 
         def _recurse_dict(element):
@@ -108,12 +109,16 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
             aux_tpl.update(defaults)
             aux_tpl["image_name"] = tpl["name"]
             aux_tpl["image_id"] = self._gen_id(tpl["name"], tpl_id, img_schema)
-            aux_tpl["image_description"] = tpl.get("description", None)
             disk = tpl.get("template", {}).get("disk", {}).get("image", None)
             if disk is not None:
                 aux = one_images.get(disk, {}).get("template", {})
                 aux_tpl["image_marketplace_id"] = aux.get(
                     "vmcatcher_event_ad_mpuri", None
+                )
+                aux_tpl["image_description"] = aux.get("description", None)
+                aux_tpl["image_version"] = aux.get(
+                    "vmcatcher_event_hv_version",
+                    None
                 )
             templates[tpl_id] = aux_tpl
         return templates
