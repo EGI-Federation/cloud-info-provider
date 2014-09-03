@@ -120,7 +120,7 @@ class OpenStackProvider(providers.BaseProvider):
                 continue
 
             aux = defaults.copy()
-            aux.update({'template_id': 'resource_tpl#%s' % flavor.name,
+            aux.update({'template_id': 'resource_tpl#%s' % flavor.name.lower(),
                         'template_memory': flavor.ram,
                         'template_cpu': flavor.vcpus})
             flavors[flavor.id] = aux
