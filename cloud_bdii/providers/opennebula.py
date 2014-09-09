@@ -34,6 +34,7 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
                    ' env[ON_RPCXML_ENDPOINT] ')
             raise exceptions.OpenNebulaProviderException(msg)
 
+        self.opts = opts
         self.static = providers.static.StaticProvider(opts)
 
     def _get_from_xml(self, what):
@@ -156,7 +157,7 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
         """
         Get flavors from rOCCI-server configuration.
         """
-        if opts.template_dir is None:
+        if self.opts.template_dir is None:
             # revert to static
             return self.static.get_templates()
 
