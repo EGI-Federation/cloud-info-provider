@@ -57,9 +57,6 @@ compute:
             api_type: Sunstone GUI
             api_version: 4.6
 
-    #Comment the line below if you do not have access to the rOCCI templates directory. In this case, you need to specify the templates staticaly from the lines below
-    template_dir: /opt/occi-server/embedded/app/rOCCI-server/etc/backends/opennebula/fixtures/resource_tpl/
-
     templates:
         defaults:
             platform: amd64
