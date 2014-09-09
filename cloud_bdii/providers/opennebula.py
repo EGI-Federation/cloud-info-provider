@@ -157,7 +157,7 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
         """
         Get flavors from rOCCI-server configuration.
         """
-        if opts.template_dir is None:
+        if self.opts.template_dir is None:
             # revert to static
             return self.static.get_templates()
 
