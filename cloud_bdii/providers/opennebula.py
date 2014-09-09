@@ -153,10 +153,10 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
     # files. If the script has no access to them, you can set the directory to
     # None and configuration files specified in the YAML configuration.
     def get_templates(self):
-
-        if (('template_dir' not in self.static.yaml['compute']) or
-                (not self.static.yaml['compute']['template_dir']) or
-                (self.static.yaml['compute']['template_dir'] is None)):
+        """
+        Get flavors from rOCCI-server configuration.
+        """
+        if opts.template_dir is None:
             # revert to static
             return self.static.get_templates()
 
@@ -188,6 +188,17 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
             flid = flid + 1
 
         return flavors
+
+    @staticmethod
+    def populate_parser(parser):
+        super(OpenNebulaROCCIProvider,
+              OpenNebulaROCCIProvider).populate_parser(parser)
+
+        parser.add_argument(
+            '--template-dir',
+            metavar='<template-dir>',
+            default=None,
+            help='Location of the rOCCI-server template definitions.')
 
     @staticmethod
     def _gen_id(image_name, image_id, schema):
