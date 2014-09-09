@@ -157,7 +157,7 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
         """
         Get flavors from rOCCI-server configuration.
         """
-        if self.opts.template_dir is None:
+        if opts.template_dir is None:
             # revert to static
             return self.static.get_templates()
 
@@ -181,8 +181,8 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
             else:
                 aux.update({'template_id': '%s#%s' % (ressch, jd['mixins'][0]['term'])})  # noqa
 
-            aux.update({'template_memory': jd['mixins'][0]['attributes']['occi']['compute']['cores']['Default'],  # noqa
-                        'template_cpu': int(jd['mixins'][0]['attributes']['occi']['compute']['memory']['Default'] * 1024),  # noqa
+            aux.update({'template_cpu': jd['mixins'][0]['attributes']['occi']['compute']['cores']['Default'],  # noqa
+                        'template_memory': int(jd['mixins'][0]['attributes']['occi']['compute']['memory']['Default'] * 1024),  # noqa
                         'template_description': jd['mixins'][0]['title']})
 
             flavors[flid] = aux
