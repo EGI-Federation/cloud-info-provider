@@ -1,5 +1,6 @@
 import argparse
 import unittest
+import uuid
 
 import mock
 
@@ -92,8 +93,13 @@ class OpenNebulaBaseProviderTest(unittest.TestCase):
                 self.api = mock.Mock()
                 self.static = mock.Mock()
                 self.static.get_image_defaults.return_value = {}
+                self.opts = opts
 
-        self.provider = FakeProvider(None)
+        class Opts(object):
+            on_auth = 'foo'
+            on_rpcxml_endpoint = 'bar'
+
+        self.provider = FakeProvider(Opts())
 
     @mock.patch('urllib2.urlopen')
     def test_get_images(self, mock_open):
@@ -121,3 +127,30 @@ class OpenNebulaROCCIProviderTest(OpenNebulaBaseProviderTest):
         self.expected_images['86']['image_id'] = (
             'os_tpl#uuid_ubuntu_server_14_04_lts_ht_xxl_fedcloud_dukan_86'
         )
+
+    def setUp(self):
+        class FakeProvider(self.provider_class):
+            def __init__(self, opts):
+                self.on_auth = None
+                self.on_rpcxml_endpoint = "http://foo.bar.com/"
+                self.api = mock.Mock()
+                self.static = mock.Mock()
+                self.static.get_image_defaults.return_value = {}
+                self.static.get_template_defaults.return_value = {}
+                self.opts = opts
+
+        class Opts(object):
+            on_auth = 'foo'
+            on_rpcxml_endpoint = 'bar'
+            template_dir = 'foobar'
+
+        self.provider = FakeProvider(Opts())
+
+    def test_templates_missing(self):
+        fake_dir = uuid.uuid4().hex
+        self.provider.opts.template_dir = fake_dir
+        self.assertRaises(OSError, self.provider.get_templates)
+
+    def test_load_templates(self):
+        # TBD
+        pass

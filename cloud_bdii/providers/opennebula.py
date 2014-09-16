@@ -166,28 +166,32 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
         ressch = defaults.get('template_schema', None)
 
         # Try to parse template dir
-        template_dir = self.static.yaml['compute']['template_dir']
-        dlist = os.listdir(template_dir)
+        try:
+            template_files = os.listdir(self.opts.template_dir)
+        except OSError as e:
+            raise e
+
         flavors = {}
-        flid = 0
-        for d in dlist:
-            jf = open(template_dir + '/' + d, 'r')
-            jd = json.load(jf)
-            jf.close()
+        for template_file in template_files:
+            template_file = os.path.join(self.opts.template_dir, template_file)
+            with open(template_file, 'r') as fd:
+                jd = json.load(fd)
 
             aux = defaults.copy()
             if ressch is None:
-                aux.update({'template_id': '%s#%s' % (jd['mixins'][0]['scheme'].rstrip('#'), jd['mixins'][0]['term'])})  # noqa
+                flid = '%s#%s' % (jd['mixins'][0]['scheme'].rstrip('#'), jd['mixins'][0]['term'])  # noqa
             else:
+                flid = '%s#%s' % (ressch, jd['mixins'][0]['term'])
                 aux.update({'template_id': '%s#%s' % (ressch, jd['mixins'][0]['term'])})  # noqa
 
-            aux.update({'template_cpu': jd['mixins'][0]['attributes']['occi']['compute']['cores']['Default'],  # noqa
-                        'template_memory': int(jd['mixins'][0]['attributes']['occi']['compute']['memory']['Default'] * 1024),  # noqa
-                        'template_description': jd['mixins'][0]['title']})
+            aux.update({
+                'template_id': flid,
+                'template_cpu': jd['mixins'][0]['attributes']['occi']['compute']['cores']['Default'],  # noqa
+                'template_memory': int(jd['mixins'][0]['attributes']['occi']['compute']['memory']['Default'] * 1024),  # noqa
+                'template_description': jd['mixins'][0]['title']
+            })
 
             flavors[flid] = aux
-            flid = flid + 1
-
         return flavors
 
     @staticmethod
