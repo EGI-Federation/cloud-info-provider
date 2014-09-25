@@ -1,7 +1,7 @@
-dn: GLUE2StorageServiceCapacityID=cloud.storage.%(site_name)s_capacity,GLUE2ServiceID=cloud.storage.%(site_name)s_service,GLUE2GroupID=cloud,%(suffix)s
+dn: GLUE2StorageServiceCapacityID=%(site_service_name)s_cloud.storage_capacity,GLUE2ServiceID=%(site_service_name)s_cloud.storage,GLUE2GroupID=cloud,%(suffix)s
 objectClass: GLUE2Entity
 objectClass: GLUE2StorageServiceCapacity
-GLUE2StorageServiceCapacityID: cloud.storage.%(site_name)s_capacity
+GLUE2StorageServiceCapacityID: %(site_service_name)s_cloud.storage_capacity
 GLUE2StorageServiceCapacityType: online
-GLUE2StorageServiceCapacityStorageServiceForeignKey: cloud.storage.%(site_name)s_service
+GLUE2StorageServiceCapacityStorageServiceForeignKey: %(site_service_name)s_cloud.storage
 GLUE2StorageServiceCapacityTotalSize: %(storage_total_storage)s

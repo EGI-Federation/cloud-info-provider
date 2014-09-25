@@ -67,7 +67,7 @@ class StaticProvider(providers.BaseProvider):
         else:
             data = {'name': None}
 
-        fields = ('name', )
+        fields = ('name', 'service_name')
         site_info = self._get_fields_and_prefix(fields, 'site_', data)
 
         # Resolve site name from BDII configuration
@@ -91,6 +91,9 @@ class StaticProvider(providers.BaseProvider):
                 'Specify one in the YAML site configuration or be '
                 'sure the file %s is'
                 'accessible and readable' % self.opts.glite_site_info_static)
+
+        if site_info.get('site_service_name', None) is None:
+            site_info['site_service_name'] = site_info['site_name']
 
         site_info['suffix'] = 'o=glue'
 
@@ -123,7 +126,6 @@ class StaticProvider(providers.BaseProvider):
                                    None,
                                    fields,
                                    prefix='template_')
-
         return templates['templates']
 
     def get_compute_endpoints(self):
