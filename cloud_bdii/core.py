@@ -135,7 +135,7 @@ class CloudBDII(BaseBDII):
         super(CloudBDII, self).__init__(*args)
 
         if not self.opts.full_bdii_ldif:
-            self.templates = ('clouddomain', )
+            self.templates = ('headers', 'clouddomain', )
 
     def render(self):
         output = []
