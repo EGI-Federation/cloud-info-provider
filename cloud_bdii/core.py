@@ -160,7 +160,7 @@ class CloudBDII(BaseBDII):
 
 
 def parse_opts():
-    parser = parser = argparse.ArgumentParser(
+    parser = argparse.ArgumentParser(
         description='Cloud BDII provider',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
         fromfile_prefix_chars='@',
