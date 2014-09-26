@@ -96,12 +96,13 @@ class BaseBDIITest(BaseTest):
         info = {'fobble': 'burble', 'brongle': 'farbla'}
         expected = tpl_contents % info
 
+        bdii = cloud_bdii.core.BaseBDII(self.opts)
         with contextlib.nested(
-            mock.patch.object(cloud_bdii.core.BaseBDII, 'templates', tpls),
+            mock.patch.object(bdii, 'templates', tpls),
             mock.patch('cloud_bdii.core.open',
                        mock.mock_open(read_data=tpl_contents), create=True)
         ) as (m_templates, m_open):
-            bdii = cloud_bdii.core.BaseBDII(self.opts)
+            bdii.load_templates()
             for tpl in tpls:
                 m_open.assert_any_call(
                     os.path.join(self.opts.template_dir, '%s.ldif' % tpl),

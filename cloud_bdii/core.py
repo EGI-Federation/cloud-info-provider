@@ -16,10 +16,11 @@ SUPPORTED_MIDDLEWARE = {
 
 
 class BaseBDII(object):
-    templates = ()
-
     def __init__(self, opts):
         self.opts = opts
+
+        self.templates = ()
+        self.ldif = {}
 
         if (opts.middleware != 'static' and
                 opts.middleware in SUPPORTED_MIDDLEWARE):
@@ -29,6 +30,7 @@ class BaseBDII(object):
 
         self.static_provider = SUPPORTED_MIDDLEWARE['static'](opts)
 
+    def load_templates(self):
         self.ldif = {}
         for tpl in self.templates:
             template_file = os.path.join(self.opts.template_dir,
@@ -52,7 +54,12 @@ class BaseBDII(object):
 
 
 class StorageBDII(BaseBDII):
-    templates = ('storage_service', 'storage_endpoint', 'storage_capacity')
+    def __init__(self, opts):
+        super(StorageBDII, self).__init__(opts)
+
+        self.templates = ('storage_service',
+                          'storage_endpoint',
+                          'storage_capacity')
 
     def render(self):
         output = []
@@ -82,8 +89,13 @@ class StorageBDII(BaseBDII):
 
 
 class ComputeBDII(BaseBDII):
-    templates = ('compute_service', 'compute_endpoint',
-                 'execution_environment', 'application_environment')
+    def __init__(self, opts):
+        super(ComputeBDII, self).__init__(opts)
+
+        self.templates = ('compute_service',
+                          'compute_endpoint',
+                          'execution_environment',
+                          'application_environment')
 
     def render(self):
         output = []
@@ -129,13 +141,13 @@ class ComputeBDII(BaseBDII):
 
 
 class CloudBDII(BaseBDII):
-    templates = ('headers', 'domain', 'bdii', 'clouddomain')
-
-    def __init__(self, *args):
-        super(CloudBDII, self).__init__(*args)
+    def __init__(self, opts):
+        super(CloudBDII, self).__init__(opts)
 
         if not self.opts.full_bdii_ldif:
             self.templates = ('headers', 'clouddomain', )
+        else:
+            self.templates = ('headers', 'domain', 'bdii', 'clouddomain')
 
     def render(self):
         output = []
@@ -201,6 +213,7 @@ def main():
 
     for cls_ in (CloudBDII, ComputeBDII, StorageBDII):
         bdii = cls_(opts)
+        bdii.load_templates()
         print bdii.render()
 
 if __name__ == '__main__':
