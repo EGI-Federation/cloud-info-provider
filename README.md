@@ -1,82 +1,98 @@
 # Cloud BDII provider
 
+The Cloud BDII provider generates a GlueSchema v2 representation of cloud resources for publihing it into
+a BDII
+
 ## Installation
 
-### Binary packages ###
+### Binary packages
 
-#### For RHEL/CentOS/ScientificLinux ####
+Packages are available at [EGI's AppDB](http://appdb.egi.eu/xxxx). Use the appropriate repos for your distribution and install using the usual tools.
 
-    yum localinstall http://repository.egi.eu/community/software/cloud.info.provider/0.x/releases/sl/6/x86_64/RPMS/cloud-info-provider-service-0.3-1.el6.noarch.rpm
-    
-#### For Debian/Ubuntu ####
+For RHEL/CentOS/ScientificLinux:
 
-    apt-get -y install python-yaml
-    wget http://repository.egi.eu/community/software/cloud.info.provider/0.x/releases/debian/dists/wheezy/main/binary-i386/cloud-info-provider-service_0.3-2_all.deb
-    dpkg -i cloud-info-provider-service_0.3-2_all.deb
+```
+wget http://repository.egi.eu/community/software/cloud.info.provider/ccc > /etc/yum.repos.d/cloud-info-provider.repo
+yum install cloud-info-provider
+```
 
-### From Source ###
+For Debian/Ubuntu:
 
-    pip install -e .
+```
+wget http://repository.egi.eu/community/software/cloud.info.provider/ccc > /etc/.list
+apt-get update
+apt-get install cloud-info-provider
+```
 
-## Usage
+### From source
 
-### Within a site BDII ###
+Get the source by cloning this repo and do a pip install:
 
-If you are going to use this script with the EGI BDII information system, see the full
-configuration instructions at https://wiki.egi.eu/wiki/Fedclouds_BDII_instructions
+```
+git clone https://sddsfsdf/
+cd cloud-info-provider
+pip install .
+```
 
-### Standalone usage ###
+## Generation of the LDIF 
 
-See the usage information with:
+The cloud-info-provider generates a LDIF according to the information in a
+yaml file describing the static information of the cloud resources.
+By default `etc/bdii.yaml` is used, but this path can be overriden with
+the `--yaml-file` option. A complete example with comments is available 
+in the `sample.static.yaml` file.
 
-    cloud-info-provider-service --help
+Dynamic information can be further obtained with the middleware providers
+(OpenStack and OpenNebula via rOCCI supported currently). Use the
+`--middleware` option for specifying the provider to use (see the command
+help for exact names). cloud-info-provider will fallback to static information
+defined in the yaml file if a dynamic provider is not able to return any
+information. See the `sample.openstack.yaml` and `sample.opennebularocci.yaml`
+for example configurations for each provider.
 
-To produce a complete LDIF to be used without a site-BDII use:
+There are three different XYXXX in the yaml file considered by the provider:
+`site`, `compute`, and `storage`:
+ * `site` contains basic information of the site. It is only needed if the
+    cloud-info-provider will be used to generate LDIF for a complete site-BDII
+    information. This is 'not' the recommended deployment mode in a production
+    infrastructure. 
+   
+ * `compute` should be present for those sites providing a IaaS computing
+    service. It describes the available resources, service endpoints,
+    the available VM images and the templates to run those images.
+    Dynamic providers will fetch most of the information in this section.
+    See the sample yaml files for details.
 
-    cloud-info-provider-service --full-bdii-ldif
+ * `storage` should be present for sites providing IaaS storage service.
+    Similarly to the `compute`, it contains a description of the resources
+    and enpoints providing the service. There are no dynamic providers for
+    `storage`at the moment.
 
-The provider will use a YAML file to load static information. By default it will
-look for `etc/bdii.yaml` but this path can be overwriten with:
+Each dynamic provider has its own commandline options for specifying how
+to connect to the underlying service. Use the `--help` option for a complete
+listing of options.
 
-    cloud-info-provider-service --yaml-file /path/to/yaml/file.yaml
+For example for OpenStack, use a command line similar to the following:
+```
+cloud-info-provider-service --yaml-file /etc/openstack.bdii.yaml
+    --middleware OpenStack --os-username <username> --os-password <password> \
+    --os-tenant-name <tenant> --os-auth-url <auth-url>
+```
 
-To specify a middleware provider instead of the static provider use
-the following (OpenStack, OpenNebula and OpenNebula via rOCCI are supported so far).
+'Test the generation of the LDIF before running the provider into your BDII!'
 
-    cloud-info-provider-service --middleware OpenStack
+### Running the provider in a resource-BDII
 
-The provider will use static information if no dynamic values are present or if a
-dynamic provider is not able to return information.
+u
+u ha
 
-### Using the static provider
+### Running the provider in a site-BDII
 
-The static provider will read values from a YAML file and will generate a LDIF
-according to those values. See `etc/sample.static.yaml` for a commented sample.
+'This is not the recommended deployment mode in the production infrastructure'
 
-### Using the a dynamic provider
+If your site does not have a site-BDII and you want to generate both the
+resource information and the site information with the cloud-bdii-provider....
 
-The dynamic provider will get dynamic information from the cloud middleware.
-Dynamic providers included within this release are:
- * openstack (for OpenStack Nova)
- * opennebula (for bare OpenNebula)
- * opennebularocci (for OpenNebula plus rOCCI server)
-
-The quantity of dynamic information gathered depends on the provider itself. For
-example, openstack provider retreives information about the endpoints, the flavours
-and the images, while opennebula providers retreives only data about teh images
-
-Thus, some static information is still needed, so you will have to create a YAML file.
-A sample of a YAML file for each provider can be found in the `etc/` directory.
-
-Once you've generated your YAML file you can run the provider with
-
-    cloud-info-provider-service  --yaml-file etc/sample.openstack.yaml
-    
-You can also specify credentials and middleware parameters from the command line, eg.
-
-    cloud-info-provider-service  --middleware OpenStack \
-        --os-username <username> --os-password <password> \
-        --os-tenant-name <tenant> --os-auth-url <auth-url>
 
 ## Development
 
