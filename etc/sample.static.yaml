@@ -1,25 +1,31 @@
-# Site options below are only needed if you want to produce
-# a full BDII ldif. If you're running a site, BDII, skip these.
-
 site:
     # Your site name, as in GODCB (if omitted or set to None, this value is
     # retreived from /etc/glite-info-static/site/site.cfg )
-    # name: SITE_NAME
+    #name: SITE_NAME
 
     # Site url
     url: http://site.url.example.org/
+    # Production level
     production_level: production
     # Two digit country code
     country: ES
+    # Site Longitude
     longitude: 0.0
+    # Site Latitude
     latitude: 0.0
     # Your affiliated NGI
     ngi: NGI_FOO
-    user_support_contact: user-support@example.org
+    # Contact email
     general_contact: general-support@example.org
+    # User support email
+    user_support_contact: user-support@example.org
+    # Sysadmin contact email
     sysadmin_contact: support@example.org
+    # Security contacts email email
     security_contact: security-support@example.org
+    # User support email
     bdii_host: site.bdii.example.org
+    # User support email
     bdii_port: 2170
 
 compute:

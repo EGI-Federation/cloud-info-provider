@@ -1,26 +1,32 @@
-# Site options below are only needed if you want to produce
-# a full BDII ldif. If you're running a site, BDII, skip these.
+site:
+    # Your site name, as in GODCB (if omitted or set to None, this value is
+    # retreived from /etc/glite-info-static/site/site.cfg )
+    #name: SITE_NAME
 
-#site:
-     # Your site name, asn in GODCB (if omitted or set to None, this value is retreived from /etc/glite-info-static/site/site.cfg )
-     #name: MySite
-
-     # Site url
-     #url: http://site.url.example.org/
-     # BDII Production level (testing, candidate, production)
-     #production_level: production
-     # Two digit country code
-     #country: ES
-     #longitude: 0.0
-     #latitude: 0.0
-     # Your affiliated NGI
-     #ngi: NGI_FOO
-     #user_support_contact: user-support@example.org
-     #general_contact: general-support@example.org
-     #sysadmin_contact: support@example.org
-     #security_contact: security-support@example.org
-     #bdii_host: site.bdii.example.org
-     #bdii_port: 2170
+    # Site url
+    #url: http://site.url.example.org/
+    # Production level
+    #production_level: production
+    # Two digit country code
+    #country: ES
+    # Site Longitude
+    #longitude: 0.0
+    # Site Latitude
+    #latitude: 0.0
+    # Your affiliated NGI
+    #ngi: NGI_FOO
+    # Contact email
+    #general_contact: general-support@example.org
+    # User support email
+    #user_support_contact: user-support@example.org
+    # Sysadmin contact email
+    #sysadmin_contact: support@example.org
+    # Security contacts email email
+    #security_contact: security-support@example.org
+    # User support email
+    #bdii_host: site.bdii.example.org
+    # User support email
+    #bdii_port: 2170
 
 compute:
     # Total number of cores available
@@ -39,7 +45,7 @@ compute:
     middleware_developer: OpenNebula Team
     # Service Production level (testing, candidate, production...)
     service_production_level: production
-    #Service capabilities
+    # Service capabilities
     capabilities:
         - cloud.managementSystem
 
@@ -78,29 +84,8 @@ compute:
             memory: 16384
             cpu: 8
 
-    #Images are retreived automatically by the endpoint
+    # Images are retreived automatically by the endpoint
     images:
         defaults:
             platform: amd64
             schema: os_tpl
-
-#No STorage-as-a-Service is provided by OpenNebula. Information coming from other STaaS may be included here or put into a separate YAML
-#storage:
-#    total_storage: 0
-#    middleware: A Middleware
-#    middleware_version: v1.0
-#    middleware_developer: Middleware Developer
-#    service_production_level: production
-#    capabilities:
-#        - cloud.data.upload
-#
-#    endpoints:
-#        defaults:
-#            api_type: CDMI
-#            api_version: 1.0.1
-#            api_endpoint_technology: REST
-#            api_authn_method: X509-VOMS
-#            production_level: production
-#
-#        https://storage-service01.example.org:8080:
-#            production_level: testing
