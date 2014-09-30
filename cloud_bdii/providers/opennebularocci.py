@@ -91,10 +91,10 @@ class OpenNebulaROCCIProvider(providers.BaseProvider):
                             (ressch, jd['mixins'][0]['term'])})
             aux.update(
                 {
-                    'template_memory': jd['mixins'][0]['attributes']
+                    'template_cpu': jd['mixins'][0]['attributes']
                                          ['occi']['compute']['cores']
                                          ['Default'],
-                    'template_cpu': int(
+                    'template_memory': int(
                         jd['mixins'][0]['attributes']['occi']['compute']
                           ['memory']['Default'] * 1024),
                     'template_description': jd['mixins'][0]['title']})
