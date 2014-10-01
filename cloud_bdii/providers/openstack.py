@@ -1,61 +1,45 @@
-import os
-import sys
-
+from cloud_bdii import exceptions
 from cloud_bdii import providers
-
-
-def env(*args, **kwargs):
-    '''
-    returns the first environment variable set
-    if none are non-empty, defaults to '' or keyword arg default
-    '''
-    for arg in args:
-        value = os.environ.get(arg, None)
-        if value:
-            return value
-    return kwargs.get('default', '')
+from cloud_bdii import utils
 
 
 class OpenStackProvider(providers.BaseProvider):
-
     def __init__(self, opts):
         super(OpenStackProvider, self).__init__(opts)
 
         try:
             import novaclient.client
         except ImportError:
-            print >> sys.stderr, 'ERROR: Cannot import novaclient module.'
-            sys.exit(1)
+            msg = 'Cannot import novaclient module.'
+            raise exceptions.OpenStackProviderException(msg)
 
         (os_username, os_password, os_tenant_name,
-            os_auth_url, cacert, insecure) = (
-                opts.os_username, opts.os_password,
-                opts.os_tenant_name,
-                opts.os_auth_url, opts.os_cacert, opts.insecure)
+            os_auth_url, cacert, insecure) = (opts.os_username,
+                                              opts.os_password,
+                                              opts.os_tenant_name,
+                                              opts.os_auth_url,
+                                              opts.os_cacert,
+                                              opts.insecure)
 
         if not os_username:
-            print >> sys.stderr, ('ERROR, You must provide a username '
-                                  'via either --os-username or '
-                                  'env[OS_USERNAME]')
-            sys.exit(1)
+            msg = ('ERROR, You must provide a username '
+                   'via either --os-username or env[OS_USERNAME]')
+            raise exceptions.OpenStackProviderException(msg)
 
         if not os_password:
-            print >> sys.stderr, ('ERROR, You must provide a password '
-                                  'via either --os-password or '
-                                  'env[OS_PASSWORD]')
-            sys.exit(1)
+            msg = ('ERROR, You must provide a password '
+                   'via either --os-password or env[OS_PASSWORD]')
+            raise exceptions.OpenStackProviderException(msg)
 
         if not os_tenant_name:
-            print >> sys.stderr, ('You must provide a tenant name '
-                                  'via either --os-tenant-name or '
-                                  'env[OS_TENANT_NAME]')
-            sys.exit(1)
+            msg = ('You must provide a tenant name '
+                   'via either --os-tenant-name or env[OS_TENANT_NAME]')
+            raise exceptions.OpenStackProviderException(msg)
 
         if not os_auth_url:
-            print >> sys.stderr, ('You must provide an auth url '
-                                  'via either --os-auth-url or '
-                                  'env[OS_AUTH_URL] ')
-            sys.exit(1)
+            msg = ('You must provide an auth url '
+                   'via either --os-auth-url or env[OS_AUTH_URL] ')
+            raise exceptions.OpenStackProviderException(msg)
 
         client_cls = novaclient.client.get_client_class('2')
         if insecure:
@@ -73,7 +57,7 @@ class OpenStackProvider(providers.BaseProvider):
                                   cacert=cacert)
 
         self.api.authenticate()
-
+        self.service_name = os_auth_url
         self.static = providers.static.StaticProvider(opts)
 
     def get_compute_endpoints(self):
@@ -81,10 +65,12 @@ class OpenStackProvider(providers.BaseProvider):
             'endpoints': {},
             'compute_middleware_developer': 'OpenStack',
             'compute_middleware': 'OpenStack Nova',
+            'compute_service_name': self.api.client.auth_url,
         }
 
         defaults = self.static.get_compute_endpoint_defaults(prefix=True)
         catalog = self.api.client.service_catalog.catalog
+
         endpoints = catalog['access']['serviceCatalog']
         for endpoint in endpoints:
             if endpoint['type'] == 'occi':
@@ -112,7 +98,8 @@ class OpenStackProvider(providers.BaseProvider):
     def get_templates(self):
         flavors = {}
 
-        defaults = {"platform": "amd64", "network": "private"}
+        defaults = {'template_platform': 'amd64',
+                    'template_network': 'private'}
         defaults.update(self.static.get_template_defaults(prefix=True))
 
         for flavor in self.api.flavors.list(detailed=True):
@@ -120,7 +107,7 @@ class OpenStackProvider(providers.BaseProvider):
                 continue
 
             aux = defaults.copy()
-            aux.update({'template_id': 'resource_tpl#%s' % flavor.name.lower(),
+            aux.update({'template_id': 'resource_tpl#%s' % flavor.name,
                         'template_memory': flavor.ram,
                         'template_cpu': flavor.vcpus})
             flavors[flavor.id] = aux
@@ -131,20 +118,21 @@ class OpenStackProvider(providers.BaseProvider):
 
         template = {
             'image_name': None,
-            'image description': None,
+            'image_description': None,
             'image_version': None,
             'image_marketplace_id': None,
-            'image_occi_id': None,
+            'image_id': None,
             'image_os_family': None,
             'image_os_name': None,
             'image_os_version': None,
-            'image_platform': "amd64",
+            'image_platform': 'amd64',
         }
         defaults = self.static.get_image_defaults(prefix=True)
 
         for image in self.api.images.list(detailed=True):
             aux = template.copy()
             aux.update(defaults)
+            link = None
             for link in image.links:
                 # TODO(aloga): Check if this is the needed parameter
                 if link.get('type',
@@ -153,69 +141,73 @@ class OpenStackProvider(providers.BaseProvider):
                     break
             # FIXME(aloga): we need to add the version, etc from
             # metadata
-            aux.update({'image_name': image.name,
-                        'image_id': 'os_tpl#%s' % image.id})
-            if 'vmcatcher_event_dc_description' in image.metadata:
-                aux.update(
-                    {'image_description':
-                     image.metadata['vmcatcher_event_dc_description']})
-            elif 'vmcatcher_event_dc_title' in image.metadata:
-                aux.update(
-                    {'image_description':
-                     image.metadata['vmcatcher_event_dc_title']})
+            aux.update({
+                'image_name': image.name,
+                'image_id': 'os_tpl#%s' % image.id
+            })
 
+            image_descr = None
+            if 'vmcatcher_event_dc_description' in image.metadata:
+                image_descr = image.metadata['vmcatcher_event_dc_description']
+            elif 'vmcatcher_event_dc_title' in image.metadata:
+                image_descr = image.metadata['vmcatcher_event_dc_title']
+
+            marketplace_id = None
             if 'vmcatcher_event_ad_mpuri' in image.metadata:
-                aux.update(
-                    {'image_marketplace_id':
-                     image.metadata['vmcatcher_event_ad_mpuri']})
+                marketplace_id = image.metadata['vmcatcher_event_ad_mpuri']
             elif 'marketplace' in image.metadata:
-                aux.update(
-                    {'image_marketplace_id': image.metadata['marketplace']})
-            elif not (('image_require_marketplace_id' in defaults)
-                      and (defaults['image_require_marketplace_id'])):
-                aux.update({'image_marketplace_id': link})
+                marketplace_id = image.metadata['marketplace']
+            elif not defaults.get('image_require_marketplace_id', False):
+                marketplace_id = link
             else:
                 continue
 
+            if marketplace_id:
+                aux['image_marketplace_id'] = marketplace_id
+            if image_descr:
+                aux['image_description'] = image_descr
             images[image.id] = aux
         return images
 
     @staticmethod
     def populate_parser(parser):
-        parser.add_argument('--os-username',
-                            metavar='<auth-user-name>',
-                            default=env('OS_USERNAME', 'NOVA_USERNAME'),
-                            help='Defaults to env[OS_USERNAME].')
+        parser.add_argument(
+            '--os-username',
+            metavar='<auth-user-name>',
+            default=utils.env('OS_USERNAME', 'NOVA_USERNAME'),
+            help='Defaults to env[OS_USERNAME].')
 
-        parser.add_argument('--os-password',
-                            metavar='<auth-password>',
-                            default=env('OS_PASSWORD', 'NOVA_PASSWORD'),
-                            help='Defaults to env[OS_PASSWORD].')
+        parser.add_argument(
+            '--os-password',
+            metavar='<auth-password>',
+            default=utils.env('OS_PASSWORD', 'NOVA_PASSWORD'),
+            help='Defaults to env[OS_PASSWORD].')
 
-        parser.add_argument('--os-tenant-name',
-                            metavar='<auth-tenant-name>',
-                            default=env('OS_TENANT_NAME', 'NOVA_PROJECT_ID'),
-                            help='Defaults to env[OS_TENANT_NAME].')
+        parser.add_argument(
+            '--os-tenant-name',
+            metavar='<auth-tenant-name>',
+            default=utils.env('OS_TENANT_NAME', 'NOVA_PROJECT_ID'),
+            help='Defaults to env[OS_TENANT_NAME].')
 
-        parser.add_argument('--os-auth-url',
-                            metavar='<auth-url>',
-                            default=env('OS_AUTH_URL', 'NOVA_URL'),
-                            help='Defaults to env[OS_AUTH_URL].')
+        parser.add_argument(
+            '--os-auth-url',
+            metavar='<auth-url>',
+            default=utils.env('OS_AUTH_URL', 'NOVA_URL'),
+            help='Defaults to env[OS_AUTH_URL].')
 
-        parser.add_argument('--os-cacert',
-                            metavar='<ca-certificate>',
-                            default=env('OS_CACERT', default=None),
-                            help='Specify a CA bundle file to use in '
-                            'verifying a TLS (https) server certificate. '
-                            'Defaults to env[OS_CACERT]')
+        parser.add_argument(
+            '--os-cacert',
+            metavar='<ca-certificate>',
+            default=utils.env('OS_CACERT', default=None),
+            help='Specify a CA bundle file to use in '
+                 'verifying a TLS (https) server certificate. '
+                 'Defaults to env[OS_CACERT]')
 
         parser.add_argument(
             '--insecure',
-            default=env(
-                'NOVACLIENT_INSECURE',
-                default=False),
+            default=utils.env('NOVACLIENT_INSECURE', default=False),
             action='store_true',
-            help='Explicitly allow novaclient to perform "insecure" '
-            'SSL (https) requests. The server\'s certificate will '
-            'not be verified against any certificate authorities. '
-            'This option should be used with caution.')
+            help="Explicitly allow novaclient to perform 'insecure' "
+                 "SSL (https) requests. The server's certificate will "
+                 'not be verified against any certificate authorities. '
+                 'This option should be used with caution.')
