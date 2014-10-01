@@ -27,9 +27,9 @@ If you plan to use the script in a bdii, the `bdii` package should be also insta
 
 The cloud-info-provider generates a LDIF according to the information in a
 yaml file describing the static information of the cloud resources.
-By default `etc/bdii.yaml` is used, but this path can be overriden with
-the `--yaml-file` option. A complete example with comments is available 
-in the `sample.static.yaml` file.
+By default `/etc/cloud-info-provider/bdii.yaml` is used, but this path can be
+overriden with the `--yaml-file` option. A complete example with comments is
+available in the `sample.static.yaml` file.
 
 Dynamic information can be further obtained with the middleware providers
 (OpenStack and OpenNebula via rOCCI supported currently). Use the
@@ -47,7 +47,7 @@ There are three different maps in the yaml file considered by the provider:
     `/etc/glite-info-static/site/site.cfg` (or by the file set with the
     `--glite-site-info-static` option).
     Any other information is only relevant to generate a LDIF for a complete 
-    site-BDII (*this is not the recommended deployment mode*).
+    site-BDII (**this is not the recommended deployment mode**).
    
  * `compute` should be present for those sites providing a IaaS computing
     service. It describes the available resources, service endpoints,
@@ -71,7 +71,7 @@ cloud-info-provider-service --yaml-file /etc/cloud-info-provider/bdii.yaml \
     --os-tenant-name <tenant> --os-auth-url <auth-url>
 ```
 
-*Test the generation of the LDIF before running the provider into your BDII!*
+**Test the generation of the LDIF before running the provider into your BDII!**
 
 ## Running the provider in a resource-BDII
 
@@ -114,7 +114,7 @@ Once the provider script is working, start the bdii service:
 service bdii start
 ```
 
-The ldap server should contain all your site information:
+The ldap server should contain all your cloud resource information:
 ```
 ldapsearch -x -h localhost -p 2170 -b o=glue
 ```
@@ -132,7 +132,7 @@ ldap://<cloud-info-provier-hostname>:2170/GLUE2GroupID=cloud,o=glue
 
 ## Running the cloud-provider as a full site-BDII
 
-*This is not recommended for production!*
+**This is not recommended for production!!**
 
 If your site does not have a site-BDII and you want to generate both the
 resource information and the site information with the cloud-bdii-provider
