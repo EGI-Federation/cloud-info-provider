@@ -47,7 +47,7 @@ There are three different maps in the yaml file considered by the provider:
     `/etc/glite-info-static/site/site.cfg` (or by the file set with the
     `--glite-site-info-static` option).
     Any other information is only relevant to generate a LDIF for a complete 
-    site-BDII (**this is not the recommended deployment mode**).
+    site-BDII (*this is not the recommended deployment mode*).
    
  * `compute` should be present for those sites providing a IaaS computing
     service. It describes the available resources, service endpoints,
@@ -89,8 +89,7 @@ calls the provider with the correct options for your site:
 ```
 #!/bin/sh
 
-cloud-info-provider-service --yaml /etc/cloud-info-provider/bdii.yaml \
-                            --template-dir /etc/cloud-info-provider/templates \
+cloud-info-provider-service --yaml /etc/cloud-info-provider/openstack.yaml \
                             --middleware openstack \
                             --os-username <username> --os-password <passwd> \
                             --os-tenant-name <tenant> --os-auth-url <url>
