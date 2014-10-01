@@ -67,7 +67,7 @@ class StaticProvider(providers.BaseProvider):
         else:
             data = {'name': None}
 
-        fields = ('name', 'service_name')
+        fields = ('name', )
         site_info = self._get_fields_and_prefix(fields, 'site_', data)
 
         # Resolve site name from BDII configuration
@@ -91,9 +91,6 @@ class StaticProvider(providers.BaseProvider):
                 'Specify one in the YAML site configuration or be '
                 'sure the file %s is'
                 'accessible and readable' % self.opts.glite_site_info_static)
-
-        if site_info.get('site_service_name', None) is None:
-            site_info['site_service_name'] = site_info['site_name']
 
         site_info['suffix'] = 'o=glue'
 
@@ -133,19 +130,23 @@ class StaticProvider(providers.BaseProvider):
                          'total_cores', 'capabilities',
                          'hypervisor', 'hypervisor_version',
                          'middleware', 'middleware_version',
-                         'middleware_developer')
+                         'middleware_developer',
+                         'service_name')
         endpoint_fields = ('production_level', 'api_type', 'api_version',
                            'api_endpoint_technology', 'api_authn_method')
         endpoints = self._get_what('compute',
                                    'endpoints',
                                    global_fields,
                                    endpoint_fields)
+        if endpoints['compute_service_name'] is None:
+            endpoints['compute_service_name'] = 'default'
         return endpoints
 
     def get_storage_endpoints(self):
         global_fields = ('service_production_level', 'total_storage',
                          'capabilities', 'middleware',
-                         'middleware_version', 'middleware_developer')
+                         'middleware_version', 'middleware_developer',
+                         'service_name')
         endpoint_fields = ('production_level', 'api_type', 'api_version',
                            'api_endpoint_technology',
                            'api_authn_method')
@@ -154,6 +155,8 @@ class StaticProvider(providers.BaseProvider):
                                    'endpoints',
                                    global_fields,
                                    endpoint_fields)
+        if endpoints['storage_service_name'] is None:
+            endpoints['storage_service_name'] = 'default'
         return endpoints
 
     def _get_defaults(self, what, which, prefix=''):

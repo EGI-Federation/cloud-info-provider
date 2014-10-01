@@ -58,7 +58,7 @@ class OpenStackProvider(providers.BaseProvider):
                                   cacert=cacert)
 
         self.api.authenticate()
-
+        self.service_name = os_auth_url
         self.static = providers.static.StaticProvider(opts)
 
     def get_compute_endpoints(self):
@@ -66,10 +66,12 @@ class OpenStackProvider(providers.BaseProvider):
             'endpoints': {},
             'compute_middleware_developer': 'OpenStack',
             'compute_middleware': 'OpenStack Nova',
+            'compute_service_name': self.api.client.auth_url,
         }
 
         defaults = self.static.get_compute_endpoint_defaults(prefix=True)
         catalog = self.api.client.service_catalog.catalog
+
         endpoints = catalog['access']['serviceCatalog']
         for endpoint in endpoints:
             if endpoint['type'] == 'occi':
@@ -85,8 +87,7 @@ class OpenStackProvider(providers.BaseProvider):
                 e_id = ept['id']
                 e_url = ept['publicURL']
 
-#                e = defaults.copy()
-                e = {}
+                e = defaults.copy()
                 e.update({'endpoint_url': e_url,
                           'compute_api_type': e_type,
                           'compute_api_version': e_version})

@@ -1,4 +1,4 @@
-dn: GLUE2EndpointID=%(endpoint_url)s_%(storage_api_type)s_%(storage_api_version)s_%(storage_api_authn_method)s,GLUE2ServiceID=%(site_service_name)s_cloud.storage,GLUE2GroupID=cloud,%(suffix)s
+dn: GLUE2EndpointID=%(endpoint_url)s_%(storage_api_type)s_%(storage_api_version)s_%(storage_api_authn_method)s,GLUE2ServiceID=%(storage_service_name)s_cloud.storage,GLUE2GroupID=cloud,%(suffix)s
 objectClass: GLUE2Entity
 objectClass: GLUE2Endpoint
 objectClass: GLUE2StorageEndpoint
@@ -6,10 +6,10 @@ GLUE2EndpointHealthState: ok
 GLUE2EndpointID: %(endpoint_url)s_%(storage_api_type)s_%(storage_api_version)s_%(storage_api_authn_method)s
 GLUE2EndpointInterfaceName: %(storage_api_type)s
 GLUE2EndpointQualityLevel: %(storage_production_level)s
-GLUE2EndpointServiceForeignKey: %(site_service_name)s_cloud.storage
+GLUE2EndpointServiceForeignKey: %(storage_service_name)s_cloud.storage
 GLUE2EndpointServingState: %(storage_production_level)s
 GLUE2EndpointURL: %(endpoint_url)s
-GLUE2StorageEndpointStorageServiceForeignKey: %(site_service_name)s_cloud.storage
+GLUE2StorageEndpointStorageServiceForeignKey: %(storage_service_name)s_cloud.storage
 GLUE2EndpointCapability: %(storage_capabilities)s
 GLUE2EndpointImplementationName: %(storage_middleware)s
 GLUE2EndpointImplementationVersion: %(storage_middleware_version)s

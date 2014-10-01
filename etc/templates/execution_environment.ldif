@@ -1,4 +1,4 @@
-dn: GLUE2ResourceID=%(template_id)s,GLUE2ServiceID=%(site_service_name)s_cloud.compute,GLUE2GroupID=cloud,%(suffix)s
+dn: GLUE2ResourceID=%(template_id)s,GLUE2ServiceID=%(compute_service_name)s_cloud.compute,GLUE2GroupID=cloud,%(suffix)s
 objectClass: GLUE2Entity
 objectClass: GLUE2Resource
 objectClass: GLUE2ExecutionEnvironment
@@ -8,9 +8,9 @@ GLUE2ExecutionEnvironmentVirtualMachine: TRUE
 GLUE2ExecutionEnvironmentMainMemorySize: %(template_memory)s
 GLUE2ExecutionEnvironmentPlatform: %(template_platform)s
 GLUE2ExecutionEnvironmentOSFamily: linux
-GLUE2ResourceManagerForeignKey: %(site_service_name)s_cloud.compute_manager
+GLUE2ResourceManagerForeignKey: %(compute_service_name)s_cloud.compute_manager
 GLUE2EntityName: %(template_id)s
-GLUE2ExecutionEnvironmentComputingManagerForeignKey: %(site_service_name)s_cloud.compute_manager
+GLUE2ExecutionEnvironmentComputingManagerForeignKey: %(compute_service_name)s_cloud.compute_manager
 GLUE2ExecutionEnvironmentCPUModel: virtual model
 GLUE2ExecutionEnvironmentCPUMultiplicity: multicpu-multicore
 GLUE2ExecutionEnvironmentCPUVendor: virtual vendor
