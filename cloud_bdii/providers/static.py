@@ -9,7 +9,6 @@ from cloud_bdii import providers
 
 
 class StaticProvider(providers.BaseProvider):
-
     def __init__(self, *args):
         super(StaticProvider, self).__init__(*args)
 
