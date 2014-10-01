@@ -4,7 +4,6 @@ from cloud_bdii import utils
 
 
 class OpenStackProvider(providers.BaseProvider):
-
     def __init__(self, opts):
         super(OpenStackProvider, self).__init__(opts)
 
@@ -108,7 +107,7 @@ class OpenStackProvider(providers.BaseProvider):
                 continue
 
             aux = defaults.copy()
-            aux.update({'template_id': 'resource_tpl#%s' % flavor.name.lower(),
+            aux.update({'template_id': 'resource_tpl#%s' % flavor.name,
                         'template_memory': flavor.ram,
                         'template_cpu': flavor.vcpus})
             flavors[flavor.id] = aux
