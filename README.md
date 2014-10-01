@@ -1,38 +1,27 @@
 # Cloud BDII provider
 
-The Cloud BDII provider generates a GlueSchema v2 representation of cloud resources for publihing it into
-a BDII
+The Cloud BDII provider generates a GlueSchema v2 representation of cloud
+resources for publihing it into a BDII
 
 ## Installation
 
 ### Binary packages
 
-Packages are available at [EGI's AppDB](http://appdb.egi.eu/xxxx). Use the appropriate repos for your distribution and install using the usual tools.
-
-For RHEL/CentOS/ScientificLinux:
-
-```
-wget http://repository.egi.eu/community/software/cloud.info.provider/ccc > /etc/yum.repos.d/cloud-info-provider.repo
-yum install cloud-info-provider
-```
-
-For Debian/Ubuntu:
-
-```
-wget http://repository.egi.eu/community/software/cloud.info.provider/ccc > /etc/.list
-apt-get update
-apt-get install cloud-info-provider
-```
+Packages are available at [EGI's AppDB](https://appdb.egi.eu/store/software/cloud.info.provider).
+Use the appropriate repos for your distribution and install using the usual tools.
 
 ### From source
 
 Get the source by cloning this repo and do a pip install:
 
 ```
-git clone https://sddsfsdf/
-cd cloud-info-provider
+git clone https://github.com/EGI-FCTF/BDIIscripts
+cd BDIIscripts 
 pip install .
 ```
+
+If you plan to use the script in a bdii, the `bdii` package should be also installed
+(it should be available in standard OS repositories).
 
 ## Generation of the LDIF 
 
@@ -50,12 +39,15 @@ defined in the yaml file if a dynamic provider is not able to return any
 information. See the `sample.openstack.yaml` and `sample.opennebularocci.yaml`
 for example configurations for each provider.
 
-There are three different XYXXX in the yaml file considered by the provider:
+There are three different maps in the yaml file considered by the provider:
 `site`, `compute`, and `storage`:
- * `site` contains basic information of the site. It is only needed if the
-    cloud-info-provider will be used to generate LDIF for a complete site-BDII
-    information. This is 'not' the recommended deployment mode in a production
-    infrastructure. 
+ * `site` contains basic information of the site. The only attribute to define
+    here is the `name` which must contain the site name as defined in GOCDB.
+    Alternatively, the site name can be fetched from
+    `/etc/glite-info-static/site/site.cfg` (or by the file set with the
+    `--glite-site-info-static` option).
+    Any other information is only relevant to generate a LDIF for a complete 
+    site-BDII (*this is not the recommended deployment mode*).
    
  * `compute` should be present for those sites providing a IaaS computing
     service. It describes the available resources, service endpoints,
@@ -74,57 +66,76 @@ listing of options.
 
 For example for OpenStack, use a command line similar to the following:
 ```
-cloud-info-provider-service --yaml-file /etc/openstack.bdii.yaml
+cloud-info-provider-service --yaml-file /etc/cloud-info-provider/bdii.yaml \
     --middleware OpenStack --os-username <username> --os-password <password> \
     --os-tenant-name <tenant> --os-auth-url <auth-url>
 ```
 
-'Test the generation of the LDIF before running the provider into your BDII!'
+*Test the generation of the LDIF before running the provider into your BDII!*
 
-### Running the provider in a resource-BDII
+## Running the provider in a resource-BDII
 
-u
-u ha
+This is the normal deployment mode for the cloud provider. It should be installed
+in a node with access to your cloud infrastructure: for OpenStack, access to
+nova service is needed; for OpenNebula-rOCCI provider, access to the files
+describing the rOCCI templates is needed (e.g. installing the provider in the same
+host as rOCCI-server).
 
-### Running the provider in a site-BDII
+### Create the provider script
 
-'This is not the recommended deployment mode in the production infrastructure'
+In `/var/lib/bdii/gip/provider/` create a `cloud-info-provider` file that 
+calls the provider with the correct options for your site:
+
+```
+#!/bin/sh
+
+cloud-info-provider-service --yaml /etc/cloud-info-provider/bdii.yaml \
+                            --template-dir /etc/cloud-info-provider/templates \
+                            --middleware openstack \
+                            --os-username <username> --os-password <passwd> \
+                            --os-tenant-name <tenant> --os-auth-url <url>
+
+```
+
+Give execution permission:
+```
+chmod +x /var/lib/bdii/gip/provider/cloud-info-provider
+```
+and test it:
+```
+/var/lib/bdii/gip/provider/cloud-info-provider
+```
+It should output the full ldif describing your site.
+
+### Start the bdii service
+
+Once the provider script is working, start the bdii service:
+```
+service bdii start
+```
+
+The ldap server should contain all your site information:
+```
+ldapsearch -x -h localhost -p 2170 -b o=glue
+```
+
+## Adding the resource provider in a site-BDII
+
+Sites should have a dedicated host for the site-BDII. Information on how to
+set up this machine is avaiable in the EGI.eu wiki at
+[How to publish site information](https://wiki.egi.eu/wiki/MAN01_How_to_publish_Site_Information). 
+
+Add your cloud-info-provider to your site-BDII by adding a new URL like this:
+```
+ldap://<cloud-info-provier-hostname>:2170/GLUE2GroupID=cloud,o=glue
+```
+
+## Running the cloud-provider as a full site-BDII
+
+*This is not recommended for production!*
 
 If your site does not have a site-BDII and you want to generate both the
-resource information and the site information with the cloud-bdii-provider....
-
-
-## Development
-
-### Build packages for RHEL/CentOs/ScientificLinux ###
-
-Install RPM build tools
-
-    yum install -y rpm-build
-    
-Create a non-root user for the build
-
-    useradd rpmbuild
-
-Setup the user build environment
-
-    su - rpmbuild
-    mkdir -p BUILD BUILDROOT LOGS RPMS SOURCES SPECS SRPMS tmp
-
-Download sources from GitHub (for the latest release)
-
-    wget https://github.com/EGI-FCTF/BDIIscripts/archive/0.3.zip -O SOURCES/BDIIscripts-0.3.zip
-    
-Extract the spec file
-
-    unzip -p SOURCES/BDIIscripts-0.3.zip BDIIscripts-0.3/rpm/cloud-info-provider-service.spec > SPECS/cloud-info-provider-service.spec   
-    
-Compile rpm
-
-    rpmbuild --define '_topdir /home/rpmbuild' --define '_tmpdir /home/rpmbuild/tmp' --define '_tmppath /home/rpmbuild/tmp' -bb SPECS/cloud-info-provider-service.spec
-
-### Build packages for Debian/Ubuntu ###
-
-For Debian/Ubuntu, you can just convert the RHEL rpm to debian using Alien
-
-    alien cloud-info-provider-service-0.3-1.el6.noarch.rpm
+resource information and the site information with the cloud-bdii-provider
+you can add in the `/var/lib/bdii/gip/provider/cloud-info-provider` the
+`--full-bdii-info` option to the `cloud-info-provider-service`. The YAML
+file must contain all your site information as described in the templates.
