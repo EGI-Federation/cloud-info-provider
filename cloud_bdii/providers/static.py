@@ -1,5 +1,6 @@
 import copy
 import re
+import socket
 
 import yaml
 
@@ -139,7 +140,7 @@ class StaticProvider(providers.BaseProvider):
                                    global_fields,
                                    endpoint_fields)
         if endpoints['compute_service_name'] is None:
-            endpoints['compute_service_name'] = 'default'
+            endpoints['compute_service_name'] = socket.getfqdn()
         return endpoints
 
     def get_storage_endpoints(self):
@@ -156,7 +157,7 @@ class StaticProvider(providers.BaseProvider):
                                    global_fields,
                                    endpoint_fields)
         if endpoints['storage_service_name'] is None:
-            endpoints['storage_service_name'] = 'default'
+            endpoints['storage_service_name'] = socket.getfqdn()
         return endpoints
 
     def _get_defaults(self, what, which, prefix=''):
