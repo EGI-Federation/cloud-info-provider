@@ -1,11 +1,3 @@
-dn: o=glue
-objectClass: organization
-o: glue
-
-dn: GLUE2GroupID=grid,o=glue
-objectClass: GLUE2Group
-GLUE2GroupID: grid
-
 dn: GLUE2GroupID=resource,o=glue
 objectClass: GLUE2Group
 GLUE2GroupID: resource

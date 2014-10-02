@@ -1,43 +1,56 @@
-Name:           cloud-info-provider-service
-Version:        0.3
-Release:        1%{?dist}
-Summary:        Information provider for Cloud Compute and Cloud Storage services for BDII.
+#
+# cloud-info-provider-service RPM
+#
 
-Group:          Applications/Internet
-License:        GPLv3
-URL:            https://github.com/EGI-FCTF/BDIIscripts
-Source0:        BDIIscripts-%{version}.zip
-BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildArch:      noarch
+%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
-#BuildRequires:  cp
-Requires:       PyYAML bdii python-argparse python-yaml
+Summary: Information provider for Cloud Compute and Cloud Storage services for BDII.
+Name: cloud-info-provider-service
+Version: 0.4
+Release: 1%{?dist}
+Group: Applications/Internet
+License: ASL 2.0
+URL: https://github.com/EGI-FCTF/BDIIscripts
+Source0: %{name}-%{version}.tar.gz
+
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+BuildRequires: python-setuptools
+BuildRequires: python-pbr
+Requires: python
+Requires: python-argparse
+Requires: python-yaml
+Requires: bdii
+BuildArch: noarch
 
 %description
-Information provider for Cloud COmpute and Cloud Storage services for BDII. It supports static information specification, OpenNebula nad OpenStack cloud middleware. The provider uses GLUE 2.0 EGI Cloud Profile to publish the information.
+Information provider for Cloud Compute and Cloud Storage services for BDII.
+It supports static information specification, OpenNebula nad OpenStack cloud
+middlewares.
+The provider uses GLUE 2.0 EGI Cloud Profile to publish the information.
 
 %prep
-%setup -q -n BDIIscripts-%{version}
+%setup -q -n %{name}
 
 %build
 
 %install
-rm -rf %{buildroot}
-mkdir -p %{buildroot}/opt/cloud-info-provider/
-cp -r cloud_bdii etc bin %{buildroot}/opt/cloud-info-provider/
-mkdir -p %{buildroot}/usr/bin
-ln -s /opt/cloud-info-provider/bin/cloud-info-provider-service.py %{buildroot}/usr/bin/cloud-info-provider-service
-chmod +x %{buildroot}/opt/cloud-info-provider/bin/cloud-info-provider-service.py
+rm -rf $RPM_BUILD_ROOT
+python setup.py install --root $RPM_BUILD_ROOT  --install-data /
 
 %clean
-rm -rf %{buildroot}
+rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-/opt/cloud-info-provider
+%{python_sitelib}/cloud_bdii*
 /usr/bin/cloud-info-provider-service
+/etc/cloud-info-provider/
 
 %changelog
+* Wed Oct 01 2014 Release 0.4 - Enol Fernandez <enol.fernandez@egi.eu>
+- Incorporate changes from Alvaro Lopez.
+- Enhance the published schema by adding a service name.
+- Packaging improvements.
 * Mon Aug 18 2014 Release 0.3 - Salvatore Pinto
 - Fixed OpenNebula provider (thanks to Boris Parak)
 * Tue Jul 25 2014 Release 0.2 - Salvatore Pinto
