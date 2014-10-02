@@ -185,20 +185,17 @@ def parse_opts():
         '--full-bdii-ldif',
         action='store_true',
         default=False,
-        help=(
-            'Whether to generate a LDIF containing all the '
-            'BDII information, or just this node\'s information'))
+        help=('Whether to generate a LDIF containing all the '
+              'BDII information, or just this node\'s information'))
 
     parser.add_argument(
         '--middleware',
         metavar='MIDDLEWARE',
         choices=SUPPORTED_MIDDLEWARE,
         default='static',
-        help=(
-            'Middleware used. Only the following middlewares are '
-            'supported: %s. If you do not specify anything, static '
-            'values will be used.' %
-            SUPPORTED_MIDDLEWARE.keys()))
+        help=('Middleware used. Only the following middlewares are '
+              'supported: %s. If you do not specify anything, static '
+              'values will be used.' % SUPPORTED_MIDDLEWARE.keys()))
 
     for provider_name, provider in SUPPORTED_MIDDLEWARE.items():
         group = parser.add_argument_group('%s provider options' %

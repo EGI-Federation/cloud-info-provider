@@ -4,7 +4,6 @@ from cloud_bdii import utils
 
 
 class OpenStackProvider(providers.BaseProvider):
-
     def __init__(self, opts):
         super(OpenStackProvider, self).__init__(opts)
 
