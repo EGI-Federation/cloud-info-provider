@@ -142,7 +142,7 @@ class OpenNebulaROCCIProviderTest(OpenNebulaBaseProviderTest):
         class Opts(object):
             on_auth = 'foo'
             on_rpcxml_endpoint = 'bar'
-            template_dir = 'foobar'
+            rocci_template_dir = 'foobar'
 
         self.provider = FakeProvider(Opts())
 
