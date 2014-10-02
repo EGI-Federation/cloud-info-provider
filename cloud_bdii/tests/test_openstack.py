@@ -64,16 +64,18 @@ class OpenStackProviderTest(unittest.TestCase):
         class FakeProvider(os_provider.OpenStackProvider):
             def __init__(self, opts):
                 self.api = mock.Mock()
+                self.api.client.auth_url = 'http://foo.example.org:1234/v2'
                 self.static = mock.Mock()
 
         self.provider = FakeProvider(None)
 
-    def assert_resources(self, expected, observed, template=None):
+    def assert_resources(self, expected, observed, template=None,
+                         ignored_fields=[]):
         if template:
-            fields = test_utils.get_variables_from_template(template)
+            fields = test_utils.get_variables_from_template(template,
+                                                            ignored_fields)
         else:
             fields = []
-
         for k, v in observed.iteritems():
             self.assertDictEqual(expected[k], v)
             for f in fields:
@@ -104,7 +106,8 @@ class OpenStackProviderTest(unittest.TestCase):
 
         self.assert_resources(expected_templates,
                               templates,
-                              template="execution_environment.ldif")
+                              template="execution_environment.ldif",
+                              ignored_fields=["compute_service_name"])
 
     def test_get_templates_with_defaults_from_static(self):
         expected_templates = {}
@@ -133,7 +136,8 @@ class OpenStackProviderTest(unittest.TestCase):
 
         self.assert_resources(expected_templates,
                               templates,
-                              template="execution_environment.ldif")
+                              template="execution_environment.ldif",
+                              ignored_fields=["compute_service_name"])
 
     def test_get_images(self):
         expected_images = {
@@ -173,7 +177,8 @@ class OpenStackProviderTest(unittest.TestCase):
 
         self.assert_resources(expected_images,
                               images,
-                              template="application_environment.ldif")
+                              template="application_environment.ldif",
+                              ignored_fields=["compute_service_name"])
 
     def test_get_endpoints_with_defaults_from_static(self):
         expected_endpoints = {
@@ -189,6 +194,7 @@ class OpenStackProviderTest(unittest.TestCase):
             },
             'compute_middleware_developer': 'OpenStack',
             'compute_middleware': 'OpenStack Nova',
+            'compute_service_name': 'http://foo.example.org:1234/v2',
         }
 
         with mock.patch.object(
@@ -202,7 +208,8 @@ class OpenStackProviderTest(unittest.TestCase):
             self.provider.api.client.service_catalog.catalog = FAKES.catalog
             endpoints = self.provider.get_compute_endpoints()
 
-        self.assertDictEqual(expected_endpoints, endpoints)
+        for k, v in expected_endpoints['endpoints'].iteritems():
+            self.assertDictContainsSubset(v, endpoints['endpoints'].get(k, {}))
 
     def test_get_endpoints_with_defaults(self):
         expected_endpoints = {
@@ -218,6 +225,7 @@ class OpenStackProviderTest(unittest.TestCase):
             },
             'compute_middleware_developer': 'OpenStack',
             'compute_middleware': 'OpenStack Nova',
+            'compute_service_name': 'http://foo.example.org:1234/v2',
         }
 
         with mock.patch.object(

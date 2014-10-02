@@ -1,4 +1,4 @@
-dn: GLUE2EndpointID=%(endpoint_url)s_%(compute_api_type)s_%(compute_api_version)s_%(compute_api_authn_method)s,GLUE2ServiceID=cloud.compute.%(site_name)s_service,GLUE2GroupID=cloud,%(suffix)s
+dn: GLUE2EndpointID=%(endpoint_url)s_%(compute_api_type)s_%(compute_api_version)s_%(compute_api_authn_method)s,GLUE2ServiceID=%(compute_service_name)s_cloud.compute,GLUE2GroupID=cloud,%(suffix)s
 objectClass: GLUE2Entity
 objectClass: GLUE2Endpoint
 objectClass: GLUE2ComputingEndpoint
@@ -6,10 +6,10 @@ GLUE2EndpointHealthState: ok
 GLUE2EndpointID: %(endpoint_url)s_%(compute_api_type)s_%(compute_api_version)s_%(compute_api_authn_method)s
 GLUE2EndpointInterfaceName: %(compute_api_type)s
 GLUE2EndpointQualityLevel: %(compute_production_level)s
-GLUE2EndpointServiceForeignKey: cloud.compute.%(site_name)s_service
+GLUE2EndpointServiceForeignKey: %(compute_service_name)s_cloud.compute
 GLUE2EndpointServingState: %(compute_production_level)s
 GLUE2EndpointURL: %(endpoint_url)s
-GLUE2ComputingEndpointComputingServiceForeignKey: cloud.compute.%(site_name)s_service
+GLUE2ComputingEndpointComputingServiceForeignKey: %(compute_service_name)s_cloud.compute
 GLUE2EndpointCapability: %(compute_capabilities)s
 GLUE2EndpointImplementationName: %(compute_middleware)s
 GLUE2EndpointImplementationVersion: %(compute_middleware_version)s

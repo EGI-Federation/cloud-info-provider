@@ -122,7 +122,7 @@ class ComputeBDII(BaseBDII):
             ex_env.setdefault('template_id', tid)
             output.append(self._format_template('execution_environment',
                                                 ex_env,
-                                                extra=site_info))
+                                                extra=static_compute_info))
 
         images = self._get_info_from_providers('get_images')
         for iid, app_env in images.iteritems():
@@ -135,7 +135,7 @@ class ComputeBDII(BaseBDII):
                                 '%(image_platform)s' % app_env))
             output.append(self._format_template('application_environment',
                                                 app_env,
-                                                extra=site_info))
+                                                extra=static_compute_info))
 
         return '\n'.join(output)
 

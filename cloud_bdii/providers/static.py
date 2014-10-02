@@ -1,5 +1,6 @@
 import copy
 import re
+import socket
 
 import yaml
 
@@ -122,7 +123,6 @@ class StaticProvider(providers.BaseProvider):
                                    None,
                                    fields,
                                    prefix='template_')
-
         return templates['templates']
 
     def get_compute_endpoints(self):
@@ -130,19 +130,23 @@ class StaticProvider(providers.BaseProvider):
                          'total_cores', 'capabilities',
                          'hypervisor', 'hypervisor_version',
                          'middleware', 'middleware_version',
-                         'middleware_developer')
+                         'middleware_developer',
+                         'service_name')
         endpoint_fields = ('production_level', 'api_type', 'api_version',
                            'api_endpoint_technology', 'api_authn_method')
         endpoints = self._get_what('compute',
                                    'endpoints',
                                    global_fields,
                                    endpoint_fields)
+        if endpoints['compute_service_name'] is None:
+            endpoints['compute_service_name'] = socket.getfqdn()
         return endpoints
 
     def get_storage_endpoints(self):
         global_fields = ('service_production_level', 'total_storage',
                          'capabilities', 'middleware',
-                         'middleware_version', 'middleware_developer')
+                         'middleware_version', 'middleware_developer',
+                         'service_name')
         endpoint_fields = ('production_level', 'api_type', 'api_version',
                            'api_endpoint_technology',
                            'api_authn_method')
@@ -151,6 +155,8 @@ class StaticProvider(providers.BaseProvider):
                                    'endpoints',
                                    global_fields,
                                    endpoint_fields)
+        if endpoints['storage_service_name'] is None:
+            endpoints['storage_service_name'] = socket.getfqdn()
         return endpoints
 
     def _get_defaults(self, what, which, prefix=''):
