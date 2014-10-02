@@ -169,7 +169,7 @@ def parse_opts():
 
     parser.add_argument(
         '--yaml-file',
-        default='etc/bdii.yaml',
+        default='/etc/cloud-info-provider/bdii.yaml',
         help=('Path to the YAML file containing configuration static values. '
               'This file will be used to populate the information '
               'to the static provider. These values will be used whenever '
@@ -178,7 +178,7 @@ def parse_opts():
 
     parser.add_argument(
         '--template-dir',
-        default='etc/templates',
+        default='/etc/cloud-info-provider/templates',
         help=('Path to the directory containing the needed templates'))
 
     parser.add_argument(
