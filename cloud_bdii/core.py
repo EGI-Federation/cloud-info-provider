@@ -2,27 +2,25 @@
 
 import argparse
 import os.path
-import yaml
 
 import cloud_bdii.providers.openstack
 import cloud_bdii.providers.opennebula
-import cloud_bdii.providers.opennebularocci
 import cloud_bdii.providers.static
 
 SUPPORTED_MIDDLEWARE = {
     'openstack': cloud_bdii.providers.openstack.OpenStackProvider,
     'opennebula': cloud_bdii.providers.opennebula.OpenNebulaProvider,
-    'opennebularocci': cloud_bdii.providers.opennebularocci
-    .OpenNebulaROCCIProvider,
+    'opennebularocci': cloud_bdii.providers.opennebula.OpenNebulaROCCIProvider,
     'static': cloud_bdii.providers.static.StaticProvider,
 }
 
 
 class BaseBDII(object):
-    templates = ()
-
     def __init__(self, opts):
         self.opts = opts
+
+        self.templates = ()
+        self.ldif = {}
 
         if (opts.middleware != 'static' and
                 opts.middleware in SUPPORTED_MIDDLEWARE):
@@ -32,6 +30,7 @@ class BaseBDII(object):
 
         self.static_provider = SUPPORTED_MIDDLEWARE['static'](opts)
 
+    def load_templates(self):
         self.ldif = {}
         for tpl in self.templates:
             template_file = os.path.join(self.opts.template_dir,
@@ -55,7 +54,12 @@ class BaseBDII(object):
 
 
 class StorageBDII(BaseBDII):
-    templates = ('storage_service', 'storage_endpoint', 'storage_capacity')
+    def __init__(self, opts):
+        super(StorageBDII, self).__init__(opts)
+
+        self.templates = ('storage_service',
+                          'storage_endpoint',
+                          'storage_capacity')
 
     def render(self):
         output = []
@@ -85,12 +89,16 @@ class StorageBDII(BaseBDII):
 
 
 class ComputeBDII(BaseBDII):
-    templates = ('compute_service', 'compute_endpoint',
-                 'execution_environment', 'application_environment')
+    def __init__(self, opts):
+        super(ComputeBDII, self).__init__(opts)
+
+        self.templates = ('compute_service',
+                          'compute_endpoint',
+                          'execution_environment',
+                          'application_environment')
 
     def render(self):
         output = []
-
         endpoints = self._get_info_from_providers('get_compute_endpoints')
 
         if not endpoints['endpoints']:
@@ -114,7 +122,7 @@ class ComputeBDII(BaseBDII):
             ex_env.setdefault('template_id', tid)
             output.append(self._format_template('execution_environment',
                                                 ex_env,
-                                                extra=site_info))
+                                                extra=static_compute_info))
 
         images = self._get_info_from_providers('get_images')
         for iid, app_env in images.iteritems():
@@ -127,19 +135,19 @@ class ComputeBDII(BaseBDII):
                                 '%(image_platform)s' % app_env))
             output.append(self._format_template('application_environment',
                                                 app_env,
-                                                extra=site_info))
+                                                extra=static_compute_info))
 
         return '\n'.join(output)
 
 
 class CloudBDII(BaseBDII):
-    templates = ('headers', 'domain', 'bdii', 'clouddomain')
-
-    def __init__(self, *args):
-        super(CloudBDII, self).__init__(*args)
+    def __init__(self, opts):
+        super(CloudBDII, self).__init__(opts)
 
         if not self.opts.full_bdii_ldif:
-            self.templates = ('clouddomain', )
+            self.templates = ('headers', 'clouddomain', )
+        else:
+            self.templates = ('headers', 'domain', 'bdii', 'clouddomain')
 
     def render(self):
         output = []
@@ -152,44 +160,42 @@ class CloudBDII(BaseBDII):
 
 
 def parse_opts():
-    parser = parser = argparse.ArgumentParser(
+    parser = argparse.ArgumentParser(
         description='Cloud BDII provider',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-        fromfile_prefix_chars='@')
+        fromfile_prefix_chars='@',
+        conflict_handler="resolve",
+    )
 
     parser.add_argument(
         '--yaml-file',
-        default='etc/bdii.yaml',
-        help=(
-            'Path to the YAML file containing configuration static values. '
-            'This file will be used to populate the information '
-            'to the static provider. These values will be used whenever '
-            'a dynamic provider is used and it is not able to produce any '
-            'of the required values, or when using the static provider. '))
+        default='/etc/cloud-info-provider/bdii.yaml',
+        help=('Path to the YAML file containing configuration static values. '
+              'This file will be used to populate the information '
+              'to the static provider. These values will be used whenever '
+              'a dynamic provider is used and it is not able to produce any '
+              'of the required values, or when using the static provider. '))
 
     parser.add_argument(
         '--template-dir',
-        default='etc/templates',
+        default='/etc/cloud-info-provider/templates',
         help=('Path to the directory containing the needed templates'))
 
     parser.add_argument(
         '--full-bdii-ldif',
         action='store_true',
         default=False,
-        help=(
-            'Whether to generate a LDIF containing all the '
-            'BDII information, or just this node\'s information'))
+        help=('Whether to generate a LDIF containing all the '
+              'BDII information, or just this node\'s information'))
 
     parser.add_argument(
         '--middleware',
         metavar='MIDDLEWARE',
         choices=SUPPORTED_MIDDLEWARE,
         default='static',
-        help=(
-            'Middleware used. Only the following middlewares are '
-            'supported: %s. If you do not specify anything, static '
-            'values will be used.' %
-            SUPPORTED_MIDDLEWARE.keys()))
+        help=('Middleware used. Only the following middlewares are '
+              'supported: %s. If you do not specify anything, static '
+              'values will be used.' % SUPPORTED_MIDDLEWARE.keys()))
 
     for provider_name, provider in SUPPORTED_MIDDLEWARE.items():
         group = parser.add_argument_group('%s provider options' %
@@ -202,17 +208,9 @@ def parse_opts():
 def main():
     opts = parse_opts()
 
-    # Load options from YAML file, if any they override command line options
-    with open(opts.yaml_file, 'r') as f:
-        yml = yaml.safe_load(f)
-        if 'opts' in yml:
-            yml = yml['opts']
-            for a in yml:
-                if a in opts.__dict__:
-                    opts.__dict__[a] = yml[a]
-
     for cls_ in (CloudBDII, ComputeBDII, StorageBDII):
         bdii = cls_(opts)
+        bdii.load_templates()
         print bdii.render()
 
 if __name__ == '__main__':

@@ -1,0 +1,5 @@
+python-cloud-info-provider (0.4) unstable; urgency=low
+
+  * Initial Debian Release.
+
+ -- Enol Fernandez <enol.fernandez@egi.eu>  Fri, 03 Oct 2014 16:42:41 +0200
