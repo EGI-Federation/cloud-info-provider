@@ -191,6 +191,30 @@ class StaticProviderTest(unittest.TestCase):
             self.provider.get_storage_endpoint_defaults(prefix=True)
         )
 
+    def test_get_empty_storage_endpoints(self):
+        expected = {}
+        self.provider.yaml = {}
+        self.assertEqual(expected, self.provider.get_storage_endpoints())
+
+    def test_get_empty_compute_endpoints(self):
+        expected = {}
+        self.provider.yaml = {}
+        self.assertEqual(expected, self.provider.get_compute_endpoints())
+
+    def test_get_default_storage_service_name(self):
+        self.provider.yaml = {'storage': {'endpoints': {}}}
+        with mock.patch('socket.getfqdn') as m_fqdn:
+            m_fqdn.return_value = 'foo'
+            ep = self.provider.get_storage_endpoints()
+            self.assertEqual('foo', ep.get('storage_service_name'))
+
+    def test_get_default_compute_service_name(self):
+        self.provider.yaml = {'compute': {'endpoints': {}}}
+        with mock.patch('socket.getfqdn') as m_fqdn:
+            m_fqdn.return_value = 'foo'
+            ep = self.provider.get_compute_endpoints()
+            self.assertEqual('foo', ep.get('compute_service_name'))
+
     def test_get_storage_endpoints(self):
         expected = DATA.storage_endpoints
         self.assertEqual(expected, self.provider.get_storage_endpoints())

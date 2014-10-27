@@ -137,6 +137,15 @@ class StorageBDIITEst(BaseTest):
         bdii = cloud_bdii.core.StorageBDII(self.opts)
         self.assertNotEqual('', bdii.render())
 
+    @mock.patch.object(cloud_bdii.core.StorageBDII, '_get_info_from_providers')
+    def test_render_empty(self, m_get_info):
+        m_get_info.side_effect = (
+            {},
+            DATA.site_info
+        )
+        bdii = cloud_bdii.core.StorageBDII(self.opts)
+        self.assertEqual('', bdii.render())
+
 
 class ComputeBDIITest(BaseTest):
     @mock.patch.object(cloud_bdii.core.ComputeBDII, '_get_info_from_providers')
@@ -149,3 +158,14 @@ class ComputeBDIITest(BaseTest):
         )
         bdii = cloud_bdii.core.ComputeBDII(self.opts)
         self.assertNotEqual('', bdii.render())
+
+    @mock.patch.object(cloud_bdii.core.ComputeBDII, '_get_info_from_providers')
+    def test_render_empty(self, m_get_info):
+        m_get_info.side_effect = (
+            {},
+            DATA.site_info,
+            DATA.compute_templates,
+            DATA.compute_images,
+        )
+        bdii = cloud_bdii.core.ComputeBDII(self.opts)
+        self.assertEqual('', bdii.render())

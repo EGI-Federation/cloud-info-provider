@@ -66,7 +66,7 @@ class StorageBDII(BaseBDII):
 
         endpoints = self._get_info_from_providers('get_storage_endpoints')
 
-        if not endpoints:
+        if not endpoints.get('endpoints'):
             return ''
 
         site_info = self._get_info_from_providers('get_site_info')
@@ -101,7 +101,7 @@ class ComputeBDII(BaseBDII):
         output = []
         endpoints = self._get_info_from_providers('get_compute_endpoints')
 
-        if not endpoints['endpoints']:
+        if not endpoints.get('endpoints'):
             return ''
 
         site_info = self._get_info_from_providers('get_site_info')

@@ -138,7 +138,7 @@ class StaticProvider(providers.BaseProvider):
                                    'endpoints',
                                    global_fields,
                                    endpoint_fields)
-        if endpoints['compute_service_name'] is None:
+        if endpoints and not endpoints.get('compute_service_name'):
             endpoints['compute_service_name'] = socket.getfqdn()
         return endpoints
 
@@ -155,7 +155,7 @@ class StaticProvider(providers.BaseProvider):
                                    'endpoints',
                                    global_fields,
                                    endpoint_fields)
-        if endpoints['storage_service_name'] is None:
+        if endpoints and not endpoints.get('compute_service_name'):
             endpoints['storage_service_name'] = socket.getfqdn()
         return endpoints
 
