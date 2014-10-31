@@ -16,13 +16,12 @@ Architecture: all
 Section: python
 Depends: ${python:Depends}, ${misc:Depends},
  python-yaml,
- python-novaclient,
  bdii
 Provides: ${python:Provides}
 Description: Cloud information provider for BDII.
  Information provider for Cloud Compute and Cloud Storage services for BDII.
  .
- It supports static information specification, OpenNebula nad OpenStack cloud
+ It supports static information specification, OpenNebula and OpenStack cloud
  middlewares.
  The provider uses GLUE 2.0 EGI Cloud Profile to publish the information.
 
