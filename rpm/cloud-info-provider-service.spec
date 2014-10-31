@@ -6,7 +6,7 @@
 
 Summary: Information provider for Cloud Compute and Cloud Storage services for BDII.
 Name: cloud-info-provider-service
-Version: 0.4
+Version: 0.5
 Release: 1%{?dist}
 Group: Applications/Internet
 License: ASL 2.0
@@ -47,6 +47,8 @@ rm -rf $RPM_BUILD_ROOT
 /etc/cloud-info-provider/
 
 %changelog
+* Fri Oct 31 2014 Release 0.5 - Enol Fernandez <enol.fernandez@egi.eu>
+- Fixed issue when storage is not defined (#13).
 * Wed Oct 01 2014 Release 0.4 - Enol Fernandez <enol.fernandez@egi.eu>
 - Incorporate changes from Alvaro Lopez.
 - Enhance the published schema by adding a service name.

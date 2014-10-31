@@ -1,3 +1,10 @@
+python-cloud-info-provider (0.5) UNRELEASED; urgency=medium
+
+  * Fixed issue when storage is not defined (#13).
+  * Removed python-novaclient dependency.
+
+ -- Enol Fernandez <enol.fernandez@egi.eu>  Fri, 31 Oct 2014 11:08:21 +0100
+
 python-cloud-info-provider (0.4) unstable; urgency=low
 
   * Initial Debian Release.
