@@ -146,13 +146,15 @@ class OpenStackProvider(providers.BaseProvider):
             })
 
             image_descr = None
-            if 'vmcatcher_event_dc_description' in image.metadata:
+            if image.metadata.get('vmcatcher_event_dc_description',
+                                  None) is not None:
                 image_descr = image.metadata['vmcatcher_event_dc_description']
             elif 'vmcatcher_event_dc_title' in image.metadata:
                 image_descr = image.metadata['vmcatcher_event_dc_title']
 
             marketplace_id = None
-            if 'vmcatcher_event_ad_mpuri' in image.metadata:
+            if image.metadata.get('vmcatcher_event_ad_mpuri',
+                                  None) is not None:
                 marketplace_id = image.metadata['vmcatcher_event_ad_mpuri']
             elif 'marketplace' in image.metadata:
                 marketplace_id = image.metadata['marketplace']
