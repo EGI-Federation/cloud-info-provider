@@ -19,7 +19,8 @@ BuildRequires: python-pbr
 Requires: python
 Requires: python-argparse
 Requires: python-yaml
-Requires: bdii
+Recommends: bdii
+Recommends: python-novaclient
 BuildArch: noarch
 
 %description
@@ -47,8 +48,12 @@ rm -rf $RPM_BUILD_ROOT
 /etc/cloud-info-provider/
 
 %changelog
-* Fri Oct 31 2014 Release 0.5 - Enol Fernandez <enol.fernandez@egi.eu>
+* Tue Nov 04 2014 Release 0.5 - Enol Fernandez <enol.fernandez@egi.eu>
 - Fixed issue when storage is not defined (#13).
+- Allow to define a image and resource template schema in OpenStack(#15).
+- Add option to include the site name in the DN's suffix.
+- Changed bdii dependency to Recommends.
+- Added python-novaclient to Recommends.
 * Wed Oct 01 2014 Release 0.4 - Enol Fernandez <enol.fernandez@egi.eu>
 - Incorporate changes from Alvaro Lopez.
 - Enhance the published schema by adding a service name.

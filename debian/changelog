@@ -1,7 +1,9 @@
 python-cloud-info-provider (0.5) UNRELEASED; urgency=medium
 
   * Fixed issue when storage is not defined (#13).
-  * Removed python-novaclient dependency.
+  * Removed python-novaclient and bdii dependencies, changed to recommends.
+  * Allow to define a image and resource template schema in OpenStack(#15).
+  * Add option to include the site name in the DN's suffix.
 
  -- Enol Fernandez <enol.fernandez@egi.eu>  Fri, 31 Oct 2014 11:08:21 +0100
 
