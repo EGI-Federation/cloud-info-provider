@@ -15,6 +15,7 @@ class StaticProviderTest(unittest.TestCase):
         class Opts(object):
             yaml_file = None
             full_bdii_ldif = False
+            site_in_suffix = False
             glite_site_info_static = "foo"
 
         cwd = os.path.dirname(__file__)
@@ -226,6 +227,22 @@ class StaticProviderTest(unittest.TestCase):
     def test_no_site_name(self):
         self.opts.glite_site_info_static = "This does not exist"
         self.assertRaises(Exception, self.provider.get_site_info)
+
+    def test_get_suffix_default(self):
+        site_info = {'site_name': 'SITE_NAME'}
+        self.assertEquals("o=glue", self.provider._get_suffix(site_info))
+
+    def test_get_suffix_full_bdii(self):
+        site_info = {'site_name': 'SITE_NAME'}
+        self.provider.opts.full_bdii_ldif = True
+        self.assertEquals("GLUE2DomainID=SITE_NAME,o=glue",
+                          self.provider._get_suffix(site_info))
+
+    def test_get_suffix_site_in_suffix(self):
+        site_info = {'site_name': 'SITE_NAME'}
+        self.provider.opts.site_in_suffix = True
+        self.assertEquals("GLUE2DomainID=SITE_NAME,o=glue",
+                          self.provider._get_suffix(site_info))
 
     def test_get_site_info_no_full_bdii(self):
         data = StringIO.StringIO("SITE_NAME = SITE_NAME")
