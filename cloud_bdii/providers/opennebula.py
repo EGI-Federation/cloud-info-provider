@@ -58,7 +58,7 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
         # same that was before. Leave it like that, thenrefactor it
         doc = xee.fromstring(xml)
         doc = doc.find("params/param/value/array/data/value/string").text
-        doc = xee.fromstring(doc)
+        doc = xee.fromstring(doc.encode('utf-8'))
         templates = doc.getchildren()
 
         def _recurse_dict(element):

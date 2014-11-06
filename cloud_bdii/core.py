@@ -219,7 +219,7 @@ def main():
     for cls_ in (CloudBDII, ComputeBDII, StorageBDII):
         bdii = cls_(opts)
         bdii.load_templates()
-        print bdii.render()
+        print bdii.render().encode('utf-8')
 
 if __name__ == '__main__':
     main()
