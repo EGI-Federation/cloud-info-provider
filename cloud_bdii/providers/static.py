@@ -61,6 +61,13 @@ class StaticProvider(providers.BaseProvider):
 
         return ret
 
+    def _get_suffix(self, site_info):
+        if self.opts.full_bdii_ldif or self.opts.site_in_suffix:
+            return ('GLUE2DomainID=%(site_name)s,o=glue' %
+                    {'site_name': site_info['site_name']})
+        else:
+            return 'o=glue'
+
     def get_site_info(self):
         if 'site' in self.yaml:
             data = self.yaml['site']
@@ -92,7 +99,7 @@ class StaticProvider(providers.BaseProvider):
                 'sure the file %s is'
                 'accessible and readable' % self.opts.glite_site_info_static)
 
-        site_info['suffix'] = 'o=glue'
+        site_info['suffix'] = self._get_suffix(site_info)
 
         if self.opts.full_bdii_ldif:
             fields = ('production_level', 'url', 'ngi', 'country', 'latitude',
@@ -100,8 +107,6 @@ class StaticProvider(providers.BaseProvider):
                       'security_contact', 'user_support_contact',
                       'bdii_host', 'bdii_port')
             r = self._get_fields_and_prefix(fields, 'site_', data)
-            r['suffix'] = ('GLUE2DomainID=%(site_name)s,o=glue' %
-                           {'site_name': site_info['site_name']})
             site_info.update(r)
 
         return site_info

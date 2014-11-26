@@ -20,15 +20,18 @@ class OpenNebulaBaseProviderOptionsTest(unittest.TestCase):
         self.provider.populate_parser(parser)
 
         opts = parser.parse_args(['--on-auth', 'foo',
-                                  '--on-rpcxml-endpoint', 'bar'])
+                                  '--on-rpcxml-endpoint', 'bar',
+                                  '--vmcatcher-images'])
 
         self.assertEqual(opts.on_auth, 'foo')
         self.assertEqual(opts.on_rpcxml_endpoint, 'bar')
+        self.assertTrue(opts.vmcatcher_images)
 
     def test_options(self):
         class Opts(object):
             on_auth = 'foo'
             on_rpcxml_endpoint = 'bar'
+            vmcatcher_images = False
 
         # Check that the required opts are there
         for opt in ('on_auth', 'on_rpcxml_endpoint'):
@@ -98,6 +101,7 @@ class OpenNebulaBaseProviderTest(unittest.TestCase):
         class Opts(object):
             on_auth = 'foo'
             on_rpcxml_endpoint = 'bar'
+            vmcatcher_images = False
 
         self.provider = FakeProvider(Opts())
 
@@ -107,6 +111,17 @@ class OpenNebulaBaseProviderTest(unittest.TestCase):
         resp.read.side_effect = [FAKES.templatepool, FAKES.imagepool]
         mock_open.return_value = resp
         self.assertDictEqual(self.expected_images,
+                             self.provider.get_images())
+
+    @mock.patch('urllib2.urlopen')
+    def test_get_filtered_images(self, mock_open):
+        resp = mock.Mock()
+        resp.read.side_effect = [FAKES.templatepool, FAKES.imagepool]
+        mock_open.return_value = resp
+        self.provider.opts.vmcatcher_images = True
+        filtered_images = {k: v for (k, v) in self.expected_images.items()
+                           if v.get('image_marketplace_id')}
+        self.assertDictEqual(filtered_images,
                              self.provider.get_images())
 
 
@@ -143,6 +158,7 @@ class OpenNebulaROCCIProviderTest(OpenNebulaBaseProviderTest):
             on_auth = 'foo'
             on_rpcxml_endpoint = 'bar'
             rocci_template_dir = 'foobar'
+            vmcatcher_images = False
 
         self.provider = FakeProvider(Opts())
 

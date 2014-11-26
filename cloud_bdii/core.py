@@ -186,7 +186,15 @@ def parse_opts():
         action='store_true',
         default=False,
         help=('Whether to generate a LDIF containing all the '
-              'BDII information, or just this node\'s information'))
+              'BDII information, or just this node\'s information\n'
+              'NOTE: it does not generate GlueSchema 1.3 information'))
+
+    parser.add_argument(
+        '--site-in-suffix',
+        action='store_true',
+        default=False,
+        help=('Whether to include the site name in the generated DN\'s'
+              'suffix (Use only for execution as a site-BDII provider)'))
 
     parser.add_argument(
         '--middleware',
@@ -211,7 +219,7 @@ def main():
     for cls_ in (CloudBDII, ComputeBDII, StorageBDII):
         bdii = cls_(opts)
         bdii.load_templates()
-        print bdii.render()
+        print bdii.render().encode('utf-8')
 
 if __name__ == '__main__':
     main()

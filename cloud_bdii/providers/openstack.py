@@ -100,13 +100,15 @@ class OpenStackProvider(providers.BaseProvider):
         defaults = {'template_platform': 'amd64',
                     'template_network': 'private'}
         defaults.update(self.static.get_template_defaults(prefix=True))
+        tpl_sch = defaults.get('template_schema', 'resource_tpl')
 
         for flavor in self.api.flavors.list(detailed=True):
             if not flavor.is_public:
                 continue
 
             aux = defaults.copy()
-            aux.update({'template_id': 'resource_tpl#%s' % flavor.name.lower(),
+            aux.update({'template_id': '%s#%s' % (tpl_sch,
+                                                  flavor.name.lower()),
                         'template_memory': flavor.ram,
                         'template_cpu': flavor.vcpus})
             flavors[flavor.id] = aux
@@ -127,6 +129,7 @@ class OpenStackProvider(providers.BaseProvider):
             'image_platform': 'amd64',
         }
         defaults = self.static.get_image_defaults(prefix=True)
+        img_sch = defaults.get('image_schema', 'os_tpl')
 
         for image in self.api.images.list(detailed=True):
             aux = template.copy()
@@ -142,7 +145,7 @@ class OpenStackProvider(providers.BaseProvider):
             # metadata
             aux.update({
                 'image_name': image.name,
-                'image_id': 'os_tpl#%s' % image.id
+                'image_id': '%s#%s' % (img_sch, image.id)
             })
 
             image_descr = None
