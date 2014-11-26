@@ -121,6 +121,9 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
                     "vmcatcher_event_hv_version",
                     None
                 )
+            if (self.opts.vmcatcher_images and
+                    aux_tpl.get("image_marketplace_id", None) is None):
+                continue
             templates[tpl_id] = aux_tpl
         return templates
 
@@ -139,6 +142,13 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
             metavar='<auth-url>',
             default=utils.env('OS_RPCXML_ENDPOINT'),
             help='Defaults to env[OS_RPCXML_ENDPOINT].')
+
+        parser.add_argument(
+            '--vmcatcher-images',
+            action='store_true',
+            default=False,
+            help=('If set, include only information on images that '
+                  'have vmcatcher metadata, ignoring the others.'))
 
 
 class OpenNebulaProvider(OpenNebulaBaseProvider):
