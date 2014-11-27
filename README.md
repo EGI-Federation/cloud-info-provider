@@ -5,6 +5,17 @@ resources for publihing it into a BDII
 
 ## Installation
 
+### Dependencies
+
+The cloud-provider depends on PyYAML, which is already included as a dependency for 
+binary packages and when installing from source.
+
+For running the cloud-provider in a production environment you will probably need:
+ - bdii (available in Ubuntu/Debian repos, for RH based distros it is in EPEL, for
+ Debian wheezy it is available in the backports repo).
+ - if you are generating information for OpenStack, you will also need
+ to install python-novaclient.
+
 ### Binary packages
 
 Packages are available at [EGI's AppDB](https://appdb.egi.eu/store/software/cloud.info.provider).
@@ -19,9 +30,6 @@ git clone https://github.com/EGI-FCTF/BDIIscripts
 cd BDIIscripts 
 pip install .
 ```
-
-If you plan to use the script in a bdii, the `bdii` package should be also installed
-(it should be available in standard OS repositories).
 
 ## Generation of the LDIF 
 
@@ -118,23 +126,33 @@ The ldap server should contain all your cloud resource information:
 ldapsearch -x -h localhost -p 2170 -b o=glue
 ```
 
-## Adding the resource provider in a site-BDII
+### Adding the resource provider to the site-BDII
 
 Sites should have a dedicated host for the site-BDII. Information on how to
 set up this machine is avaiable in the EGI.eu wiki at
 [How to publish site information](https://wiki.egi.eu/wiki/MAN01_How_to_publish_Site_Information). 
 
-Add your cloud-info-provider to your site-BDII by adding a new URL like this:
+Add your cloud-info-provider to your site-BDII by adding a new URL that looks like this:
 ```
 ldap://<cloud-info-provier-hostname>:2170/GLUE2GroupID=cloud,o=glue
 ```
 
-## Running the cloud-provider as a full site-BDII
 
-**This is not recommended for production!!**
+## Other deployment modes
 
-If your site does not have a site-BDII and you want to generate both the
-resource information and the site information with the cloud-bdii-provider
-you can add in the `/var/lib/bdii/gip/provider/cloud-info-provider` the
-`--full-bdii-info` option to the `cloud-info-provider-service`. The YAML
-file must contain all your site information as described in the templates.
+**These deployment modes cover special cases that should not be used in
+  production!**
+
+### Running the cloud-provider in a site-BDII
+
+If your site does not have a separated site-BDII and you want to use the cloud
+provider in the site-BDII host (NOTE: any problems in the cloud provider
+will affect your site-BDII!), you can add the `--site-in-suffix` to the provider
+in `/var/lib/bdii/gip/provider/cloud-info-provider`.
+
+### Generate complete BDII information
+
+**This does not generate GlueSchema 1.3 information and will fail SAM tests**
+
+The cloud provider can also generate the GlueSchema 2.0 info for a site by
+using the `--full-bdii-ldif` option.
