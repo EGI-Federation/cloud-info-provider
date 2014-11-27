@@ -129,12 +129,20 @@ Add your cloud-info-provider to your site-BDII by adding a new URL like this:
 ldap://<cloud-info-provier-hostname>:2170/GLUE2GroupID=cloud,o=glue
 ```
 
-## Running the cloud-provider as a full site-BDII
+## Running the cloud-provider in a site-BDII
 
 **This is not recommended for production!!**
 
-If your site does not have a site-BDII and you want to generate both the
-resource information and the site information with the cloud-bdii-provider
-you can add in the `/var/lib/bdii/gip/provider/cloud-info-provider` the
-`--full-bdii-info` option to the `cloud-info-provider-service`. The YAML
-file must contain all your site information as described in the templates.
+If your site does not have a separated site-BDII and you want to use the cloud
+provider in the site-BDII host (NOTE: any problems in the cloud provider
+will affect your site-BDII!), you can add the `--site-in-suffix` to the provider
+in `/var/lib/bdii/gip/provider/cloud-info-provider`.
+
+## Generate complete BDII information
+
+**This is not recommended for production! It does not generate GlueSchema 1.3
+  information and will fail SAM tests**
+
+The cloud provider can also generate the GlueSchema 2.0 info for a site by
+using the `--full-bdii-ldif` option. This option will probably be removed in the
+future!
