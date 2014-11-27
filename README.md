@@ -126,31 +126,33 @@ The ldap server should contain all your cloud resource information:
 ldapsearch -x -h localhost -p 2170 -b o=glue
 ```
 
-## Adding the resource provider in a site-BDII
+### Adding the resource provider to the site-BDII
 
 Sites should have a dedicated host for the site-BDII. Information on how to
 set up this machine is avaiable in the EGI.eu wiki at
 [How to publish site information](https://wiki.egi.eu/wiki/MAN01_How_to_publish_Site_Information). 
 
-Add your cloud-info-provider to your site-BDII by adding a new URL like this:
+Add your cloud-info-provider to your site-BDII by adding a new URL that looks like this:
 ```
 ldap://<cloud-info-provier-hostname>:2170/GLUE2GroupID=cloud,o=glue
 ```
 
-## Running the cloud-provider in a site-BDII
 
-**This is not recommended for production!!**
+## Other deployment modes
+
+**These deployment modes cover special cases that should not be used in
+  production!**
+
+### Running the cloud-provider in a site-BDII
 
 If your site does not have a separated site-BDII and you want to use the cloud
 provider in the site-BDII host (NOTE: any problems in the cloud provider
 will affect your site-BDII!), you can add the `--site-in-suffix` to the provider
 in `/var/lib/bdii/gip/provider/cloud-info-provider`.
 
-## Generate complete BDII information
+### Generate complete BDII information
 
-**This is not recommended for production! It does not generate GlueSchema 1.3
-  information and will fail SAM tests**
+**This does not generate GlueSchema 1.3 information and will fail SAM tests**
 
 The cloud provider can also generate the GlueSchema 2.0 info for a site by
-using the `--full-bdii-ldif` option. This option will probably be removed in the
-future!
+using the `--full-bdii-ldif` option.
