@@ -1,13 +1,16 @@
 Source: python-cloud-info-provider
-Section: python 
+Section: net
 Priority: extra
 Maintainer: Enol Fernandez <enol.fernandez@egi.eu>
-Build-Depends: debhelper (>= 8.0.0),
+Build-Depends:
+ debhelper (>= 7.0.50),
  python-all (>= 2.6),
- python-all-dev (>= 2.6.6-3~) | python-support,
- python-setuptools,
- python-pbr
-Standards-Version: 3.9.4
+ python-all-dev (>= 2.6),
+ python-support
+Build-Depends-Indep:
+ python-pbr (>= 0.6),
+ python-setuptools
+Standards-Version: 3.9.5
 Homepage: http://github.com/EGI-FCTF/BDIIscripts
 Vcs-Git: https://github.com/EGI-FCTF/BDIIscripts.git
 
@@ -16,7 +19,8 @@ Architecture: all
 Section: python
 Depends: ${python:Depends}, ${misc:Depends},
  python-yaml
-Recommends: bdii, python-novaclient
+Recommends: bdii
+Suggests: python-novaclient
 Provides: ${python:Provides}
 Description: Cloud information provider for BDII.
  Information provider for Cloud Compute and Cloud Storage services for BDII.
