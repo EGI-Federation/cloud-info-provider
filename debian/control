@@ -5,8 +5,7 @@ Maintainer: Enol Fernandez <enol.fernandez@egi.eu>
 Build-Depends:
  debhelper (>= 7.0.50),
  python-all (>= 2.6),
- python-all-dev (>= 2.6),
- python-support
+ python-all-dev (>= 2.6)
 Build-Depends-Indep:
  python-pbr (>= 0.6),
  python-setuptools
