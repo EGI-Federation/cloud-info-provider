@@ -155,21 +155,21 @@ class OpenStackFakes(object):
         flavors = (
             {
                 'id': 1,
-                'name': 'foo',
+                'name': 'm1.foo',
                 'ram': 10,
                 'vcpus': 20,
                 'is_public': True,
             },
             {
                 'id': 2,
-                'name': 'bar',
+                'name': 'm1 bar',
                 'ram': 20,
                 'vcpus': 30,
                 'is_public': False,
             },
             {
                 'id': 3,
-                'name': 'baz',
+                'name': 'm1.baz',
                 'ram': 2,
                 'vcpus': 3,
                 'is_public': True,
@@ -184,7 +184,7 @@ class OpenStackFakes(object):
         images = (
             {
                 'name': 'fooimage',
-                'id': 'fooid',
+                'id': 'foo.id',
                 'metadata': {},
                 'links': [{
                     'type': 'application/vnd.openstack.image',
@@ -193,7 +193,7 @@ class OpenStackFakes(object):
             },
             {
                 'name': 'barimage',
-                'id': 'barid',
+                'id': 'bar id',
                 'metadata': {},
                 'links': []
             },

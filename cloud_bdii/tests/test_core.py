@@ -22,9 +22,11 @@ class ModuleTest(unittest.TestCase):
             for i in (m1, m2, m3):
                 i = i.return_value
                 i.render.return_value = 'foo'
-                i.assert_called()
 
             self.assertIsNone(cloud_bdii.core.main())
+
+            for i in (m0, m1, m2, m3):
+                assert i.called
 
 
 class FakeBDIIOpts(object):
