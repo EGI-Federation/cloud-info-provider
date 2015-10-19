@@ -87,10 +87,11 @@ class OpenStackProviderTest(unittest.TestCase):
             if not f.is_public:
                 continue
 
+            name = f.name.strip().replace(' ', '_').replace('.', '-').lower()
             expected_templates[f.id] = {
                 'template_memory': f.ram,
                 'template_cpu': f.vcpus,
-                'template_id': 'resource_tpl#%s' % f.name,
+                'template_id': 'resource_tpl#%s' % name,
                 'template_platform': 'amd64',
                 'template_network': 'private'
             }
@@ -100,9 +101,9 @@ class OpenStackProviderTest(unittest.TestCase):
             mock.patch.object(self.provider.api.flavors, 'list'),
         ) as (m_get_template_defaults, m_flavors_list):
             m_get_template_defaults.return_value = {}
-            m_get_template_defaults.assert_called()
             m_flavors_list.return_value = FAKES.flavors
             templates = self.provider.get_templates()
+            assert m_get_template_defaults.called
 
         self.assert_resources(expected_templates,
                               templates,
@@ -115,10 +116,11 @@ class OpenStackProviderTest(unittest.TestCase):
             if not f.is_public:
                 continue
 
+            name = f.name.strip().replace(' ', '_').replace('.', '-').lower()
             expected_templates[f.id] = {
                 'template_memory': f.ram,
                 'template_cpu': f.vcpus,
-                'template_id': 'resource_tpl#%s' % f.name,
+                'template_id': 'resource_tpl#%s' % name,
                 'template_platform': 'i686',
                 'template_network': 'private'
             }
@@ -130,9 +132,9 @@ class OpenStackProviderTest(unittest.TestCase):
             m_get_template_defaults.return_value = {
                 'template_platform': 'i686'
             }
-            m_get_template_defaults.assert_called()
             m_flavors_list.return_value = FAKES.flavors
             templates = self.provider.get_templates()
+            assert m_get_template_defaults.called
 
         self.assert_resources(expected_templates,
                               templates,
@@ -141,7 +143,7 @@ class OpenStackProviderTest(unittest.TestCase):
 
     def test_get_images(self):
         expected_images = {
-            'barid': {
+            'bar id': {
                 'image_description': None,
                 'image_name': 'barimage',
                 'image_os_family': None,
@@ -150,9 +152,9 @@ class OpenStackProviderTest(unittest.TestCase):
                 'image_platform': 'amd64',
                 'image_version': None,
                 'image_marketplace_id': None,
-                'image_id': 'os_tpl#barid'
+                'image_id': 'os_tpl#bar_id'
             },
-            'fooid': {
+            'foo.id': {
                 'image_description': None,
                 'image_name': 'fooimage',
                 'image_os_family': None,
@@ -161,7 +163,7 @@ class OpenStackProviderTest(unittest.TestCase):
                 'image_platform': 'amd64',
                 'image_version': None,
                 'image_marketplace_id': 'http://example.org/',
-                'image_id': 'os_tpl#fooid'
+                'image_id': 'os_tpl#foo-id'
             }
         }
 
@@ -170,10 +172,10 @@ class OpenStackProviderTest(unittest.TestCase):
             mock.patch.object(self.provider.api.images, 'list'),
         ) as (m_get_image_defaults, m_images_list):
             m_get_image_defaults.return_value = {}
-            m_get_image_defaults.assert_called()
             m_images_list.return_value = FAKES.images
 
             images = self.provider.get_images()
+            assert m_get_image_defaults.called
 
         self.assert_resources(expected_images,
                               images,
@@ -204,9 +206,9 @@ class OpenStackProviderTest(unittest.TestCase):
                 'endpoint_occi_api_version': '11.11',
                 'endpoint_openstack_api_version': '99.99',
             }
-            m_get_endpoint_defaults.assert_called()
             self.provider.api.client.service_catalog.catalog = FAKES.catalog
             endpoints = self.provider.get_compute_endpoints()
+            assert m_get_endpoint_defaults.called
 
         for k, v in expected_endpoints['endpoints'].iteritems():
             self.assertDictContainsSubset(v, endpoints['endpoints'].get(k, {}))
@@ -232,8 +234,13 @@ class OpenStackProviderTest(unittest.TestCase):
             self.provider.static, 'get_compute_endpoint_defaults'
         ) as m_get_endpoint_defaults:
             m_get_endpoint_defaults.return_value = {}
-            m_get_endpoint_defaults.assert_called()
             self.provider.api.client.service_catalog.catalog = FAKES.catalog
             endpoints = self.provider.get_compute_endpoints()
+            assert m_get_endpoint_defaults.called
 
         self.assertDictEqual(expected_endpoints, endpoints)
+
+    def test_occify_terms(self):
+        self.assertEquals('m1-tiny', self.provider.occify('m1.tiny'))
+        self.assertEquals('m1_tiny', self.provider.occify('m1 tiny'))
+        self.assertEquals('m1-tiny_s', self.provider.occify('m1.tiny s'))

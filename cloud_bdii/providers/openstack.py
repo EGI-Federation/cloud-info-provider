@@ -107,8 +107,9 @@ class OpenStackProvider(providers.BaseProvider):
                 continue
 
             aux = defaults.copy()
-            aux.update({'template_id': '%s#%s' % (tpl_sch,
-                                                  flavor.name.lower()),
+            template_id = '%s#%s' % (tpl_sch,
+                                     OpenStackProvider.occify(flavor.name))
+            aux.update({'template_id': template_id,
                         'template_memory': flavor.ram,
                         'template_cpu': flavor.vcpus})
             flavors[flavor.id] = aux
@@ -145,7 +146,8 @@ class OpenStackProvider(providers.BaseProvider):
             # metadata
             aux.update({
                 'image_name': image.name,
-                'image_id': '%s#%s' % (img_sch, image.id)
+                'image_id': '%s#%s' % (img_sch,
+                                       OpenStackProvider.occify(image.id))
             })
 
             image_descr = None
@@ -172,6 +174,14 @@ class OpenStackProvider(providers.BaseProvider):
                 aux['image_description'] = image_descr
             images[image.id] = aux
         return images
+
+    @staticmethod
+    def occify(term_name):
+        '''
+        Occifies a term_name so that it is compliant with GFD 185.
+        '''
+        term = term_name.strip().replace(' ', '_').replace('.', '-').lower()
+        return term
 
     @staticmethod
     def populate_parser(parser):

@@ -4,14 +4,14 @@
 
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
-Summary: Information provider for Cloud Compute and Cloud Storage services for BDII.
-Name: cloud-info-provider-service
+Summary: Information provider for Cloud Compute and Cloud Storage services for BDII
+Name: cloud-info-provider
 Version: 0.5
 Release: 1%{?dist}
 Group: Applications/Internet
 License: ASL 2.0
 URL: https://github.com/EGI-FCTF/BDIIscripts
-Source0: %{name}-%{version}.tar.gz
+Source: cloud_bdii-%{version}.tar.gz
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: python-setuptools
@@ -19,8 +19,8 @@ BuildRequires: python-pbr
 Requires: python
 Requires: python-argparse
 Requires: python-yaml
-Recommends: bdii
-Recommends: python-novaclient
+#Recommends: bdii
+#Recommends: python-novaclient
 BuildArch: noarch
 
 %description
@@ -30,13 +30,13 @@ middlewares.
 The provider uses GLUE 2.0 EGI Cloud Profile to publish the information.
 
 %prep
-%setup -q -n %{name}
+%setup -q -n cloud_bdii-%{version}
 
 %build
 
 %install
 rm -rf $RPM_BUILD_ROOT
-python setup.py install --root $RPM_BUILD_ROOT  --install-data /
+python setup.py install --root $RPM_BUILD_ROOT
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -45,22 +45,22 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{python_sitelib}/cloud_bdii*
 /usr/bin/cloud-info-provider-service
-/etc/cloud-info-provider/
+%config /etc/cloud-info-provider/
 
 %changelog
-* Tue Nov 04 2014 Release 0.5 - Enol Fernandez <enol.fernandez@egi.eu>
+* Wed Feb  2015 Enol Fernandez <enol.fernandez@egi.eu> - 0.5-{%release}
 - Fixed issue when storage is not defined (#13).
 - Allow to define a image and resource template schema in OpenStack(#15).
 - Add option to include the site name in the DN's suffix.
 - Changed bdii dependency to Recommends.
 - Added python-novaclient to Recommends.
-* Wed Oct 01 2014 Release 0.4 - Enol Fernandez <enol.fernandez@egi.eu>
+* Wed Oct 01 2014 Enol Fernandez <enol.fernandez@egi.eu> - 0.4
 - Incorporate changes from Alvaro Lopez.
 - Enhance the published schema by adding a service name.
 - Packaging improvements.
-* Mon Aug 18 2014 Release 0.3 - Salvatore Pinto
+* Mon Aug 18 2014 Salvatore Pinto - 0.3
 - Fixed OpenNebula provider (thanks to Boris Parak)
-* Tue Jul 25 2014 Release 0.2 - Salvatore Pinto
+* Tue Jul 25 2014 Salvatore Pinto -0.2
 - Added rpm packaging and bin wrapper
 - Added possibility to setup options via YAML
 - Added retreival of Site name from BDII configuration
@@ -69,5 +69,5 @@ rm -rf $RPM_BUILD_ROOT
 - Added OpenNebula and OpenNebulaROCCI drivers
 - Small changes to OpenStack driver (Marketplace information from glancepush, rewritten template, possibility to filter images without marketplace ID)
 - Removed support for Tenant ID (insthead of Tenant name) for retro-compatibility with older versions of novaclient libraries
-* Wed May 28 2014 Release 0.1 - Alvaro Lopez Garcia
+* Wed May 28 2014 Alvaro Lopez Garcia - 0.1
 - First release
