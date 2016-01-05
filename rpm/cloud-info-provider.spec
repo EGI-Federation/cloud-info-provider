@@ -10,8 +10,8 @@ Version: 0.5
 Release: 1%{?dist}
 Group: Applications/Internet
 License: ASL 2.0
-URL: https://github.com/EGI-FCTF/BDIIscripts
-Source: cloud_bdii-%{version}.tar.gz
+URL: https://github.com/EGI-FCTF/cloud-bdii-provider
+Source: cloud-bdii-provider-%{version}.tar.gz
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: python-setuptools
@@ -30,7 +30,7 @@ middlewares.
 The provider uses GLUE 2.0 EGI Cloud Profile to publish the information.
 
 %prep
-%setup -q -n cloud_bdii-%{version}
+%setup -q -n cloud-bdii-provider-%{version}
 
 %build
 
@@ -48,7 +48,7 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/cloud-info-provider/
 
 %changelog
-* Wed Feb  2015 Enol Fernandez <enol.fernandez@egi.eu> - 0.5-{%release}
+* Wed Feb 4 2015 Enol Fernandez <enol.fernandez@egi.eu> - 0.5-{%release}
 - Fixed issue when storage is not defined (#13).
 - Allow to define a image and resource template schema in OpenStack(#15).
 - Add option to include the site name in the DN's suffix.
@@ -60,7 +60,7 @@ rm -rf $RPM_BUILD_ROOT
 - Packaging improvements.
 * Mon Aug 18 2014 Salvatore Pinto - 0.3
 - Fixed OpenNebula provider (thanks to Boris Parak)
-* Tue Jul 25 2014 Salvatore Pinto -0.2
+* Fri Jul 25 2014 Salvatore Pinto -0.2
 - Added rpm packaging and bin wrapper
 - Added possibility to setup options via YAML
 - Added retreival of Site name from BDII configuration
