@@ -3,12 +3,11 @@
 # that this is a generic OpenNebula plugin. If you use rOCCI server on top of
 # OpenNebula, please refer to the OpenNebulaROCCI provider
 
+import json
 import os
 import string
 import urllib2
 import xml.etree.ElementTree as xee
-
-import json
 
 from cloud_bdii import exceptions
 from cloud_bdii import providers

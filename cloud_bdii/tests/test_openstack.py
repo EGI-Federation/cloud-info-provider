@@ -1,7 +1,7 @@
 import argparse
 import contextlib
-import unittest
 import sys
+import unittest
 
 import mock
 

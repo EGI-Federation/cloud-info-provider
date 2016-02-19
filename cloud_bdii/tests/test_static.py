@@ -1,6 +1,6 @@
-import unittest
 import os.path
 import StringIO
+import unittest
 
 import mock
 

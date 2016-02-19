@@ -1,5 +1,5 @@
 import cgi
-from collections import namedtuple
+import collections
 import os.path
 import socket
 
@@ -149,8 +149,9 @@ DATA = Data()
 
 class OpenStackFakes(object):
     def __init__(self):
-        Flavor = namedtuple('Flavor',
-                            ('id', 'name', 'ram', 'vcpus', 'is_public'))
+        Flavor = collections.namedtuple(
+            'Flavor',
+            ('id', 'name', 'ram', 'vcpus', 'is_public'))
 
         flavors = (
             {
@@ -178,8 +179,9 @@ class OpenStackFakes(object):
 
         self.flavors = [Flavor(**f) for f in flavors]
 
-        Image = namedtuple('Image',
-                           ('name', 'id', 'links', 'metadata'))
+        Image = collections.namedtuple(
+            'Image',
+            ('name', 'id', 'links', 'metadata'))
 
         images = (
             {

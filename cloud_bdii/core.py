@@ -1,8 +1,8 @@
 import argparse
 import os.path
 
-import cloud_bdii.providers.openstack
 import cloud_bdii.providers.opennebula
+import cloud_bdii.providers.openstack
 import cloud_bdii.providers.static
 
 SUPPORTED_MIDDLEWARE = {
