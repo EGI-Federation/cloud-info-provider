@@ -164,9 +164,8 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
     # files. If the script has no access to them, you can set the directory to
     # None and configuration files specified in the YAML configuration.
     def get_templates(self):
-        """
-        Get flavors from rOCCI-server configuration.
-        """
+        """Get flavors from rOCCI-server configuration."""
+
         if self.opts.rocci_template_dir is None:
             # revert to static
             return self.static.get_templates()
