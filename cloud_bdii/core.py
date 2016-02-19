@@ -1,8 +1,8 @@
 import argparse
 import os.path
 
-import cloud_bdii.providers.openstack
 import cloud_bdii.providers.opennebula
+import cloud_bdii.providers.openstack
 import cloud_bdii.providers.static
 
 SUPPORTED_MIDDLEWARE = {
@@ -217,7 +217,7 @@ def main():
     for cls_ in (CloudBDII, ComputeBDII, StorageBDII):
         bdii = cls_(opts)
         bdii.load_templates()
-        print bdii.render().encode('utf-8')
+        print(bdii.render().encode('utf-8'))
 
 if __name__ == '__main__':
     main()

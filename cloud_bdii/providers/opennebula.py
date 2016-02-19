@@ -3,12 +3,11 @@
 # that this is a generic OpenNebula plugin. If you use rOCCI server on top of
 # OpenNebula, please refer to the OpenNebulaROCCI provider
 
+import json
 import os
 import string
 import urllib2
 import xml.etree.ElementTree as xee
-
-import json
 
 from cloud_bdii import exceptions
 from cloud_bdii import providers
@@ -164,9 +163,8 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
     # files. If the script has no access to them, you can set the directory to
     # None and configuration files specified in the YAML configuration.
     def get_templates(self):
-        """
-        Get flavors from rOCCI-server configuration.
-        """
+        """Get flavors from rOCCI-server configuration."""
+
         if self.opts.rocci_template_dir is None:
             # revert to static
             return self.static.get_templates()

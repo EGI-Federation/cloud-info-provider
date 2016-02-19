@@ -177,9 +177,8 @@ class OpenStackProvider(providers.BaseProvider):
 
     @staticmethod
     def occify(term_name):
-        '''
-        Occifies a term_name so that it is compliant with GFD 185.
-        '''
+        '''Occifies a term_name so that it is compliant with GFD 185.'''
+
         term = term_name.strip().replace(' ', '_').replace('.', '-').lower()
         return term
 

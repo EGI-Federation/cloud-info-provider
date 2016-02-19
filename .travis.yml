@@ -1,12 +1,11 @@
 language: python
-python:
-    - "2.7"
 
-install: 
-    - pip install -r requirements.txt
-    - pip install -r test-requirements.txt
+install:
+    - pip install tox
 
 script:
-    - flake8 cloud_bdii
-    - nosetests 
+    - tox
 
+env:
+    - TOXENV=py27
+    - TOXENV=pep8
