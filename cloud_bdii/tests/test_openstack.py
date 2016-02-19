@@ -241,6 +241,6 @@ class OpenStackProviderTest(unittest.TestCase):
         self.assertDictEqual(expected_endpoints, endpoints)
 
     def test_occify_terms(self):
-        self.assertEquals('m1-tiny', self.provider.occify('m1.tiny'))
-        self.assertEquals('m1_tiny', self.provider.occify('m1 tiny'))
-        self.assertEquals('m1-tiny_s', self.provider.occify('m1.tiny s'))
+        self.assertEqual('m1-tiny', self.provider.occify('m1.tiny'))
+        self.assertEqual('m1_tiny', self.provider.occify('m1 tiny'))
+        self.assertEqual('m1-tiny_s', self.provider.occify('m1.tiny s'))
