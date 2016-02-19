@@ -4,6 +4,7 @@ import unittest
 
 import mock
 
+from cloud_bdii import exceptions
 from cloud_bdii.providers import static as static_provider
 from cloud_bdii.tests import data
 
@@ -226,7 +227,8 @@ class StaticProviderTest(unittest.TestCase):
 
     def test_no_site_name(self):
         self.opts.glite_site_info_static = "This does not exist"
-        self.assertRaises(Exception, self.provider.get_site_info)
+        self.assertRaises(exceptions.StaticProviderException,
+                          self.provider.get_site_info)
 
     def test_get_suffix_default(self):
         site_info = {'site_name': 'SITE_NAME'}

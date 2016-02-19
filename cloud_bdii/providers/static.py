@@ -87,7 +87,7 @@ class StaticProvider(providers.BaseProvider):
                         if m:
                             site_info['site_name'] = m.group(1)
                             break
-            except:
+            except Exception:
                 raise exceptions.StaticProviderException(
                     'Cannot read %s for getting the site name' %
                     self.opts.glite_site_info_static)
