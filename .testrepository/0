@@ -1,0 +1,406 @@
+time: 2016-03-01 11:44:49.537223Z
+tags: worker-2
+test: cloud_bdii.tests.test_core.ComputeBDIITest.test_render
+time: 2016-03-01 11:44:49.541544Z
+successful: cloud_bdii.tests.test_core.ComputeBDIITest.test_render [ multipart
+]
+tags: -worker-2
+time: 2016-03-01 11:44:49.542149Z
+tags: worker-2
+test: cloud_bdii.tests.test_opennebula.OpenNebulaBaseProviderOptionsTest.test_options
+time: 2016-03-01 11:44:49.542528Z
+successful: cloud_bdii.tests.test_opennebula.OpenNebulaBaseProviderOptionsTest.test_options [ multipart
+]
+tags: -worker-2
+time: 2016-03-01 11:44:49.543592Z
+tags: worker-2
+test: cloud_bdii.tests.test_opennebula.OpenNebulaProviderOptionsTest.test_options
+time: 2016-03-01 11:44:49.543964Z
+successful: cloud_bdii.tests.test_opennebula.OpenNebulaProviderOptionsTest.test_options [ multipart
+]
+tags: -worker-2
+time: 2016-03-01 11:44:49.544467Z
+tags: worker-2
+test: cloud_bdii.tests.test_opennebula.OpenNebulaROCCIProviderTest.test_templates_missing
+time: 2016-03-01 11:44:49.545597Z
+successful: cloud_bdii.tests.test_opennebula.OpenNebulaROCCIProviderTest.test_templates_missing [ multipart
+]
+tags: -worker-2
+time: 2016-03-01 11:44:49.541123Z
+tags: worker-3
+test: cloud_bdii.tests.test_core.BaseBDIITest.test_load_templates
+time: 2016-03-01 11:44:49.545982Z
+successful: cloud_bdii.tests.test_core.BaseBDIITest.test_load_templates [ multipart
+]
+tags: -worker-3
+time: 2016-03-01 11:44:49.539598Z
+tags: worker-1
+test: cloud_bdii.tests.test_base_provider.BaseProviderTest.test_provider_get_compute_endpoints
+time: 2016-03-01 11:44:49.540082Z
+successful: cloud_bdii.tests.test_base_provider.BaseProviderTest.test_provider_get_compute_endpoints [ multipart
+]
+tags: -worker-1
+time: 2016-03-01 11:44:49.546029Z
+tags: worker-2
+test: cloud_bdii.tests.test_static.StaticProviderTest.test_get_site_info_full_bdii
+time: 2016-03-01 11:44:49.568574Z
+successful: cloud_bdii.tests.test_static.StaticProviderTest.test_get_site_info_full_bdii [ multipart
+]
+tags: -worker-2
+time: 2016-03-01 11:44:49.547545Z
+tags: worker-4
+test: cloud_bdii.tests.test_core.BaseBDIITest.test_get_info_from_providers
+time: 2016-03-01 11:44:49.555721Z
+successful: cloud_bdii.tests.test_core.BaseBDIITest.test_get_info_from_providers [ multipart
+]
+tags: -worker-4
+time: 2016-03-01 11:44:49.544170Z
+tags: worker-0
+test: cloud_bdii.tests.test_core.CloudBDIITest.test_render_full
+time: 2016-03-01 11:44:49.546479Z
+successful: cloud_bdii.tests.test_core.CloudBDIITest.test_render_full [ multipart
+]
+tags: -worker-0
+time: 2016-03-01 11:44:49.540497Z
+tags: worker-1
+test: cloud_bdii.tests.test_base_provider.BaseProviderTest.test_provider_get_images
+time: 2016-03-01 11:44:49.540807Z
+successful: cloud_bdii.tests.test_base_provider.BaseProviderTest.test_provider_get_images [ multipart
+]
+tags: -worker-1
+time: 2016-03-01 11:44:49.548534Z
+tags: worker-5
+test: cloud_bdii.tests.test_base_provider.BaseProviderTest.test_provider_get_site_info
+time: 2016-03-01 11:44:49.548974Z
+successful: cloud_bdii.tests.test_base_provider.BaseProviderTest.test_provider_get_site_info [ multipart
+]
+tags: -worker-5
+time: 2016-03-01 11:44:49.556343Z
+tags: worker-4
+test: cloud_bdii.tests.test_openstack.OpenStackProviderTest.test_get_endpoints_with_defaults
+time: 2016-03-01 11:44:49.557063Z
+successful: cloud_bdii.tests.test_openstack.OpenStackProviderTest.test_get_endpoints_with_defaults [ multipart
+]
+tags: -worker-4
+time: 2016-03-01 11:44:49.541887Z
+tags: worker-1
+test: cloud_bdii.tests.test_opennebula.OpenNebulaBaseProviderTest.test_get_filtered_images
+time: 2016-03-01 11:44:49.559976Z
+successful: cloud_bdii.tests.test_opennebula.OpenNebulaBaseProviderTest.test_get_filtered_images [ multipart
+]
+tags: -worker-1
+time: 2016-03-01 11:44:49.546981Z
+tags: worker-0
+test: cloud_bdii.tests.test_core.StorageBDIITEst.test_render
+time: 2016-03-01 11:44:49.549216Z
+successful: cloud_bdii.tests.test_core.StorageBDIITEst.test_render [ multipart
+]
+tags: -worker-0
+time: 2016-03-01 11:44:49.549391Z
+tags: worker-5
+test: cloud_bdii.tests.test_base_provider.BaseProviderTest.test_provider_get_storage_endpoints
+time: 2016-03-01 11:44:49.549663Z
+successful: cloud_bdii.tests.test_base_provider.BaseProviderTest.test_provider_get_storage_endpoints [ multipart
+]
+tags: -worker-5
+time: 2016-03-01 11:44:49.560761Z
+tags: worker-1
+test: cloud_bdii.tests.test_opennebula.OpenNebulaProviderTest.test_get_filtered_images
+time: 2016-03-01 11:44:49.575707Z
+successful: cloud_bdii.tests.test_opennebula.OpenNebulaProviderTest.test_get_filtered_images [ multipart
+]
+tags: -worker-1
+time: 2016-03-01 11:44:49.557374Z
+tags: worker-4
+test: cloud_bdii.tests.test_openstack.OpenStackProviderTest.test_occify_terms
+time: 2016-03-01 11:44:49.557792Z
+successful: cloud_bdii.tests.test_openstack.OpenStackProviderTest.test_occify_terms [ multipart
+]
+tags: -worker-4
+time: 2016-03-01 11:44:49.549668Z
+tags: worker-0
+test: cloud_bdii.tests.test_opennebula.OpenNebulaBaseProviderOptionsTest.test_populate_parser
+time: 2016-03-01 11:44:49.550868Z
+successful: cloud_bdii.tests.test_opennebula.OpenNebulaBaseProviderOptionsTest.test_populate_parser [ multipart
+]
+tags: -worker-0
+time: 2016-03-01 11:44:49.550324Z
+tags: worker-5
+test: cloud_bdii.tests.test_opennebula.OpenNebulaBaseProviderTest.test_get_images
+time: 2016-03-01 11:44:49.568702Z
+successful: cloud_bdii.tests.test_opennebula.OpenNebulaBaseProviderTest.test_get_images [ multipart
+]
+tags: -worker-5
+time: 2016-03-01 11:44:49.569042Z
+tags: worker-2
+test: cloud_bdii.tests.test_static.StaticProviderTest.test_get_what
+time: 2016-03-01 11:44:49.588160Z
+successful: cloud_bdii.tests.test_static.StaticProviderTest.test_get_what [ multipart
+]
+tags: -worker-2
+time: 2016-03-01 11:44:49.576157Z
+tags: worker-1
+test: cloud_bdii.tests.test_opennebula.OpenNebulaROCCIProviderOptionsTest.test_options
+time: 2016-03-01 11:44:49.576544Z
+successful: cloud_bdii.tests.test_opennebula.OpenNebulaROCCIProviderOptionsTest.test_options [ multipart
+]
+tags: -worker-1
+time: 2016-03-01 11:44:49.568946Z
+tags: worker-7
+test: cloud_bdii.tests.test_opennebula.OpenNebulaProviderOptionsTest.test_populate_parser
+time: 2016-03-01 11:44:49.570333Z
+successful: cloud_bdii.tests.test_opennebula.OpenNebulaProviderOptionsTest.test_populate_parser [ multipart
+]
+tags: -worker-7
+time: 2016-03-01 11:44:49.551265Z
+tags: worker-0
+test: cloud_bdii.tests.test_opennebula.OpenNebulaROCCIProviderOptionsTest.test_populate_parser
+time: 2016-03-01 11:44:49.552255Z
+successful: cloud_bdii.tests.test_opennebula.OpenNebulaROCCIProviderOptionsTest.test_populate_parser [ multipart
+]
+tags: -worker-0
+time: 2016-03-01 11:44:49.569275Z
+tags: worker-5
+test: cloud_bdii.tests.test_openstack.OpenStackProviderTest.test_get_templates_with_defaults
+time: 2016-03-01 11:44:49.570728Z
+successful: cloud_bdii.tests.test_openstack.OpenStackProviderTest.test_get_templates_with_defaults [ multipart
+]
+tags: -worker-5
+time: 2016-03-01 11:44:49.558551Z
+tags: worker-4
+test: cloud_bdii.tests.test_static.StaticProviderTest.test_get_compute_endpoints
+time: 2016-03-01 11:44:49.593812Z
+successful: cloud_bdii.tests.test_static.StaticProviderTest.test_get_compute_endpoints [ multipart
+]
+tags: -worker-4
+time: 2016-03-01 11:44:49.570797Z
+tags: worker-7
+test: cloud_bdii.tests.test_opennebula.OpenNebulaProviderTest.test_get_images
+time: 2016-03-01 11:44:49.589815Z
+successful: cloud_bdii.tests.test_opennebula.OpenNebulaProviderTest.test_get_images [ multipart
+]
+tags: -worker-7
+time: 2016-03-01 11:44:49.577263Z
+tags: worker-1
+test: cloud_bdii.tests.test_static.StaticProviderTest.test_get_defaults
+time: 2016-03-01 11:44:49.598399Z
+successful: cloud_bdii.tests.test_static.StaticProviderTest.test_get_defaults [ multipart
+]
+tags: -worker-1
+time: 2016-03-01 11:44:49.552636Z
+tags: worker-0
+test: cloud_bdii.tests.test_openstack.OpenStackProviderTest.test_get_endpoints_with_defaults_from_static
+time: 2016-03-01 11:44:49.553764Z
+successful: cloud_bdii.tests.test_openstack.OpenStackProviderTest.test_get_endpoints_with_defaults_from_static [ multipart
+]
+tags: -worker-0
+time: 2016-03-01 11:44:49.571466Z
+tags: worker-5
+test: cloud_bdii.tests.test_static.StaticProviderTest.test_get_compute_endpoint_defaults
+time: 2016-03-01 11:44:49.592441Z
+successful: cloud_bdii.tests.test_static.StaticProviderTest.test_get_compute_endpoint_defaults [ multipart
+]
+tags: -worker-5
+time: 2016-03-01 11:44:49.554079Z
+tags: worker-0
+test: cloud_bdii.tests.test_openstack.OpenStackProviderTest.test_get_templates_with_defaults_from_static
+time: 2016-03-01 11:44:49.555664Z
+successful: cloud_bdii.tests.test_openstack.OpenStackProviderTest.test_get_templates_with_defaults_from_static [ multipart
+]
+tags: -worker-0
+time: 2016-03-01 11:44:49.546907Z
+tags: worker-3
+test: cloud_bdii.tests.test_core.ModuleTest.test_main
+time: 2016-03-01 11:44:49.552568Z
+successful: cloud_bdii.tests.test_core.ModuleTest.test_main [ multipart
+]
+tags: -worker-3
+time: 2016-03-01 11:44:49.590502Z
+tags: worker-7
+test: cloud_bdii.tests.test_opennebula.OpenNebulaROCCIProviderTest.test_get_filtered_images
+time: 2016-03-01 11:44:49.604799Z
+successful: cloud_bdii.tests.test_opennebula.OpenNebulaROCCIProviderTest.test_get_filtered_images [ multipart
+]
+tags: -worker-7
+time: 2016-03-01 11:44:49.586037Z
+tags: worker-6
+test: cloud_bdii.tests.test_base_provider.BaseProviderTest.test_provider_get_templates
+time: 2016-03-01 11:44:49.586828Z
+successful: cloud_bdii.tests.test_base_provider.BaseProviderTest.test_provider_get_templates [ multipart
+]
+tags: -worker-6
+time: 2016-03-01 11:44:49.556478Z
+tags: worker-0
+test: cloud_bdii.tests.test_static.StaticProviderTest.test_get_empty_compute_endpoints
+time: 2016-03-01 11:44:49.580027Z
+successful: cloud_bdii.tests.test_static.StaticProviderTest.test_get_empty_compute_endpoints [ multipart
+]
+tags: -worker-0
+time: 2016-03-01 11:44:49.553107Z
+tags: worker-3
+test: cloud_bdii.tests.test_opennebula.OpenNebulaROCCIProviderTest.test_get_images
+time: 2016-03-01 11:44:49.573183Z
+successful: cloud_bdii.tests.test_opennebula.OpenNebulaROCCIProviderTest.test_get_images [ multipart
+]
+tags: -worker-3
+time: 2016-03-01 11:44:49.588537Z
+tags: worker-2
+test: cloud_bdii.tests.test_static.StaticProviderTest.test_no_site_name
+time: 2016-03-01 11:44:49.608132Z
+successful: cloud_bdii.tests.test_static.StaticProviderTest.test_no_site_name [ multipart
+]
+tags: -worker-2
+time: 2016-03-01 11:44:49.605264Z
+tags: worker-7
+test: cloud_bdii.tests.test_openstack.OpenStackProviderOptionsTest.test_populate_parser
+time: 2016-03-01 11:44:49.606694Z
+successful: cloud_bdii.tests.test_openstack.OpenStackProviderOptionsTest.test_populate_parser [ multipart
+]
+tags: -worker-7
+time: 2016-03-01 11:44:49.580428Z
+tags: worker-0
+test: cloud_bdii.tests.test_static.StaticProviderTest.test_get_site_info_no_full_bdii
+time: 2016-03-01 11:44:49.602928Z
+successful: cloud_bdii.tests.test_static.StaticProviderTest.test_get_site_info_no_full_bdii [ multipart
+]
+tags: -worker-0
+time: 2016-03-01 11:44:49.573682Z
+tags: worker-3
+test: cloud_bdii.tests.test_openstack.OpenStackProviderOptionsTest.test_options
+time: 2016-03-01 11:44:49.574383Z
+successful: cloud_bdii.tests.test_openstack.OpenStackProviderOptionsTest.test_options [ multipart
+]
+tags: -worker-3
+time: 2016-03-01 11:44:49.587341Z
+tags: worker-6
+test: cloud_bdii.tests.test_core.CloudBDIITest.test_render
+time: 2016-03-01 11:44:49.589723Z
+successful: cloud_bdii.tests.test_core.CloudBDIITest.test_render [ multipart
+]
+tags: -worker-6
+time: 2016-03-01 11:44:49.592805Z
+tags: worker-5
+test: cloud_bdii.tests.test_static.StaticProviderTest.test_get_default_compute_service_name
+time: 2016-03-01 11:44:49.612638Z
+successful: cloud_bdii.tests.test_static.StaticProviderTest.test_get_default_compute_service_name [ multipart
+]
+tags: -worker-5
+time: 2016-03-01 11:44:49.574786Z
+tags: worker-3
+test: cloud_bdii.tests.test_openstack.OpenStackProviderTest.test_get_images
+time: 2016-03-01 11:44:49.576352Z
+successful: cloud_bdii.tests.test_openstack.OpenStackProviderTest.test_get_images [ multipart
+]
+tags: -worker-3
+time: 2016-03-01 11:44:49.590096Z
+tags: worker-6
+test: cloud_bdii.tests.test_core.ComputeBDIITest.test_render_empty
+time: 2016-03-01 11:44:49.591483Z
+successful: cloud_bdii.tests.test_core.ComputeBDIITest.test_render_empty [ multipart
+]
+tags: -worker-6
+time: 2016-03-01 11:44:49.598801Z
+tags: worker-1
+test: cloud_bdii.tests.test_static.StaticProviderTest.test_get_images
+time: 2016-03-01 11:44:49.617803Z
+successful: cloud_bdii.tests.test_static.StaticProviderTest.test_get_images [ multipart
+]
+tags: -worker-1
+time: 2016-03-01 11:44:49.576877Z
+tags: worker-3
+test: cloud_bdii.tests.test_static.StaticProviderTest.test_get_suffix_full_bdii
+time: 2016-03-01 11:44:49.596030Z
+successful: cloud_bdii.tests.test_static.StaticProviderTest.test_get_suffix_full_bdii [ multipart
+]
+tags: -worker-3
+time: 2016-03-01 11:44:49.591867Z
+tags: worker-6
+test: cloud_bdii.tests.test_core.StorageBDIITEst.test_render_empty
+time: 2016-03-01 11:44:49.593750Z
+successful: cloud_bdii.tests.test_core.StorageBDIITEst.test_render_empty [ multipart
+]
+tags: -worker-6
+time: 2016-03-01 11:44:49.607078Z
+tags: worker-7
+test: cloud_bdii.tests.test_static.StaticProviderTest.test_get_image_defaults
+time: 2016-03-01 11:44:49.626134Z
+successful: cloud_bdii.tests.test_static.StaticProviderTest.test_get_image_defaults [ multipart
+]
+tags: -worker-7
+time: 2016-03-01 11:44:49.596505Z
+tags: worker-3
+test: cloud_bdii.tests.test_static.StaticProviderTest.test_get_templates
+time: 2016-03-01 11:44:49.618111Z
+successful: cloud_bdii.tests.test_static.StaticProviderTest.test_get_templates [ multipart
+]
+tags: -worker-3
+time: 2016-03-01 11:44:49.594417Z
+tags: worker-6
+test: cloud_bdii.tests.test_opennebula.OpenNebulaROCCIProviderTest.test_load_templates
+time: 2016-03-01 11:44:49.594874Z
+successful: cloud_bdii.tests.test_opennebula.OpenNebulaROCCIProviderTest.test_load_templates [ multipart
+]
+tags: -worker-6
+time: 2016-03-01 11:44:49.595249Z
+tags: worker-6
+test: cloud_bdii.tests.test_static.StaticProviderTest.test_get_default_storage_service_name
+time: 2016-03-01 11:44:49.620219Z
+successful: cloud_bdii.tests.test_static.StaticProviderTest.test_get_default_storage_service_name [ multipart
+]
+tags: -worker-6
+time: 2016-03-01 11:44:49.613063Z
+tags: worker-5
+test: cloud_bdii.tests.test_static.StaticProviderTest.test_get_fields
+time: 2016-03-01 11:44:49.630830Z
+successful: cloud_bdii.tests.test_static.StaticProviderTest.test_get_fields [ multipart
+]
+tags: -worker-5
+time: 2016-03-01 11:44:49.594279Z
+tags: worker-4
+test: cloud_bdii.tests.test_static.StaticProviderTest.test_get_images_with_yaml
+time: 2016-03-01 11:44:49.630113Z
+successful: cloud_bdii.tests.test_static.StaticProviderTest.test_get_images_with_yaml [ multipart
+]
+tags: -worker-4
+time: 2016-03-01 11:44:49.621027Z
+tags: worker-6
+test: cloud_bdii.tests.test_static.StaticProviderTest.test_get_empty_storage_endpoints
+time: 2016-03-01 11:44:49.636229Z
+successful: cloud_bdii.tests.test_static.StaticProviderTest.test_get_empty_storage_endpoints [ multipart
+]
+tags: -worker-6
+time: 2016-03-01 11:44:49.618287Z
+tags: worker-1
+test: cloud_bdii.tests.test_static.StaticProviderTest.test_get_storage_endpoint_defaults
+time: 2016-03-01 11:44:49.636439Z
+successful: cloud_bdii.tests.test_static.StaticProviderTest.test_get_storage_endpoint_defaults [ multipart
+]
+tags: -worker-1
+time: 2016-03-01 11:44:49.626576Z
+tags: worker-7
+test: cloud_bdii.tests.test_static.StaticProviderTest.test_get_suffix_default
+time: 2016-03-01 11:44:49.644455Z
+successful: cloud_bdii.tests.test_static.StaticProviderTest.test_get_suffix_default [ multipart
+]
+tags: -worker-7
+time: 2016-03-01 11:44:49.630554Z
+tags: worker-4
+test: cloud_bdii.tests.test_static.StaticProviderTest.test_get_storage_endpoints
+time: 2016-03-01 11:44:49.650392Z
+successful: cloud_bdii.tests.test_static.StaticProviderTest.test_get_storage_endpoints [ multipart
+]
+tags: -worker-4
+time: 2016-03-01 11:44:49.644916Z
+tags: worker-7
+test: cloud_bdii.tests.test_static.StaticProviderTest.test_get_template_defaults
+time: 2016-03-01 11:44:49.662538Z
+successful: cloud_bdii.tests.test_static.StaticProviderTest.test_get_template_defaults [ multipart
+]
+tags: -worker-7
+time: 2016-03-01 11:44:49.650901Z
+tags: worker-4
+test: cloud_bdii.tests.test_static.StaticProviderTest.test_get_suffix_site_in_suffix
+time: 2016-03-01 11:44:49.668355Z
+successful: cloud_bdii.tests.test_static.StaticProviderTest.test_get_suffix_site_in_suffix [ multipart
+]
+tags: -worker-4

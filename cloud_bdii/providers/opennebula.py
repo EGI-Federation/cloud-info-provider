@@ -6,7 +6,7 @@
 import json
 import os
 import string
-import urllib2
+import xmlrpclib
 import xml.etree.ElementTree as xee
 
 from cloud_bdii import exceptions
@@ -14,9 +14,9 @@ from cloud_bdii import providers
 from cloud_bdii import utils
 
 
-class OpenNebulaBaseProvider(providers.BaseProvider):
+class OpenNebulaProvider(providers.BaseProvider):
     def __init__(self, opts):
-        super(OpenNebulaBaseProvider, self).__init__(opts)
+	super(OpenNebulaProvider, self).__init__(opts)
 
         self.on_auth = opts.on_auth
         self.on_rpcxml_endpoint = opts.on_rpcxml_endpoint
@@ -38,26 +38,17 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
 
     def _get_from_xml(self, what):
         # FIXME(aloga): exception on bad what
-        requestdata = ("<?xml version='1.0' encoding='UTF-8'?>"
-                       "<methodCall>"
-                       "<methodName>%s</methodName>"
-                       "<params>"
-                       "<param><value><string>%s</string></value></param>"
-                       "<param><value><i4>-2</i4></value></param>"
-                       "<param><value><i4>-1</i4></value></param>"
-                       "<param><value><i4>-1</i4></value></param>"
-                       "</params>"
-                       "</methodCall>" % (what, self.on_auth))
-
-        req = urllib2.Request(self.on_rpcxml_endpoint, requestdata)
-        response = urllib2.urlopen(req)
-
-        xml = response.read()
-        # NOTE(aloga): this is wrong in so may ways, but it is more or less the
-        # same that was before. Leave it like that, thenrefactor it
-        doc = xee.fromstring(xml)
-        doc = doc.find("params/param/value/array/data/value/string").text
-        doc = xee.fromstring(doc.encode('utf-8'))
+	#Connect to XMLRPC server and invoke selected method
+	serverproxy = xmlrpclib.ServerProxy("https://carach5.ics.muni.cz:6443/RPC2")
+	xmlrpccall = getattr(serverproxy, what)	
+	response = xmlrpccall(str(self.on_auth),-2,-1,-1)
+		
+	#In case request fails raise exeption
+	if not response[0]:
+	    raise exceptions.OpenNebulaProviderException(response[1])
+	
+      	#Parse obtained XML
+	doc = xee.fromstring(response[1])
         templates = doc.getchildren()
 
         def _recurse_dict(element):
@@ -68,9 +59,14 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
 
     @staticmethod
     def _gen_id(image_name, image_id, schema):
-        # FIXME(aloga): make this an abstrac method
-        """Generate image id."""
-        return '%s#%s' % (schema, image_id)
+        """Generate image uiid as rOCCI does."""
+        replace_punctuation = string.maketrans(
+            string.punctuation + string.whitespace,
+            '_' * len(string.punctuation + string.whitespace)
+        )
+        image_name = string.translate(image_name.lower(),
+                                      replace_punctuation).strip('_')
+        return '%s#uuid_%s_%s' % (schema, image_name, image_id)
 
     def _get_one_images(self):
         return dict([(img["name"], img) for _, img in self._get_from_xml(
@@ -79,6 +75,50 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
     def _get_one_templates(self):
         return dict([(tpl["id"], tpl) for _, tpl in self._get_from_xml(
             "one.templatepool.info")])
+
+    # The flavours are retreived directly from rOCCI-server configuration
+    # files. If the script has no access to them, you can set the directory to
+    # None and configuration files specified in the YAML configuration.
+    def get_templates(self):
+        """Get flavors from rOCCI-server configuration."""
+
+        if self.opts.rocci_template_dir is None:
+            # revert to static
+            return self.static.get_templates()
+
+        defaults = {'platform': 'amd64', 'network': 'private'}
+        defaults.update(self.static.get_template_defaults(prefix=True))
+        ressch = defaults.get('template_schema', None)
+
+        # Try to parse template dir
+        try:
+            template_files = os.listdir(self.opts.rocci_template_dir)
+        except OSError as e:
+            raise e
+
+        flavors = {}
+        for template_file in template_files:
+            template_file = os.path.join(self.opts.rocci_template_dir,
+                                         template_file)
+            with open(template_file, 'r') as fd:
+                jd = json.load(fd)
+
+            aux = defaults.copy()
+            if ressch is None:
+                flid = '%s#%s' % (jd['mixins'][0]['scheme'].rstrip('#'), jd['mixins'][0]['term'])  # noqa
+            else:
+                flid = '%s#%s' % (ressch, jd['mixins'][0]['term'])
+                aux.update({'template_id': '%s#%s' % (ressch, jd['mixins'][0]['term'])})  # noqa
+
+            aux.update({
+                'template_id': flid,
+                'template_cpu': jd['mixins'][0]['attributes']['occi']['compute']['cores']['Default'],  # noqa
+                'template_memory': int(jd['mixins'][0]['attributes']['occi']['compute']['memory']['Default'] * 1024),  # noqa
+                'template_description': jd['mixins'][0]['title']
+            })
+
+            flavors[flid] = aux
+        return flavors
 
     def get_images(self):
         template = {
@@ -149,78 +189,9 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
             help=('If set, include only information on images that '
                   'have vmcatcher metadata, ignoring the others.'))
 
-
-class OpenNebulaProvider(OpenNebulaBaseProvider):
-    def __init__(self, opts):
-        super(OpenNebulaProvider, self).__init__(opts)
-
-
-class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
-    def __init__(self, opts):
-        super(OpenNebulaROCCIProvider, self).__init__(opts)
-
-    # The flavours are retreived directly from rOCCI-server configuration
-    # files. If the script has no access to them, you can set the directory to
-    # None and configuration files specified in the YAML configuration.
-    def get_templates(self):
-        """Get flavors from rOCCI-server configuration."""
-
-        if self.opts.rocci_template_dir is None:
-            # revert to static
-            return self.static.get_templates()
-
-        defaults = {'platform': 'amd64', 'network': 'private'}
-        defaults.update(self.static.get_template_defaults(prefix=True))
-        ressch = defaults.get('template_schema', None)
-
-        # Try to parse template dir
-        try:
-            template_files = os.listdir(self.opts.rocci_template_dir)
-        except OSError as e:
-            raise e
-
-        flavors = {}
-        for template_file in template_files:
-            template_file = os.path.join(self.opts.rocci_template_dir,
-                                         template_file)
-            with open(template_file, 'r') as fd:
-                jd = json.load(fd)
-
-            aux = defaults.copy()
-            if ressch is None:
-                flid = '%s#%s' % (jd['mixins'][0]['scheme'].rstrip('#'), jd['mixins'][0]['term'])  # noqa
-            else:
-                flid = '%s#%s' % (ressch, jd['mixins'][0]['term'])
-                aux.update({'template_id': '%s#%s' % (ressch, jd['mixins'][0]['term'])})  # noqa
-
-            aux.update({
-                'template_id': flid,
-                'template_cpu': jd['mixins'][0]['attributes']['occi']['compute']['cores']['Default'],  # noqa
-                'template_memory': int(jd['mixins'][0]['attributes']['occi']['compute']['memory']['Default'] * 1024),  # noqa
-                'template_description': jd['mixins'][0]['title']
-            })
-
-            flavors[flid] = aux
-        return flavors
-
-    @staticmethod
-    def populate_parser(parser):
-        super(OpenNebulaROCCIProvider,
-              OpenNebulaROCCIProvider).populate_parser(parser)
-
         parser.add_argument(
             '--rocci-template-dir',
             metavar='<rocci-template-dir>',
             default=None,
             help='Location of the rOCCI-server template definitions.')
 
-    @staticmethod
-    def _gen_id(image_name, image_id, schema):
-        """Generate image uiid as rOCCI does."""
-        replace_punctuation = string.maketrans(
-            string.punctuation + string.whitespace,
-            '_' * len(string.punctuation + string.whitespace)
-        )
-        image_name = string.translate(image_name.lower(),
-                                      replace_punctuation).strip('_')
-        return '%s#uuid_%s_%s' % (schema, image_name, image_id)
