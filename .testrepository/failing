@@ -1,0 +1,42 @@
+time: 2016-03-01 12:32:01.214487Z
+tags: worker-0
+test: cloud_bdii.tests.test_opennebula.OpenNebulaProviderTest.test_get_filtered_images
+time: 2016-03-01 12:32:01.215588Z
+failure: cloud_bdii.tests.test_opennebula.OpenNebulaProviderTest.test_get_filtered_images [ multipart
+Content-Type: text/x-traceback;language=""python",charset="utf8""
+traceback
+313
+Traceback (most recent call last):
+  File "/home/mtd/Documents/CesnetWork/cloud-bdii-provider/.tox/py27/local/lib/python2.7/site-packages/mock/mock.py", line 1297, in patched
+    arg = patching.__enter__()
+  File "/home/mtd/Documents/CesnetWork/cloud-bdii-provider/.tox/py27/local/lib/python2.7/site-packages/mock/mock.py", line 1353, in __enter__
+    self.target = self.getter()
+  File "/home/mtd/Documents/CesnetWork/cloud-bdii-provider/.tox/py27/local/lib/python2.7/site-packages/mock/mock.py", line 1520, in <lambda>
+    getter = lambda: _importer(target)
+  File "/home/mtd/Documents/CesnetWork/cloud-bdii-provider/.tox/py27/local/lib/python2.7/site-packages/mock/mock.py", line 1206, in _importer
+    thing = __import__(import_path)
+ImportError: No module named xmlrpccall(str(self
+0
+]
+tags: -worker-0
+time: 2016-03-01 12:32:01.219102Z
+tags: worker-0
+test: cloud_bdii.tests.test_opennebula.OpenNebulaProviderTest.test_get_images
+time: 2016-03-01 12:32:01.219702Z
+failure: cloud_bdii.tests.test_opennebula.OpenNebulaProviderTest.test_get_images [ multipart
+Content-Type: text/x-traceback;language=""python",charset="utf8""
+traceback
+313
+Traceback (most recent call last):
+  File "/home/mtd/Documents/CesnetWork/cloud-bdii-provider/.tox/py27/local/lib/python2.7/site-packages/mock/mock.py", line 1297, in patched
+    arg = patching.__enter__()
+  File "/home/mtd/Documents/CesnetWork/cloud-bdii-provider/.tox/py27/local/lib/python2.7/site-packages/mock/mock.py", line 1353, in __enter__
+    self.target = self.getter()
+  File "/home/mtd/Documents/CesnetWork/cloud-bdii-provider/.tox/py27/local/lib/python2.7/site-packages/mock/mock.py", line 1520, in <lambda>
+    getter = lambda: _importer(target)
+  File "/home/mtd/Documents/CesnetWork/cloud-bdii-provider/.tox/py27/local/lib/python2.7/site-packages/mock/mock.py", line 1206, in _importer
+    thing = __import__(import_path)
+ImportError: No module named xmlrpccall(str(self
+0
+]
+tags: -worker-0
