@@ -20,18 +20,16 @@ class OpenNebulaProviderOptionsTest(unittest.TestCase):
         self.provider.populate_parser(parser)
 
         opts = parser.parse_args(['--on-auth', 'foo',
-                                  '--on-rpcxml-endpoint', 'bar',
-                                  '--vmcatcher-images'])
+                                  '--on-rpcxml-endpoint',
+                                  'bar'])
 
         self.assertEqual(opts.on_auth, 'foo')
         self.assertEqual(opts.on_rpcxml_endpoint, 'bar')
-        self.assertTrue(opts.vmcatcher_images)
 
     def test_options(self):
         class Opts(object):
             on_auth = 'foo'
             on_rpcxml_endpoint = 'bar'
-            vmcatcher_images = False
 
         # Check that the required opts are there
         for opt in ('on_auth', 'on_rpcxml_endpoint'):
@@ -45,43 +43,37 @@ class OpenNebulaProviderTest(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(OpenNebulaProviderTest, self).__init__(*args, **kwargs)
         self.expected_images = {
-            '80': {
-                'image_marketplace_id': (
-                    'https://appdb.egi.eu/store/vm/image/'
-                    'c0482bc2-bf41-5d49-a85f-a750174a186b:642/'
-                ),
-                'image_version': '3.3.0-1',
-                'image_platform': 'amd64',
-                'image_os_version': None,
-                'image_name': 'CERNVM-3.3.0-40GB@fedcloud-dukan',
-                'image_id': 'os_tpl#uuid_cernvm_3_3_0_40gb_fedcloud_dukan_80',
-                'image_description': (
-                    'This version of CERNVM has been modified by EGI with '
-                    'the followign changes - default OS extended to 40GB '
-                    'of disk - updated OpenNebula Cloud-Init driver to '
-                    'latest version 0.7.5 - enabled all Cloud-Init data '
-                    'sources'
-                ),
+            0: {
+                'image_description': 'OS Disk Image',
                 'image_os_name': None,
-                'image_os_family': None
-            },
-            '86': {
+                'image_name': 'Scientific-Linux-6.5-minimal@fedcloud-dukan',
                 'image_marketplace_id': None,
-                'image_version': None,
+                'image_id':
+                'os_tpl#uuid_scientific_linux_6_5_minimal_fedcloud_dukan_85',
                 'image_platform': 'amd64',
-                'image_os_version': None,
-                'image_name': 'Ubuntu-Server-14.04-LTS-ht-xxl@fedcloud-dukan',
-                'image_id': 'os_tpl#uuid_ubuntu_server_14_04_lts_ht_xxl_fedcloud_dukan_86',
+                'image_version': '20141029',
+                'image_os_family': None,
+                'image_os_version': None
+            },
+            1: {
                 'image_description': None,
                 'image_os_name': None,
-                'image_os_family': None},
+                'image_name': 'Ubuntu-Server-14.04-LTS-ht-xxl@fedcloud-dukan',
+                'image_marketplace_id': None,
+                'image_id':
+                'os_tpl#uuid_ubuntu_server_14_04_lts_ht_xxl_fedcloud_dukan_86',
+                'image_platform': 'amd64',
+                'image_version': '20141029',
+                'image_os_family': None,
+                'image_os_version': None
+            }
         }
         self.provider_class = opennebula.OpenNebulaProvider
 
     def setUp(self):
         class FakeProvider(self.provider_class):
             def __init__(self, opts):
-                self.on_auth = None
+                self.on_auth = 'foo'
                 self.on_rpcxml_endpoint = "http://foo.bar.com/"
                 self.api = mock.Mock()
                 self.static = mock.Mock()
@@ -96,31 +88,35 @@ class OpenNebulaProviderTest(unittest.TestCase):
             vmcatcher_images = False
 
         self.provider = FakeProvider(Opts())
-    
-    @mock.patch('xmlrpccall')
-    def test_get_images(self, mock_open):
-        resp = mock.Mock()
-        resp.read.side_effect = [0,[FAKES.templatepool, FAKES.imagepool],0]
-        mock_open.return_value = resp
-        self.assertDictEqual(self.expected_images,
-                             self.provider.get_images())
 
-    @mock.patch('xmlrpccall')
-    def test_get_filtered_images(self, mock_open):
-        resp = mock.Mock()
-        resp.read.side_effect = [0,[FAKES.templatepool, FAKES.imagepool],0]
-        mock_open.return_value = resp
-        self.provider.opts.vmcatcher_images = True
-        filtered_images = {k: v for (k, v) in self.expected_images.items()
-                           if v.get('image_marketplace_id')}
-        self.assertDictEqual(filtered_images,
-                             self.provider.get_images())
+        class Templatepool:
+            def info(self, a, b, c, d):
+                return [True, FAKES.templatepool, 0]
+
+        class Pool:
+            def __init__(self, t):
+                self.templatepool = t
+
+        class Serverproxy:
+            def __init__(self, o):
+                self.one = o
+
+        templatepool = Templatepool()
+        pool = Pool(templatepool)
+        self.mockedserverproxy = Serverproxy(pool)
+
+    @mock.patch('xmlrpclib.ServerProxy')
+    def test_get_images(self, serverproxy):
+        self.maxDiff = None
+        serverproxy.return_value = self.mockedserverproxy
+        self.assertDictEqual(
+            self.expected_images, self.provider.get_images())
 
     def test_templates_missing(self):
         fake_dir = uuid.uuid4().hex
         self.provider.opts.template_dir = fake_dir
         self.assertRaises(OSError, self.provider.get_templates)
 
-    def test_load_templates(self): 
-	# TBD
+    def test_load_templates(self):
+        # TBD
         pass
