@@ -161,7 +161,7 @@ class OpenNebulaProvider(providers.BaseProvider):
                 xml_template, "TEMPLATE/NIFTY_APPLIANCE_DESCRIPTION", '""""')
             if tmp_template["image_description"] is None:
                 tmp_template["image_description"] = self.get_xml_string(
-                    xml_template, "TEMPLATE/NIFTY_APPLIANCE_DESCRIPTION",
+                    xml_template, "TEMPLATE/VMCATCHER_EVENT_DC_DESCRIPTION",
                     '""""')
             if tmp_template["image_description"] is None:
                 tmp_template["image_description"] = self.get_xml_string(
