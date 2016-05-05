@@ -9,3 +9,5 @@
 build/*
 dist/*
 etc/test.conf
+.testrepository
+.tox

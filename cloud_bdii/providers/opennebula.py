@@ -6,17 +6,17 @@
 import json
 import os
 import string
-import urllib2
 import xml.etree.ElementTree as xee
+import xmlrpclib
 
 from cloud_bdii import exceptions
 from cloud_bdii import providers
 from cloud_bdii import utils
 
 
-class OpenNebulaBaseProvider(providers.BaseProvider):
+class OpenNebulaProvider(providers.BaseProvider):
     def __init__(self, opts):
-        super(OpenNebulaBaseProvider, self).__init__(opts)
+        super(OpenNebulaProvider, self).__init__(opts)
 
         self.on_auth = opts.on_auth
         self.on_rpcxml_endpoint = opts.on_rpcxml_endpoint
@@ -35,129 +35,6 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
 
         self.opts = opts
         self.static = providers.static.StaticProvider(opts)
-
-    def _get_from_xml(self, what):
-        # FIXME(aloga): exception on bad what
-        requestdata = ("<?xml version='1.0' encoding='UTF-8'?>"
-                       "<methodCall>"
-                       "<methodName>%s</methodName>"
-                       "<params>"
-                       "<param><value><string>%s</string></value></param>"
-                       "<param><value><i4>-2</i4></value></param>"
-                       "<param><value><i4>-1</i4></value></param>"
-                       "<param><value><i4>-1</i4></value></param>"
-                       "</params>"
-                       "</methodCall>" % (what, self.on_auth))
-
-        req = urllib2.Request(self.on_rpcxml_endpoint, requestdata)
-        response = urllib2.urlopen(req)
-
-        xml = response.read()
-        # NOTE(aloga): this is wrong in so may ways, but it is more or less the
-        # same that was before. Leave it like that, thenrefactor it
-        doc = xee.fromstring(xml)
-        doc = doc.find("params/param/value/array/data/value/string").text
-        doc = xee.fromstring(doc.encode('utf-8'))
-        templates = doc.getchildren()
-
-        def _recurse_dict(element):
-            return (element.tag.lower(),
-                    dict(map(_recurse_dict, element)) or element.text)
-
-        return [_recurse_dict(e) for e in templates]
-
-    @staticmethod
-    def _gen_id(image_name, image_id, schema):
-        # FIXME(aloga): make this an abstrac method
-        """Generate image id."""
-        return '%s#%s' % (schema, image_id)
-
-    def _get_one_images(self):
-        return dict([(img["name"], img) for _, img in self._get_from_xml(
-            "one.imagepool.info")])
-
-    def _get_one_templates(self):
-        return dict([(tpl["id"], tpl) for _, tpl in self._get_from_xml(
-            "one.templatepool.info")])
-
-    def get_images(self):
-        template = {
-            'image_name': None,
-            'image_description': None,
-            'image_version': None,
-            'image_marketplace_id': None,
-            'image_id': None,
-            'image_os_family': None,
-            'image_os_name': None,
-            'image_os_version': None,
-            'image_platform': 'amd64',
-        }
-        defaults = self.static.get_image_defaults(prefix=True)
-        img_schema = defaults.get('image_schema', 'os_tpl')
-
-        templates = {}
-        one_templates = self._get_one_templates()
-        one_images = self._get_one_images()
-
-        # 1. take a VMTEMPLATE from templatepool
-        # 2. use metadata from VMTEMPLATE to create an os_tpl mixin
-        # 3. take the first disk from VMTEMPLATE
-        # 4. use disk's IMAGE element to find it in the imagepool
-        # 5. associate selected IMAGE metadata (*VMCATCHER* stuff) with the tpl
-        for tpl_id, tpl in one_templates.iteritems():
-            aux_tpl = template.copy()
-            aux_tpl.update(defaults)
-            aux_tpl["image_name"] = tpl["name"]
-            aux_tpl["image_id"] = self._gen_id(tpl["name"], tpl_id, img_schema)
-            disk = tpl.get("template", {}).get("disk", {}).get("image", None)
-            if disk is not None:
-                aux = one_images.get(disk, {}).get("template", {})
-                aux_tpl["image_marketplace_id"] = aux.get(
-                    "vmcatcher_event_ad_mpuri", None
-                )
-                aux_tpl["image_description"] = aux.get("description", None)
-                aux_tpl["image_version"] = aux.get(
-                    "vmcatcher_event_hv_version",
-                    None
-                )
-            if (self.opts.vmcatcher_images and
-                    aux_tpl.get("image_marketplace_id", None) is None):
-                continue
-            templates[tpl_id] = aux_tpl
-        return templates
-
-    @staticmethod
-    def populate_parser(parser):
-        parser.add_argument(
-            '--on-auth',
-            metavar='<auth>',
-            default=utils.env('ON_AUTH'),
-            help=('Specify authorization information. For core drivers, '
-                    'it shall be <username>:<password>. '
-                    'Defaults to env[ON_USERNAME].'))
-
-        parser.add_argument(
-            '--on-rpcxml-endpoint',
-            metavar='<auth-url>',
-            default=utils.env('OS_RPCXML_ENDPOINT'),
-            help='Defaults to env[OS_RPCXML_ENDPOINT].')
-
-        parser.add_argument(
-            '--vmcatcher-images',
-            action='store_true',
-            default=False,
-            help=('If set, include only information on images that '
-                  'have vmcatcher metadata, ignoring the others.'))
-
-
-class OpenNebulaProvider(OpenNebulaBaseProvider):
-    def __init__(self, opts):
-        super(OpenNebulaProvider, self).__init__(opts)
-
-
-class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
-    def __init__(self, opts):
-        super(OpenNebulaROCCIProvider, self).__init__(opts)
 
     # The flavours are retreived directly from rOCCI-server configuration
     # files. If the script has no access to them, you can set the directory to
@@ -204,17 +81,6 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
         return flavors
 
     @staticmethod
-    def populate_parser(parser):
-        super(OpenNebulaROCCIProvider,
-              OpenNebulaROCCIProvider).populate_parser(parser)
-
-        parser.add_argument(
-            '--rocci-template-dir',
-            metavar='<rocci-template-dir>',
-            default=None,
-            help='Location of the rOCCI-server template definitions.')
-
-    @staticmethod
     def _gen_id(image_name, image_id, schema):
         """Generate image uiid as rOCCI does."""
         replace_punctuation = string.maketrans(
@@ -224,3 +90,104 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
         image_name = string.translate(image_name.lower(),
                                       replace_punctuation).strip('_')
         return '%s#uuid_%s_%s' % (schema, image_name, image_id)
+
+    # Return noenmpty string from xml if exists
+    @staticmethod
+    def get_xml_string(xml, tag, emptystring):
+        search_result = xml.find(tag)
+        if search_result is None:
+            return None
+        if search_result.text == emptystring:
+            return None
+        return search_result.text
+
+    def get_images(self):
+        defaults = self.static.get_image_defaults(prefix=True)
+        img_schema = defaults.get('image_schema', 'os_tpl')
+
+        # Mamut
+        # Setup server for XMLRPC connector
+        serverproxy = xmlrpclib.ServerProxy(self.on_rpcxml_endpoint)
+
+        # Get templates
+        response = serverproxy.one.templatepool.info(self.on_auth, -2, -1, -1)
+
+        # In case request fails raise exeption
+        if not response[0]:
+            raise exceptions.OpenNebulaProviderException(response[1])
+
+        # raise exceptions.OpenNebulaProviderException(response[1])
+        # Get XML templatesi
+        xml_templates = []
+        doc = xee.fromstring(response[1])
+        # Create template list with only FEDcloud templates,
+        # generated from VMcatcher (must have nifty elements)
+        for template_index, xml_template in enumerate(doc.getchildren()):
+            # raise exceptions.OpenNebulaProviderException(xml_template)
+            if (xml_template.find("TEMPLATE/NIFTY_APPLIANCE_ID") is not None):
+                xml_templates.append(xml_template)
+
+        # Form template list
+        templates = {}
+        for template_index, xml_template in enumerate(xml_templates):
+            tmp_template = {
+                'image_name': None,
+                'image_description': None,
+                'image_version': None,
+                'image_marketplace_id': None,
+                'image_id': None,
+                'image_os_family': None,
+                'image_os_name': None,
+                'image_os_version': None,
+                'image_platform': 'amd64',
+            }
+            # image_name
+            tmp_template["image_name"] = self.get_xml_string(
+                xml_template, "NAME", '""""')
+
+            # image_id
+            name = self.get_xml_string(xml_template, "NAME", '""""')
+            ident = self.get_xml_string(xml_template, "ID", '""""')
+            if (name is not None) and (ident is not None):
+                tmp_template["image_id"] = self._gen_id(
+                    tmp_template["image_name"], ident, img_schema)
+
+            # image_version
+            tmp_template["image_version"] = self.get_xml_string(
+                xml_template, "TEMPLATE/VMCATCHER_EVENT_HV_VERSION", '""""')
+
+            # image_description with fallback
+            tmp_template["image_description"] = self.get_xml_string(
+                xml_template, "TEMPLATE/NIFTY_APPLIANCE_DESCRIPTION", '""""')
+            if tmp_template["image_description"] is None:
+                tmp_template["image_description"] = self.get_xml_string(
+                    xml_template, "TEMPLATE/VMCATCHER_EVENT_DC_DESCRIPTION",
+                    '""""')
+            if tmp_template["image_description"] is None:
+                tmp_template["image_description"] = self.get_xml_string(
+                    xml_template, "DESCRIPTION", '""""')
+
+            templates[template_index] = tmp_template
+        return templates
+
+    @staticmethod
+    def populate_parser(parser):
+        parser.add_argument(
+            '--on-auth',
+            metavar='<auth>',
+            default=utils.env('ON_AUTH'),
+            help=('Specify authorization information. For core drivers, '
+                    'it shall be <username>:<password>. '
+                    'Defaults to env[ON_USERNAME].'))
+
+        parser.add_argument(
+            '--on-rpcxml-endpoint',
+            metavar='<auth-url>',
+            default=utils.env('OS_RPCXML_ENDPOINT'),
+            help='Defaults to env[OS_RPCXML_ENDPOINT].')
+
+        parser.add_argument(
+            '--rocci-template-dir',
+            metavar='<rocci-template-dir>',
+            default=None,
+            help='Location of the rOCCI-server template definitions.')
