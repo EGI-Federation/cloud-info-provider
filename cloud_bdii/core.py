@@ -163,7 +163,7 @@ class IndigoComputeBDII(BaseBDII):
 
         # prepare json formatting
         output.append('{')
-        output.append('images')
+        output.append('images:')
 
         #output.append(self._format_template('compute_service',
         #                                    static_compute_info))
@@ -196,6 +196,9 @@ class IndigoComputeBDII(BaseBDII):
                                                 extra=static_compute_info))
             output.append(',')
 
+        # XXX remote ending coma if any
+        if output[-1] == ',':
+           del output[-1]
         # End JSON output
         output.append(']')
         output.append('}')
