@@ -1,0 +1,11 @@
+{
+  compute_service_name: "%(compute_service_name)s",
+  suffix: "%(suffix)s",
+  site_name: "%(site_name)s",
+  compute_service_production_level: "%(compute_service_production_level)s",
+  compute_capabilities: "%(compute_capabilities)s",
+  compute_hypervisor: "%(compute_hypervisor)s",
+  compute_hypervisor_version: "%(compute_hypervisor_version)s",
+  compute_total_cores: "%(compute_total_cores)s",
+  compute_total_ram: "%(compute_total_ram)s",
+}
