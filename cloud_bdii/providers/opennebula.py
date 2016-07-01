@@ -92,6 +92,9 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
             'image_os_name': None,
             'image_os_version': None,
             'image_platform': 'amd64',
+            'docker_id': None,
+            'docker_name': None,
+            'docker_tag': None,
         }
         defaults = self.static.get_image_defaults(prefix=True)
         img_schema = defaults.get('image_schema', 'os_tpl')
