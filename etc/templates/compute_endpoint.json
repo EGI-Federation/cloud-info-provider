@@ -10,6 +10,5 @@
   compute_middleware: "%(compute_middleware)s",
   compute_middleware_version: "%(compute_middleware_version)s",
   compute_middleware_developer: "%(compute_middleware_developer)s",
-  compute_api_endpoint_technology: "%(compute_api_endpoint_technology)s",
+  compute_api_endpoint_technology: "%(compute_api_endpoint_technology)s"
 }
-

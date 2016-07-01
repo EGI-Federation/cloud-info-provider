@@ -4,5 +4,5 @@
   suffix: "%(suffix)s",
   template_memory: "%(template_memory)s",
   template_platform: "%(template_platform)s",
-  template_cpu: "%(template_cpu)s",
+  template_cpu: "%(template_cpu)s"
 }

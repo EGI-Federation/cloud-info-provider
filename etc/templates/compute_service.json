@@ -7,5 +7,5 @@
   compute_hypervisor: "%(compute_hypervisor)s",
   compute_hypervisor_version: "%(compute_hypervisor_version)s",
   compute_total_cores: "%(compute_total_cores)s",
-  compute_total_ram: "%(compute_total_ram)s",
+  compute_total_ram: "%(compute_total_ram)s"
 }
