@@ -114,7 +114,8 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
             aux_tpl = template.copy()
             aux_tpl.update(defaults)
             aux_tpl["image_name"] = tpl_name
-            aux_tpl["image_id"] = tpl["id"]
+            tpl_id = tpl["id"]
+            aux_tpl["image_id"] = tpl_id
             # XXX update to use info from image?
             # disk = tpl.get("template", {}).get("disk", {}).get("image", None)
             # if disk is not None:
