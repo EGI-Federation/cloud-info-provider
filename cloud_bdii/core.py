@@ -32,7 +32,7 @@ class BaseBDII(object):
         self.ldif = {}
         for tpl in self.templates:
             template_file = os.path.join(self.opts.template_dir,
-                                         '%s.ldif' % tpl)
+                                         '%s.%s' % (tpl, self.opts.template_extension))
             with open(template_file, 'r') as f:
                 self.ldif[tpl] = f.read()
 
@@ -178,6 +178,11 @@ def parse_opts():
         '--template-dir',
         default='/etc/cloud-info-provider/templates',
         help=('Path to the directory containing the needed templates'))
+
+    parser.add_argument(
+        '--template-extension',
+        default='ldif',
+        help=('Extension to use for the templates'))
 
     parser.add_argument(
         '--full-bdii-ldif',
