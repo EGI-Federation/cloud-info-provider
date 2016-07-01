@@ -138,6 +138,70 @@ class ComputeBDII(BaseBDII):
         return '\n'.join(output)
 
 
+class IndigoComputeBDII(BaseBDII):
+    def __init__(self, opts):
+        super(IndigoComputeBDII, self).__init__(opts)
+
+        # XXX disable non-required templates
+        # self.templates = ('compute_service',
+        #                   'compute_endpoint',
+        #                   'execution_environment',
+        #                   'application_environment')
+        self.templates = ('execution_environment',
+                          'application_environment')
+
+    def render(self):
+        output = []
+        endpoints = self._get_info_from_providers('get_compute_endpoints')
+
+        if not endpoints.get('endpoints'):
+            return ''
+
+        site_info = self._get_info_from_providers('get_site_info')
+        static_compute_info = dict(endpoints, **site_info)
+        static_compute_info.pop('endpoints')
+
+        # prepare json formatting
+        output.append('{')
+        output.append('images')
+
+        #output.append(self._format_template('compute_service',
+        #                                    static_compute_info))
+
+        #for url, endpoint in endpoints['endpoints'].iteritems():
+        #    endpoint.setdefault('endpoint_url', url)
+        #    output.append(self._format_template('compute_endpoint',
+        #                                        endpoint,
+        #                                        extra=static_compute_info))
+
+        templates = self._get_info_from_providers('get_templates')
+        for tid, ex_env in templates.iteritems():
+            ex_env.setdefault('template_id', tid)
+            output.append(self._format_template('execution_environment',
+                                                ex_env,
+                                                extra=static_compute_info))
+
+        images = self._get_info_from_providers('get_images')
+        output.append('[')
+        for iid, app_env in images.iteritems():
+            app_env.setdefault('image_id', iid)
+            app_env.setdefault('image_description',
+                               ('%(image_name)s version '
+                                '%(image_version)s on '
+                                '%(image_os_family)s %(image_os_name)s '
+                                '%(image_os_version)s '
+                                '%(image_platform)s' % app_env))
+            output.append(self._format_template('application_environment',
+                                                app_env,
+                                                extra=static_compute_info))
+            output.append(',')
+
+        # End JSON output
+        output.append(']')
+        output.append('}')
+        return '\n'.join(output)
+
+
 class CloudBDII(BaseBDII):
     def __init__(self, opts):
         super(CloudBDII, self).__init__(opts)
@@ -219,10 +283,14 @@ def parse_opts():
 def main():
     opts = parse_opts()
 
-    for cls_ in (CloudBDII, ComputeBDII, StorageBDII):
-        bdii = cls_(opts)
-        bdii.load_templates()
-        print(bdii.render().encode('utf-8'))
+    bdii = IndigoComputeBDII(opts)
+    bdii.load_templates()
+    print(bdii.render().encode('utf-8'))
+    # XXX do not care of legacy stuff
+    #for cls_ in (CloudBDII, ComputeBDII, StorageBDII):
+    #     bdii = cls_(opts)
+    #     bdii.load_templates()
+    #     print(bdii.render().encode('utf-8'))
 
 if __name__ == '__main__':
     main()
