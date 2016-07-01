@@ -1,0 +1,8 @@
+{
+  template_id: "%(template_id)s",
+  compute_service_name: "%(compute_service_name)s",
+  suffix: "%(suffix)s",
+  template_memory: "%(template_memory)s",
+  template_platform: "%(template_platform)s",
+  template_cpu: "%(template_cpu)s",
+}
