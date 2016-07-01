@@ -105,25 +105,35 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
         # 3. take the first disk from VMTEMPLATE
         # 4. use disk's IMAGE element to find it in the imagepool
         # 5. associate selected IMAGE metadata (*VMCATCHER* stuff) with the tpl
-        for tpl_id, tpl in one_templates.items():
+        # XXX use a image from imagepool
+        # TODO document
+        for tpl_name, tpl in one_images.items():
             aux_tpl = template.copy()
             aux_tpl.update(defaults)
-            aux_tpl["image_name"] = tpl["name"]
-            aux_tpl["image_id"] = self._gen_id(tpl["name"], tpl_id, img_schema)
-            disk = tpl.get("template", {}).get("disk", {}).get("image", None)
-            if disk is not None:
-                aux = one_images.get(disk, {}).get("template", {})
-                aux_tpl["image_marketplace_id"] = aux.get(
-                    "vmcatcher_event_ad_mpuri", None
-                )
-                aux_tpl["image_description"] = aux.get("description", None)
-                aux_tpl["image_version"] = aux.get(
-                    "vmcatcher_event_hv_version",
-                    None
-                )
-            if (self.opts.vmcatcher_images and
-                    aux_tpl.get("image_marketplace_id", None) is None):
-                continue
+            aux_tpl["image_name"] = tpl_name
+            aux_tpl["image_id"] = tpl["id"]
+            # XXX update to use info from image?
+            # disk = tpl.get("template", {}).get("disk", {}).get("image", None)
+            # if disk is not None:
+            #     aux = one_images.get(disk, {}).get("template", {})
+            #     aux_tpl["image_marketplace_id"] = aux.get(
+            #         "vmcatcher_event_ad_mpuri", None
+            #     )
+            #     aux_tpl["image_description"] = aux.get("description", None)
+            #     aux_tpl["image_version"] = aux.get(
+            #         "vmcatcher_event_hv_version",
+            #         None
+            #     )
+            # if (self.opts.vmcatcher_images and
+            #         aux_tpl.get("image_marketplace_id", None) is None):
+            #     continue
+            if "template" in tpl:
+                if "docker_id" in tpl["template"]:
+                    aux_tpl["docker_id"] = tpl["template"]["docker_id"]
+                if "docker_name" in tpl["template"]:
+                    aux_tpl["image_name"] = tpl["template"]["docker_name"]
+                if "docker_tag" in tpl["template"]:
+                    aux_tpl["image_tag"] = tpl["template"]["docker_tag"]
             templates[tpl_id] = aux_tpl
         return templates
 
