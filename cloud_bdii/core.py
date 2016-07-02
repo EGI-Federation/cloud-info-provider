@@ -204,6 +204,8 @@ class IndigoComputeBDII(BaseBDII):
                                 '%(image_os_family)s %(image_os_name)s '
                                 '%(image_os_version)s '
                                 '%(image_platform)s' % app_env))
+            # XXX will fail if image info does not contain docker_*
+            # as templates contains it
             output.append(self._format_template('application_environment',
                                                 app_env,
                                                 extra=static_compute_info))
