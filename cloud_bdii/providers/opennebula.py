@@ -81,6 +81,80 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
         return dict([(tpl["id"], tpl) for _, tpl in self._get_from_xml(
             "one.templatepool.info")])
 
+    def get_images(self):
+        template = {
+            'image_name': None,
+            'image_description': None,
+            'image_version': None,
+            'image_marketplace_id': None,
+            'image_id': None,
+            'image_os_family': None,
+            'image_os_name': None,
+            'image_os_version': None,
+            'image_platform': 'amd64',
+        }
+        defaults = self.static.get_image_defaults(prefix=True)
+        img_schema = defaults.get('image_schema', 'os_tpl')
+
+        templates = {}
+        one_templates = self._get_one_templates()
+        one_images = self._get_one_images()
+
+        # 1. take a VMTEMPLATE from templatepool
+        # 2. use metadata from VMTEMPLATE to create an os_tpl mixin
+        # 3. take the first disk from VMTEMPLATE
+        # 4. use disk's IMAGE element to find it in the imagepool
+        # 5. associate selected IMAGE metadata (*VMCATCHER* stuff) with the tpl
+        for tpl_id, tpl in one_templates.iteritems():
+            aux_tpl = template.copy()
+            aux_tpl.update(defaults)
+            aux_tpl["image_name"] = tpl["name"]
+            aux_tpl["image_id"] = self._gen_id(tpl["name"], tpl_id, img_schema)
+            disk = tpl.get("template", {}).get("disk", {}).get("image", None)
+            if disk is not None:
+                aux = one_images.get(disk, {}).get("template", {})
+                aux_tpl["image_marketplace_id"] = aux.get(
+                    "vmcatcher_event_ad_mpuri", None
+                )
+                aux_tpl["image_description"] = aux.get("description", None)
+                aux_tpl["image_version"] = aux.get(
+                    "vmcatcher_event_hv_version",
+                    None
+                )
+            if (self.opts.vmcatcher_images and
+                    aux_tpl.get("image_marketplace_id", None) is None):
+                continue
+            templates[tpl_id] = aux_tpl
+        return templates
+
+    @staticmethod
+    def populate_parser(parser):
+        parser.add_argument(
+            '--on-auth',
+            metavar='<auth>',
+            default=utils.env('ON_AUTH'),
+            help=('Specify authorization information. For core drivers, '
+                    'it shall be <username>:<password>. '
+                    'Defaults to env[ON_USERNAME].'))
+
+        parser.add_argument(
+            '--on-rpcxml-endpoint',
+            metavar='<auth-url>',
+            default=utils.env('OS_RPCXML_ENDPOINT'),
+            help='Defaults to env[OS_RPCXML_ENDPOINT].')
+
+        parser.add_argument(
+            '--vmcatcher-images',
+            action='store_true',
+            default=False,
+            help=('If set, include only information on images that '
+                  'have vmcatcher metadata, ignoring the others.'))
+
+
+class OpenNebulaProvider(OpenNebulaBaseProvider):
+    def __init__(self, opts):
+        super(OpenNebulaProvider, self).__init__(opts)
+
     def get_templates(self):
         template = {
             'template_id': None,
@@ -145,15 +219,10 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
             'image_os_name': None,
             'image_os_version': None,
             'image_platform': 'amd64',
-            'docker_id': None,
-            'docker_name': None,
-            'docker_tag': None,
         }
         defaults = self.static.get_image_defaults(prefix=True)
-        # img_schema = defaults.get('image_schema', 'os_tpl')
 
-        templates = {}
-        # one_templates = self._get_one_templates()
+        images = {}
         one_images = self._get_one_images()
 
         # 1. take a VMTEMPLATE from templatepool
@@ -163,64 +232,38 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
         # 5. associate selected IMAGE metadata (*VMCATCHER* stuff) with the tpl
         # XXX use a image from imagepool
         # TODO(document)
-        for tpl_name, tpl in one_images.items():
-            aux_tpl = template.copy()
-            aux_tpl.update(defaults)
-            aux_tpl["image_name"] = tpl_name
-            tpl_id = tpl["id"]
-            aux_tpl["image_id"] = tpl_id
-            # XXX update to use info from image?
-            # disk = tpl.get("template", {}).get("disk", {}).get("image", None)
-            # if disk is not None:
-            #     aux = one_images.get(disk, {}).get("template", {})
-            #     aux_tpl["image_marketplace_id"] = aux.get(
-            #         "vmcatcher_event_ad_mpuri", None
-            #     )
-            #     aux_tpl["image_description"] = aux.get("description", None)
-            #     aux_tpl["image_version"] = aux.get(
-            #         "vmcatcher_event_hv_version",
-            #         None
-            #     )
+        for img_name, img in one_images.items():
+            aux_img = template.copy()
+            aux_img.update(defaults)
+            aux_img["image_name"] = img_name
+            img_id = img["id"]
+            aux_img["image_id"] = img_id
+            if "template" in img:
+                aux = img["template"]
+                aux_img["image_marketplace_id"] = aux.get(
+                    "vmcatcher_event_ad_mpuri", None
+                )
+                aux_img["image_description"] = aux.get("description", None)
+                aux_img["image_version"] = aux.get(
+                    "vmcatcher_event_hv_version",
+                    None
+                )
+                aux_img["docker_id"] = aux.get(
+                    "docker_id", None
+                )
+                aux_img["docker_name"] = aux.get(
+                    "docker_name", None
+                )
+                aux_img["docker_tag"] = aux.get(
+                    "docker_tag", None
+                )
+            # XXX avoid skipping some images
+            # XXX we might want to keep images only from marketpalce or docker
             # if (self.opts.vmcatcher_images and
-            #         aux_tpl.get("image_marketplace_id", None) is None):
+            #         aux_img.get("image_marketplace_id", None) is None):
             #     continue
-            if "template" in tpl:
-                if "docker_id" in tpl["template"]:
-                    aux_tpl["docker_id"] = tpl["template"]["docker_id"]
-                if "docker_name" in tpl["template"]:
-                    aux_tpl["image_name"] = tpl["template"]["docker_name"]
-                if "docker_tag" in tpl["template"]:
-                    aux_tpl["image_tag"] = tpl["template"]["docker_tag"]
-            templates[tpl_id] = aux_tpl
-        return templates
-
-    @staticmethod
-    def populate_parser(parser):
-        parser.add_argument(
-            '--on-auth',
-            metavar='<auth>',
-            default=utils.env('ON_AUTH'),
-            help=('Specify authorization information. For core drivers, '
-                    'it shall be <username>:<password>. '
-                    'Defaults to env[ON_USERNAME].'))
-
-        parser.add_argument(
-            '--on-rpcxml-endpoint',
-            metavar='<auth-url>',
-            default=utils.env('OS_RPCXML_ENDPOINT'),
-            help='Defaults to env[OS_RPCXML_ENDPOINT].')
-
-        parser.add_argument(
-            '--vmcatcher-images',
-            action='store_true',
-            default=False,
-            help=('If set, include only information on images that '
-                  'have vmcatcher metadata, ignoring the others.'))
-
-
-class OpenNebulaProvider(OpenNebulaBaseProvider):
-    def __init__(self, opts):
-        super(OpenNebulaProvider, self).__init__(opts)
+            images[img_id] = aux_img
+        return images
 
 
 class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
