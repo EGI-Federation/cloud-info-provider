@@ -142,6 +142,64 @@ class IndigoONProviderTest(OpenNebulaBaseProviderTest):
         super(IndigoONProviderTest, self).__init__(*args, **kwargs)
         self.provider_class = opennebula.IndigoONProvider
         self.maxDiff = None
+        self.expected_images = {
+            '30': {
+                'image_marketplace_id': None,
+                'image_version': None,
+                'image_platform': 'amd64',
+                'image_os_version': None,
+                'image_name': 'monitoring',
+                'image_id': '30',
+                'image_description': 'Monitoring image',
+                'image_os_name': None,
+                'image_os_family': None
+            },
+            '31': {
+                'image_marketplace_id': None,
+                'image_version': None,
+                'image_platform': 'amd64',
+                'image_os_version': None,
+                'image_name': 'debian6',
+                'image_id': '31',
+                'image_description': 'Debian6 sample image',
+                'image_os_name': None,
+                'image_os_family': None},
+            '183': {
+                'image_marketplace_id': (
+                    'https://appdb.egi.eu/store/vm/image/'
+                    'c0482bc2-bf41-5d49-a85f-a750174a186b:642/'
+                ),
+                'image_version': '3.3.0-1',
+                'image_platform': 'amd64',
+                'image_os_version': None,
+                'image_name': 'c0482bc2-bf41-5d49-a85f-a750174a186b',
+                'image_id': '183',
+                'image_description': (
+                    'This version of CERNVM has been modified by EGI '
+                    'with the followign changes - default OS extended to '
+                    '40GB of disk - updated OpenNebula Cloud-Init driver '
+                    'to latest version 0.7.5 - enabled all Cloud-Init '
+                    'data sources'
+                ),
+                'image_os_name': None,
+                'image_os_family': None},
+            '186': {
+                'image_marketplace_id': (
+                    'https://appdb.egi.eu/store/vm/image/'
+                    'c0482bc2-bf41-5d49-a85f-a750174a186b:642/'
+                ),
+                'image_version': '20140227',
+                'image_platform': 'amd64',
+                'image_os_version': None,
+                'image_name': '800f345f-5278-5523-a1dc-8a98476006f8',
+                'image_id': '186',
+                'image_description': (
+                    'This machine image is provided by '
+                    'the Ubuntu project http//cloud-images.ubuntu.com'
+                ),
+                'image_os_name': None,
+                'image_os_family': None},
+        }
 
 
 class OpenNebulaROCCIProviderTest(OpenNebulaBaseProviderTest):
