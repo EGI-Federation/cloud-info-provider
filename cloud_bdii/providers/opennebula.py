@@ -253,20 +253,15 @@ class IndigoONProvider(OpenNebulaBaseProvider):
                     "vmcatcher_event_hv_version",
                     None
                 )
-                aux_img["docker_id"] = aux.get(
-                    "docker_id", None
-                )
-                aux_img["docker_name"] = aux.get(
-                    "docker_name", None
-                )
-                aux_img["docker_tag"] = aux.get(
-                    "docker_tag", None
-                )
-            # XXX avoid skipping some images
-            # XXX we might want to keep images only from marketpalce or docker
-            # if (self.opts.vmcatcher_images and
-            #         aux_img.get("image_marketplace_id", None) is None):
-            #     continue
+                if "docker_id"in aux:
+                    aux_img["docker_id"] = aux["docker_id"]
+                if "docker_name"in aux:
+                    aux_img["docker_name"] = aux["docker_name"]
+                if "docker_tag"in aux:
+                    aux_img["docker_tag"] = aux["docker_tag"]
+            if (self.opts.vmcatcher_images and
+                    aux_img.get("image_marketplace_id", None) is None):
+                continue
             images[img_id] = aux_img
         return images
 
