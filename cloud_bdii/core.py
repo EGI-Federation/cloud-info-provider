@@ -212,7 +212,7 @@ class IndigoComputeBDII(BaseBDII):
                                 '%(image_platform)s' % app_env))
             output.append(self._format_template(application_environment_tpl,
                                                 app_env,
-                                                extra=static_compute_info))
+                                                extra=static_compute_info).rstrip())
             output.append(',')
 
         # XXX remote ending coma if any
