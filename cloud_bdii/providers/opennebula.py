@@ -256,11 +256,11 @@ class IndigoONProvider(OpenNebulaBaseProvider):
                     "vmcatcher_event_hv_version",
                     None
                 )
-                if "docker_id"in aux:
+                if "docker_id" in aux:
                     aux_img["docker_id"] = aux["docker_id"]
-                if "docker_name"in aux:
+                if "docker_name" in aux:
                     aux_img["docker_name"] = aux["docker_name"]
-                if "docker_tag"in aux:
+                if "docker_tag" in aux:
                     aux_img["docker_tag"] = aux["docker_tag"]
             if (self.opts.vmcatcher_images and
                     aux_img.get("image_marketplace_id", None) is None):
