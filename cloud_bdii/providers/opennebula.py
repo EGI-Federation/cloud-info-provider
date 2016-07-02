@@ -155,6 +155,11 @@ class OpenNebulaProvider(OpenNebulaBaseProvider):
     def __init__(self, opts):
         super(OpenNebulaProvider, self).__init__(opts)
 
+
+class OpenNebulaIndigoProvider(OpenNebulaBaseProvider):
+    def __init__(self, opts):
+        super(OpenNebulaProvider, self).__init__(opts)
+
     def get_templates(self):
         template = {
             'template_id': None,
