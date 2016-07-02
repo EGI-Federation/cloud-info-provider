@@ -15,8 +15,8 @@ class ModuleTest(unittest.TestCase):
         with utils.nested(
             mock.patch.object(cloud_bdii.core, 'parse_opts'),
             mock.patch('cloud_bdii.core.CloudBDII'),
-            mock.patch('cloud_bdii.core.ComputeBDII'),
             mock.patch('cloud_bdii.core.IndigoComputeBDII'),
+            mock.patch('cloud_bdii.core.ComputeBDII'),
             mock.patch('cloud_bdii.core.StorageBDII')
         ) as (m0, m1, m2, m3, m4):
             m0.return_value = None
@@ -173,4 +173,30 @@ class ComputeBDIITest(BaseTest):
             DATA.compute_images,
         )
         bdii = cloud_bdii.core.ComputeBDII(self.opts)
+        self.assertEqual('', bdii.render())
+
+
+class IndigoComputeBDIITest(BaseTest):
+    @mock.patch.object(cloud_bdii.core.IndigoComputeBDII,
+                       '_get_info_from_providers')
+    def test_render(self, m_get_info):
+        m_get_info.side_effect = (
+            DATA.compute_endpoints,
+            DATA.site_info,
+            DATA.compute_templates,
+            DATA.compute_images,
+        )
+        bdii = cloud_bdii.core.IndigoComputeBDII(self.opts)
+        self.assertNotEqual('', bdii.render())
+
+    @mock.patch.object(cloud_bdii.core.IndigoComputeBDII,
+                       '_get_info_from_providers')
+    def test_render_empty(self, m_get_info):
+        m_get_info.side_effect = (
+            {},
+            DATA.site_info,
+            DATA.compute_templates,
+            DATA.compute_images,
+        )
+        bdii = cloud_bdii.core.IndigoComputeBDII(self.opts)
         self.assertEqual('', bdii.render())
