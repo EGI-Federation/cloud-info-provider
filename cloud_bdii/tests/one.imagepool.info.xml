@@ -535,4 +535,48 @@
       <VMCATCHER_EVENT_AD_MPURI><![CDATA[https://appdb.egi.eu/store/vm/image/c0482bc2-bf41-5d49-a85f-a750174a186b:642/]]></VMCATCHER_EVENT_AD_MPURI>
     </TEMPLATE>
   </IMAGE>
+  <IMAGE>
+    <ID>194</ID>
+    <UID>0</UID>
+    <GID>102</GID>
+    <UNAME>jose.sanchezm@atos.net</UNAME>
+    <GNAME>users</GNAME>
+    <NAME>indigodataclouddevel_mesos-slave</NAME>
+    <PERMISSIONS>
+      <OWNER_U>1</OWNER_U>
+      <OWNER_M>1</OWNER_M>
+      <OWNER_A>0</OWNER_A>
+      <GROUP_U>1</GROUP_U>
+      <GROUP_M>0</GROUP_M>
+      <GROUP_A>0</GROUP_A>
+      <OTHER_U>1</OTHER_U>
+      <OTHER_M>0</OTHER_M>
+      <OTHER_A>0</OTHER_A>
+    </PERMISSIONS>
+    <TYPE>0</TYPE>
+    <DISK_TYPE>0</DISK_TYPE>
+    <PERSISTENT>0</PERSISTENT>
+    <REGTIME>1466414666</REGTIME>
+    <SOURCE><![CDATA[docker://opennebula.novalocal:5000/image4one:24]]></SOURCE>
+    <PATH><![CDATA[docker://indigodataclouddevel/mesos-slave:latest]]></PATH>
+    <FSTYPE><![CDATA[]]></FSTYPE>
+    <SIZE>0</SIZE>
+    <STATE>1</STATE>
+    <RUNNING_VMS>0</RUNNING_VMS>
+    <CLONING_OPS>0</CLONING_OPS>
+    <CLONING_ID>-1</CLONING_ID>
+    <TARGET_SNAPSHOT>-1</TARGET_SNAPSHOT>
+    <DATASTORE_ID>100</DATASTORE_ID>
+    <DATASTORE>onedock</DATASTORE>
+    <VMS/>
+    <CLONES/>
+    <TEMPLATE>
+      <DESCRIPTION><![CDATA[Docker image]]></DESCRIPTION>
+      <DEV_PREFIX><![CDATA[hd]]></DEV_PREFIX>
+      <DOCKER_ID><![CDATA[sha256:e751041cceaf609983ec34f3e5ef6f1e08f02c99eeede80347a5d5f2ec0a3fc2]]></DOCKER_ID>
+      <DOCKER_NAME><![CDATA[indigodataclouddevel/mesos-slave]]></DOCKER_NAME>
+      <DOCKER_TAG><![CDATA[latest]]></DOCKER_TAG>
+    </TEMPLATE>
+    <SNAPSHOTS/>
+  </IMAGE>
 </IMAGE_POOL>
