@@ -16,16 +16,17 @@ class ModuleTest(unittest.TestCase):
             mock.patch.object(cloud_bdii.core, 'parse_opts'),
             mock.patch('cloud_bdii.core.CloudBDII'),
             mock.patch('cloud_bdii.core.ComputeBDII'),
+            mock.patch('cloud_bdii.core.IndigoComputeBDII'),
             mock.patch('cloud_bdii.core.StorageBDII')
-        ) as (m0, m1, m2, m3):
+        ) as (m0, m1, m2, m3, m4):
             m0.return_value = None
-            for i in (m1, m2, m3):
+            for i in (m1, m2, m3, m4):
                 i = i.return_value
                 i.render.return_value = 'foo'
 
             self.assertIsNone(cloud_bdii.core.main())
 
-            for i in (m0, m1, m2, m3):
+            for i in (m0, m1, m2, m3, m4):
                 assert i.called
 
 
