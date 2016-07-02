@@ -81,6 +81,59 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
         return dict([(tpl["id"], tpl) for _, tpl in self._get_from_xml(
             "one.templatepool.info")])
 
+    def get_templates(self):
+        template = {
+            'template_id': None,
+            'template_name': None,
+            'template_description': None,
+            'template_memory': None,
+            'template_cpu': None,
+            'template_platform': 'amd64',
+            'network': 'private',
+        }
+        defaults = self.static.get_image_defaults(prefix=True)
+        img_schema = defaults.get('image_schema', 'os_tpl')
+
+        templates = {}
+        one_templates = self._get_one_templates()
+        one_images = self._get_one_images()
+
+        # 1. take a VMTEMPLATE from templatepool
+        # 2. use metadata from VMTEMPLATE to create an os_tpl mixin
+        # 3. take the first disk from VMTEMPLATE
+        # 4. use disk's IMAGE element to find it in the imagepool
+        # 5. associate selected IMAGE metadata (*VMCATCHER* stuff) with the tpl
+        # TODO(document)
+        for tpl_id, tpl in one_templates.iteritems():
+            aux_tpl = template.copy()
+            aux_tpl.update(defaults)
+            if "template" in tpl:
+                tpl_tpl = tpl["template"]
+                if "description" in tpl_tpl:
+                    aux_tpl["template_description"] = tpl_tpl["description"]
+                if "cpu" in tpl_tpl:
+                    aux_tpl["template_cpu"] = tpl_tpl["cpu"]
+                if "memory" in tpl_tpl:
+                    aux_tpl["template_memory"] = tpl_tpl["memory"]
+            aux_tpl["template_id"] = self._gen_id(tpl["name"],
+                                                  tpl_id, img_schema)
+            disk = tpl.get("template", {}).get("disk", {}).get("image", None)
+            if disk is not None:
+                aux = one_images.get(disk, {}).get("template", {})
+                aux_tpl["image_marketplace_id"] = aux.get(
+                    "vmcatcher_event_ad_mpuri", None
+                )
+                aux_tpl["image_description"] = aux.get("description", None)
+                aux_tpl["image_version"] = aux.get(
+                    "vmcatcher_event_hv_version",
+                    None
+                )
+            if (self.opts.vmcatcher_images and
+                    aux_tpl.get("image_marketplace_id", None) is None):
+                continue
+            templates[tpl_id] = aux_tpl
+        return templates
+
     def get_images(self):
         template = {
             'image_name': None,
