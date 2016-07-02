@@ -169,14 +169,14 @@ class IndigoComputeBDII(BaseBDII):
         output.append('templates:')
         output.append('[')
 
-        # output.append(self._format_template('compute_service',
-        #                                     static_compute_info))
+        output.append(self._format_template('compute_service',
+                                            static_compute_info))
 
-        # for url, endpoint in endpoints['endpoints'].iteritems():
-        #     endpoint.setdefault('endpoint_url', url)
-        #     output.append(self._format_template('compute_endpoint',
-        #                                         endpoint,
-        #                                         extra=static_compute_info))
+        for url, endpoint in endpoints['endpoints'].iteritems():
+            endpoint.setdefault('endpoint_url', url)
+            output.append(self._format_template('compute_endpoint',
+                                                endpoint,
+                                                extra=static_compute_info))
 
         templates = self._get_info_from_providers('get_templates')
         for tid, ex_env in templates.iteritems():
