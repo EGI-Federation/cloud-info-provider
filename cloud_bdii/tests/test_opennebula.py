@@ -132,6 +132,13 @@ class OpenNebulaProviderTest(OpenNebulaBaseProviderTest):
         self.maxDiff = None
 
 
+class IndigoONProviderTest(OpenNebulaBaseProviderTest):
+    def __init__(self, *args, **kwargs):
+        super(IndigoONProviderTest, self).__init__(*args, **kwargs)
+        self.provider_class = opennebula.IndigoONProvider
+        self.maxDiff = None
+
+
 class OpenNebulaROCCIProviderTest(OpenNebulaBaseProviderTest):
     def __init__(self, *args, **kwargs):
         super(OpenNebulaROCCIProviderTest, self).__init__(*args, **kwargs)
