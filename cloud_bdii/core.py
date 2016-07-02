@@ -31,8 +31,9 @@ class BaseBDII(object):
     def load_templates(self):
         self.ldif = {}
         for tpl in self.templates:
+            template_extension = self.opts.template_extension
             template_file = os.path.join(self.opts.template_dir,
-                                         '%s.%s' % (tpl, self.opts.template_extension))
+                                         '%s.%s' % (tpl, template_extension))
             with open(template_file, 'r') as f:
                 self.ldif[tpl] = f.read()
 
@@ -163,16 +164,17 @@ class IndigoComputeBDII(BaseBDII):
 
         # prepare json formatting
         output.append('{')
-        output.append('images:')
+        output.append('templates:')
+        output.append('[')
 
-        #output.append(self._format_template('compute_service',
-        #                                    static_compute_info))
+        # output.append(self._format_template('compute_service',
+        #                                     static_compute_info))
 
-        #for url, endpoint in endpoints['endpoints'].iteritems():
-        #    endpoint.setdefault('endpoint_url', url)
-        #    output.append(self._format_template('compute_endpoint',
-        #                                        endpoint,
-        #                                        extra=static_compute_info))
+        # for url, endpoint in endpoints['endpoints'].iteritems():
+        #     endpoint.setdefault('endpoint_url', url)
+        #     output.append(self._format_template('compute_endpoint',
+        #                                         endpoint,
+        #                                         extra=static_compute_info))
 
         templates = self._get_info_from_providers('get_templates')
         for tid, ex_env in templates.iteritems():
@@ -180,9 +182,18 @@ class IndigoComputeBDII(BaseBDII):
             output.append(self._format_template('execution_environment',
                                                 ex_env,
                                                 extra=static_compute_info))
+            output.append(',')
+        # XXX remote ending coma if any
+        if output[-1] == ',':
+            del output[-1]
+        output.append(']')
+        output.append("},")
+
+        output.append('{')
+        output.append('images:')
+        output.append('[')
 
         images = self._get_info_from_providers('get_images')
-        output.append('[')
         for iid, app_env in images.iteritems():
             app_env.setdefault('image_id', iid)
             app_env.setdefault('image_description',
@@ -198,7 +209,7 @@ class IndigoComputeBDII(BaseBDII):
 
         # XXX remote ending coma if any
         if output[-1] == ',':
-           del output[-1]
+            del output[-1]
         # End JSON output
         output.append(']')
         output.append('}')
@@ -290,10 +301,10 @@ def main():
     bdii.load_templates()
     print(bdii.render().encode('utf-8'))
     # XXX do not care of legacy stuff
-    #for cls_ in (CloudBDII, ComputeBDII, StorageBDII):
-    #     bdii = cls_(opts)
-    #     bdii.load_templates()
-    #     print(bdii.render().encode('utf-8'))
+    # for cls_ in (CloudBDII, ComputeBDII, StorageBDII):
+    #      bdii = cls_(opts)
+    #      bdii.load_templates()
+    #      print(bdii.render().encode('utf-8'))
 
 if __name__ == '__main__':
     main()
