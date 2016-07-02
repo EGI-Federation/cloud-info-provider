@@ -6,7 +6,7 @@ import cloud_bdii.providers.openstack
 import cloud_bdii.providers.static
 
 SUPPORTED_MIDDLEWARE = {
-    # 'openstack': cloud_bdii.providers.openstack.OpenStackProvider,
+    'openstack': cloud_bdii.providers.openstack.OpenStackProvider,
     # 'opennebula': cloud_bdii.providers.opennebula.OpenNebulaProvider,
     'indigoon': cloud_bdii.providers.opennebula.IndigoONProvider,
     # 'opennebularocci':
