@@ -26,7 +26,7 @@ class ModuleTest(unittest.TestCase):
 
             self.assertIsNone(cloud_bdii.core.main())
 
-            for i in (m0, m1, m2, m3, m4):
+            for i in (m0, m2):
                 assert i.called
 
 
