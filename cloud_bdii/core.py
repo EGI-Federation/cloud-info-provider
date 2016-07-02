@@ -166,35 +166,34 @@ class IndigoComputeBDII(BaseBDII):
         static_compute_info.pop('endpoints')
 
         # prepare json formatting
-        output.append('{')
-        output.append('templates:')
-        output.append('[')
+        # output.append('{')
+        # output.append('templates:')
+        # output.append('[')
 
-        output.append(self._format_template('compute_service',
-                                            static_compute_info))
+        # output.append(self._format_template('compute_service',
+        #                                    static_compute_info))
 
-        for url, endpoint in endpoints['endpoints'].iteritems():
-            endpoint.setdefault('endpoint_url', url)
-            output.append(self._format_template('compute_endpoint',
-                                                endpoint,
-                                                extra=static_compute_info))
+        # for url, endpoint in endpoints['endpoints'].iteritems():
+        #     endpoint.setdefault('endpoint_url', url)
+        #     output.append(self._format_template('compute_endpoint',
+        #                                         endpoint,
+        #                                         extra=static_compute_info))
 
         templates = self._get_info_from_providers('get_templates')
         for tid, ex_env in templates.iteritems():
             ex_env.setdefault('template_id', tid)
-            output.append(self._format_template('execution_environment',
-                                                ex_env,
-                                                extra=static_compute_info))
-            output.append(',')
+        #     output.append(self._format_template('execution_environment',
+        #                                         ex_env,
+        #                                         extra=static_compute_info))
+        #     output.append(',')
         # XXX remote ending coma if any
-        if output[-1] == ',':
-            del output[-1]
-        output.append(']')
-        output.append("},")
+        # if output[-1] == ',':
+        #    del output[-1]
+        # output.append(']')
+        # output.append("},")
 
         output.append('{')
-        output.append('images:')
-        output.append('[')
+        output.append('images: [')
 
         images = self._get_info_from_providers('get_images')
         for iid, app_env in images.iteritems():
