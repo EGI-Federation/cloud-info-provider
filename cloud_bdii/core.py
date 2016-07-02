@@ -259,7 +259,7 @@ def parse_opts():
 
     parser.add_argument(
         '--template-extension',
-        default='ldif',
+        default='json',
         help=('Extension to use for the templates'))
 
     parser.add_argument(
