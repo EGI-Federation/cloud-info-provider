@@ -199,6 +199,84 @@ class IndigoONProviderTest(OpenNebulaBaseProviderTest):
                 ),
                 'image_os_name': None,
                 'image_os_family': None},
+            '187': {
+                'image_description': '""',
+                'image_id': '187',
+                'image_marketplace_id': (
+                    'https://appdb.egi.eu/store/vm/image/'
+                    'c0482bc2-bf41-5d49-a85f-a750174a186b:642/'
+                ),
+                'image_name': 'b25c250b-637b-5622-a6fb-b0db4f2883f2',
+                'image_os_family': None,
+                'image_os_name': None,
+                'image_os_version': None,
+                'image_platform': 'amd64',
+                'image_version': '20140617'},
+            '188': {
+                'image_description': '""',
+                'image_id': '188',
+                'image_marketplace_id': (
+                    'https://appdb.egi.eu/store/vm/image/'
+                    'c0482bc2-bf41-5d49-a85f-a750174a186b:642/'
+                ),
+                'image_name': '662b0e71-3e21-5f43-b6a1-cc2f51319fa7',
+                'image_os_family': None,
+                'image_os_name': None,
+                'image_os_version': None,
+                'image_platform': 'amd64',
+                'image_version': '20140617'},
+            '189': {
+                'image_description': '""',
+                'image_id': '189',
+                'image_marketplace_id': (
+                    'https://appdb.egi.eu/store/vm/image/'
+                    'c0482bc2-bf41-5d49-a85f-a750174a186b:642/'
+                ),
+                'image_name': 'de355bfb-5781-5b0c-9ccd-9bd3d0d2be06',
+                'image_os_family': None,
+                'image_os_name': None,
+                'image_os_version': None,
+                'image_platform': 'amd64',
+                'image_version': '20140607.1'},
+            '190': {
+                'image_description': 'ttylinux-kvm',
+                'image_id': '190',
+                'image_marketplace_id': (
+                    'https://appdb.egi.eu/store/vm/image/'
+                    'c0482bc2-bf41-5d49-a85f-a750174a186b:642/'
+                ),
+                'image_name': '93084776-1176-4849-95dc-cc7a15f2ce97',
+                'image_os_family': None,
+                'image_os_name': None,
+                'image_os_version': None,
+                'image_platform': 'amd64',
+                'image_version': '0.0.93'},
+            '192': {
+                'image_description': '""',
+                'image_id': '192',
+                'image_marketplace_id': (
+                    'https://appdb.egi.eu/store/vm/image/'
+                    'c0482bc2-bf41-5d49-a85f-a750174a186b:642/'
+                ),
+                'image_name': '2f55ff2a-abe3-52b3-ad56-aded22a63fae',
+                'image_os_family': None,
+                'image_os_name': None,
+                'image_os_version': None,
+                'image_platform': 'amd64',
+                'image_version': '20140617'},
+            '193': {
+                'image_description': '""',
+                'image_id': '193',
+                'image_marketplace_id': (
+                    'https://appdb.egi.eu/store/vm/image/'
+                    'c0482bc2-bf41-5d49-a85f-a750174a186b:642/'
+                ),
+                'image_name': 'ba4235f2-8732-5376-ad46-53bf176ea036',
+                'image_os_family': None,
+                'image_os_name': None,
+                'image_os_version': None,
+                'image_platform': 'amd64',
+                'image_version': '20140607.1'}
         }
 
 
