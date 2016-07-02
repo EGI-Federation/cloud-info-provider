@@ -151,7 +151,8 @@ class IndigoComputeBDII(BaseBDII):
         #                   'execution_environment',
         #                   'application_environment')
         self.templates = ('execution_environment',
-                          'application_environment')
+                          'application_environment',
+                          'application_environment_docker')
 
     def render(self):
         output = []
@@ -197,6 +198,11 @@ class IndigoComputeBDII(BaseBDII):
 
         images = self._get_info_from_providers('get_images')
         for iid, app_env in images.iteritems():
+            if "docker_id" in app_env:
+                application_environment_tpl = 'application_environment_docker'
+            else:
+                application_environment_tpl = 'application_environment'
+
             app_env.setdefault('image_id', iid)
             app_env.setdefault('image_description',
                                ('%(image_name)s version '
@@ -204,9 +210,7 @@ class IndigoComputeBDII(BaseBDII):
                                 '%(image_os_family)s %(image_os_name)s '
                                 '%(image_os_version)s '
                                 '%(image_platform)s' % app_env))
-            # XXX will fail if image info does not contain docker_*
-            # as templates contains it
-            output.append(self._format_template('application_environment',
+            output.append(self._format_template(application_environment_tpl,
                                                 app_env,
                                                 extra=static_compute_info))
             output.append(',')
