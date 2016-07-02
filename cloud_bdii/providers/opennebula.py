@@ -150,10 +150,10 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
             'docker_tag': None,
         }
         defaults = self.static.get_image_defaults(prefix=True)
-        img_schema = defaults.get('image_schema', 'os_tpl')
+        # img_schema = defaults.get('image_schema', 'os_tpl')
 
         templates = {}
-        one_templates = self._get_one_templates()
+        # one_templates = self._get_one_templates()
         one_images = self._get_one_images()
 
         # 1. take a VMTEMPLATE from templatepool
@@ -162,7 +162,7 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
         # 4. use disk's IMAGE element to find it in the imagepool
         # 5. associate selected IMAGE metadata (*VMCATCHER* stuff) with the tpl
         # XXX use a image from imagepool
-        # TODO document
+        # TODO(document)
         for tpl_name, tpl in one_images.items():
             aux_tpl = template.copy()
             aux_tpl.update(defaults)
