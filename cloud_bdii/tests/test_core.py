@@ -109,7 +109,8 @@ class BaseBDIITest(BaseTest):
             bdii.load_templates()
             for tpl in tpls:
                 m_open.assert_any_call(
-                    os.path.join(self.opts.template_dir, '%s.ldif' % tpl),
+                    os.path.join(self.opts.template_dir, '%s.%s' %
+                                 (tpl, self.opts.template_extension)),
                     'r'
                 )
                 self.assertEqual(expected,
