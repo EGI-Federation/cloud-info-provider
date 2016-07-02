@@ -1,5 +1,7 @@
 {
   template_id: "%(template_id)s",
+  template_name: "%(template_name)s",
+  template_description: "%(template_description)s",
   compute_service_name: "%(compute_service_name)s",
   suffix: "%(suffix)s",
   template_memory: "%(template_memory)s",
