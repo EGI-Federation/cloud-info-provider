@@ -1,8 +1,5 @@
 {
   image_id: "%(image_id)s",
-  docker_id: "%(docker_id)s",
-  docker_name: "%(docker_name)s",
-  docker_tag: "%(docker_tag)s",
   compute_service_name: "%(compute_service_name)s",
   suffix: "%(suffix)s",
   image_name: "%(image_name)s",
