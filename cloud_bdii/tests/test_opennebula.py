@@ -276,7 +276,23 @@ class IndigoONProviderTest(OpenNebulaBaseProviderTest):
                 'image_os_name': None,
                 'image_os_version': None,
                 'image_platform': 'amd64',
-                'image_version': '20140607.1'}
+                'image_version': '20140607.1'},
+            '194': {
+                'docker_name': 'indigodataclouddevel/mesos-slave',
+                'docker_tag': 'latest',
+                'docker_id': (
+                    'sha256:e751041cceaf609983ec34f3e5ef6f'
+                    '1e08f02c99eeede80347a5d5f2ec0a3fc2'
+                ),
+                'image_description': 'Docker image',
+                'image_id': '194',
+                'image_marketplace_id': None,
+                'image_name': 'indigodataclouddevel_mesos-slave',
+                'image_os_family': None,
+                'image_os_name': None,
+                'image_os_version': None,
+                'image_platform': 'amd64',
+                'image_version': None}
         }
 
 
