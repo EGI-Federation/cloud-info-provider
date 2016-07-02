@@ -34,6 +34,7 @@ class FakeBDIIOpts(object):
     middleware = 'foo middleware'
     yaml_file = None
     template_dir = ''
+    template_extension = ''
 
 
 class BaseTest(unittest.TestCase):
