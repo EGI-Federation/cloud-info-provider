@@ -298,10 +298,7 @@ def parse_opts():
 def main():
     opts = parse_opts()
 
-    # bdii = IndigoComputeBDII(opts)
-    # bdii.load_templates()
-    # print(bdii.render().encode('utf-8'))
-    # XXX do not care of legacy stuff
+    # XXX we should not care of legacy stuff
     for cls_ in (CloudBDII, ComputeBDII, StorageBDII, IndigoComputeBDII):
         bdii = cls_(opts)
         bdii.load_templates()
