@@ -26,6 +26,7 @@ class ModuleTest(unittest.TestCase):
 
             self.assertIsNone(cloud_bdii.core.main())
 
+            # XXX only IndigoComputeBDII is used
             for i in (m0, m2):
                 assert i.called
 
