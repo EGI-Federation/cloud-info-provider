@@ -51,6 +51,11 @@ class OpenNebulaROCCIProviderOptionsTest(OpenNebulaBaseProviderOptionsTest):
         self.provider = opennebula.OpenNebulaROCCIProvider
 
 
+class IndigoONProviderOptionsTest(OpenNebulaBaseProviderOptionsTest):
+    def setUp(self):
+        self.provider = opennebula.IndigoONProvider
+
+
 class OpenNebulaBaseProviderTest(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(OpenNebulaBaseProviderTest, self).__init__(*args, **kwargs)
