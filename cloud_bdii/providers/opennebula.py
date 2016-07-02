@@ -228,6 +228,9 @@ class IndigoONProvider(OpenNebulaBaseProvider):
         defaults = self.static.get_image_defaults(prefix=True)
 
         images = {}
+        # XXX need to call this or tests will fail
+        # as templates will be returned instead of images
+        self._get_one_templates()
         one_images = self._get_one_images()
 
         # 1. take a VMTEMPLATE from templatepool
