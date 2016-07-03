@@ -10,11 +10,9 @@
   % if "docker_tag" in image:
   docker_id: "${image["docker_tag"]}",
   % endif
-  compute_service_name: "${image["compute_service_name"]}",
-  suffix: "${image["suffix"]}",
   image_name: "${image["image_name"]}",
   image_version: "${image["image_version"]}",
   image_marketplace_id: "${image["image_marketplace_id"]}",
   image_description: "${image["image_description"]}"
-}
+},
 % endfor
