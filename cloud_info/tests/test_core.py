@@ -99,7 +99,10 @@ class BaseBDIITest(BaseTest):
         tpls = ['foo', 'bar']
         tpl_contents = 'foo ${attributes["fobble"]}'
         info = {'fobble': 'burble', 'brongle': 'farbla'}
-        expected_tpls = {'foo': 'foobar/foo.', 'bar': 'foobar/bar.'}
+        expected_tpls = {
+            'foo': 'foobar/foo.%s' % self.opts.template_extension,
+            'bar': 'foobar/bar.%s' % self.opts.template_extension
+        }
         expected = 'foo burble'
 
         bdii = cloud_info.core.BaseBDII(self.opts)
