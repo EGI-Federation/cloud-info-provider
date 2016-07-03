@@ -5,10 +5,10 @@
   docker_id: "${image["docker_id"]}",
   % endif
   % if "docker_name" in image:
-  docker_id: "${image["docker_name"]}",
+  docker_name: "${image["docker_name"]}",
   % endif
   % if "docker_tag" in image:
-  docker_id: "${image["docker_tag"]}",
+  docker_tag: "${image["docker_tag"]}",
   % endif
   image_name: "${image["image_name"]}",
   image_version: "${image["image_version"]}",
