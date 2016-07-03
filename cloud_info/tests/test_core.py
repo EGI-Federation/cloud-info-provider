@@ -82,7 +82,7 @@ class BaseBDIITest(BaseTest):
             ),
         )
 
-        bdii = cloud_bdii.core.BaseBDII(self.opts)
+        bdii = cloud_info.core.BaseBDII(self.opts)
 
         for s, d, e in cases:
             with utils.nested(
@@ -101,10 +101,10 @@ class BaseBDIITest(BaseTest):
         info = {'fobble': 'burble', 'brongle': 'farbla'}
         expected = tpl_contents % info
 
-        bdii = cloud_bdii.core.BaseBDII(self.opts)
+        bdii = cloud_info.core.BaseBDII(self.opts)
         with utils.nested(
             mock.patch.object(bdii, 'templates', tpls),
-            mock.patch('cloud_bdii.core.open',
+            mock.patch('cloud_info.core.open',
                        mock.mock_open(read_data=tpl_contents), create=True)
         ) as (m_templates, m_open):
             bdii.load_templates()
