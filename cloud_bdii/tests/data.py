@@ -207,7 +207,7 @@ class OpenStackFakes(object):
                     'docker_id': 'sha1:xxxxxxxxxxxxxxxxxxxxxxxxxx',
                     'docker_tag': 'latest',
                     'docker_name': 'test/image',
-                 },
+                },
                 'links': []
             },
         )
