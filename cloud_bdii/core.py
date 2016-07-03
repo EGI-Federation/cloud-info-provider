@@ -262,7 +262,7 @@ def parse_opts():
 
     parser.add_argument(
         '--template-dir',
-        default='/etc/cloud-info-provider/templates',
+        default='/etc/cloud-info-provider-indigo/templates',
         help=('Path to the directory containing the needed templates'))
 
     parser.add_argument(
