@@ -148,7 +148,7 @@ class IndigoComputeBDII(BaseBDII):
     def __init__(self, opts):
         super(IndigoComputeBDII, self).__init__(opts)
 
-        self.templates = (['indigo'])
+        self.templates = ['indigo']
 
     def render(self):
         endpoints = self._get_info_from_providers('get_compute_endpoints')
