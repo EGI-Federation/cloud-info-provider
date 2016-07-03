@@ -229,8 +229,8 @@ class OpenStackProviderTest(unittest.TestCase):
                 'image_version': None,
                 'image_marketplace_id': 'http://example.org/',
                 'image_id': 'os_tpl#foo-id'
-            }
-            'foo.id': {
+            },
+            'baz id': {
                 'image_description': None,
                 'image_name': 'bazimage',
                 'image_os_family': None,
@@ -239,10 +239,10 @@ class OpenStackProviderTest(unittest.TestCase):
                 'image_platform': 'amd64',
                 'image_version': None,
                 'image_marketplace_id': None,
-                'image_id': 'os_tpl#baz_id'
+                'image_id': 'os_tpl#baz_id',
                 'docker_id': 'sha1:xxxxxxxxxxxxxxxxxxxxxxxxxx',
                 'docker_tag': 'latest',
-                'docker_name': 'test/image',
+                'docker_name': 'test/image'
             }
         }
 
