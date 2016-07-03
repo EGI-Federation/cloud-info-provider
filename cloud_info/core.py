@@ -164,8 +164,9 @@ class IndigoComputeBDII(BaseBDII):
         info = {}
         info.update({'templates': templates})
         info.update({'images': images})
+        info.update({'static_compute_info': static_compute_info})
 
-        return self._format_template('indigo', info, extra=static_compute_info)
+        return self._format_template('indigo', info)
 
 
 class CloudBDII(BaseBDII):
