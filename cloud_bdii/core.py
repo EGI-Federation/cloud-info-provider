@@ -148,17 +148,7 @@ class IndigoComputeBDII(BaseBDII):
     def __init__(self, opts):
         super(IndigoComputeBDII, self).__init__(opts)
 
-        # XXX disable non-required templates
-        # self.templates = ('compute_service',
-        #                   'compute_endpoint',
-        #                   'execution_environment',
-        #                   'application_environment')
-        # self.templates = ('execution_environment',
-        #                   'application_environment',
-        #                   'application_environment_docker')
-        self.templates = ('execution_environment',
-                          'application_environment',
-                          'application_environment_docker')
+        self.templates = (['indigo'])
 
     def render(self):
         output = []
@@ -169,38 +159,16 @@ class IndigoComputeBDII(BaseBDII):
 
         site_info = self._get_info_from_providers('get_site_info')
         static_compute_info = dict(endpoints, **site_info)
-        static_compute_info.pop('endpoints')
 
-        # output.append(self._format_template('compute_service',
-        #                                    static_compute_info))
-
-        # for url, endpoint in endpoints['endpoints'].iteritems():
-        #     endpoint.setdefault('endpoint_url', url)
-        #     output.append(self._format_template('compute_endpoint',
-        #                                         endpoint,
-        #                                         extra=static_compute_info))
 
         templates = self._get_info_from_providers('get_templates')
-        for tid, ex_env in templates.iteritems():
-            ex_env.setdefault('template_id', tid)
-        #     output.append(self._format_template('execution_environment',
-        #                                         ex_env,
-        #                                         extra=static_compute_info))
-
         images = self._get_info_from_providers('get_images')
-        for iid, app_env in images.iteritems():
-            app_env.setdefault('image_id', iid)
-            app_env.setdefault('image_description',
-                               ('%(image_name)s version '
-                                '%(image_version)s on '
-                                '%(image_os_family)s %(image_os_name)s '
-                                '%(image_os_version)s '
-                                '%(image_platform)s' % app_env))
-            output.append(self._format_template('application_environment',
-                                                app_env,
-                                                extra=static_compute_info))
 
-        return '\n'.join(output)
+        info = {}
+        info.update({'templates': templates})
+        info.update({'images': images})
+
+        return self._format_template('indigo', info, extra=static_compute_info)
 
 
 class CloudBDII(BaseBDII):
