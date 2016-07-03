@@ -4,9 +4,9 @@ import uuid
 
 import mock
 
-from cloud_bdii import exceptions
-from cloud_bdii.providers import opennebula
-from cloud_bdii.tests import data
+from cloud_info import exceptions
+from cloud_info.providers import opennebula
+from cloud_info.tests import data
 
 FAKES = data.ONE_FAKES
 

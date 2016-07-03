@@ -3,28 +3,28 @@ import unittest
 
 import mock
 
-import cloud_bdii.core
-from cloud_bdii.tests import data
-from cloud_bdii.tests import utils
+import cloud_info.core
+from cloud_info.tests import data
+from cloud_info.tests import utils
 
 DATA = data.DATA
 
 
 class ModuleTest(unittest.TestCase):
     def test_main(self):
-        with utils.nested(
-            mock.patch.object(cloud_bdii.core, 'parse_opts'),
-            mock.patch('cloud_bdii.core.CloudBDII'),
-            mock.patch('cloud_bdii.core.IndigoComputeBDII'),
-            mock.patch('cloud_bdii.core.ComputeBDII'),
-            mock.patch('cloud_bdii.core.StorageBDII')
+        with contextlib.nested(
+            mock.patch.object(cloud_info.core, 'parse_opts'),
+            mock.patch('cloud_info.core.CloudBDII'),
+            mock.patch('cloud_info.core.IndigoComputeBDII'),
+            mock.patch('cloud_info.core.ComputeBDII'),
+            mock.patch('cloud_info.core.StorageBDII')
         ) as (m0, m1, m2, m3, m4):
             m0.return_value = None
             for i in (m1, m2, m3, m4):
                 i = i.return_value
                 i.render.return_value = 'foo'
 
-            self.assertIsNone(cloud_bdii.core.main())
+            self.assertIsNone(cloud_info.core.main())
 
             # XXX only IndigoComputeBDII is used
             for i in (m0, m2):
@@ -41,7 +41,7 @@ class FakeBDIIOpts(object):
 
 class BaseTest(unittest.TestCase):
     def setUp(self):
-        cloud_bdii.core.SUPPORTED_MIDDLEWARE = {
+        cloud_info.core.SUPPORTED_MIDDLEWARE = {
             'static': mock.MagicMock(),
             'foo middleware': mock.MagicMock(),
         }
@@ -178,7 +178,7 @@ class ComputeBDIITest(BaseTest):
 
 
 class IndigoComputeBDIITest(BaseTest):
-    @mock.patch.object(cloud_bdii.core.IndigoComputeBDII,
+    @mock.patch.object(cloud_info.core.IndigoComputeBDII,
                        '_get_info_from_providers')
     def test_render(self, m_get_info):
         m_get_info.side_effect = (
@@ -187,10 +187,10 @@ class IndigoComputeBDIITest(BaseTest):
             DATA.compute_templates,
             DATA.compute_images,
         )
-        bdii = cloud_bdii.core.IndigoComputeBDII(self.opts)
+        bdii = cloud_info.core.IndigoComputeBDII(self.opts)
         self.assertNotEqual('', bdii.render())
 
-    @mock.patch.object(cloud_bdii.core.IndigoComputeBDII,
+    @mock.patch.object(cloud_info.core.IndigoComputeBDII,
                        '_get_info_from_providers')
     def test_render_empty(self, m_get_info):
         m_get_info.side_effect = (
@@ -199,5 +199,5 @@ class IndigoComputeBDIITest(BaseTest):
             DATA.compute_templates,
             DATA.compute_images,
         )
-        bdii = cloud_bdii.core.IndigoComputeBDII(self.opts)
+        bdii = cloud_info.core.IndigoComputeBDII(self.opts)
         self.assertEqual('', bdii.render())

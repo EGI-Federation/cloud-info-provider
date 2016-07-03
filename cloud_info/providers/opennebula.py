@@ -10,9 +10,9 @@ import xml.etree.ElementTree as xee
 
 from six.moves import urllib
 
-from cloud_bdii import exceptions
-from cloud_bdii import providers
-from cloud_bdii import utils
+from cloud_info import exceptions
+from cloud_info import providers
+from cloud_info import utils
 
 
 class OpenNebulaBaseProvider(providers.BaseProvider):

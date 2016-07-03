@@ -1,19 +1,19 @@
 import argparse
 import os.path
 
-import cloud_bdii.providers.opennebula
-import cloud_bdii.providers.openstack
-import cloud_bdii.providers.static
+import cloud_info.providers.opennebula
+import cloud_info.providers.openstack
+import cloud_info.providers.static
 
 import mako.template
 
 SUPPORTED_MIDDLEWARE = {
-    'openstack': cloud_bdii.providers.openstack.OpenStackProvider,
-    # 'opennebula': cloud_bdii.providers.opennebula.OpenNebulaProvider,
-    'indigoon': cloud_bdii.providers.opennebula.IndigoONProvider,
+    'openstack': cloud_info.providers.openstack.OpenStackProvider,
+    # 'opennebula': cloud_info.providers.opennebula.OpenNebulaProvider,
+    'indigoon': cloud_info.providers.opennebula.IndigoONProvider,
     # 'opennebularocci':
-    # cloud_bdii.providers.opennebula.OpenNebulaROCCIProvider,
-    'static': cloud_bdii.providers.static.StaticProvider,
+    # cloud_info.providers.opennebula.OpenNebulaROCCIProvider,
+    'static': cloud_info.providers.static.StaticProvider,
 }
 
 
