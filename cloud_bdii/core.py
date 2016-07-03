@@ -5,6 +5,8 @@ import cloud_bdii.providers.opennebula
 import cloud_bdii.providers.openstack
 import cloud_bdii.providers.static
 
+import mako.template
+
 SUPPORTED_MIDDLEWARE = {
     'openstack': cloud_bdii.providers.openstack.OpenStackProvider,
     # 'opennebula': cloud_bdii.providers.opennebula.OpenNebulaProvider,
@@ -20,7 +22,7 @@ class BaseBDII(object):
         self.opts = opts
 
         self.templates = ()
-        self.ldif = {}
+        self.templates_files = {}
 
         if (opts.middleware != 'static' and
                 opts.middleware in SUPPORTED_MIDDLEWARE):
@@ -31,13 +33,12 @@ class BaseBDII(object):
         self.static_provider = SUPPORTED_MIDDLEWARE['static'](opts)
 
     def load_templates(self):
-        self.ldif = {}
+        self.templates_files = {}
         for tpl in self.templates:
             template_extension = self.opts.template_extension
             template_file = os.path.join(self.opts.template_dir,
                                          '%s.%s' % (tpl, template_extension))
-            with open(template_file, 'r') as f:
-                self.ldif[tpl] = f.read()
+            self.templates_files[tpl] = template_file
 
     def _get_info_from_providers(self, method):
         info = {}
@@ -51,7 +52,9 @@ class BaseBDII(object):
     def _format_template(self, template, info, extra={}):
         info = info.copy()
         info.update(extra)
-        return self.ldif.get(template, '') % info
+        t = self.templates_files[template]
+        tpl = mako.template.Template(filename=t)
+        return tpl.render(attributes=info)
 
 
 class StorageBDII(BaseBDII):
@@ -150,6 +153,9 @@ class IndigoComputeBDII(BaseBDII):
         #                   'compute_endpoint',
         #                   'execution_environment',
         #                   'application_environment')
+        # self.templates = ('execution_environment',
+        #                   'application_environment',
+        #                   'application_environment_docker')
         self.templates = ('execution_environment',
                           'application_environment',
                           'application_environment_docker')
@@ -164,11 +170,6 @@ class IndigoComputeBDII(BaseBDII):
         site_info = self._get_info_from_providers('get_site_info')
         static_compute_info = dict(endpoints, **site_info)
         static_compute_info.pop('endpoints')
-
-        # prepare json formatting
-        # output.append('{')
-        # output.append('templates:')
-        # output.append('[')
 
         # output.append(self._format_template('compute_service',
         #                                    static_compute_info))
@@ -185,23 +186,9 @@ class IndigoComputeBDII(BaseBDII):
         #     output.append(self._format_template('execution_environment',
         #                                         ex_env,
         #                                         extra=static_compute_info))
-        #     output.append(',')
-        # XXX remote ending coma if any
-        # if output[-1] == ',':
-        #    del output[-1]
-        # output.append(']')
-        # output.append("},")
-
-        output.append('{')
-        output.append('images: [')
 
         images = self._get_info_from_providers('get_images')
         for iid, app_env in images.iteritems():
-            if "docker_id" in app_env:
-                application_environment_tpl = 'application_environment_docker'
-            else:
-                application_environment_tpl = 'application_environment'
-
             app_env.setdefault('image_id', iid)
             app_env.setdefault('image_description',
                                ('%(image_name)s version '
@@ -209,18 +196,10 @@ class IndigoComputeBDII(BaseBDII):
                                 '%(image_os_family)s %(image_os_name)s '
                                 '%(image_os_version)s '
                                 '%(image_platform)s' % app_env))
-            output.append(self._format_template(application_environment_tpl,
+            output.append(self._format_template('application_environment',
                                                 app_env,
-                                                extra=static_compute_info)
-                          .rstrip())
-            output.append(',')
+                                                extra=static_compute_info))
 
-        # XXX remote ending coma if any
-        if output[-1] == ',':
-            del output[-1]
-        # End JSON output
-        output.append(']')
-        output.append('}')
         return '\n'.join(output)
 
 
