@@ -151,7 +151,6 @@ class IndigoComputeBDII(BaseBDII):
         self.templates = (['indigo'])
 
     def render(self):
-        output = []
         endpoints = self._get_info_from_providers('get_compute_endpoints')
 
         if not endpoints.get('endpoints'):
@@ -159,7 +158,6 @@ class IndigoComputeBDII(BaseBDII):
 
         site_info = self._get_info_from_providers('get_site_info')
         static_compute_info = dict(endpoints, **site_info)
-
 
         templates = self._get_info_from_providers('get_templates')
         images = self._get_info_from_providers('get_images')
