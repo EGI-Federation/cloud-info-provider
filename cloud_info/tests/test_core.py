@@ -187,8 +187,19 @@ class IndigoComputeBDIITest(BaseTest):
             DATA.compute_templates,
             DATA.compute_images,
         )
+        tpls = ['foo']
+        tpl_contents = 'foo ${attributes["fobble"]}'
+        info = {'fobble': 'burble', 'brongle': 'farbla'}
         bdii = cloud_info.core.IndigoComputeBDII(self.opts)
-        self.assertNotEqual('', bdii.render())
+        with contextlib.nested(
+            mock.patch.object(bdii, 'templates', tpls),
+            mock.patch('mako.util.open',
+                       mock.mock_open(read_data=tpl_contents), create=True)
+        ):
+            bdii.load_templates()
+            # XXX here we should test bdii.redner()
+            # self.assertNotEqual('', bdii.render())
+            self.assertNotEqual('', bdii._format_template('foo', info))
 
     @mock.patch.object(cloud_info.core.IndigoComputeBDII,
                        '_get_info_from_providers')
