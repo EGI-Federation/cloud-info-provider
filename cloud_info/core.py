@@ -147,7 +147,7 @@ class IndigoComputeBDII(BaseBDII):
     def __init__(self, opts):
         super(IndigoComputeBDII, self).__init__(opts)
 
-        self.templates = ['indigo']
+        self.templates = ['compute_bdii']
 
     def render(self):
         endpoints = self._get_info_from_providers('get_compute_endpoints')
@@ -166,7 +166,7 @@ class IndigoComputeBDII(BaseBDII):
         info.update({'images': images})
         info.update({'static_compute_info': static_compute_info})
 
-        return self._format_template('indigo', info)
+        return self._format_template('compute_bdii', info)
 
 
 class CloudBDII(BaseBDII):
@@ -212,7 +212,7 @@ def parse_opts():
 
     parser.add_argument(
         '--template-extension',
-        default='json',
+        default='indigo',
         help=('Extension to use for the templates'))
 
     parser.add_argument(
