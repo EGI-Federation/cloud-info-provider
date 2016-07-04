@@ -222,13 +222,7 @@ class IndigoONProvider(OpenNebulaBaseProvider):
         self._get_one_templates()
         one_images = self._get_one_images()
 
-        # 1. take a VMTEMPLATE from templatepool
-        # 2. use metadata from VMTEMPLATE to create an os_tpl mixin
-        # 3. take the first disk from VMTEMPLATE
-        # 4. use disk's IMAGE element to find it in the imagepool
-        # 5. associate selected IMAGE metadata (*VMCATCHER* stuff) with the tpl
-        # XXX use a image from imagepool
-        # TODO(document)
+        # add all the custom fields
         for img_name, img in one_images.items():
             aux_img = {}
             aux_img.update(defaults)
@@ -237,20 +231,8 @@ class IndigoONProvider(OpenNebulaBaseProvider):
             aux_img["image_id"] = img_id
             if "template" in img:
                 aux = img["template"]
-                aux_img["image_marketplace_id"] = aux.get(
-                    "vmcatcher_event_ad_mpuri", None
-                )
-                aux_img["image_description"] = aux.get("description", None)
-                aux_img["image_version"] = aux.get(
-                    "vmcatcher_event_hv_version",
-                    None
-                )
-                if "docker_id" in aux:
-                    aux_img["docker_id"] = aux["docker_id"]
-                if "docker_name" in aux:
-                    aux_img["docker_name"] = aux["docker_name"]
-                if "docker_tag" in aux:
-                    aux_img["docker_tag"] = aux["docker_tag"]
+                for name, value in aux.iteritems():
+                    aux_img[name] = value
             if (self.opts.vmcatcher_images and
                     aux_img.get("image_marketplace_id", None) is None):
                 continue
