@@ -214,17 +214,6 @@ class IndigoONProvider(OpenNebulaBaseProvider):
         return templates
 
     def get_images(self):
-        template = {
-            'image_name': None,
-            'image_description': None,
-            'image_version': None,
-            'image_marketplace_id': None,
-            'image_id': None,
-            'image_os_family': None,
-            'image_os_name': None,
-            'image_os_version': None,
-            'image_platform': 'amd64',
-        }
         defaults = self.static.get_image_defaults(prefix=True)
 
         images = {}
@@ -241,7 +230,7 @@ class IndigoONProvider(OpenNebulaBaseProvider):
         # XXX use a image from imagepool
         # TODO(document)
         for img_name, img in one_images.items():
-            aux_img = template.copy()
+            aux_img = {}
             aux_img.update(defaults)
             aux_img["image_name"] = img_name
             img_id = img["id"]
