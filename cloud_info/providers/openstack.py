@@ -154,14 +154,10 @@ class OpenStackProvider(providers.BaseProvider):
                                        OpenStackProvider.occify(image.id))
             })
 
-            # XXX should we set this to none if not present?
-            if "docker_id" in image.metadata:
-                aux["docker_id"] = image.metadata["docker_id"]
-            if "docker_name" in image.metadata:
-                aux["docker_name"] = image.metadata["docker_name"]
-            if "docker_tag" in image.metadata:
-                    aux["docker_tag"] = image.metadata["docker_tag"]
+            for name, value in image.metadata.iteritems():
+                aux_img[name] = value
 
+            # XXX could probably be move to the mako template
             image_descr = None
             if image.metadata.get('vmcatcher_event_dc_description',
                                   None) is not None:
