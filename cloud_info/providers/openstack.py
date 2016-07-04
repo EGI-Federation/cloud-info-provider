@@ -137,8 +137,8 @@ class OpenStackProvider(providers.BaseProvider):
         img_sch = defaults.get('image_schema', 'os_tpl')
 
         for image in self.api.images.list(detailed=True):
-            aux = template.copy()
-            aux.update(defaults)
+            aux_img = template.copy()
+            aux_img.update(defaults)
             link = None
             for link in image.links:
                 # TODO(aloga): Check if this is the needed parameter
@@ -148,7 +148,7 @@ class OpenStackProvider(providers.BaseProvider):
                     break
             # FIXME(aloga): we need to add the version, etc from
             # metadata
-            aux.update({
+            aux_img.update({
                 'image_name': image.name,
                 'image_id': '%s#%s' % (img_sch,
                                        OpenStackProvider.occify(image.id))
@@ -181,10 +181,10 @@ class OpenStackProvider(providers.BaseProvider):
                 continue
 
             if marketplace_id:
-                aux['image_marketplace_id'] = marketplace_id
+                aux_img['image_marketplace_id'] = marketplace_id
             if image_descr:
-                aux['image_description'] = image_descr
-            images[image.id] = aux
+                aux_img['image_description'] = image_descr
+            images[image.id] = aux_img
         return images
 
     @staticmethod
