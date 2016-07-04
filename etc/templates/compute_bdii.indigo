@@ -1,0 +1,16 @@
+% for image_id, image in attributes["images"].iteritems():
+{
+  image_id: "${image_id}"
+  % for name, value in image.iteritems():
+  % if name == "vmcatcher_event_hv_version":
+  image_version: "${value}",
+  % elif name == "vmcatcher_event_ad_mpuri":
+  image_marketplace_id: "${value}",
+  % elif name == "description":
+  image_description: "${value}"
+  % else:
+  ${name}: "${value}",
+  % endif
+  % endfor
+},
+% endfor
