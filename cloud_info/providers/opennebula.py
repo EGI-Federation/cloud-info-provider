@@ -229,13 +229,28 @@ class IndigoONProvider(OpenNebulaBaseProvider):
             aux_img["image_name"] = img_name
             img_id = img["id"]
             aux_img["image_id"] = img_id
+
+            # XXX could probably be move to the mako template
+            image_descr = None
+
             if "template" in img:
                 aux = img["template"]
                 for name, value in aux.iteritems():
                     aux_img[name] = value
+                aux_img["image_marketplace_id"] = aux.get(
+                    "vmcatcher_event_ad_mpuri", None)
+                if aux.get('vmcatcher_event_dc_description', None) is not None:
+                    image_descr = aux['vmcatcher_event_dc_description']
+                elif "description" in aux:
+                    image_descr = aux.get("description")
+                elif 'vmcatcher_event_dc_title' in aux:
+                    image_descr = aux['vmcatcher_event_dc_title']
+
             if (self.opts.vmcatcher_images and
                     aux_img.get("image_marketplace_id", None) is None):
                 continue
+            if image_descr:
+                aux_img['image_description'] = image_descr
             images[img_id] = aux_img
         return images
 
