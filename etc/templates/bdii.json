@@ -1,6 +1,0 @@
-{
-  site_name: "%(site_name)s",
-  site_production_level: "%(site_production_level)s",
-  site_bdii_host: "%(site_bdii_host)s",
-  site_bdii_port: "%(site_bdii_port)s"
-}
