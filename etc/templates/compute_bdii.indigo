@@ -10,9 +10,11 @@
         image_name = image["image_name"]
 
     if 'hw_architecture' in image:
-        architecture = image["hw_architecture"]
+        arch = image["hw_architecture"]
     elif 'architecture' in image:
-        architecture = image["architecture"]
+        arch = image["architecture"]
+    else:
+        arch = nil
 
     if 'version' in image:
         version = image["version"]
@@ -20,6 +22,8 @@
         version = image["dist_version"]
     elif 'vmcatcher_event_hv_version' in image:
         version = image["vmcatcher_event_hv_version"]
+    else:
+        version = nil
 %>\
 {
   % if 'vmcatcher_event_ad_mpuri' in image:
@@ -28,8 +32,8 @@
   % if 'description' in image:
   "image_description": "${image["description"]}",
   % endif
-  % if context.get('architecture', UNDEFINED) is not UNDEFINED:
-  "architecture": "${architecture}",
+  % if arch is not UNDEFINED:
+  "architecture": "${arch}",
   % endif
   % if 'os' in image:
   "type": "${image["os"]}",
@@ -37,7 +41,7 @@
   % if 'distribution' in image:
   "distribution": "${image["distribution"]}",
   % endif
-  % if context.get('version', UNDEFINED) is not UNDEFINED:
+  % if version is not UNDEFINED:
   "version": "${version}",
   % endif
   "image_id": "${image_id}",
