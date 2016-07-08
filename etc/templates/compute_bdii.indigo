@@ -1,3 +1,4 @@
+<% last_img_index = len(attributes["images"])-1 %>
 % for image_id, image in attributes["images"].iteritems():
 {
   "image_id": "${image_id}",
@@ -7,6 +8,12 @@
   "docker_id": "${image["dockerid"]}",
   % else:
   "image_name": "${image["image_name"]}",
+  % endif
+  % if 'vmcatcher_event_ad_mpuri' in image:
+  "image_marketplace_id": "${image["vmcatcher_event_ad_mpuri"]}",
+  % endif
+  % if 'description' in image:
+  "image_description": "${image["description"]}",
   % endif
   ## Architecture
   % if 'hw_architecture' in image:
@@ -30,20 +37,17 @@
   % endif
   ## OS version
   % if 'version' in image:
-  "version": "${image["version"]}",
+  "version": "${image["version"]}"
   % elif 'dist_version' in image:
-  "version": "${image["dist_version"]}",
+  "version": "${image["dist_version"]}"
   % elif 'vmcatcher_event_hv_version' in image:
-  "version": "${image["vmcatcher_event_hv_version"]}",
+  "version": "${image["vmcatcher_event_hv_version"]}"
   % else:
-  "version": null,
+  "version": null
   % endif
-  ## generic information
-  % if 'vmcatcher_event_ad_mpuri' in image:
-  "image_marketplace_id": "${image["vmcatcher_event_ad_mpuri"]}",
-  % endif
-  % if 'description' in image:
-  "image_description": "${image["description"]}",
-  % endif
+  % if loop.index < last_img_index:
 },
+  % else:
+}
+% endif
 % endfor
