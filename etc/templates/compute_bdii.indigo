@@ -26,6 +26,7 @@
         version = nil
 %>\
 {
+  "image_name": "${image_name}",
   % if 'vmcatcher_event_ad_mpuri' in image:
   "image_marketplace_id": "${image["vmcatcher_event_ad_mpuri"]}",
   % endif
@@ -44,8 +45,7 @@
   % if version is not UNDEFINED:
   "version": "${version}",
   % endif
-  "image_id": "${image_id}",
-  "image_name": "${image_name}"
+  "image_id": "${image_id}"
   % if loop.index < last_img_index:
 },
   % else:
