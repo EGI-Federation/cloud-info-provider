@@ -1,16 +1,49 @@
 % for image_id, image in attributes["images"].iteritems():
 {
-  image_id: "${image_id}"
-  % for name, value in image.iteritems():
-  % if name == "vmcatcher_event_hv_version":
-  image_version: "${value}",
-  % elif name == "vmcatcher_event_ad_mpuri":
-  image_marketplace_id: "${value}",
-  % elif name == "description":
-  image_description: "${value}"
+  "image_id": "${image_id}",
+  ## Docker stuff
+  % if 'dockerid' in image:
+  "image_name": "${image["image_name"]}:${image["dockertag"]}",
+  "docker_id": "${image["dockerid"]}",
   % else:
-  ${name}: "${value}",
+  "image_name": "${image["image_name"]}",
   % endif
-  % endfor
+  ## Architecture
+  % if 'hw_architecture' in image:
+  "architecture": "${image["hw_architecture"]}",
+  % elif 'architecture' in image:
+  "architecture": "${image["architecture"]}",
+  % else:
+  "architecture": null,
+  % endif
+  ## OS type
+  % if 'os' in image:
+  "type:" "${image["os"]}",
+  % else:
+  "type": null,
+  % endif
+  ## OS distribution
+  % if 'distribution' in image:
+  "distribution": "${image["distribution"]}",
+  % else:
+  "distribution": null,
+  % endif
+  ## OS version
+  % if 'version' in image:
+  "version": "${image["version"]}",
+  % elif 'dist_version' in image:
+  "version": "${image["dist_version"]}",
+  % elif 'vmcatcher_event_hv_version' in image:
+  "version": "${image["vmcatcher_event_hv_version"]}",
+  % else:
+  "version": null,
+  % endif
+  ## generic information
+  % if 'vmcatcher_event_ad_mpuri' in image:
+  "image_marketplace_id": "${image["vmcatcher_event_ad_mpuri"]}",
+  % endif
+  % if 'description' in image:
+  "image_description": "${image["description"]}",
+  % endif
 },
 % endfor
