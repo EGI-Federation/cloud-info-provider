@@ -21,20 +21,14 @@
   "architecture": "${image["hw_architecture"]}",
   % elif 'architecture' in image:
   "architecture": "${image["architecture"]}",
-  % else:
-  "architecture": null,
   % endif
   ## OS type
   % if 'os' in image:
   "type": "${image["os"]}",
-  % else:
-  "type": null,
   % endif
   ## OS distribution
   % if 'distribution' in image:
   "distribution": "${image["distribution"]}",
-  % else:
-  "distribution": null,
   % endif
   ## OS version
   % if 'version' in image:
@@ -43,8 +37,6 @@
   "version": "${image["dist_version"]}"
   % elif 'vmcatcher_event_hv_version' in image:
   "version": "${image["vmcatcher_event_hv_version"]}"
-  % else:
-  "version": null
   % endif
   % if loop.index < last_img_index:
 },
