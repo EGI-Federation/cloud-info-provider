@@ -4,7 +4,7 @@
   "image_id": "${image_id}",
   ## Docker stuff
   % if 'dockerid' in image:
-  "image_name": "${image["image_name"]}:${image["dockertag"]}",
+  "image_name": "${image["dockername"]}:${image["dockertag"]}",
   "docker_id": "${image["dockerid"]}",
   % else:
   "image_name": "${image["image_name"]}",
