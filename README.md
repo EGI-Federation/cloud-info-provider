@@ -81,6 +81,14 @@ cloud-info-provider-service --yaml-file /etc/cloud-info-provider/bdii.yaml \
 
 **Test the generation of the LDIF before running the provider into your BDII!**
 
+### Legacy OpenStack OCCI-OS interface
+
+If you are using [OCCI-OS](https://github.com/EGI-FCTF/occi-os) for providing
+OCCI support for OpenStack, use the `legacy-occi-os` command line option. This
+will produce output with ids compatible with your setup instead of the current
+default that supports [ooi](https://launchpad.net/ooi).
+
+
 ## Running the provider in a resource-BDII
 
 This is the normal deployment mode for the cloud provider. It should be installed

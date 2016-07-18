@@ -24,7 +24,8 @@ class OpenStackProviderOptionsTest(unittest.TestCase):
                                   '--os-tenant-name', 'bazonk',
                                   '--os-auth-url', 'http://example.org:5000',
                                   '--os-cacert', 'foobar',
-                                  '--insecure'])
+                                  '--insecure',
+                                  '--legacy-occi-os'])
 
         self.assertEqual(opts.os_username, 'foo')
         self.assertEqual(opts.os_password, 'bar')
@@ -32,6 +33,7 @@ class OpenStackProviderOptionsTest(unittest.TestCase):
         self.assertEqual(opts.os_auth_url, 'http://example.org:5000')
         self.assertEqual(opts.os_cacert, 'foobar')
         self.assertEqual(opts.insecure, True)
+        self.assertEqual(opts.legacy_occi_os, True)
 
     def test_options(self):
         class Opts(object):
@@ -39,6 +41,7 @@ class OpenStackProviderOptionsTest(unittest.TestCase):
             os_auth_url = 'http://foo.example.org'
             os_cacert = None
             insecure = False
+            legacy_occi_os = False
 
         sys.modules['novaclient'] = mock.Mock()
         sys.modules['novaclient.client'] = mock.Mock()
@@ -66,6 +69,7 @@ class OpenStackProviderTest(unittest.TestCase):
                 self.api = mock.Mock()
                 self.api.client.auth_url = 'http://foo.example.org:1234/v2'
                 self.static = mock.Mock()
+                self.legacy_occi_os = False
 
         self.provider = FakeProvider(None)
 
@@ -81,7 +85,7 @@ class OpenStackProviderTest(unittest.TestCase):
             for f in fields:
                 self.assertIn(f, v)
 
-    def test_get_templates_with_defaults(self):
+    def test_get_legacy_templates_with_defaults(self):
         expected_templates = {}
         for f in FAKES.flavors:
             if not f.is_public:
@@ -92,6 +96,67 @@ class OpenStackProviderTest(unittest.TestCase):
                 'template_memory': f.ram,
                 'template_cpu': f.vcpus,
                 'template_id': 'resource_tpl#%s' % name,
+                'template_platform': 'amd64',
+                'template_network': 'private'
+            }
+
+        self.provider.legacy_occi_os = True
+        with contextlib.nested(
+            mock.patch.object(self.provider.static, 'get_template_defaults'),
+            mock.patch.object(self.provider.api.flavors, 'list'),
+        ) as (m_get_template_defaults, m_flavors_list):
+            m_get_template_defaults.return_value = {}
+            m_flavors_list.return_value = FAKES.flavors
+            templates = self.provider.get_templates()
+            assert m_get_template_defaults.called
+
+        self.assert_resources(expected_templates,
+                              templates,
+                              template="execution_environment.ldif",
+                              ignored_fields=["compute_service_name"])
+
+    def test_get_legacy_templates_with_defaults_from_static(self):
+        expected_templates = {}
+        for f in FAKES.flavors:
+            if not f.is_public:
+                continue
+
+            name = f.name.strip().replace(' ', '_').replace('.', '-').lower()
+            expected_templates[f.id] = {
+                'template_memory': f.ram,
+                'template_cpu': f.vcpus,
+                'template_id': 'resource_tpl#%s' % name,
+                'template_platform': 'i686',
+                'template_network': 'private'
+            }
+
+        self.provider.legacy_occi_os = True
+        with contextlib.nested(
+            mock.patch.object(self.provider.static, 'get_template_defaults'),
+            mock.patch.object(self.provider.api.flavors, 'list'),
+        ) as (m_get_template_defaults, m_flavors_list):
+            m_get_template_defaults.return_value = {
+                'template_platform': 'i686'
+            }
+            m_flavors_list.return_value = FAKES.flavors
+            templates = self.provider.get_templates()
+            assert m_get_template_defaults.called
+
+        self.assert_resources(expected_templates,
+                              templates,
+                              template="execution_environment.ldif",
+                              ignored_fields=["compute_service_name"])
+
+    def test_get_templates_with_defaults(self):
+        expected_templates = {}
+        for f in FAKES.flavors:
+            if not f.is_public:
+                continue
+
+            expected_templates[f.id] = {
+                'template_memory': f.ram,
+                'template_cpu': f.vcpus,
+                'template_id': 'resource_tpl#%s' % f.id,
                 'template_platform': 'amd64',
                 'template_network': 'private'
             }
@@ -116,11 +181,10 @@ class OpenStackProviderTest(unittest.TestCase):
             if not f.is_public:
                 continue
 
-            name = f.name.strip().replace(' ', '_').replace('.', '-').lower()
             expected_templates[f.id] = {
                 'template_memory': f.ram,
                 'template_cpu': f.vcpus,
-                'template_id': 'resource_tpl#%s' % name,
+                'template_id': 'resource_tpl#%s' % f.id,
                 'template_platform': 'i686',
                 'template_network': 'private'
             }
