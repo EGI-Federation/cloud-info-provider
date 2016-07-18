@@ -1,3 +1,16 @@
+python-cloud-info-provider (0.6-1) trusty; urgency=medium
+
+  [ Enol Fernandez ]
+  * [a683cec] Add legacy-occi-os option
+
+  [ Alvaro Lopez Garcia ]
+  * [5e4f7d0] Move testing to tox
+  * [6017a2c] Do not support Python2.6
+  * [f1c33b9] Update code to work with Python 3
+  * Style changes (pep8)
+
+ -- Alvaro Lopez Garcia <aloga@ifca.unican.es>  Mon, 18 Jul 2016 12:00:04 +0200
+
 python-cloud-info-provider (0.5-1) trusty; urgency=medium
 
   * Fixed issue when storage is not defined (#13).
