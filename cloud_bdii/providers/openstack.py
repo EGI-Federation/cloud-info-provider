@@ -13,13 +13,14 @@ class OpenStackProvider(providers.BaseProvider):
             msg = 'Cannot import novaclient module.'
             raise exceptions.OpenStackProviderException(msg)
 
-        (os_username, os_password, os_tenant_name,
-            os_auth_url, cacert, insecure) = (opts.os_username,
-                                              opts.os_password,
-                                              opts.os_tenant_name,
-                                              opts.os_auth_url,
-                                              opts.os_cacert,
-                                              opts.insecure)
+        (os_username, os_password, os_tenant_name, os_auth_url,
+            cacert, insecure, legacy_occi_os) = (opts.os_username,
+                                                 opts.os_password,
+                                                 opts.os_tenant_name,
+                                                 opts.os_auth_url,
+                                                 opts.os_cacert,
+                                                 opts.insecure,
+                                                 opts.legacy_occi_os)
 
         if not os_username:
             msg = ('ERROR, You must provide a username '
@@ -58,6 +59,7 @@ class OpenStackProvider(providers.BaseProvider):
 
         self.api.authenticate()
         self.static = providers.static.StaticProvider(opts)
+        self.legacy_occi_os = legacy_occi_os
 
     def get_compute_endpoints(self):
         ret = {
@@ -101,14 +103,16 @@ class OpenStackProvider(providers.BaseProvider):
                     'template_network': 'private'}
         defaults.update(self.static.get_template_defaults(prefix=True))
         tpl_sch = defaults.get('template_schema', 'resource_tpl')
+        flavor_id_attr = 'name' if self.legacy_occi_os else 'id'
 
         for flavor in self.api.flavors.list(detailed=True):
             if not flavor.is_public:
                 continue
 
             aux = defaults.copy()
+            flavor_id = str(getattr(flavor, flavor_id_attr))
             template_id = '%s#%s' % (tpl_sch,
-                                     OpenStackProvider.occify(flavor.name))
+                                     OpenStackProvider.occify(flavor_id))
             aux.update({'template_id': template_id,
                         'template_memory': flavor.ram,
                         'template_cpu': flavor.vcpus})
@@ -224,3 +228,10 @@ class OpenStackProvider(providers.BaseProvider):
                  "SSL (https) requests. The server's certificate will "
                  'not be verified against any certificate authorities. '
                  'This option should be used with caution.')
+
+        parser.add_argument(
+            '--legacy-occi-os',
+            default=False,
+            action='store_true',
+            help="Generate information and ids compatible with OCCI-OS, "
+                 "e.g. using the flavor name instead of the flavor id.")
