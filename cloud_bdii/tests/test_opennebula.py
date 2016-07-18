@@ -105,7 +105,7 @@ class OpenNebulaBaseProviderTest(unittest.TestCase):
 
         self.provider = FakeProvider(Opts())
 
-    @mock.patch('urllib2.urlopen')
+    @mock.patch('six.moves.urllib.request.urlopen')
     def test_get_images(self, mock_open):
         resp = mock.Mock()
         resp.read.side_effect = [FAKES.templatepool, FAKES.imagepool]
@@ -113,7 +113,7 @@ class OpenNebulaBaseProviderTest(unittest.TestCase):
         self.assertDictEqual(self.expected_images,
                              self.provider.get_images())
 
-    @mock.patch('urllib2.urlopen')
+    @mock.patch('six.moves.urllib.request.urlopen')
     def test_get_filtered_images(self, mock_open):
         resp = mock.Mock()
         resp.read.side_effect = [FAKES.templatepool, FAKES.imagepool]

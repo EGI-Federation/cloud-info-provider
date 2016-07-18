@@ -1,4 +1,15 @@
 import os
+import string
+
+import six
+
+
+if six.PY2:
+    maketrans = string.maketrans
+    translate = string.translate
+else:
+    maketrans = str.maketrans
+    translate = str.translate
 
 
 def env(*args, **kwargs):

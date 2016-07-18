@@ -74,7 +74,7 @@ class StorageBDII(BaseBDII):
         output.append(self._format_template('storage_service',
                                             static_storage_info))
 
-        for url, endpoint in endpoints['endpoints'].iteritems():
+        for url, endpoint in endpoints['endpoints'].items():
             endpoint.setdefault('endpoint_url', url)
             output.append(self._format_template('storage_endpoint',
                                                 endpoint,
@@ -109,21 +109,21 @@ class ComputeBDII(BaseBDII):
         output.append(self._format_template('compute_service',
                                             static_compute_info))
 
-        for url, endpoint in endpoints['endpoints'].iteritems():
+        for url, endpoint in endpoints['endpoints'].items():
             endpoint.setdefault('endpoint_url', url)
             output.append(self._format_template('compute_endpoint',
                                                 endpoint,
                                                 extra=static_compute_info))
 
         templates = self._get_info_from_providers('get_templates')
-        for tid, ex_env in templates.iteritems():
+        for tid, ex_env in templates.items():
             ex_env.setdefault('template_id', tid)
             output.append(self._format_template('execution_environment',
                                                 ex_env,
                                                 extra=static_compute_info))
 
         images = self._get_info_from_providers('get_images')
-        for iid, app_env in images.iteritems():
+        for iid, app_env in images.items():
             app_env.setdefault('image_id', iid)
             app_env.setdefault('image_description',
                                ('%(image_name)s version '
