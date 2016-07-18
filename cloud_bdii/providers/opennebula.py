@@ -6,8 +6,9 @@
 import json
 import os
 import string
-import urllib2
 import xml.etree.ElementTree as xee
+
+from six.moves import urllib
 
 from cloud_bdii import exceptions
 from cloud_bdii import providers
@@ -49,8 +50,8 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
                        "</params>"
                        "</methodCall>" % (what, self.on_auth))
 
-        req = urllib2.Request(self.on_rpcxml_endpoint, requestdata)
-        response = urllib2.urlopen(req)
+        req = urllib.request.Request(self.on_rpcxml_endpoint, requestdata)
+        response = urllib.request.urlopen(req)
 
         xml = response.read()
         # NOTE(aloga): this is wrong in so may ways, but it is more or less the
@@ -104,7 +105,7 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
         # 3. take the first disk from VMTEMPLATE
         # 4. use disk's IMAGE element to find it in the imagepool
         # 5. associate selected IMAGE metadata (*VMCATCHER* stuff) with the tpl
-        for tpl_id, tpl in one_templates.iteritems():
+        for tpl_id, tpl in one_templates.items():
             aux_tpl = template.copy()
             aux_tpl.update(defaults)
             aux_tpl["image_name"] = tpl["name"]
@@ -217,10 +218,10 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
     @staticmethod
     def _gen_id(image_name, image_id, schema):
         """Generate image uiid as rOCCI does."""
-        replace_punctuation = string.maketrans(
+        replace_punctuation = utils.maketrans(
             string.punctuation + string.whitespace,
             '_' * len(string.punctuation + string.whitespace)
         )
-        image_name = string.translate(image_name.lower(),
-                                      replace_punctuation).strip('_')
+        image_name = utils.translate(image_name.lower(),
+                                     replace_punctuation).strip('_')
         return '%s#uuid_%s_%s' % (schema, image_name, image_id)

@@ -1,5 +1,4 @@
 import argparse
-import contextlib
 import sys
 import unittest
 
@@ -8,7 +7,7 @@ import mock
 from cloud_bdii import exceptions
 from cloud_bdii.providers import openstack as os_provider
 from cloud_bdii.tests import data
-from cloud_bdii.tests import utils as test_utils
+from cloud_bdii.tests import utils as utils
 
 FAKES = data.OS_FAKES
 
@@ -76,11 +75,11 @@ class OpenStackProviderTest(unittest.TestCase):
     def assert_resources(self, expected, observed, template=None,
                          ignored_fields=[]):
         if template:
-            fields = test_utils.get_variables_from_template(template,
-                                                            ignored_fields)
+            fields = utils.get_variables_from_template(template,
+                                                       ignored_fields)
         else:
             fields = []
-        for k, v in observed.iteritems():
+        for k, v in observed.items():
             self.assertDictEqual(expected[k], v)
             for f in fields:
                 self.assertIn(f, v)
@@ -101,7 +100,7 @@ class OpenStackProviderTest(unittest.TestCase):
             }
 
         self.provider.legacy_occi_os = True
-        with contextlib.nested(
+        with utils.nested(
             mock.patch.object(self.provider.static, 'get_template_defaults'),
             mock.patch.object(self.provider.api.flavors, 'list'),
         ) as (m_get_template_defaults, m_flavors_list):
@@ -131,7 +130,7 @@ class OpenStackProviderTest(unittest.TestCase):
             }
 
         self.provider.legacy_occi_os = True
-        with contextlib.nested(
+        with utils.nested(
             mock.patch.object(self.provider.static, 'get_template_defaults'),
             mock.patch.object(self.provider.api.flavors, 'list'),
         ) as (m_get_template_defaults, m_flavors_list):
@@ -161,7 +160,7 @@ class OpenStackProviderTest(unittest.TestCase):
                 'template_network': 'private'
             }
 
-        with contextlib.nested(
+        with utils.nested(
             mock.patch.object(self.provider.static, 'get_template_defaults'),
             mock.patch.object(self.provider.api.flavors, 'list'),
         ) as (m_get_template_defaults, m_flavors_list):
@@ -189,7 +188,7 @@ class OpenStackProviderTest(unittest.TestCase):
                 'template_network': 'private'
             }
 
-        with contextlib.nested(
+        with utils.nested(
             mock.patch.object(self.provider.static, 'get_template_defaults'),
             mock.patch.object(self.provider.api.flavors, 'list'),
         ) as (m_get_template_defaults, m_flavors_list):
@@ -231,7 +230,7 @@ class OpenStackProviderTest(unittest.TestCase):
             }
         }
 
-        with contextlib.nested(
+        with utils.nested(
             mock.patch.object(self.provider.static, 'get_image_defaults'),
             mock.patch.object(self.provider.api.images, 'list'),
         ) as (m_get_image_defaults, m_images_list):
@@ -274,7 +273,7 @@ class OpenStackProviderTest(unittest.TestCase):
             endpoints = self.provider.get_compute_endpoints()
             assert m_get_endpoint_defaults.called
 
-        for k, v in expected_endpoints['endpoints'].iteritems():
+        for k, v in expected_endpoints['endpoints'].items():
             self.assertDictContainsSubset(v, endpoints['endpoints'].get(k, {}))
 
     def test_get_endpoints_with_defaults(self):

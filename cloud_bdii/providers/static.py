@@ -49,7 +49,7 @@ class StaticProvider(providers.BaseProvider):
 
         if which in data:
             defaults = self._get_defaults(what, which)
-            for e, e_data in data[which].iteritems():
+            for e, e_data in data[which].items():
                 if e == 'defaults':
                     continue
                 r = self._get_fields_and_prefix(fields,
@@ -175,7 +175,7 @@ class StaticProvider(providers.BaseProvider):
 
         if prefix:
             aux = {}
-            for k, v in defaults.iteritems():
+            for k, v in defaults.items():
                 key = '%s%s' % (prefix, k)
                 aux[key] = v
             defaults = aux

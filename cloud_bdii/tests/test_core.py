@@ -1,4 +1,3 @@
-import contextlib
 import os.path
 import unittest
 
@@ -6,13 +5,14 @@ import mock
 
 import cloud_bdii.core
 from cloud_bdii.tests import data
+from cloud_bdii.tests import utils
 
 DATA = data.DATA
 
 
 class ModuleTest(unittest.TestCase):
     def test_main(self):
-        with contextlib.nested(
+        with utils.nested(
             mock.patch.object(cloud_bdii.core, 'parse_opts'),
             mock.patch('cloud_bdii.core.CloudBDII'),
             mock.patch('cloud_bdii.core.ComputeBDII'),
@@ -82,7 +82,7 @@ class BaseBDIITest(BaseTest):
         bdii = cloud_bdii.core.BaseBDII(self.opts)
 
         for s, d, e in cases:
-            with contextlib.nested(
+            with utils.nested(
                 mock.patch.object(bdii.static_provider, 'foomethod'),
                 mock.patch.object(bdii.dynamic_provider, 'foomethod')
             ) as (m_static, m_dynamic):
@@ -99,7 +99,7 @@ class BaseBDIITest(BaseTest):
         expected = tpl_contents % info
 
         bdii = cloud_bdii.core.BaseBDII(self.opts)
-        with contextlib.nested(
+        with utils.nested(
             mock.patch.object(bdii, 'templates', tpls),
             mock.patch('cloud_bdii.core.open',
                        mock.mock_open(read_data=tpl_contents), create=True)
