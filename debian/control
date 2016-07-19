@@ -1,23 +1,26 @@
 Source: python-cloud-info-provider
 Section: net
 Priority: extra
-Maintainer: Enol Fernandez <enol.fernandez@egi.eu>
+Maintainer: EGI Federated Cloud <fedcloud-devel@mailman.egi.eu>
+Homepage: http://github.com/EGI-FCTF/cloud-bdii-provider
 Build-Depends:
  debhelper (>= 7.0.50),
- python-all (>= 2.6),
- python-all-dev (>= 2.6)
+ dh-python,
+ python-all (>= 2.7),
+ python-all-dev (>= 2.7),
+ python-support
 Build-Depends-Indep:
  python-pbr (>= 0.6),
  python-setuptools
-Standards-Version: 3.9.5
-Homepage: http://github.com/EGI-FCTF/BDIIscripts
-Vcs-Git: https://github.com/EGI-FCTF/BDIIscripts.git
+Standards-Version: 3.9.6
+Vcs-Git: https://github.com/EGI-FCTF/cloud-bdii-provider.git
 
 Package: python-cloud-info-provider
 Architecture: all
 Section: python
 Depends: ${python:Depends}, ${misc:Depends},
- python-yaml
+ python-yaml,
+ python-six
 Recommends: bdii
 Suggests: python-novaclient
 Provides: ${python:Provides}

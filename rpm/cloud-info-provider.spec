@@ -6,7 +6,7 @@
 
 Summary: Information provider for Cloud Compute and Cloud Storage services for BDII
 Name: cloud-info-provider
-Version: 0.5
+Version: 0.6
 Release: 1%{?dist}
 Group: Applications/Internet
 License: ASL 2.0
@@ -19,6 +19,7 @@ BuildRequires: python-pbr
 Requires: python
 Requires: python-argparse
 Requires: python-yaml
+Requires: python-six
 #Recommends: bdii
 #Recommends: python-novaclient
 BuildArch: noarch
@@ -48,6 +49,10 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/cloud-info-provider/
 
 %changelog
+* Mon Jul 18 2016 Alvaro Lopez Garcia <aloga@ifca.unican.es>
+- Add Python 3 support (#27).
+- Add support for new 'ooi' ID generation.
+- Style improvements.
 * Wed Feb 4 2015 Enol Fernandez <enol.fernandez@egi.eu> - 0.5-{%release}
 - Fixed issue when storage is not defined (#13).
 - Allow to define a image and resource template schema in OpenStack(#15).
