@@ -25,7 +25,7 @@
   % endif
   ## OS type
   % if 'os' in image:
-  "type:" "${image["os"]}",
+  "type": "${image["os"]}",
   % else:
   "type": null,
   % endif
