@@ -1,3 +1,4 @@
 Mako
 PyYAML
 six
+requests
