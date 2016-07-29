@@ -20,6 +20,8 @@ Architecture: all
 Section: python
 Depends: ${python:Depends}, ${misc:Depends},
  python-yaml,
+ python-requests,
+ python-mako,
  python-six
 Recommends: bdii
 Suggests: python-novaclient
