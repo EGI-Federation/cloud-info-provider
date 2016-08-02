@@ -170,6 +170,30 @@ class IndigoComputeBDII(BaseBDII):
         info.update({'static_compute_info': static_compute_info})
 
         return self._format_template('compute_bdii', info)
+# class IndigoComputeBDII(BaseBDII):
+#     def __init__(self, opts):
+#         super(IndigoComputeBDII, self).__init__(opts)
+#
+#         self.templates = ['compute_bdii']
+#
+#     def render(self):
+#         endpoints = self._get_info_from_providers('get_compute_endpoints')
+#
+#         if not endpoints.get('endpoints'):
+#             return ''
+#
+#         site_info = self._get_info_from_providers('get_site_info')
+#         static_compute_info = dict(endpoints, **site_info)
+#
+#         templates = self._get_info_from_providers('get_templates')
+#         images = self._get_info_from_providers('get_images')
+#
+#         info = {}
+#         info.update({'templates': templates})
+#         info.update({'images': images})
+#         info.update({'static_compute_info': static_compute_info})
+#
+#         return self._format_template('compute_bdii', info)
 
 
 class CloudBDII(BaseBDII):
@@ -253,7 +277,7 @@ def parse_opts():
 def main():
     opts = parse_opts()
 
-    for cls_ in (CloudBDII, ComputeBDII, StorageBDII, IndigoComputeBDII):
+    for cls_ in (CloudBDII, ComputeBDII, StorageBDII):
         bdii = cls_(opts)
         bdii.load_templates()
         print(bdii.render().encode('utf-8'))
