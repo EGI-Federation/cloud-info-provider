@@ -153,6 +153,7 @@ class ComputeBDII(BaseBDII):
         return '\n'.join(output)
 
 
+# XXX To be removed once tests will pass
 # class IndigoComputeBDII(BaseBDII):
 #     def __init__(self, opts):
 #         super(IndigoComputeBDII, self).__init__(opts)
@@ -206,7 +207,7 @@ def parse_opts():
 
     parser.add_argument(
         '--yaml-file',
-        default='/etc/cloud-info-provider-indigo/static.yaml',
+        default='/etc/cloud-info-provider/static.yaml',
         help=('Path to the YAML file containing configuration static values. '
               'This file will be used to populate the information '
               'to the static provider. These values will be used whenever '
@@ -215,12 +216,12 @@ def parse_opts():
 
     parser.add_argument(
         '--template-dir',
-        default='/etc/cloud-info-provider-indigo/templates',
+        default='/etc/cloud-info-provider/templates',
         help=('Path to the directory containing the needed templates'))
 
     parser.add_argument(
         '--template-extension',
-        default='indigo',
+        default='ldif',
         help=('Extension to use for the templates'))
 
     parser.add_argument(
