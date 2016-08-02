@@ -1,21 +1,21 @@
-dn: GLUE2EndpointID=%(endpoint_url)s_%(compute_api_type)s_%(compute_api_version)s_%(compute_api_authn_method)s,GLUE2ServiceID=%(compute_service_name)s_cloud.compute,GLUE2GroupID=cloud,%(suffix)s
+dn: GLUE2EndpointID=${endpoint_url}_${compute_api_type}_${compute_api_version}_${compute_api_authn_method},GLUE2ServiceID=${compute_service_name}_cloud.compute,GLUE2GroupID=cloud,${suffix}
 objectClass: GLUE2Entity
 objectClass: GLUE2Endpoint
 objectClass: GLUE2ComputingEndpoint
 GLUE2EndpointHealthState: ok
-GLUE2EndpointID: %(endpoint_url)s_%(compute_api_type)s_%(compute_api_version)s_%(compute_api_authn_method)s
-GLUE2EndpointInterfaceName: %(compute_api_type)s
-GLUE2EndpointQualityLevel: %(compute_production_level)s
-GLUE2EndpointServiceForeignKey: %(compute_service_name)s_cloud.compute
-GLUE2EndpointServingState: %(compute_production_level)s
-GLUE2EndpointURL: %(endpoint_url)s
-GLUE2ComputingEndpointComputingServiceForeignKey: %(compute_service_name)s_cloud.compute
-GLUE2EndpointCapability: %(compute_capabilities)s
-GLUE2EndpointImplementationName: %(compute_middleware)s
-GLUE2EndpointImplementationVersion: %(compute_middleware_version)s
-GLUE2EndpointImplementor: %(compute_middleware_developer)s
-GLUE2EndpointInterfaceVersion: %(compute_api_version)s
+GLUE2EndpointID: ${endpoint_url}_${compute_api_type}_${compute_api_version}_${compute_api_authn_method}
+GLUE2EndpointInterfaceName: ${compute_api_type}
+GLUE2EndpointQualityLevel: ${compute_production_level}
+GLUE2EndpointServiceForeignKey: ${compute_service_name}_cloud.compute
+GLUE2EndpointServingState: ${compute_production_level}
+GLUE2EndpointURL: ${endpoint_url}
+GLUE2ComputingEndpointComputingServiceForeignKey: ${compute_service_name}_cloud.compute
+GLUE2EndpointCapability: ${compute_capabilities}
+GLUE2EndpointImplementationName: ${compute_middleware}
+GLUE2EndpointImplementationVersion: ${compute_middleware_version}
+GLUE2EndpointImplementor: ${compute_middleware_developer}
+GLUE2EndpointInterfaceVersion: ${compute_api_version}
 #GLUE2EndpointSemantics:
 #GLUE2EndpointSupportedProfile:
-GLUE2EntityOtherInfo: Authn=%(compute_api_authn_method)s
-GLUE2EndpointTechnology: %(compute_api_endpoint_technology)s
+GLUE2EntityOtherInfo: Authn=${compute_api_authn_method}
+GLUE2EndpointTechnology: ${compute_api_endpoint_technology}

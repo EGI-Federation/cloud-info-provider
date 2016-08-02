@@ -1,18 +1,18 @@
-dn: GLUE2ResourceID=%(template_id)s_%(compute_service_name)s,GLUE2ServiceID=%(compute_service_name)s_cloud.compute,GLUE2GroupID=cloud,%(suffix)s
+dn: GLUE2ResourceID=${template_id}_${compute_service_name},GLUE2ServiceID=${compute_service_name}_cloud.compute,GLUE2GroupID=cloud,${suffix}
 objectClass: GLUE2Entity
 objectClass: GLUE2Resource
 objectClass: GLUE2ExecutionEnvironment
 GLUE2ExecutionEnvironmentConnectivityIn: TRUE
 GLUE2ExecutionEnvironmentConnectivityOut: TRUE
 GLUE2ExecutionEnvironmentVirtualMachine: TRUE
-GLUE2ExecutionEnvironmentMainMemorySize: %(template_memory)s
-GLUE2ExecutionEnvironmentPlatform: %(template_platform)s
+GLUE2ExecutionEnvironmentMainMemorySize: ${template_memory}
+GLUE2ExecutionEnvironmentPlatform: ${template_platform}
 GLUE2ExecutionEnvironmentOSFamily: linux
-GLUE2ResourceManagerForeignKey: %(compute_service_name)s_cloud.compute_manager
-GLUE2EntityName: %(template_id)s
-GLUE2ExecutionEnvironmentComputingManagerForeignKey: %(compute_service_name)s_cloud.compute_manager
+GLUE2ResourceManagerForeignKey: ${compute_service_name}_cloud.compute_manager
+GLUE2EntityName: ${template_id}
+GLUE2ExecutionEnvironmentComputingManagerForeignKey: ${compute_service_name}_cloud.compute_manager
 GLUE2ExecutionEnvironmentCPUModel: virtual model
 GLUE2ExecutionEnvironmentCPUMultiplicity: multicpu-multicore
 GLUE2ExecutionEnvironmentCPUVendor: virtual vendor
-GLUE2ExecutionEnvironmentLogicalCPUs: %(template_cpu)s
-GLUE2ExecutionEnvironmentPhysicalCPUs: %(template_cpu)s
+GLUE2ExecutionEnvironmentLogicalCPUs: ${template_cpu}
+GLUE2ExecutionEnvironmentPhysicalCPUs: ${template_cpu}

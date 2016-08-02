@@ -1,20 +1,20 @@
-dn: GLUE2ServiceID=%(storage_service_name)s_cloud.storage,GLUE2GroupID=cloud,%(suffix)s
+dn: GLUE2ServiceID=${storage_service_name}_cloud.storage,GLUE2GroupID=cloud,${suffix}
 objectClass: GLUE2Entity
 objectClass: GLUE2Service
 objectClass: GLUE2StorageService
-GLUE2ServiceAdminDomainForeignKey: %(site_name)s
-GLUE2ServiceID: %(storage_service_name)s_cloud.storage
-GLUE2ServiceQualityLevel: %(storage_service_production_level)s
+GLUE2ServiceAdminDomainForeignKey: ${site_name}
+GLUE2ServiceID: ${storage_service_name}_cloud.storage
+GLUE2ServiceQualityLevel: ${storage_service_production_level}
 GLUE2ServiceType: STaaS
-GLUE2ServiceCapability: %(storage_capabilities)s
+GLUE2ServiceCapability: ${storage_capabilities}
 
-dn: GLUE2ManagerID=%(storage_service_name)s_cloud.storage_manager,GLUE2ServiceID=%(storage_service_name)s_cloud.storage,GLUE2GroupID=cloud,%(suffix)s
+dn: GLUE2ManagerID=${storage_service_name}_cloud.storage_manager,GLUE2ServiceID=${storage_service_name}_cloud.storage,GLUE2GroupID=cloud,${suffix}
 objectClass: GLUE2Entity
 objectClass: GLUE2Manager
 objectClass: GLUE2StorageManager
-GLUE2ManagerID: %(storage_service_name)s_cloud.storage_manager
-GLUE2ManagerProductName: %(storage_middleware)s
-GLUE2ManagerServiceForeignKey: %(storage_service_name)s_cloud.storage
-GLUE2StorageManagerStorageServiceForeignKey: %(storage_service_name)s_cloud.storage
-GLUE2EntityName: Cloud Storage Manager at %(storage_service_name)s
-GLUE2ManagerProductVersion: %(storage_middleware_version)s
+GLUE2ManagerID: ${storage_service_name}_cloud.storage_manager
+GLUE2ManagerProductName: ${storage_middleware}
+GLUE2ManagerServiceForeignKey: ${storage_service_name}_cloud.storage
+GLUE2StorageManagerStorageServiceForeignKey: ${storage_service_name}_cloud.storage
+GLUE2EntityName: Cloud Storage Manager at ${storage_service_name}
+GLUE2ManagerProductVersion: ${storage_middleware_version}

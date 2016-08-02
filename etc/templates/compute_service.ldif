@@ -1,22 +1,22 @@
-dn: GLUE2ServiceID=%(compute_service_name)s_cloud.compute,GLUE2GroupID=cloud,%(suffix)s
+dn: GLUE2ServiceID=${compute_service_name}_cloud.compute,GLUE2GroupID=cloud,${suffix}
 objectClass: GLUE2Entity
 objectClass: GLUE2Service
 objectClass: GLUE2ComputingService
-GLUE2ServiceAdminDomainForeignKey: %(site_name)s
-GLUE2ServiceID: %(compute_service_name)s_cloud.compute
-GLUE2ServiceQualityLevel: %(compute_service_production_level)s
+GLUE2ServiceAdminDomainForeignKey: ${site_name}
+GLUE2ServiceID: ${compute_service_name}_cloud.compute
+GLUE2ServiceQualityLevel: ${compute_service_production_level}
 GLUE2ServiceType: IaaS
-GLUE2ServiceCapability: %(compute_capabilities)s
+GLUE2ServiceCapability: ${compute_capabilities}
 
-dn: GLUE2ManagerID=%(compute_service_name)s_cloud.compute_manager,GLUE2ServiceID=%(compute_service_name)s_cloud.compute,GLUE2GroupID=cloud,%(suffix)s
+dn: GLUE2ManagerID=${compute_service_name}_cloud.compute_manager,GLUE2ServiceID=${compute_service_name}_cloud.compute,GLUE2GroupID=cloud,${suffix}
 objectClass: GLUE2Entity
 objectClass: GLUE2Manager
 objectClass: GLUE2ComputingManager
-GLUE2ManagerID: %(compute_service_name)s_cloud.compute_manager
-GLUE2ManagerProductName: %(compute_hypervisor)s
-GLUE2ManagerServiceForeignKey: %(compute_service_name)s_cloud.compute
-GLUE2ComputingManagerComputingServiceForeignKey: %(compute_service_name)s_cloud.compute
-GLUE2EntityName: Cloud Manager for %(compute_service_name)s
-GLUE2ManagerProductVersion: %(compute_hypervisor_version)s
-GLUE2ComputingManagerTotalLogicalCPUs: %(compute_total_cores)s
-GLUE2ComputingManagerWorkingAreaTotal: %(compute_total_ram)s
+GLUE2ManagerID: ${compute_service_name}_cloud.compute_manager
+GLUE2ManagerProductName: ${compute_hypervisor}
+GLUE2ManagerServiceForeignKey: ${compute_service_name}_cloud.compute
+GLUE2ComputingManagerComputingServiceForeignKey: ${compute_service_name}_cloud.compute
+GLUE2EntityName: Cloud Manager for ${compute_service_name}
+GLUE2ManagerProductVersion: ${compute_hypervisor_version}
+GLUE2ComputingManagerTotalLogicalCPUs: ${compute_total_cores}
+GLUE2ComputingManagerWorkingAreaTotal: ${compute_total_ram}

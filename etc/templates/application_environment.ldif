@@ -1,9 +1,9 @@
-dn: GLUE2ApplicationEnvironmentID=%(image_id)s_%(compute_service_name)s,GLUE2ServiceID=%(compute_service_name)s_cloud.compute,GLUE2GroupID=cloud,%(suffix)s
+dn: GLUE2ApplicationEnvironmentID=${image_id}_${compute_service_name},GLUE2ServiceID=${compute_service_name}_cloud.compute,GLUE2GroupID=cloud,${suffix}
 objectClass: GLUE2Entity
 objectClass: GLUE2ApplicationEnvironment
-GLUE2ApplicationEnvironmentAppName: %(image_name)s
-GLUE2ApplicationEnvironmentAppVersion: %(image_version)s
-GLUE2ApplicationEnvironmentRepository: %(image_marketplace_id)s
-GLUE2ApplicationEnvironmentDescription: %(image_description)s
-GLUE2EntityName: %(image_id)s
-GLUE2ApplicationEnvironmentComputingManagerForeignKey: %(compute_service_name)s_cloud.compute_manager
+GLUE2ApplicationEnvironmentAppName: ${image_name}
+GLUE2ApplicationEnvironmentAppVersion: ${image_version}
+GLUE2ApplicationEnvironmentRepository: ${image_marketplace_id}
+GLUE2ApplicationEnvironmentDescription: ${image_description}
+GLUE2EntityName: ${image_id}
+GLUE2ApplicationEnvironmentComputingManagerForeignKey: ${compute_service_name}_cloud.compute_manager
