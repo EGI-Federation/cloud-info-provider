@@ -177,8 +177,6 @@ class ComputeBDII(BaseBDII):
 #         info.update({'static_compute_info': static_compute_info})
 #
 #         return self._format_template('compute_bdii', info)
-
-
 class CloudBDII(BaseBDII):
     def __init__(self, opts):
         super(CloudBDII, self).__init__(opts)
