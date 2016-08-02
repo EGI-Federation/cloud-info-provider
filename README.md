@@ -1,5 +1,7 @@
 # Cloud BDII provider
 
+[![BuildStatus](https://travis-ci.org/indigo-dc/cloud-info-provider.svg?branch=master)](https://travis-ci.org/indigo-dc/cloud-info-provider)
+
 The Cloud BDII provider generates a GlueSchema v2 representation of cloud
 resources for publihing it into a BDII
 
