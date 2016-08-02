@@ -94,7 +94,7 @@ class BaseBDIITest(BaseTest):
 
     def test_load_templates(self):
         self.opts.template_dir = 'foobar'
-        tpls = ['foo', 'bar']
+        tpls = ('foo', 'bar')
         tpl_contents = 'foo ${attributes["fobble"]}'
         info = {'fobble': 'burble', 'brongle': 'farbla'}
         expected_tpls = {
