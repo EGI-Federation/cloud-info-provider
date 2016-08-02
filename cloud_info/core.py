@@ -9,10 +9,9 @@ import mako.template
 
 SUPPORTED_MIDDLEWARE = {
     'openstack': cloud_info.providers.openstack.OpenStackProvider,
-    # 'opennebula': cloud_info.providers.opennebula.OpenNebulaProvider,
+    'opennebula': cloud_info.providers.opennebula.OpenNebulaProvider,
     'indigoon': cloud_info.providers.opennebula.IndigoONProvider,
-    # 'opennebularocci':
-    # cloud_info.providers.opennebula.OpenNebulaROCCIProvider,
+    'opennebularocci': cloud_info.providers.opennebula.OpenNebulaROCCIProvider,
     'static': cloud_info.providers.static.StaticProvider,
 }
 
@@ -250,14 +249,10 @@ def parse_opts():
 def main():
     opts = parse_opts()
 
-    bdii = IndigoComputeBDII(opts)
-    bdii.load_templates()
-    print(bdii.render().encode('utf-8'))
-    # XXX do not care of legacy stuff
-    # for cls_ in (CloudBDII, ComputeBDII, StorageBDII, IndigoComputeBDII):
-    #     bdii = cls_(opts)
-    #     bdii.load_templates()
-    #     print(bdii.render().encode('utf-8'))
+    for cls_ in (CloudBDII, ComputeBDII, StorageBDII, IndigoComputeBDII):
+        bdii = cls_(opts)
+        bdii.load_templates()
+        print(bdii.render().encode('utf-8'))
 
 if __name__ == '__main__':
     main()
