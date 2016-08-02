@@ -117,7 +117,6 @@ class BaseBDIITest(BaseTest):
             self.assertEqual(expected, bdii._format_template('foo', info))
 
 
-
 class CloudBDIITest(BaseTest):
     @mock.patch.object(cloud_info.core.CloudBDII, '_get_info_from_providers')
     def test_render(self, m_get_info):
