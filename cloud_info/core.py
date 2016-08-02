@@ -74,21 +74,19 @@ class StorageBDII(BaseBDII):
 
         site_info = self._get_info_from_providers('get_site_info')
         static_storage_info = dict(endpoints, **site_info)
-        info = {}
-        info.update({'endpoints': endpoints})
-        info.update({'site_info': site_info})
-        info.update({'static_storage_info': static_storage_info})
+        static_storage_info.pop('endpoints')
 
-        output.append(self._format_template('storage_service', info))
+        output.append(self._format_template('storage_service',
+                                            static_storage_info))
 
-        # for url, endpoint in endpoints['endpoints'].items():
-        #     endpoint.setdefault('endpoint_url', url)
-        #     output.append(self._format_template('storage_endpoint',
-        #                                         endpoint,
-        #                                         extra=static_storage_info))
-        output.append(self._format_template('storage_endpoint', info))
+        for url, endpoint in endpoints['endpoints'].items():
+            endpoint.setdefault('endpoint_url', url)
+            output.append(self._format_template('storage_endpoint',
+                                                endpoint,
+                                                extra=static_storage_info))
 
-        output.append(self._format_template('storage_capacity', info))
+        output.append(self._format_template('storage_capacity',
+                                            static_storage_info))
 
         return '\n'.join(output)
 
@@ -107,48 +105,40 @@ class ComputeBDII(BaseBDII):
         endpoints = self._get_info_from_providers('get_compute_endpoints')
 
         if not endpoints.get('endpoints'):
-            return ''
+          return ''
 
         site_info = self._get_info_from_providers('get_site_info')
         static_compute_info = dict(endpoints, **site_info)
+        static_compute_info.pop('endpoints')
 
-        # XXX comment old output code until more tests
-        # output.append(self._format_template('compute_service',
-        #                                     static_compute_info))
+        output.append(self._format_template('compute_service',
+                                            static_compute_info))
 
-        # for url, endpoint in endpoints['endpoints'].items():
-        #     endpoint.setdefault('endpoint_url', url)
-        #     output.append(self._format_template('compute_endpoint',
-        #                                         endpoint,
-        #                                         extra=static_compute_info))
+        for url, endpoint in endpoints['endpoints'].items():
+            endpoint.setdefault('endpoint_url', url)
+            output.append(self._format_template('compute_endpoint',
+                                                endpoint,
+                                                extra=static_compute_info))
 
         templates = self._get_info_from_providers('get_templates')
-        # for tid, ex_env in templates.items():
-        #     ex_env.setdefault('template_id', tid)
-        #     output.append(self._format_template('execution_environment',
-        #                                         ex_env,
-        #                                         extra=static_compute_info))
+        for tid, ex_env in templates.items():
+            ex_env.setdefault('template_id', tid)
+            output.append(self._format_template('execution_environment',
+                                                ex_env,
+                                                extra=static_compute_info))
 
         images = self._get_info_from_providers('get_images')
-        # for iid, app_env in images.items():
-        #     app_env.setdefault('image_id', iid)
-        #     app_env.setdefault('image_description',
-        #                        ('%(image_name)s version '
-        #                         '%(image_version)s on '
-        #                         '%(image_os_family)s %(image_os_name)s '
-        #                         '%(image_os_version)s '
-        #                         '%(image_platform)s' % app_env))
-        #     output.append(self._format_template('application_environment',
-        #                                         app_env,
-        #                                         extra=static_compute_info))
-
-        info = {}
-        info.update({'templates': templates})
-        info.update({'images': images})
-        info.update({'static_compute_info': static_compute_info})
-
-        for tpl in self.templates:
-            output.append(self._format_template(tpl, info))
+        for iid, app_env in images.items():
+            app_env.setdefault('image_id', iid)
+            app_env.setdefault('image_description',
+                               ('%(image_name)s version '
+                                '%(image_version)s on '
+                                '%(image_os_family)s %(image_os_name)s '
+                                '%(image_os_version)s '
+                                '%(image_platform)s' % app_env))
+            output.append(self._format_template('application_environment',
+                                                app_env,
+                                                extra=static_compute_info))
 
         return '\n'.join(output)
 
