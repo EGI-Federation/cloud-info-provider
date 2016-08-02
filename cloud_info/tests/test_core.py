@@ -12,7 +12,7 @@ DATA = data.DATA
 
 class ModuleTest(unittest.TestCase):
     def test_main(self):
-        with contextlib.nested(
+        with utils.nested(
             mock.patch.object(cloud_info.core, 'parse_opts'),
             mock.patch('cloud_info.core.CloudBDII'),
             mock.patch('cloud_info.core.IndigoComputeBDII'),
@@ -191,7 +191,7 @@ class IndigoComputeBDIITest(BaseTest):
         tpl_contents = 'foo ${attributes["fobble"]}'
         info = {'fobble': 'burble', 'brongle': 'farbla'}
         bdii = cloud_info.core.IndigoComputeBDII(self.opts)
-        with contextlib.nested(
+        with utils.nested(
             mock.patch.object(bdii, 'templates', tpls),
             mock.patch('mako.util.open',
                        mock.mock_open(read_data=tpl_contents), create=True)
