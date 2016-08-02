@@ -198,7 +198,7 @@ def parse_opts():
 
     parser.add_argument(
         '--yaml-file',
-        default='/etc/cloud-info-provider/bdii.yaml',
+        default='/etc/cloud-info-provider-indigo/static.yaml',
         help=('Path to the YAML file containing configuration static values. '
               'This file will be used to populate the information '
               'to the static provider. These values will be used whenever '
