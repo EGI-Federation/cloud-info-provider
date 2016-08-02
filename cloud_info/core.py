@@ -74,19 +74,21 @@ class StorageBDII(BaseBDII):
 
         site_info = self._get_info_from_providers('get_site_info')
         static_storage_info = dict(endpoints, **site_info)
-        static_storage_info.pop('endpoints')
+        info = {}
+        info.update({'endpoints': endpoints})
+        info.update({'site_info': site_info})
+        info.update({'static_storage_info': static_storage_info})
 
-        output.append(self._format_template('storage_service',
-                                            static_storage_info))
+        output.append(self._format_template('storage_service', info))
 
-        for url, endpoint in endpoints['endpoints'].items():
-            endpoint.setdefault('endpoint_url', url)
-            output.append(self._format_template('storage_endpoint',
-                                                endpoint,
-                                                extra=static_storage_info))
+        # for url, endpoint in endpoints['endpoints'].items():
+        #     endpoint.setdefault('endpoint_url', url)
+        #     output.append(self._format_template('storage_endpoint',
+        #                                         endpoint,
+        #                                         extra=static_storage_info))
+        output.append(self._format_template('storage_endpoint', info))
 
-        output.append(self._format_template('storage_capacity',
-                                            static_storage_info))
+        output.append(self._format_template('storage_capacity', info))
 
         return '\n'.join(output)
 
