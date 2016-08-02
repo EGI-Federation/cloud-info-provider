@@ -105,7 +105,7 @@ class ComputeBDII(BaseBDII):
         endpoints = self._get_info_from_providers('get_compute_endpoints')
 
         if not endpoints.get('endpoints'):
-          return ''
+            return ''
 
         site_info = self._get_info_from_providers('get_site_info')
         static_compute_info = dict(endpoints, **site_info)
