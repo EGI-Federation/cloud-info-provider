@@ -201,7 +201,7 @@ class CloudBDII(BaseBDII):
         super(CloudBDII, self).__init__(opts)
 
         if not self.opts.full_bdii_ldif:
-            self.templates = ('headers', 'clouddomain', )
+            self.templates = ('headers', 'clouddomain')
         else:
             self.templates = ('headers', 'domain', 'bdii', 'clouddomain')
 
