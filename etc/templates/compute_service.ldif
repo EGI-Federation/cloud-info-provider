@@ -1,22 +1,23 @@
-dn: GLUE2ServiceID=${compute_service_name}_cloud.compute,GLUE2GroupID=cloud,${suffix}
+<% static_compute_info = attributes['static_compute_info'] %>
+dn: GLUE2ServiceID=${static_compute_info['compute_service_name']}_cloud.compute,GLUE2GroupID=cloud,${static_compute_info['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2Service
 objectClass: GLUE2ComputingService
-GLUE2ServiceAdminDomainForeignKey: ${site_name}
-GLUE2ServiceID: ${compute_service_name}_cloud.compute
-GLUE2ServiceQualityLevel: ${compute_service_production_level}
+GLUE2ServiceAdminDomainForeignKey: ${static_compute_info['site_name']}
+GLUE2ServiceID: ${static_compute_info['compute_service_name']}_cloud.compute
+GLUE2ServiceQualityLevel: ${static_compute_info['compute_service_production_level']}
 GLUE2ServiceType: IaaS
-GLUE2ServiceCapability: ${compute_capabilities}
+GLUE2ServiceCapability: ${static_compute_info['compute_capabilities']}
 
-dn: GLUE2ManagerID=${compute_service_name}_cloud.compute_manager,GLUE2ServiceID=${compute_service_name}_cloud.compute,GLUE2GroupID=cloud,${suffix}
+dn: GLUE2ManagerID=${static_compute_info['compute_service_name']}_cloud.compute_manager,GLUE2ServiceID=${static_compute_info['compute_service_name']}_cloud.compute,GLUE2GroupID=cloud,${static_compute_info['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2Manager
 objectClass: GLUE2ComputingManager
-GLUE2ManagerID: ${compute_service_name}_cloud.compute_manager
-GLUE2ManagerProductName: ${compute_hypervisor}
-GLUE2ManagerServiceForeignKey: ${compute_service_name}_cloud.compute
-GLUE2ComputingManagerComputingServiceForeignKey: ${compute_service_name}_cloud.compute
-GLUE2EntityName: Cloud Manager for ${compute_service_name}
-GLUE2ManagerProductVersion: ${compute_hypervisor_version}
-GLUE2ComputingManagerTotalLogicalCPUs: ${compute_total_cores}
-GLUE2ComputingManagerWorkingAreaTotal: ${compute_total_ram}
+GLUE2ManagerID: ${static_compute_info['compute_service_name']}_cloud.compute_manager
+GLUE2ManagerProductName: ${static_compute_info['compute_hypervisor']}
+GLUE2ManagerServiceForeignKey: ${static_compute_info['compute_service_name']}_cloud.compute
+GLUE2ComputingManagerComputingServiceForeignKey: ${static_compute_info['compute_service_name']}_cloud.compute
+GLUE2EntityName: Cloud Manager for ${static_compute_info['compute_service_name']}
+GLUE2ManagerProductVersion: ${static_compute_info['compute_hypervisor_version']}
+GLUE2ComputingManagerTotalLogicalCPUs: ${static_compute_info['compute_total_cores']}
+GLUE2ComputingManagerWorkingAreaTotal: ${static_compute_info['compute_total_ram']}
