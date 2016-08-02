@@ -32,6 +32,7 @@ class BaseBDII(object):
         self.static_provider = SUPPORTED_MIDDLEWARE['static'](opts)
 
     def load_templates(self):
+        self.templates_files = {}
         for tpl in self.templates:
             template_extension = self.opts.template_extension
             template_file = os.path.join(self.opts.template_dir,
