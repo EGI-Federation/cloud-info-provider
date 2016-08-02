@@ -103,6 +103,7 @@ class ComputeBDII(BaseBDII):
                           'application_environment')
 
     def render(self):
+        output = []
         endpoints = self._get_info_from_providers('get_compute_endpoints')
 
         if not endpoints.get('endpoints'):
@@ -146,33 +147,12 @@ class ComputeBDII(BaseBDII):
         info.update({'images': images})
         info.update({'static_compute_info': static_compute_info})
 
-        return self._format_template('compute_bdii', info)
+        for tpl in self.templates:
+            output.append(self._format_template(tpl, info))
+
+        return '\n'.join(output)
 
 
-class IndigoComputeBDII(BaseBDII):
-    def __init__(self, opts):
-        super(IndigoComputeBDII, self).__init__(opts)
-
-        self.templates = ['compute_bdii']
-
-    def render(self):
-        endpoints = self._get_info_from_providers('get_compute_endpoints')
-
-        if not endpoints.get('endpoints'):
-            return ''
-
-        site_info = self._get_info_from_providers('get_site_info')
-        static_compute_info = dict(endpoints, **site_info)
-
-        templates = self._get_info_from_providers('get_templates')
-        images = self._get_info_from_providers('get_images')
-
-        info = {}
-        info.update({'templates': templates})
-        info.update({'images': images})
-        info.update({'static_compute_info': static_compute_info})
-
-        return self._format_template('compute_bdii', info)
 # class IndigoComputeBDII(BaseBDII):
 #     def __init__(self, opts):
 #         super(IndigoComputeBDII, self).__init__(opts)
