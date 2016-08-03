@@ -27,9 +27,10 @@ Recommends: bdii
 Suggests: python-novaclient
 Provides: ${python:Provides}
 Description: Cloud information provider for BDII.
- Information provider for Cloud Compute and Cloud Storage services for BDII.
+ Information provider for Cloud Compute and Cloud Storage services.
  .
  It supports static information specification, OpenNebula and OpenStack cloud
- middlewares.
- The provider uses GLUE 2.0 EGI Cloud Profile to publish the information.
+ middleware.
+ By default the provider uses GLUE 2.0 EGI Cloud Profile to publish the
+ information, but custom format can be created.
 
