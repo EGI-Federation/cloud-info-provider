@@ -24,6 +24,7 @@ Requires: python-mako
 Requires: python-six
 #Recommends: bdii
 #Recommends: python-novaclient
+Obsoletes: cloud-info-provider-service
 BuildArch: noarch
 
 %description
