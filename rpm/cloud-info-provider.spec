@@ -11,7 +11,7 @@ Release: 1%{?dist}
 Group: Applications/Internet
 License: ASL 2.0
 URL: https://github.com/EGI-FCTF/cloud-bdii-provider
-Source: cloud-info-provider-%{version}.tar.gz
+Source: cloud_info_provider-%{version}.tar.gz
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: python-setuptools
@@ -34,7 +34,7 @@ By default the provider uses GLUE 2.0 EGI Cloud Profile to publish the
 information, but custom format can be created.
 
 %prep
-%setup -q -n cloud-info-provider-%{version}
+%setup -q -n cloud_info_provider-%{version}
 
 %build
 
