@@ -95,12 +95,23 @@ class BaseBDIITest(BaseTest):
     def test_load_templates(self):
         self.opts.template_dir = 'foobar'
         tpls = ('foo', 'bar')
-        tpl_contents = 'foo ${attributes["fobble"]}'
-        info = {'fobble': 'burble', 'brongle': 'farbla'}
         expected_tpls = {
             'foo': 'foobar/foo.%s' % self.opts.template_extension,
             'bar': 'foobar/bar.%s' % self.opts.template_extension
         }
+
+        bdii = cloud_info.core.BaseBDII(self.opts)
+        with utils.nested(
+                mock.patch.object(bdii, 'templates', tpls)):
+            bdii.load_templates()
+            templates_files = bdii.__dict__['templates_files']
+            self.assertEqual(templates_files, expected_tpls)
+
+    def test_format_template(self):
+        self.opts.template_dir = 'foobar'
+        tpls = ('foo', 'bar')
+        tpl_contents = 'foo ${attributes["fobble"]}'
+        info = {'fobble': 'burble', 'brongle': 'farbla'}
         expected = 'foo burble'
 
         bdii = cloud_info.core.BaseBDII(self.opts)
@@ -110,8 +121,6 @@ class BaseBDIITest(BaseTest):
                        mock.mock_open(read_data=tpl_contents), create=True)
         ):
             bdii.load_templates()
-            templates_files = bdii.__dict__['templates_files']
-            self.assertEqual(templates_files, expected_tpls)
             self.assertEqual(expected, bdii._format_template('foo', info))
 
 
