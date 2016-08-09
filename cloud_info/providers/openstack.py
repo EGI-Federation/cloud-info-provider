@@ -154,7 +154,7 @@ class OpenStackProvider(providers.BaseProvider):
                                        OpenStackProvider.occify(image.id))
             })
 
-            for name, value in image.metadata.iteritems():
+            for name, value in image.metadata.items():
                 aux_img[name] = value
 
             # XXX could probably be move to the mako template
