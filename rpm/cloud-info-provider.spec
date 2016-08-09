@@ -19,7 +19,6 @@ BuildRequires: python-pbr
 Requires: python
 Requires: python-argparse
 Requires: python-yaml
-Requires: python-requests
 Requires: python-mako
 Requires: python-six
 #Recommends: bdii
