@@ -105,7 +105,7 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
         # 3. take the first disk from VMTEMPLATE
         # 4. use disk's IMAGE element to find it in the imagepool
         # 5. associate selected IMAGE metadata (*VMCATCHER* stuff) with the tpl
-        for tpl_id, tpl in one_templates.iteritems():
+        for tpl_id, tpl in one_templates.items():
             aux_tpl = template.copy()
             aux_tpl.update(defaults)
             aux_tpl["image_name"] = tpl["name"]
@@ -183,7 +183,7 @@ class IndigoONProvider(OpenNebulaBaseProvider):
         # 4. use disk's IMAGE element to find it in the imagepool
         # 5. associate selected IMAGE metadata (*VMCATCHER* stuff) with the tpl
         # TODO(document)
-        for tpl_id, tpl in one_templates.iteritems():
+        for tpl_id, tpl in one_templates.items():
             aux_tpl = template.copy()
             aux_tpl.update(defaults)
             if "template" in tpl:
@@ -235,7 +235,7 @@ class IndigoONProvider(OpenNebulaBaseProvider):
 
             if "template" in img:
                 aux = img["template"]
-                for name, value in aux.iteritems():
+                for name, value in aux.items():
                     aux_img[name] = value
                 aux_img["image_marketplace_id"] = aux.get(
                     "vmcatcher_event_ad_mpuri", None)
