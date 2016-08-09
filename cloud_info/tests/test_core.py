@@ -109,18 +109,20 @@ class BaseBDIITest(BaseTest):
 
     def test_format_template(self):
         self.opts.template_dir = 'foobar'
-        tpls = ('foo', 'bar')
         tpl_contents = 'foo ${attributes["fobble"]}'
+        tpl_files = {
+            'foo': 'foobar/foo.%s' % self.opts.template_extension,
+            'bar': 'foobar/bar.%s' % self.opts.template_extension
+        }
         info = {'fobble': 'burble', 'brongle': 'farbla'}
         expected = 'foo burble'
 
         bdii = cloud_info.core.BaseBDII(self.opts)
         with utils.nested(
-            mock.patch.object(bdii, 'templates', tpls),
-            mock.patch('mako.util.open',
-                       mock.mock_open(read_data=tpl_contents), create=True)
+                mock.patch.object(bdii, 'templates_files', tpl_files),
+                mock.patch('mako.util.open',
+                           mock.mock_open(read_data=tpl_contents), create=True)
         ):
-            bdii.load_templates()
             self.assertEqual(expected, bdii._format_template('foo', info))
 
 
