@@ -145,7 +145,7 @@ class CloudBDIITest(BaseTest):
         m_get_info.return_value = DATA.site_info_full
         m_format.return_value = 'foo'
         bdii = cloud_info.core.CloudBDII(self.opts)
-        self.assertNotEqual('', bdii.render())
+        self.assertIsNotNone(bdii.render())
         m_format.assert_has_calls([mock.call("headers", DATA.site_info_full),
                                   mock.call("domain", DATA.site_info_full),
                                   mock.call("bdii", DATA.site_info_full),
@@ -167,7 +167,7 @@ class StorageBDIITEst(BaseTest):
         static_storage_info.pop('endpoints')
 
         bdii = cloud_info.core.StorageBDII(self.opts)
-        self.assertNotEqual('', bdii.render())
+        self.assertIsNotNone(bdii.render())
 
         m_format_calls = [mock.call("storage_service", static_storage_info)]
 
@@ -207,7 +207,7 @@ class ComputeBDIITest(BaseTest):
         static_compute_info.pop('endpoints')
 
         bdii = cloud_info.core.ComputeBDII(self.opts)
-        self.assertNotEqual('', bdii.render())
+        self.assertIsNotNone(bdii.render())
 
         m_format_calls = [mock.call("compute_service", static_compute_info)]
 
