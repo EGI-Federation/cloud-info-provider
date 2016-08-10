@@ -1,9 +1,15 @@
-# Cloud BDII provider
+# Cloud Information provider
 
 [![BuildStatus](https://travis-ci.org/EGI-FCTF/cloud-bdii-provider.svg?branch=master)](https://travis-ci.org/EGI-FCTF/cloud-bdii-provider)
 
-The Cloud BDII provider generates a GlueSchema v2 representation of cloud
-resources for publihing it into a BDII
+The Cloud Information provider generates a representation of cloud resources,
+that can be published inside a BDII (using the provided LDIF templates for a
+GlueSchema v2 representation) or any other component like the INDIGO
+Configuration Management Database (CMDB) (Using JSON templates).
+
+The generated representation is described using a
+[Mako](http://www.makotemplates.org/) template having access to the cloud
+middleware information.
 
 ## Installation
 
@@ -12,7 +18,8 @@ resources for publihing it into a BDII
 The cloud-provider depends on PyYAML, which is already included as a dependency for 
 binary packages and when installing from source.
 
-For running the cloud-provider in a production environment you will probably need:
+For running the cloud-provider in a production environment with a BDII you will
+probably need:
  - bdii (available in Ubuntu/Debian repos, for RH based distros it is in EPEL, for
  Debian wheezy it is available in the backports repo).
  - if you are generating information for OpenStack, you will also need
@@ -27,17 +34,31 @@ Use the appropriate repos for your distribution and install using the usual tool
 
 Get the source by cloning this repo and do a pip install:
 
+As pip will have to copy files to /etc/cloud-info-provider directory, the
+installation user should be able to write to it, so it is recommended to create
+it before using pip.
+
+``` sh
+sudo mkdir /etc/cloud-info-provider-indigo
+sudo chgrp you_user /etc/cloud-info-provider-indigo
+sudo chmod g+rwx /etc/cloud-info-provider-indigo
 ```
-git clone https://github.com/EGI-FCTF/BDIIscripts
-cd BDIIscripts 
+
+```
+git clone https://github.com/EGI-FCTF/cloud-bdii-provider
+cd cloud-bdii-provider 
 pip install .
 ```
 
 ## Generation of the LDIF 
 
-The cloud-info-provider generates a LDIF according to the information in a
-yaml file describing the static information of the cloud resources.
-By default `/etc/cloud-info-provider/bdii.yaml` is used, but this path can be
+By default the cloud-info-provider generates a LDIF according to the
+information in a yaml file describing the static information of the cloud
+resources.
+It will uses template located inside `/etc/cloud-info-provider/templates` with
+the LDIF extension. It is possible to specify another template extension using
+the `--template-extension` parameter.
+By default `/etc/cloud-info-provider/static.yaml` is used, but this path can be
 overriden with the `--yaml-file` option. A complete example with comments is
 available in the `sample.static.yaml` file.
 
@@ -76,7 +97,7 @@ listing of options.
 
 For example for OpenStack, use a command line similar to the following:
 ```
-cloud-info-provider-service --yaml-file /etc/cloud-info-provider/bdii.yaml \
+cloud-info-provider-service --yaml-file /etc/cloud-info-provider/static.yaml \
     --middleware OpenStack --os-username <username> --os-password <password> \
     --os-tenant-name <tenant> --os-auth-url <auth-url>
 ```
