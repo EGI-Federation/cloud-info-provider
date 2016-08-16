@@ -1,3 +1,5 @@
+import logging
+
 from cloud_info import exceptions
 from cloud_info import providers
 from cloud_info import utils
@@ -12,6 +14,9 @@ class OpenStackProvider(providers.BaseProvider):
         except ImportError:
             msg = 'Cannot import novaclient module.'
             raise exceptions.OpenStackProviderException(msg)
+
+        # Remove info log messages from output
+        logging.getLogger('requests').setLevel(logging.WARNING)
 
         (os_username, os_password, os_tenant_name, os_auth_url,
             cacert, insecure, legacy_occi_os) = (opts.os_username,
