@@ -42,7 +42,7 @@ class OpenStackProvider(providers.BaseProvider):
                    'via either --os-auth-url or env[OS_AUTH_URL] ')
             raise exceptions.OpenStackProviderException(msg)
 
-        client_cls = novaclient.client.get_client_class('2')
+        client_cls = novaclient.client.Client
         if insecure:
             self.api = client_cls(os_username,
                                   os_password,
