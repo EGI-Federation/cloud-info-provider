@@ -204,38 +204,53 @@ class ComputeBDIITest(BaseTest):
         m_format.return_value = 'foo'
         endpoints = DATA.compute_endpoints
         static_compute_info = dict(endpoints, **DATA.site_info)
-        static_compute_info.pop('endpoints')
+        templates = DATA.compute_templates
+        images = DATA.compute_images
+
+        info = {}
+        info.update({'templates': templates})
+        info.update({'images': images})
+        info.update({'static_compute_info': static_compute_info})
 
         bdii = cloud_info.core.ComputeBDII(self.opts)
         self.assertIsNotNone(bdii.render())
 
-        m_format_calls = [mock.call("compute_service", static_compute_info)]
+        m_format.assert_has_calls([mock.call("compute_bdii", info)])
+        # m_format.return_value = 'foo'
+        # endpoints = DATA.compute_endpoints
+        # static_compute_info = dict(endpoints, **DATA.site_info)
+        # static_compute_info.pop('endpoints')
 
-        for url, endpoint in endpoints['endpoints'].items():
-            endpoint.setdefault('endpoint_url', url)
-            m_format_calls.append(mock.call('compute_endpoint',
-                                  endpoint, extra=static_compute_info))
+        # bdii = cloud_info.core.ComputeBDII(self.opts)
+        # self.assertIsNotNone(bdii.render())
 
-        templates = DATA.compute_templates
-        for tid, ex_env in templates.items():
-            ex_env.setdefault('template_id', tid)
-            m_format_calls.append(mock.call('execution_environment',
-                                            ex_env,
-                                            extra=static_compute_info))
-        images = DATA.compute_images
-        for iid, app_env in images.items():
-            app_env.setdefault('image_id', iid)
-            app_env.setdefault('image_description',
-                               ('%(image_name)s version '
-                                '%(image_version)s on '
-                                '%(image_os_family)s %(image_os_name)s '
-                                '%(image_os_version)s '
-                                '%(image_platform)s' % app_env))
-            m_format_calls.append(mock.call('application_environment',
-                                            app_env,
-                                            extra=static_compute_info))
+        # m_format_calls = [mock.call("compute_service", static_compute_info)]
 
-        m_format.assert_has_calls(m_format_calls)
+        # for url, endpoint in endpoints['endpoints'].items():
+        #     endpoint.setdefault('endpoint_url', url)
+        #     m_format_calls.append(mock.call('compute_endpoint',
+        #                           endpoint, extra=static_compute_info))
+
+        # templates = DATA.compute_templates
+        # for tid, ex_env in templates.items():
+        #     ex_env.setdefault('template_id', tid)
+        #     m_format_calls.append(mock.call('execution_environment',
+        #                                     ex_env,
+        #                                     extra=static_compute_info))
+        # images = DATA.compute_images
+        # for iid, app_env in images.items():
+        #     app_env.setdefault('image_id', iid)
+        #     app_env.setdefault('image_description',
+        #                        ('%(image_name)s version '
+        #                         '%(image_version)s on '
+        #                         '%(image_os_family)s %(image_os_name)s '
+        #                         '%(image_os_version)s '
+        #                         '%(image_platform)s' % app_env))
+        #     m_format_calls.append(mock.call('application_environment',
+        #                                     app_env,
+        #                                     extra=static_compute_info))
+
+        # m_format.assert_has_calls(m_format_calls)
 
     @mock.patch.object(cloud_info.core.ComputeBDII, '_get_info_from_providers')
     def test_render_empty(self, m_get_info):
