@@ -108,52 +108,18 @@ class ComputeBDII(BaseBDII):
         if not endpoints.get('endpoints'):
             return ''
 
-        # site_info = self._get_info_from_providers('get_site_info')
-        # static_compute_info = dict(endpoints, **site_info)
-        # static_compute_info.pop('endpoints')
-
-        # output.append(self._format_template('compute_service',
-        #                                     static_compute_info))
-
-        # XXX ensure that endpoint_url default is correct
-        # for url, endpoint in endpoints['endpoints'].items():
-        #     endpoint.setdefault('endpoint_url', url)
-        #     output.append(self._format_template('compute_endpoint',
-        #                                         endpoint,
-        #                                         extra=static_compute_info))
-
-        # XXX ensure that template_id default is correct
-        # templates = self._get_info_from_providers('get_templates')
-        # for tid, ex_env in templates.items():
-        #     ex_env.setdefault('template_id', tid)
-        #     output.append(self._format_template('execution_environment',
-        #                                         ex_env,
-        #                                         extra=static_compute_info))
-
-        # XXX ensure that image_id and image_description default are correct
-        # images = self._get_info_from_providers('get_images')
-        # for iid, app_env in images.items():
-        #     app_env.setdefault('image_id', iid)
-        #     app_env.setdefault('image_description',
-        #                        ('%(image_name)s version '
-        #                         '%(image_version)s on '
-        #                         '%(image_os_family)s %(image_os_name)s '
-        #                         '%(image_os_version)s '
-        #                         '%(image_platform)s' % app_env))
-        #     output.append(self._format_template('application_environment',
-        #                                         app_env,
-        #                                         extra=static_compute_info))
-
         site_info = self._get_info_from_providers('get_site_info')
         static_compute_info = dict(endpoints, **site_info)
+        static_compute_info.pop('endpoints')
 
         templates = self._get_info_from_providers('get_templates')
         images = self._get_info_from_providers('get_images')
 
         info = {}
+        info.update({'endpoints': endpoints})
+        info.update({'static_compute_info': static_compute_info})
         info.update({'templates': templates})
         info.update({'images': images})
-        info.update({'static_compute_info': static_compute_info})
 
         return self._format_template('compute_bdii', info)
 
