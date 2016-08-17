@@ -28,17 +28,17 @@ GLUE2ComputingManagerTotalLogicalCPUs: ${static_compute_info['compute_total_core
 GLUE2ComputingManagerWorkingAreaTotal: ${static_compute_info['compute_total_ram']}
 
 % for url, endpoint in endpoints['endpoints'].iteritems():
-dn: GLUE2EndpointID=${url}_${endpoint['compute_api_type']}_${endpoint['compute_api_version']}_${endpoint['compute_api_authn_method']},GLUE2ServiceID=${static_compute_info['compute_service_name']}_cloud.compute,GLUE2GroupID=cloud,${static_compute_info['suffix']}
+dn: GLUE2EndpointID=${endpoint['endpoint_url']}_${endpoint['compute_api_type']}_${endpoint['compute_api_version']}_${endpoint['compute_api_authn_method']},GLUE2ServiceID=${static_compute_info['compute_service_name']}_cloud.compute,GLUE2GroupID=cloud,${static_compute_info['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2Endpoint
 objectClass: GLUE2ComputingEndpoint
 GLUE2EndpointHealthState: ok
-GLUE2EndpointID: ${url}_${endpoint['compute_api_type']}_${endpoint['compute_api_version']}_${endpoint['compute_api_authn_method']}
+GLUE2EndpointID: ${endpoint['endpoint_url']}_${endpoint['compute_api_type']}_${endpoint['compute_api_version']}_${endpoint['compute_api_authn_method']}
 GLUE2EndpointInterfaceName: ${endpoint['compute_api_type']}
 GLUE2EndpointQualityLevel: ${endpoint['compute_production_level']}
 GLUE2EndpointServiceForeignKey: ${static_compute_info['compute_service_name']}_cloud.compute
 GLUE2EndpointServingState: ${endpoint['compute_production_level']}
-GLUE2EndpointURL: ${url}
+GLUE2EndpointURL: ${endpoint['endpoint_url']}
 GLUE2ComputingEndpointComputingServiceForeignKey: ${static_compute_info['compute_service_name']}_cloud.compute
 GLUE2EndpointCapability: ${static_compute_info['compute_capabilities']}
 GLUE2EndpointImplementationName: ${static_compute_info['compute_middleware']}
