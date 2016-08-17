@@ -1,0 +1,95 @@
+<%
+    static_compute_info = attributes['static_compute_info']
+    endpoints = attributes['endpoints']
+    templates = attributes['templates']
+    images = attributes['images']
+%>\
+dn: GLUE2ServiceID=${static_compute_info['compute_service_name']}_cloud.compute,GLUE2GroupID=cloud,${static_compute_info['suffix']}
+objectClass: GLUE2Entity
+objectClass: GLUE2Service
+objectClass: GLUE2ComputingService
+GLUE2ServiceAdminDomainForeignKey: ${static_compute_info['site_name']}
+GLUE2ServiceID: ${static_compute_info['compute_service_name']}_cloud.compute
+GLUE2ServiceQualityLevel: ${static_compute_info['compute_service_production_level']}
+GLUE2ServiceType: IaaS
+GLUE2ServiceCapability: ${static_compute_info['compute_capabilities']}
+
+dn: GLUE2ManagerID=${static_compute_info['compute_service_name']}_cloud.compute_manager,GLUE2ServiceID=${static_compute_info['compute_service_name']}_cloud.compute,GLUE2GroupID=cloud,${static_compute_info['suffix']}
+objectClass: GLUE2Entity
+objectClass: GLUE2Manager
+objectClass: GLUE2ComputingManager
+GLUE2ManagerID: ${static_compute_info['compute_service_name']}_cloud.compute_manager
+GLUE2ManagerProductName: ${static_compute_info['compute_hypervisor']}
+GLUE2ManagerServiceForeignKey: ${static_compute_info['compute_service_name']}_cloud.compute
+GLUE2ComputingManagerComputingServiceForeignKey: ${static_compute_info['compute_service_name']}_cloud.compute
+GLUE2EntityName: Cloud Manager for ${static_compute_info['compute_service_name']}
+GLUE2ManagerProductVersion: ${static_compute_info['compute_hypervisor_version']}
+GLUE2ComputingManagerTotalLogicalCPUs: ${static_compute_info['compute_total_cores']}
+GLUE2ComputingManagerWorkingAreaTotal: ${static_compute_info['compute_total_ram']}
+
+% for url, endpoint in endpoints['endpoints'].iteritems():
+dn: GLUE2EndpointID=${url}_${endpoint['compute_api_type']}_${endpoint['compute_api_version']}_${endpoint['compute_api_authn_method']},GLUE2ServiceID=${static_compute_info['compute_service_name']}_cloud.compute,GLUE2GroupID=cloud,${static_compute_info['suffix']}
+objectClass: GLUE2Entity
+objectClass: GLUE2Endpoint
+objectClass: GLUE2ComputingEndpoint
+GLUE2EndpointHealthState: ok
+GLUE2EndpointID: ${url}_${endpoint['compute_api_type']}_${endpoint['compute_api_version']}_${endpoint['compute_api_authn_method']}
+GLUE2EndpointInterfaceName: ${endpoint['compute_api_type']}
+GLUE2EndpointQualityLevel: ${endpoint['compute_production_level']}
+GLUE2EndpointServiceForeignKey: ${static_compute_info['compute_service_name']}_cloud.compute
+GLUE2EndpointServingState: ${endpoint['compute_production_level']}
+GLUE2EndpointURL: ${url}
+GLUE2ComputingEndpointComputingServiceForeignKey: ${static_compute_info['compute_service_name']}_cloud.compute
+GLUE2EndpointCapability: ${static_compute_info['compute_capabilities']}
+GLUE2EndpointImplementationName: ${static_compute_info['compute_middleware']}
+GLUE2EndpointImplementationVersion: ${static_compute_info['compute_middleware_version']}
+GLUE2EndpointImplementor: ${static_compute_info['compute_middleware_developer']}
+GLUE2EndpointInterfaceVersion: ${endpoint['compute_api_version']}
+#GLUE2EndpointSemantics:
+#GLUE2EndpointSupportedProfile:
+GLUE2EntityOtherInfo: Authn=${endpoint['compute_api_authn_method']}
+GLUE2EndpointTechnology: ${endpoint['compute_api_endpoint_technology']}
+
+% endfor
+% for template_id, template in templates.iteritems():
+dn: GLUE2ResourceID=${template_id}_${template['compute_service_name']},GLUE2ServiceID=${template['compute_service_name']}_cloud.compute,GLUE2GroupID=cloud,${template['suffix']}
+objectClass: GLUE2Entity
+objectClass: GLUE2Resource
+objectClass: GLUE2ExecutionEnvironment
+GLUE2ExecutionEnvironmentConnectivityIn: TRUE
+GLUE2ExecutionEnvironmentConnectivityOut: TRUE
+GLUE2ExecutionEnvironmentVirtualMachine: TRUE
+GLUE2ExecutionEnvironmentMainMemorySize: ${template['template_memory']}
+GLUE2ExecutionEnvironmentPlatform: ${template['template_platform']}
+GLUE2ExecutionEnvironmentOSFamily: linux
+GLUE2ResourceManagerForeignKey: ${static_compute_info['compute_service_name']}_cloud.compute_manager
+GLUE2EntityName: ${template['template_id']}
+GLUE2ExecutionEnvironmentComputingManagerForeignKey: ${static_compute_info['compute_service_name']}_cloud.compute_manager
+GLUE2ExecutionEnvironmentCPUModel: virtual model
+GLUE2ExecutionEnvironmentCPUMultiplicity: multicpu-multicore
+GLUE2ExecutionEnvironmentCPUVendor: virtual vendor
+GLUE2ExecutionEnvironmentLogicalCPUs: ${template['template_cpu']}
+GLUE2ExecutionEnvironmentPhysicalCPUs: ${template['template_cpu']}
+
+% endfor
+% for image_id, image in images.iteritems():
+<%
+    if image['image_description'] is None:
+        image['image_description'] = ('%(image_name)s version '
+            '%(image_version)s on '
+            '%(image_os_family)s %(image_os_name)s '
+            '%(image_os_version)s '
+            '%(image_platform)s' % image)
+%>\
+description: ${image['image_description']}
+dn: GLUE2ApplicationEnvironmentID=${image_id}_${static_compute_info['compute_service_name']},GLUE2ServiceID=${static_compute_info['compute_service_name']}_cloud.compute,GLUE2GroupID=cloud,${static_compute_info['suffix']}
+objectClass: GLUE2Entity
+objectClass: GLUE2ApplicationEnvironment
+GLUE2ApplicationEnvironmentAppName: ${image['image_name']}
+GLUE2ApplicationEnvironmentAppVersion: ${image['image_version']}
+GLUE2ApplicationEnvironmentRepository: ${image['image_marketplace_id']}
+GLUE2ApplicationEnvironmentDescription: ${image['image_description']}
+GLUE2EntityName: ${image_id}
+GLUE2ApplicationEnvironmentComputingManagerForeignKey: ${static_compute_info['compute_service_name']}_cloud.compute_manager
+
+% endfor
