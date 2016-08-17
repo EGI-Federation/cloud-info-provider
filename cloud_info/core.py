@@ -95,14 +95,9 @@ class ComputeBDII(BaseBDII):
     def __init__(self, opts):
         super(ComputeBDII, self).__init__(opts)
 
-        # self.templates = ('compute_service',
-        #                   'compute_endpoint',
-        #                   'execution_environment',
-        #                   'application_environment')
         self.templates = ['compute_bdii']
 
     def render(self):
-        # output = []
         endpoints = self._get_info_from_providers('get_compute_endpoints')
 
         if not endpoints.get('endpoints'):
