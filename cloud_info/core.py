@@ -99,7 +99,7 @@ class ComputeBDII(BaseBDII):
         #                   'compute_endpoint',
         #                   'execution_environment',
         #                   'application_environment')
-        self.templates = ('compute_bdii')
+        self.templates = ['compute_bdii']
 
     def render(self):
         # output = []
