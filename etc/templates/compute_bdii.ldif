@@ -81,7 +81,6 @@ GLUE2ExecutionEnvironmentPhysicalCPUs: ${template['template_cpu']}
             '%(image_os_version)s '
             '%(image_platform)s' % image)
 %>\
-description: ${image['image_description']}
 dn: GLUE2ApplicationEnvironmentID=${image_id}_${static_compute_info['compute_service_name']},GLUE2ServiceID=${static_compute_info['compute_service_name']}_cloud.compute,GLUE2GroupID=cloud,${static_compute_info['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2ApplicationEnvironment
