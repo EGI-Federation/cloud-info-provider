@@ -1,9 +1,0 @@
-dn: GLUE2ApplicationEnvironmentID=${attributes['image_id']}_${attributes['compute_service_name']},GLUE2ServiceID=${attributes['compute_service_name']}_cloud.compute,GLUE2GroupID=cloud,${attributes['suffix']}
-objectClass: GLUE2Entity
-objectClass: GLUE2ApplicationEnvironment
-GLUE2ApplicationEnvironmentAppName: ${attributes['image_name']}
-GLUE2ApplicationEnvironmentAppVersion: ${attributes['image_version']}
-GLUE2ApplicationEnvironmentRepository: ${attributes['image_marketplace_id']}
-GLUE2ApplicationEnvironmentDescription: ${attributes['image_description']}
-GLUE2EntityName: ${attributes['image_id']}
-GLUE2ApplicationEnvironmentComputingManagerForeignKey: ${attributes['compute_service_name']}_cloud.compute_manager
