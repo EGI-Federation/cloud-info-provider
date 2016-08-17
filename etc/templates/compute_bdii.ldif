@@ -81,14 +81,14 @@ GLUE2ExecutionEnvironmentPhysicalCPUs: ${template['template_cpu']}
             '%(image_os_version)s '
             '%(image_platform)s' % image)
 %>\
-dn: GLUE2ApplicationEnvironmentID=${image_id}_${static_compute_info['compute_service_name']},GLUE2ServiceID=${static_compute_info['compute_service_name']}_cloud.compute,GLUE2GroupID=cloud,${static_compute_info['suffix']}
+dn: GLUE2ApplicationEnvironmentID=${image['image_id']}_${static_compute_info['compute_service_name']},GLUE2ServiceID=${static_compute_info['compute_service_name']}_cloud.compute,GLUE2GroupID=cloud,${static_compute_info['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2ApplicationEnvironment
 GLUE2ApplicationEnvironmentAppName: ${image['image_name']}
 GLUE2ApplicationEnvironmentAppVersion: ${image['image_version']}
 GLUE2ApplicationEnvironmentRepository: ${image['image_marketplace_id']}
 GLUE2ApplicationEnvironmentDescription: ${image['image_description']}
-GLUE2EntityName: ${image_id}
+GLUE2EntityName: ${image['image_id']}
 GLUE2ApplicationEnvironmentComputingManagerForeignKey: ${static_compute_info['compute_service_name']}_cloud.compute_manager
 
 % endfor
