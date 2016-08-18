@@ -39,9 +39,9 @@ installation user should be able to write to it, so it is recommended to create
 it before using pip.
 
 ``` sh
-sudo mkdir /etc/cloud-info-provider-indigo
-sudo chgrp you_user /etc/cloud-info-provider-indigo
-sudo chmod g+rwx /etc/cloud-info-provider-indigo
+sudo mkdir /etc/cloud-info-provider
+sudo chgrp you_user /etc/cloud-info-provider
+sudo chmod g+rwx /etc/cloud-info-provider
 ```
 
 ```
