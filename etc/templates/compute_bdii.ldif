@@ -27,7 +27,7 @@ GLUE2ManagerProductVersion: ${static_compute_info['compute_hypervisor_version']}
 GLUE2ComputingManagerTotalLogicalCPUs: ${static_compute_info['compute_total_cores']}
 GLUE2ComputingManagerWorkingAreaTotal: ${static_compute_info['compute_total_ram']}
 
-% for url, endpoint in endpoints['endpoints'].iteritems():
+% for url, endpoint in endpoints['endpoints'].items():
 dn: GLUE2EndpointID=${endpoint['endpoint_url']}_${endpoint['compute_api_type']}_${endpoint['compute_api_version']}_${endpoint['compute_api_authn_method']},GLUE2ServiceID=${static_compute_info['compute_service_name']}_cloud.compute,GLUE2GroupID=cloud,${static_compute_info['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2Endpoint
@@ -51,7 +51,7 @@ GLUE2EntityOtherInfo: Authn=${endpoint['compute_api_authn_method']}
 GLUE2EndpointTechnology: ${endpoint['compute_api_endpoint_technology']}
 
 % endfor
-% for template_id, template in templates.iteritems():
+% for template_id, template in templates.items():
 dn: GLUE2ResourceID=${template_id}_${template['compute_service_name']},GLUE2ServiceID=${template['compute_service_name']}_cloud.compute,GLUE2GroupID=cloud,${template['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2Resource
@@ -72,7 +72,7 @@ GLUE2ExecutionEnvironmentLogicalCPUs: ${template['template_cpu']}
 GLUE2ExecutionEnvironmentPhysicalCPUs: ${template['template_cpu']}
 
 % endfor
-% for image_id, image in images.iteritems():
+% for image_id, image in images.items():
 <%
     if image['image_description'] is None:
         image['image_description'] = ('%(image_name)s version '
