@@ -44,13 +44,15 @@ class OpenStackProvider(providers.BaseProvider):
 
         client_cls = novaclient.client.Client
         if insecure:
-            self.api = client_cls(os_username,
+            self.api = client_cls(2,
+                                  os_username,
                                   os_password,
                                   os_tenant_name,
                                   auth_url=os_auth_url,
                                   insecure=insecure)
         else:
-            self.api = client_cls(os_username,
+            self.api = client_cls(2,
+                                  os_username,
                                   os_password,
                                   os_tenant_name,
                                   auth_url=os_auth_url,
