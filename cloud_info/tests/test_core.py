@@ -208,6 +208,15 @@ class ComputeBDIITest(BaseTest):
         templates = DATA.compute_templates
         images = DATA.compute_images
 
+        for url, endpoint in endpoints['endpoints'].items():
+            endpoint.update(static_compute_info)
+
+        for template_id, template in templates.items():
+            template.update(static_compute_info)
+
+        for image_id, image in images.items():
+            image.update(static_compute_info)
+
         info = {}
         info.update({'endpoints': endpoints})
         info.update({'static_compute_info': static_compute_info})
