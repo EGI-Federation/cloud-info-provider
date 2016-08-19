@@ -1,6 +1,6 @@
 <% last_img_index = len(attributes["images"])-1 %>\
 [
-% for image_id, image in attributes["images"].iteritems():
+% for image_id, image in attributes["images"].items():
 <%
     if "dockerid" in image:
         image_name = "%s:%s" % (image["dockername"], image["dockertag"])
