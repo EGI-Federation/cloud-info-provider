@@ -1,6 +1,6 @@
 # Cloud Information provider
 
-[![BuildStatus](https://travis-ci.org/EGI-FCTF/cloud-bdii-provider.svg?branch=master)](https://travis-ci.org/EGI-FCTF/cloud-bdii-provider)
+[![BuildStatus](https://travis-ci.org/EGI-FCTF/cloud-info-provider.svg?branch=master)](https://travis-ci.org/EGI-FCTF/cloud-info-provider)
 
 The Cloud Information provider generates a representation of cloud resources,
 that can be published inside a BDII (using the provided LDIF templates for a
@@ -45,8 +45,8 @@ sudo chmod g+rwx /etc/cloud-info-provider
 ```
 
 ```
-git clone https://github.com/EGI-FCTF/cloud-bdii-provider
-cd cloud-bdii-provider 
+git clone https://github.com/EGI-FCTF/cloud-info-provider
+cd cloud-info-provider
 pip install .
 ```
 
