@@ -17,6 +17,8 @@ class OpenStackProvider(providers.BaseProvider):
 
         # Remove info log messages from output
         logging.getLogger('requests').setLevel(logging.WARNING)
+        logging.getLogger('urllib3').setLevel(logging.WARNING)
+        logging.getLogger('novaclient.client').setLevel(logging.WARNING)
 
         (os_username, os_password, os_tenant_name, os_auth_url,
             cacert, insecure, legacy_occi_os) = (opts.os_username,
