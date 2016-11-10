@@ -5,7 +5,7 @@
 The Cloud Information provider generates a representation of cloud resources,
 that can be published inside a BDII (using the provided LDIF templates for a
 GlueSchema v2 representation) or any other component like the INDIGO
-Configuration Management Database (CMDB) (Using JSON templates).
+Configuration Management Database (CMDB) (Using specific templates).
 
 The generated representation is described using a
 [Mako](http://www.makotemplates.org/) template having access to the cloud
