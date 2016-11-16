@@ -4,8 +4,8 @@ import socket
 
 import yaml
 
-from cloud_bdii import exceptions
-from cloud_bdii import providers
+from cloud_info import exceptions
+from cloud_info import providers
 
 
 class StaticProvider(providers.BaseProvider):

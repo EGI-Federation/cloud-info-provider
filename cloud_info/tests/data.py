@@ -183,6 +183,8 @@ class OpenStackFakes(object):
             'Image',
             ('name', 'id', 'links', 'metadata'))
 
+        # XXX add docker information
+        # XXX some fake images should include more information from AppDB
         images = (
             {
                 'name': 'fooimage',
@@ -197,6 +199,16 @@ class OpenStackFakes(object):
                 'name': 'barimage',
                 'id': 'bar id',
                 'metadata': {},
+                'links': []
+            },
+            {
+                'name': 'bazimage',
+                'id': 'baz id',
+                'metadata': {
+                    'docker_id': 'sha1:xxxxxxxxxxxxxxxxxxxxxxxxxx',
+                    'docker_tag': 'latest',
+                    'docker_name': 'test/image',
+                },
                 'links': []
             },
         )

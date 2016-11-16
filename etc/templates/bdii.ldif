@@ -2,76 +2,76 @@ dn: GLUE2GroupID=resource,o=glue
 objectClass: GLUE2Group
 GLUE2GroupID: resource
 
-dn: GLUE2ServiceID=%(site_name)s_sitebdii,GLUE2GroupID=resource,o=glue
+dn: GLUE2ServiceID=${attributes['site_name']}_sitebdii,GLUE2GroupID=resource,o=glue
 objectClass: GLUE2Service
-GLUE2ServiceAdminDomainForeignKey: %(site_name)s
-GLUE2ServiceID: %(site_name)s_sitebdii
-GLUE2ServiceQualityLevel: %(site_production_level)s
+GLUE2ServiceAdminDomainForeignKey: ${attributes['site_name']}
+GLUE2ServiceID: ${attributes['site_name']}_sitebdii
+GLUE2ServiceQualityLevel: ${attributes['site_production_level']}
 GLUE2ServiceType: bdii_site
-GLUE2EntityName: %(site_name)s_sitebdii
+GLUE2EntityName: ${attributes['site_name']}_sitebdii
 GLUE2ServiceCapability: information.model
 GLUE2ServiceCapability: information.discovery
 GLUE2ServiceCapability: information.monitoring
 GLUE2ServiceComplexity: endpointType=1, share=0, resource=0
 
-dn: GLUE2EndpointID=%(site_bdii_host)s:%(site_bdii_port)s_sitebdii_endpoint,GLUE2ServiceID=%(site_name)s_sitebdii,GLUE2GroupID=resource,o=glue
+dn: GLUE2EndpointID=${attributes['site_bdii_host']}:${attributes['site_bdii_port']}_sitebdii_endpoint,GLUE2ServiceID=${attributes['site_name']}_sitebdii,GLUE2GroupID=resource,o=glue
 objectClass: GLUE2Endpoint
 GLUE2EndpointHealthState: ok
-GLUE2EndpointID: %(site_bdii_host)s:%(site_bdii_port)s_sitebdii_endpoint
+GLUE2EndpointID: ${attributes['site_bdii_host']}:${attributes['site_bdii_port']}_sitebdii_endpoint
 GLUE2EndpointInterfaceName: bdii_site
-GLUE2EndpointQualityLevel: %(site_production_level)s
-GLUE2EndpointServiceForeignKey: %(site_name)s_sitebdii
-GLUE2EndpointServingState: %(site_production_level)s
-GLUE2EndpointURL: ldap://%(site_bdii_host)s:%(site_bdii_port)s/%(suffix)s
+GLUE2EndpointQualityLevel: ${attributes['site_production_level']}
+GLUE2EndpointServiceForeignKey: ${attributes['site_name']}_sitebdii
+GLUE2EndpointServingState: ${attributes['site_production_level']}
+GLUE2EndpointURL: ldap://${attributes['site_bdii_host']}:${attributes['site_bdii_port']}/${attributes['suffix']}
 GLUE2EndpointCapability: information.model
 GLUE2EndpointCapability: information.discovery
 GLUE2EndpointCapability: information.monitoring
 GLUE2EndpointDowntimeInfo: See the GOC DB for downtimes: https://goc.egi.eu/
 GLUE2EndpointHealthStateInfo: BDII Runnning [ OK ]
-GLUE2EntityName: bdii_site endpoint for Service %(site_name)s
+GLUE2EntityName: bdii_site endpoint for Service ${attributes['site_name']}
 
-dn: GLUE2PolicyID=%(site_bdii_host)s:%(site_bdii_port)s_sitebdii_endpoint_policy,GLUE2EndpointID=%(site_bdii_host)s:%(site_bdii_port)s_sitebdii_endpoint,GLUE2ServiceID=%(site_name)s_sitebdii,GLUE2GroupID=resource,o=glue
+dn: GLUE2PolicyID=${attributes['site_bdii_host']}:${attributes['site_bdii_port']}_sitebdii_endpoint_policy,GLUE2EndpointID=${attributes['site_bdii_host']}:${attributes['site_bdii_port']}_sitebdii_endpoint,GLUE2ServiceID=${attributes['site_name']}_sitebdii,GLUE2GroupID=resource,o=glue
 objectClass: GLUE2AccessPolicy
 objectClass: GLUE2Policy
-GLUE2AccessPolicyEndpointForeignKey: %(site_bdii_host)s:%(site_bdii_port)s_sitebdii_endpoint
-GLUE2PolicyID: %(site_bdii_host)s:%(site_bdii_port)s_sitebdii_endpoint_policy
+GLUE2AccessPolicyEndpointForeignKey: ${attributes['site_bdii_host']}:${attributes['site_bdii_port']}_sitebdii_endpoint
+GLUE2PolicyID: ${attributes['site_bdii_host']}:${attributes['site_bdii_port']}_sitebdii_endpoint_policy
 GLUE2PolicyRule: ALL
 GLUE2PolicyScheme: org.glite.standard
-GLUE2EntityName: Access control rules for Endpoint %(site_name)s
+GLUE2EntityName: Access control rules for Endpoint ${attributes['site_name']}
 
-dn: GLUE2ServiceID=%(site_name)s_sitebdii,GLUE2GroupID=resource,%(suffix)s
+dn: GLUE2ServiceID=${attributes['site_name']}_sitebdii,GLUE2GroupID=resource,${attributes['suffix']}
 objectClass: GLUE2Service
-GLUE2ServiceAdminDomainForeignKey: %(site_name)s
-GLUE2ServiceID: %(site_name)s_sitebdii
-GLUE2ServiceQualityLevel: %(site_production_level)s
+GLUE2ServiceAdminDomainForeignKey: ${attributes['site_name']}
+GLUE2ServiceID: ${attributes['site_name']}_sitebdii
+GLUE2ServiceQualityLevel: ${attributes['site_production_level']}
 GLUE2ServiceType: bdii_site
-GLUE2EntityName: %(site_name)s_sitebdii
+GLUE2EntityName: ${attributes['site_name']}_sitebdii
 GLUE2ServiceCapability: information.model
 GLUE2ServiceCapability: information.discovery
 GLUE2ServiceCapability: information.monitoring
 GLUE2ServiceComplexity: endpointType=1, share=0, resource=0
 
-dn: GLUE2EndpointID=%(site_bdii_host)s:%(site_bdii_port)s_sitebdii_endpoint,GLUE2ServiceID=%(site_name)s_sitebdii,GLUE2GroupID=resource,%(suffix)s
+dn: GLUE2EndpointID=${attributes['site_bdii_host']}:${attributes['site_bdii_port']}_sitebdii_endpoint,GLUE2ServiceID=${attributes['site_name']}_sitebdii,GLUE2GroupID=resource,${attributes['suffix']}
 objectClass: GLUE2Endpoint
 GLUE2EndpointHealthState: ok
-GLUE2EndpointID: %(site_bdii_host)s:%(site_bdii_port)s_sitebdii_endpoint
+GLUE2EndpointID: ${attributes['site_bdii_host']}:${attributes['site_bdii_port']}_sitebdii_endpoint
 GLUE2EndpointInterfaceName: bdii_site
-GLUE2EndpointQualityLevel: %(site_production_level)s
-GLUE2EndpointServiceForeignKey: %(site_name)s_sitebdii
-GLUE2EndpointServingState: %(site_production_level)s
-GLUE2EndpointURL: ldap://%(site_bdii_host)s:%(site_bdii_port)s/%(suffix)s
+GLUE2EndpointQualityLevel: ${attributes['site_production_level']}
+GLUE2EndpointServiceForeignKey: ${attributes['site_name']}_sitebdii
+GLUE2EndpointServingState: ${attributes['site_production_level']}
+GLUE2EndpointURL: ldap://${attributes['site_bdii_host']}:${attributes['site_bdii_port']}/${attributes['suffix']}
 GLUE2EndpointCapability: information.model
 GLUE2EndpointCapability: information.discovery
 GLUE2EndpointCapability: information.monitoring
 GLUE2EndpointDowntimeInfo: See the GOC DB for downtimes: https://goc.egi.eu/
 GLUE2EndpointHealthStateInfo: BDII Runnning [ OK ]
-GLUE2EntityName: bdii_site endpoint for Service %(site_name)s
+GLUE2EntityName: bdii_site endpoint for Service ${attributes['site_name']}
 
-dn: GLUE2PolicyID=%(site_bdii_host)s:%(site_bdii_port)s_sitebdii_endpoint_policy,GLUE2EndpointID=%(site_bdii_host)s:%(site_bdii_port)s_sitebdii_endpoint,GLUE2ServiceID=%(site_name)s_sitebdii,GLUE2GroupID=resource,%(suffix)s
+dn: GLUE2PolicyID=${attributes['site_bdii_host']}:${attributes['site_bdii_port']}_sitebdii_endpoint_policy,GLUE2EndpointID=${attributes['site_bdii_host']}:${attributes['site_bdii_port']}_sitebdii_endpoint,GLUE2ServiceID=${attributes['site_name']}_sitebdii,GLUE2GroupID=resource,${attributes['suffix']}
 objectClass: GLUE2AccessPolicy
 objectClass: GLUE2Policy
-GLUE2AccessPolicyEndpointForeignKey: %(site_bdii_host)s:%(site_bdii_port)s_sitebdii_endpoint
-GLUE2PolicyID: %(site_bdii_host)s:%(site_bdii_port)s_sitebdii_endpoint_policy
+GLUE2AccessPolicyEndpointForeignKey: ${attributes['site_bdii_host']}:${attributes['site_bdii_port']}_sitebdii_endpoint
+GLUE2PolicyID: ${attributes['site_bdii_host']}:${attributes['site_bdii_port']}_sitebdii_endpoint_policy
 GLUE2PolicyRule: ALL
 GLUE2PolicyScheme: org.glite.standard
-GLUE2EntityName: Access control rules for Endpoint %(site_name)s
+GLUE2EntityName: Access control rules for Endpoint ${attributes['site_name']}

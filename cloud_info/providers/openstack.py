@@ -1,6 +1,8 @@
-from cloud_bdii import exceptions
-from cloud_bdii import providers
-from cloud_bdii import utils
+import logging
+
+from cloud_info import exceptions
+from cloud_info import providers
+from cloud_info import utils
 
 
 class OpenStackProvider(providers.BaseProvider):
@@ -12,6 +14,11 @@ class OpenStackProvider(providers.BaseProvider):
         except ImportError:
             msg = 'Cannot import novaclient module.'
             raise exceptions.OpenStackProviderException(msg)
+
+        # Remove info log messages from output
+        logging.getLogger('requests').setLevel(logging.WARNING)
+        logging.getLogger('urllib3').setLevel(logging.WARNING)
+        logging.getLogger('novaclient.client').setLevel(logging.WARNING)
 
         (os_username, os_password, os_tenant_name, os_auth_url,
             cacert, insecure, legacy_occi_os) = (opts.os_username,
@@ -42,15 +49,17 @@ class OpenStackProvider(providers.BaseProvider):
                    'via either --os-auth-url or env[OS_AUTH_URL] ')
             raise exceptions.OpenStackProviderException(msg)
 
-        client_cls = novaclient.client.get_client_class('2')
+        client_cls = novaclient.client.Client
         if insecure:
-            self.api = client_cls(os_username,
+            self.api = client_cls(2,
+                                  os_username,
                                   os_password,
                                   os_tenant_name,
                                   auth_url=os_auth_url,
                                   insecure=insecure)
         else:
-            self.api = client_cls(os_username,
+            self.api = client_cls(2,
+                                  os_username,
                                   os_password,
                                   os_tenant_name,
                                   auth_url=os_auth_url,
@@ -137,8 +146,8 @@ class OpenStackProvider(providers.BaseProvider):
         img_sch = defaults.get('image_schema', 'os_tpl')
 
         for image in self.api.images.list(detailed=True):
-            aux = template.copy()
-            aux.update(defaults)
+            aux_img = template.copy()
+            aux_img.update(defaults)
             link = None
             for link in image.links:
                 # TODO(aloga): Check if this is the needed parameter
@@ -148,12 +157,16 @@ class OpenStackProvider(providers.BaseProvider):
                     break
             # FIXME(aloga): we need to add the version, etc from
             # metadata
-            aux.update({
+            aux_img.update({
                 'image_name': image.name,
                 'image_id': '%s#%s' % (img_sch,
                                        OpenStackProvider.occify(image.id))
             })
 
+            for name, value in image.metadata.items():
+                aux_img[name] = value
+
+            # XXX could probably be move to the mako template
             image_descr = None
             if image.metadata.get('vmcatcher_event_dc_description',
                                   None) is not None:
@@ -173,10 +186,10 @@ class OpenStackProvider(providers.BaseProvider):
                 continue
 
             if marketplace_id:
-                aux['image_marketplace_id'] = marketplace_id
+                aux_img['image_marketplace_id'] = marketplace_id
             if image_descr:
-                aux['image_description'] = image_descr
-            images[image.id] = aux
+                aux_img['image_description'] = image_descr
+            images[image.id] = aux_img
         return images
 
     @staticmethod

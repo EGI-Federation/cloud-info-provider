@@ -1,2 +1,4 @@
+Mako
 PyYAML
 six
+pbr
