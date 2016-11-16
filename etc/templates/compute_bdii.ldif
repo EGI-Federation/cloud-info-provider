@@ -52,7 +52,7 @@ GLUE2EndpointTechnology: ${endpoint['compute_api_endpoint_technology']}
 
 % endfor
 % for template_id, template in templates.items():
-dn: GLUE2ResourceID=${template_id}_${template['compute_service_name']},GLUE2ServiceID=${template['compute_service_name']}_cloud.compute,GLUE2GroupID=cloud,${template['suffix']}
+dn: GLUE2ResourceID=${template['template_id']}_${template['compute_service_name']},GLUE2ServiceID=${template['compute_service_name']}_cloud.compute,GLUE2GroupID=cloud,${template['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2Resource
 objectClass: GLUE2ExecutionEnvironment
