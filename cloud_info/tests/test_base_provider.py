@@ -1,11 +1,11 @@
 import unittest
 
-import cloud_bdii.providers
+import cloud_info.providers
 
 
 class BaseProviderTest(unittest.TestCase):
     def setUp(self):
-        self.provider = cloud_bdii.providers.BaseProvider(None)
+        self.provider = cloud_info.providers.BaseProvider(None)
 
     def test_provider_get_site_info(self):
         self.assertEqual({}, self.provider.get_site_info())

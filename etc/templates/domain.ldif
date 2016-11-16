@@ -1,47 +1,47 @@
-dn: %(suffix)s
+dn: ${attributes['suffix']}
 objectClass: GLUE2AdminDomain
 objectClass: GLUE2Domain
-GLUE2DomainID: %(site_name)s
-GLUE2DomainDescription: %(site_name)s
-GLUE2DomainWWW: %(site_url)s
-GLUE2EntityOtherInfo: EGI_NGI=%(site_ngi)s
+GLUE2DomainID: ${attributes['site_name']}
+GLUE2DomainDescription: ${attributes['site_name']}
+GLUE2DomainWWW: ${attributes['site_url']}
+GLUE2EntityOtherInfo: EGI_NGI=${attributes['site_ngi']}
 
-dn: GLUE2LocationID=location.%(site_name)s,%(suffix)s
+dn: GLUE2LocationID=location.${attributes['site_name']},${attributes['suffix']}
 objectClass: GLUE2Location
-GLUE2LocationID: location.%(site_name)s
-GLUE2LocationCountry: %(site_country)s
-GLUE2LocationDomainForeignKey: %(site_name)s
-GLUE2LocationLongitude: %(site_longitude)s
-GLUE2LocationLatitude: %(site_latitude)s
+GLUE2LocationID: location.${attributes['site_name']}
+GLUE2LocationCountry: ${attributes['site_country']}
+GLUE2LocationDomainForeignKey: ${attributes['site_name']}
+GLUE2LocationLongitude: ${attributes['site_longitude']}
+GLUE2LocationLatitude: ${attributes['site_latitude']}
 
-dn: GLUE2ContactID=general.contact.%(site_name)s,%(suffix)s
+dn: GLUE2ContactID=general.contact.${attributes['site_name']},${attributes['suffix']}
 objectClass: GLUE2Contact
-GLUE2ContactDetail: mailto:%(site_general_contact)s
-GLUE2ContactID: general.contact.%(site_name)s
+GLUE2ContactDetail: mailto:${attributes['site_general_contact']}
+GLUE2ContactID: general.contact.${attributes['site_name']}
 GLUE2ContactType: general
-GLUE2ContactDomainForeignKey: %(site_name)s
+GLUE2ContactDomainForeignKey: ${attributes['site_name']}
 
-dn: GLUE2ContactID=sysadmin.contact.%(site_name)s,%(suffix)s
+dn: GLUE2ContactID=sysadmin.contact.${attributes['site_name']},${attributes['suffix']}
 objectClass: GLUE2Contact
-GLUE2ContactDetail: mailto:%(site_sysadmin_contact)s
-GLUE2ContactID: sysadmin.contact.%(site_name)s
+GLUE2ContactDetail: mailto:${attributes['site_sysadmin_contact']}
+GLUE2ContactID: sysadmin.contact.${attributes['site_name']}
 GLUE2ContactType: sysadmin
-GLUE2ContactDomainForeignKey: %(site_name)s
+GLUE2ContactDomainForeignKey: ${attributes['site_name']}
 
-dn: GLUE2ContactID=security.contact.%(site_name)s,%(suffix)s
+dn: GLUE2ContactID=security.contact.${attributes['site_name']},${attributes['suffix']}
 objectClass: GLUE2Contact
-GLUE2ContactDetail: mailto:%(site_security_contact)s
-GLUE2ContactID: security.contact.%(site_name)s
+GLUE2ContactDetail: mailto:${attributes['site_security_contact']}
+GLUE2ContactID: security.contact.${attributes['site_name']}
 GLUE2ContactType: security
-GLUE2ContactDomainForeignKey: %(site_name)s
+GLUE2ContactDomainForeignKey: ${attributes['site_name']}
 
-dn: GLUE2ContactID=usersupport.contact.%(site_name)s,%(suffix)s
+dn: GLUE2ContactID=usersupport.contact.${attributes['site_name']},${attributes['suffix']}
 objectClass: GLUE2Contact
-GLUE2ContactDetail: mailto:%(site_user_support_contact)s
-GLUE2ContactID: usersupport.contact.%(site_name)s
+GLUE2ContactDetail: mailto:${attributes['site_user_support_contact']}
+GLUE2ContactID: usersupport.contact.${attributes['site_name']}
 GLUE2ContactType: usersupport
-GLUE2ContactDomainForeignKey: %(site_name)s
+GLUE2ContactDomainForeignKey: ${attributes['site_name']}
 
-dn: GLUE2GroupID=resource,%(suffix)s
+dn: GLUE2GroupID=resource,${attributes['suffix']}
 objectClass: GLUE2Group
 GLUE2GroupID: resource

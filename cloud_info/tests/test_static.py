@@ -4,9 +4,9 @@ import unittest
 import mock
 import six
 
-from cloud_bdii import exceptions
-from cloud_bdii.providers import static as static_provider
-from cloud_bdii.tests import data
+from cloud_info import exceptions
+from cloud_info.providers import static as static_provider
+from cloud_info.tests import data
 
 DATA = data.DATA
 
@@ -249,7 +249,7 @@ class StaticProviderTest(unittest.TestCase):
     def test_get_site_info_no_full_bdii(self):
         data = six.StringIO("SITE_NAME = SITE_NAME")
         expected = DATA.site_info
-        with mock.patch('cloud_bdii.providers.static.open',
+        with mock.patch('cloud_info.providers.static.open',
                         create=True) as m_open:
             m_open.return_value.__enter__ = lambda x: data
             m_open.return_value.__exit__ = mock.Mock()
@@ -258,7 +258,7 @@ class StaticProviderTest(unittest.TestCase):
     def test_get_site_info_full_bdii(self):
         expected = DATA.site_info_full
         data = six.StringIO("SITE_NAME = SITE_NAME")
-        with mock.patch('cloud_bdii.providers.static.open',
+        with mock.patch('cloud_info.providers.static.open',
                         create=True) as m_open:
             m_open.return_value.__enter__ = lambda x: data
             m_open.return_value.__exit__ = mock.Mock()

@@ -12,5 +12,5 @@ if cmd_folder not in sys.path:
     sys.path.insert(0, cmd_folder)
 os.chdir(cmd_folder)
 
-import cloud_bdii.core
-cloud_bdii.core.main()
+import cloud_info.core
+cloud_info.core.main()

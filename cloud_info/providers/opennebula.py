@@ -10,9 +10,9 @@ import xml.etree.ElementTree as xee
 
 from six.moves import urllib
 
-from cloud_bdii import exceptions
-from cloud_bdii import providers
-from cloud_bdii import utils
+from cloud_info import exceptions
+from cloud_info import providers
+from cloud_info import utils
 
 
 class OpenNebulaBaseProvider(providers.BaseProvider):
@@ -154,6 +154,105 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
 class OpenNebulaProvider(OpenNebulaBaseProvider):
     def __init__(self, opts):
         super(OpenNebulaProvider, self).__init__(opts)
+
+
+class IndigoONProvider(OpenNebulaBaseProvider):
+    def __init__(self, opts):
+        super(IndigoONProvider, self).__init__(opts)
+
+    def get_templates(self):
+        template = {
+            'template_id': None,
+            'template_name': None,
+            'template_description': None,
+            'template_memory': None,
+            'template_cpu': None,
+            'template_platform': 'amd64',
+            'network': 'private',
+        }
+        defaults = self.static.get_image_defaults(prefix=True)
+        img_schema = defaults.get('image_schema', 'os_tpl')
+
+        templates = {}
+        one_templates = self._get_one_templates()
+        one_images = self._get_one_images()
+
+        # 1. take a VMTEMPLATE from templatepool
+        # 2. use metadata from VMTEMPLATE to create an os_tpl mixin
+        # 3. take the first disk from VMTEMPLATE
+        # 4. use disk's IMAGE element to find it in the imagepool
+        # 5. associate selected IMAGE metadata (*VMCATCHER* stuff) with the tpl
+        # TODO(document)
+        for tpl_id, tpl in one_templates.items():
+            aux_tpl = template.copy()
+            aux_tpl.update(defaults)
+            if "template" in tpl:
+                tpl_tpl = tpl["template"]
+                if "description" in tpl_tpl:
+                    aux_tpl["template_description"] = tpl_tpl["description"]
+                if "cpu" in tpl_tpl:
+                    aux_tpl["template_cpu"] = tpl_tpl["cpu"]
+                if "memory" in tpl_tpl:
+                    aux_tpl["template_memory"] = tpl_tpl["memory"]
+            aux_tpl["template_id"] = self._gen_id(tpl["name"],
+                                                  tpl_id, img_schema)
+            disk = tpl.get("template", {}).get("disk", {}).get("image", None)
+            if disk is not None:
+                aux = one_images.get(disk, {}).get("template", {})
+                aux_tpl["image_marketplace_id"] = aux.get(
+                    "vmcatcher_event_ad_mpuri", None
+                )
+                aux_tpl["image_description"] = aux.get("description", None)
+                aux_tpl["image_version"] = aux.get(
+                    "vmcatcher_event_hv_version",
+                    None
+                )
+            if (self.opts.vmcatcher_images and
+                    aux_tpl.get("image_marketplace_id", None) is None):
+                continue
+            templates[tpl_id] = aux_tpl
+        return templates
+
+    def get_images(self):
+        defaults = self.static.get_image_defaults(prefix=True)
+
+        images = {}
+        # XXX need to call this or tests will fail
+        # as templates will be returned instead of images
+        self._get_one_templates()
+        one_images = self._get_one_images()
+
+        # add all the custom fields
+        for img_name, img in one_images.items():
+            aux_img = {}
+            aux_img.update(defaults)
+            aux_img["image_name"] = img_name
+            img_id = img["id"]
+            aux_img["image_id"] = img_id
+
+            # XXX could probably be move to the mako template
+            image_descr = None
+
+            if "template" in img:
+                aux = img["template"]
+                for name, value in aux.items():
+                    aux_img[name] = value
+                aux_img["image_marketplace_id"] = aux.get(
+                    "vmcatcher_event_ad_mpuri", None)
+                if aux.get('vmcatcher_event_dc_description', None) is not None:
+                    image_descr = aux['vmcatcher_event_dc_description']
+                elif "description" in aux:
+                    image_descr = aux.get("description")
+                elif 'vmcatcher_event_dc_title' in aux:
+                    image_descr = aux['vmcatcher_event_dc_title']
+
+            if (self.opts.vmcatcher_images and
+                    aux_img.get("image_marketplace_id", None) is None):
+                continue
+            if image_descr:
+                aux_img['image_description'] = image_descr
+            images[img_id] = aux_img
+        return images
 
 
 class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):

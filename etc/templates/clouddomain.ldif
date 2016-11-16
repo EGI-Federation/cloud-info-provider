@@ -1,3 +1,3 @@
-dn: GLUE2GroupID=cloud,%(suffix)s
+dn: GLUE2GroupID=cloud,${attributes['suffix']}
 objectClass: GLUE2Group
 GLUE2GroupID: cloud
