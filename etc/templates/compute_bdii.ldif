@@ -63,7 +63,7 @@ GLUE2ExecutionEnvironmentMainMemorySize: ${template['template_memory']}
 GLUE2ExecutionEnvironmentPlatform: ${template['template_platform']}
 GLUE2ExecutionEnvironmentOSFamily: linux
 GLUE2ResourceManagerForeignKey: ${endpoint['compute_service_name']}_cloud.compute_manager
-GLUE2EntityName: ${template['template_id']}
+GLUE2EntityName: http://schemas.openstack.org/template/${template['template_id']}
 GLUE2ExecutionEnvironmentComputingManagerForeignKey: ${endpoint['compute_service_name']}_cloud.compute_manager
 GLUE2ExecutionEnvironmentCPUModel: virtual model
 GLUE2ExecutionEnvironmentCPUMultiplicity: multicpu-multicore
@@ -88,7 +88,7 @@ GLUE2ApplicationEnvironmentAppName: ${image['image_name']}
 GLUE2ApplicationEnvironmentAppVersion: ${image['image_version']}
 GLUE2ApplicationEnvironmentRepository: ${image['image_marketplace_id']}
 GLUE2ApplicationEnvironmentDescription: ${image['image_description']}
-GLUE2EntityName: ${image['image_id']}
+GLUE2EntityName: http://schemas.openstack.org/template/${image['image_id']}
 GLUE2ApplicationEnvironmentComputingManagerForeignKey: ${endpoint['compute_service_name']}_cloud.compute_manager
 
 % endfor
