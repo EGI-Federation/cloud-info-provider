@@ -185,11 +185,30 @@ class OpenStackProvider(providers.BaseProvider):
                 marketplace_id = link
             else:
                 continue
+            distro = None
+            distro_version = None
+            if image.metadata.get('os_distro', None) is not None:
+                distro = image.metadata['os_distro']
+            if image.metadata.get('os_version', None) is not None:
+                distro_version = image.metadata['os_version']
 
             if marketplace_id:
                 aux_img['image_marketplace_id'] = marketplace_id
             if image_descr:
                 aux_img['image_description'] = image_descr
+            if distro:
+                aux_img['image_os_name'] = distro
+            if distro_version:
+                aux_img['image_os_version'] = distro_version
+            image_version = None
+            if image.metadata.get('image_version', None) is not None:
+                image_version = image.metadata['image_version']
+            else:
+                image_version = str(distro) + ' ' + str(distro_version)
+
+            if image_version:
+                aux_img['image_version'] = image_version
+
             images[image.id] = aux_img
         return images
 
