@@ -239,6 +239,7 @@ class OpenStackProviderTest(unittest.TestCase):
     def test_get_images(self):
         # XXX move this to a custom class?
         # XXX add docker information
+        self.maxDiff = None
         expected_images = {
             'bar id': {
                 'image_description': None,

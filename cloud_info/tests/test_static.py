@@ -266,6 +266,7 @@ class StaticProviderTest(unittest.TestCase):
             self.assertEqual(expected, self.provider.get_site_info())
 
     def test_get_images(self):
+        self.maxDiff = None
         expected = DATA.compute_images
         self.assertEqual(expected, self.provider.get_images())
 
@@ -321,5 +322,6 @@ class StaticProviderTest(unittest.TestCase):
         self.assertEqual(expected, self.provider.get_images())
 
     def test_get_templates(self):
+        self.maxDiff = None
         expected = DATA.compute_templates
         self.assertEqual(expected, self.provider.get_templates())
