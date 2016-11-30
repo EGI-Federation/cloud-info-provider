@@ -132,7 +132,7 @@ class OpenStackProviderTest(unittest.TestCase):
             expected_templates[f.id] = {
                 'template_memory': f.ram,
                 'template_cpu': f.vcpus,
-                'template_id': 'resource_tpl#%s' % name,
+                'template_id': 'http://schemas.openstack.org/template/resource#%s' % name,
                 'template_platform': 'i686',
                 'template_network': 'private'
             }
