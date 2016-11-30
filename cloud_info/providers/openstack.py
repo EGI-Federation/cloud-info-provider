@@ -111,16 +111,16 @@ class OpenStackProvider(providers.BaseProvider):
         defaults = {'template_platform': 'amd64',
                     'template_network': 'private'}
         defaults.update(self.static.get_template_defaults(prefix=True))
-        tpl_sch = defaults.get('template_schema', 'resource_tpl')
+        tpl_sch = defaults.get('template_schema', 'resource')
         flavor_id_attr = 'name' if self.legacy_occi_os else 'id'
-
+        URI = 'http://schemas.openstack.org/template/'
         for flavor in self.api.flavors.list(detailed=True):
             if not flavor.is_public:
                 continue
 
             aux = defaults.copy()
             flavor_id = str(getattr(flavor, flavor_id_attr))
-            template_id = '%s#%s' % (tpl_sch,
+            template_id = '%s%s#%s' % (URI,tpl_sch,
                                      OpenStackProvider.occify(flavor_id))
             aux.update({'template_id': template_id,
                         'template_memory': flavor.ram,
