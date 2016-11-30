@@ -143,7 +143,8 @@ class OpenStackProvider(providers.BaseProvider):
             'image_platform': 'amd64',
         }
         defaults = self.static.get_image_defaults(prefix=True)
-        img_sch = defaults.get('image_schema', 'os_tpl')
+        img_sch = defaults.get('image_schema', 'os')
+        URI = 'http://schemas.openstack.org/template/'
 
         for image in self.api.images.list(detailed=True):
             aux_img = template.copy()
@@ -159,7 +160,7 @@ class OpenStackProvider(providers.BaseProvider):
             # metadata
             aux_img.update({
                 'image_name': image.name,
-                'image_id': '%s#%s' % (img_sch,
+                'image_id': '%s%s#%s' % (URI,img_sch,
                                        OpenStackProvider.occify(image.id))
             })
 
