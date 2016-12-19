@@ -204,7 +204,7 @@ class OpenStackProvider(providers.BaseProvider):
                 image_version = image.metadata['image_version']
             else:
                 if (image.metadata.get('distro', None) is not None) and (
-                            image.metadata.get(distro_version) is not None):
+                        image.metadata.get(distro_version) is not None):
                     image_version = str(distro) + ' ' + str(distro_version)
                 else:
                     image_version = None
