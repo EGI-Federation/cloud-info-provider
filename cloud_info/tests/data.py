@@ -101,7 +101,7 @@ class Data(object):
     @property
     def compute_images(self):
         return {
-            'http://schemas.openstack.org/template/os#foobarid': {
+            'os_tpl#foobarid': {
                 'image_name': 'Foo Image',
                 'image_version': 1.0,
                 'image_marketplace_id': (
@@ -117,25 +117,25 @@ class Data(object):
     @property
     def compute_templates(self):
         return {
-            'http://schemas.openstack.org/template/resource#extra_large': {
+            'resource_tpl#extra_large': {
                 'template_cpu': 8,
                 'template_memory': 16384,
                 'template_network': 'public',
                 'template_platform': 'amd64'
             },
-            'http://schemas.openstack.org/template/resource#large': {
+            'resource_tpl#large': {
                 'template_cpu': 4,
                 'template_memory': 8196,
                 'template_network': 'public',
                 'template_platform': 'amd64'
             },
-            'http://schemas.openstack.org/template/resource#medium': {
+            'resource_tpl#medium': {
                 'template_cpu': 2,
                 'template_memory': 4096,
                 'template_network': 'public',
                 'template_platform': 'amd64'
             },
-            'http://schemas.openstack.org/template/resource#small': {
+            'resource_tpl#small': {
                 'template_cpu': 1,
                 'template_memory': 1024,
                 'template_network': 'public',
