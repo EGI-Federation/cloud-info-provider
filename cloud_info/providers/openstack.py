@@ -200,12 +200,14 @@ class OpenStackProvider(providers.BaseProvider):
                 aux_img['image_os_name'] = distro
             if distro_version:
                 aux_img['image_os_version'] = distro_version
-            image_version = None
             if image.metadata.get('image_version', None) is not None:
                 image_version = image.metadata['image_version']
+                print image_version
             else:
-                image_version = str(distro) + ' ' + str(distro_version)
-
+                if (image.metadata.get('distro', None) is not None) and (image.metadata.get(distro_version) is not None):
+                    image_version = str(distro) + ' ' + str(distro_version)
+                else:
+                    image_version = None
             if image_version:
                 aux_img['image_version'] = image_version
 
