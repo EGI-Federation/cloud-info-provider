@@ -21,13 +21,13 @@ class OpenStackProvider(providers.BaseProvider):
         logging.getLogger('novaclient.client').setLevel(logging.WARNING)
 
         (os_username, os_password, os_tenant_name, os_auth_url,
-            cacert, insecure, legacy_occi_os) = (opts.os_username,
-                                                 opts.os_password,
-                                                 opts.os_tenant_name,
-                                                 opts.os_auth_url,
-                                                 opts.os_cacert,
-                                                 opts.insecure,
-                                                 opts.legacy_occi_os)
+         cacert, insecure, legacy_occi_os) = (opts.os_username,
+                                              opts.os_password,
+                                              opts.os_tenant_name,
+                                              opts.os_auth_url,
+                                              opts.os_cacert,
+                                              opts.insecure,
+                                              opts.legacy_occi_os)
 
         if not os_username:
             msg = ('ERROR, You must provide a username '
@@ -120,8 +120,8 @@ class OpenStackProvider(providers.BaseProvider):
 
             aux = defaults.copy()
             flavor_id = str(getattr(flavor, flavor_id_attr))
-            template_id = '%s%s#%s' % (URI,tpl_sch,
-                                     OpenStackProvider.occify(flavor_id))
+            template_id = '%s%s#%s' % (URI, tpl_sch,
+                                       OpenStackProvider.occify(flavor_id))
             aux.update({'template_id': template_id,
                         'template_memory': flavor.ram,
                         'template_cpu': flavor.vcpus})
@@ -160,8 +160,8 @@ class OpenStackProvider(providers.BaseProvider):
             # metadata
             aux_img.update({
                 'image_name': image.name,
-                'image_id': '%s%s#%s' % (URI,img_sch,
-                                       OpenStackProvider.occify(image.id))
+                'image_id': '%s%s#%s' % (URI, img_sch,
+                                         OpenStackProvider.occify(image.id))
             })
 
             for name, value in image.metadata.items():
@@ -203,7 +203,8 @@ class OpenStackProvider(providers.BaseProvider):
             if image.metadata.get('image_version', None) is not None:
                 image_version = image.metadata['image_version']
             else:
-                if (image.metadata.get('distro', None) is not None) and (image.metadata.get(distro_version) is not None):
+                if (image.metadata.get('distro', None) is not None) and (
+                            image.metadata.get(distro_version) is not None):
                     image_version = str(distro) + ' ' + str(distro_version)
                 else:
                     image_version = None
