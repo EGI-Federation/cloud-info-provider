@@ -21,13 +21,13 @@ class OpenStackProvider(providers.BaseProvider):
         logging.getLogger('novaclient.client').setLevel(logging.WARNING)
 
         (os_username, os_password, os_tenant_name, os_auth_url,
-            cacert, insecure, legacy_occi_os) = (opts.os_username,
-                                                 opts.os_password,
-                                                 opts.os_tenant_name,
-                                                 opts.os_auth_url,
-                                                 opts.os_cacert,
-                                                 opts.insecure,
-                                                 opts.legacy_occi_os)
+         cacert, insecure, legacy_occi_os) = (opts.os_username,
+                                              opts.os_password,
+                                              opts.os_tenant_name,
+                                              opts.os_auth_url,
+                                              opts.os_cacert,
+                                              opts.insecure,
+                                              opts.legacy_occi_os)
 
         if not os_username:
             msg = ('ERROR, You must provide a username '
@@ -111,17 +111,17 @@ class OpenStackProvider(providers.BaseProvider):
         defaults = {'template_platform': 'amd64',
                     'template_network': 'private'}
         defaults.update(self.static.get_template_defaults(prefix=True))
-        tpl_sch = defaults.get('template_schema', 'resource_tpl')
+        tpl_sch = defaults.get('template_schema', 'resource')
         flavor_id_attr = 'name' if self.legacy_occi_os else 'id'
-
+        URI = 'http://schemas.openstack.org/template/'
         for flavor in self.api.flavors.list(detailed=True):
             if not flavor.is_public:
                 continue
 
             aux = defaults.copy()
             flavor_id = str(getattr(flavor, flavor_id_attr))
-            template_id = '%s#%s' % (tpl_sch,
-                                     OpenStackProvider.occify(flavor_id))
+            template_id = '%s%s#%s' % (URI, tpl_sch,
+                                       OpenStackProvider.occify(flavor_id))
             aux.update({'template_id': template_id,
                         'template_memory': flavor.ram,
                         'template_cpu': flavor.vcpus})
@@ -143,7 +143,8 @@ class OpenStackProvider(providers.BaseProvider):
             'image_platform': 'amd64',
         }
         defaults = self.static.get_image_defaults(prefix=True)
-        img_sch = defaults.get('image_schema', 'os_tpl')
+        img_sch = defaults.get('image_schema', 'os')
+        URI = 'http://schemas.openstack.org/template/'
 
         for image in self.api.images.list(detailed=True):
             aux_img = template.copy()
@@ -159,8 +160,8 @@ class OpenStackProvider(providers.BaseProvider):
             # metadata
             aux_img.update({
                 'image_name': image.name,
-                'image_id': '%s#%s' % (img_sch,
-                                       OpenStackProvider.occify(image.id))
+                'image_id': '%s%s#%s' % (URI, img_sch,
+                                         OpenStackProvider.occify(image.id))
             })
 
             for name, value in image.metadata.items():
@@ -184,11 +185,32 @@ class OpenStackProvider(providers.BaseProvider):
                 marketplace_id = link
             else:
                 continue
+            distro = None
+            distro_version = None
+            if image.metadata.get('os_distro', None) is not None:
+                distro = image.metadata['os_distro']
+            if image.metadata.get('os_version', None) is not None:
+                distro_version = image.metadata['os_version']
 
             if marketplace_id:
                 aux_img['image_marketplace_id'] = marketplace_id
             if image_descr:
                 aux_img['image_description'] = image_descr
+            if distro:
+                aux_img['image_os_name'] = distro
+            if distro_version:
+                aux_img['image_os_version'] = distro_version
+            if image.metadata.get('image_version', None) is not None:
+                image_version = image.metadata['image_version']
+            else:
+                if (image.metadata.get('distro', None) is not None) and (
+                        image.metadata.get(distro_version) is not None):
+                    image_version = str(distro) + ' ' + str(distro_version)
+                else:
+                    image_version = None
+            if image_version:
+                aux_img['image_version'] = image_version
+
             images[image.id] = aux_img
         return images
 

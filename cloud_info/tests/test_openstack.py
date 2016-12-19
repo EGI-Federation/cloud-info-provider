@@ -86,6 +86,7 @@ class OpenStackProviderTest(unittest.TestCase):
 
     def test_get_legacy_templates_with_defaults(self):
         expected_templates = {}
+        url = 'http://schemas.openstack.org/template/resource'
         for f in FAKES.flavors:
             if not f.is_public:
                 continue
@@ -94,15 +95,16 @@ class OpenStackProviderTest(unittest.TestCase):
             expected_templates[f.id] = {
                 'template_memory': f.ram,
                 'template_cpu': f.vcpus,
-                'template_id': 'resource_tpl#%s' % name,
+                'template_id': '%s#%s' % (url, name),
                 'template_platform': 'amd64',
                 'template_network': 'private'
             }
 
         self.provider.legacy_occi_os = True
         with utils.nested(
-            mock.patch.object(self.provider.static, 'get_template_defaults'),
-            mock.patch.object(self.provider.api.flavors, 'list'),
+                mock.patch.object(self.provider.static,
+                                  'get_template_defaults'),
+                mock.patch.object(self.provider.api.flavors, 'list'),
         ) as (m_get_template_defaults, m_flavors_list):
             m_get_template_defaults.return_value = {}
             m_flavors_list.return_value = FAKES.flavors
@@ -124,6 +126,7 @@ class OpenStackProviderTest(unittest.TestCase):
 
     def test_get_legacy_templates_with_defaults_from_static(self):
         expected_templates = {}
+        url = 'http://schemas.openstack.org/template/resource'
         for f in FAKES.flavors:
             if not f.is_public:
                 continue
@@ -132,15 +135,16 @@ class OpenStackProviderTest(unittest.TestCase):
             expected_templates[f.id] = {
                 'template_memory': f.ram,
                 'template_cpu': f.vcpus,
-                'template_id': 'resource_tpl#%s' % name,
+                'template_id': '%s#%s' % (url, name),
                 'template_platform': 'i686',
                 'template_network': 'private'
             }
 
         self.provider.legacy_occi_os = True
         with utils.nested(
-            mock.patch.object(self.provider.static, 'get_template_defaults'),
-            mock.patch.object(self.provider.api.flavors, 'list'),
+                mock.patch.object(self.provider.static,
+                                  'get_template_defaults'),
+                mock.patch.object(self.provider.api.flavors, 'list'),
         ) as (m_get_template_defaults, m_flavors_list):
             m_get_template_defaults.return_value = {
                 'template_platform': 'i686'
@@ -164,6 +168,7 @@ class OpenStackProviderTest(unittest.TestCase):
 
     def test_get_templates_with_defaults(self):
         expected_templates = {}
+        url = 'http://schemas.openstack.org/template/resource'
         for f in FAKES.flavors:
             if not f.is_public:
                 continue
@@ -171,14 +176,15 @@ class OpenStackProviderTest(unittest.TestCase):
             expected_templates[f.id] = {
                 'template_memory': f.ram,
                 'template_cpu': f.vcpus,
-                'template_id': 'resource_tpl#%s' % f.id,
+                'template_id': '%s#%s' % (url, f.id),
                 'template_platform': 'amd64',
                 'template_network': 'private'
             }
 
         with utils.nested(
-            mock.patch.object(self.provider.static, 'get_template_defaults'),
-            mock.patch.object(self.provider.api.flavors, 'list'),
+                mock.patch.object(self.provider.static,
+                                  'get_template_defaults'),
+                mock.patch.object(self.provider.api.flavors, 'list'),
         ) as (m_get_template_defaults, m_flavors_list):
             m_get_template_defaults.return_value = {}
             m_flavors_list.return_value = FAKES.flavors
@@ -200,6 +206,7 @@ class OpenStackProviderTest(unittest.TestCase):
 
     def test_get_templates_with_defaults_from_static(self):
         expected_templates = {}
+        url = 'http://schemas.openstack.org/template/resource'
         for f in FAKES.flavors:
             if not f.is_public:
                 continue
@@ -207,14 +214,15 @@ class OpenStackProviderTest(unittest.TestCase):
             expected_templates[f.id] = {
                 'template_memory': f.ram,
                 'template_cpu': f.vcpus,
-                'template_id': 'resource_tpl#%s' % f.id,
+                'template_id': '%s#%s' % (url, f.id),
                 'template_platform': 'i686',
                 'template_network': 'private'
             }
 
         with utils.nested(
-            mock.patch.object(self.provider.static, 'get_template_defaults'),
-            mock.patch.object(self.provider.api.flavors, 'list'),
+                mock.patch.object(self.provider.static,
+                                  'get_template_defaults'),
+                mock.patch.object(self.provider.api.flavors, 'list'),
         ) as (m_get_template_defaults, m_flavors_list):
             m_get_template_defaults.return_value = {
                 'template_platform': 'i686'
@@ -249,7 +257,7 @@ class OpenStackProviderTest(unittest.TestCase):
                 'image_platform': 'amd64',
                 'image_version': None,
                 'image_marketplace_id': None,
-                'image_id': 'os_tpl#bar_id'
+                'image_id': 'http://schemas.openstack.org/template/os#bar_id'
             },
             'foo.id': {
                 'image_description': None,
@@ -260,7 +268,7 @@ class OpenStackProviderTest(unittest.TestCase):
                 'image_platform': 'amd64',
                 'image_version': None,
                 'image_marketplace_id': 'http://example.org/',
-                'image_id': 'os_tpl#foo-id'
+                'image_id': 'http://schemas.openstack.org/template/os#foo-id'
             },
             'baz id': {
                 'image_description': None,
@@ -271,7 +279,7 @@ class OpenStackProviderTest(unittest.TestCase):
                 'image_platform': 'amd64',
                 'image_version': None,
                 'image_marketplace_id': None,
-                'image_id': 'os_tpl#baz_id',
+                'image_id': 'http://schemas.openstack.org/template/os#baz_id',
                 'docker_id': 'sha1:xxxxxxxxxxxxxxxxxxxxxxxxxx',
                 'docker_tag': 'latest',
                 'docker_name': 'test/image'
@@ -279,8 +287,8 @@ class OpenStackProviderTest(unittest.TestCase):
         }
 
         with utils.nested(
-            mock.patch.object(self.provider.static, 'get_image_defaults'),
-            mock.patch.object(self.provider.api.images, 'list'),
+                mock.patch.object(self.provider.static, 'get_image_defaults'),
+                mock.patch.object(self.provider.api.images, 'list'),
         ) as (m_get_image_defaults, m_images_list):
             m_get_image_defaults.return_value = {}
             m_images_list.return_value = FAKES.images
@@ -311,7 +319,7 @@ class OpenStackProviderTest(unittest.TestCase):
         }
 
         with mock.patch.object(
-            self.provider.static, 'get_compute_endpoint_defaults'
+                self.provider.static, 'get_compute_endpoint_defaults'
         ) as m_get_endpoint_defaults:
             m_get_endpoint_defaults.return_value = {
                 'endpoint_occi_api_version': '11.11',
@@ -342,7 +350,7 @@ class OpenStackProviderTest(unittest.TestCase):
         }
 
         with mock.patch.object(
-            self.provider.static, 'get_compute_endpoint_defaults'
+                self.provider.static, 'get_compute_endpoint_defaults'
         ) as m_get_endpoint_defaults:
             m_get_endpoint_defaults.return_value = {}
             self.provider.api.client.service_catalog.catalog = FAKES.catalog
