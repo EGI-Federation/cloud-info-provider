@@ -6,7 +6,7 @@
 
 Summary: Information provider for Cloud Compute and Cloud Storage services for BDII
 Name: cloud-info-provider
-Version: 0.6
+Version: 0.7.0
 Release: 1%{?dist}
 Group: Applications/Internet
 License: ASL 2.0
@@ -52,6 +52,9 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/cloud-info-provider/
 
 %changelog
+* Mon Jan 01 2017 Alvaro Lopez Garcia <aloga@ifca.unican.es> 0.7.0
+- Use templating engine.
+- Bugfixes.
 * Mon Aug 03 2016 Baptiste Grenier <baptiste.grenier@egi.eu>
 - Use Mako for templates.
 - Rename python packages and packages.
