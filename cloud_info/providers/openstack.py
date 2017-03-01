@@ -124,7 +124,8 @@ class OpenStackProvider(providers.BaseProvider):
                                        OpenStackProvider.occify(flavor_id))
             aux.update({'template_id': template_id,
                         'template_memory': flavor.ram,
-                        'template_cpu': flavor.vcpus})
+                        'template_cpu': flavor.vcpus,
+                        'template_disk': flavor.disk})
             flavors[flavor.id] = aux
         return flavors
 

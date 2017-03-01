@@ -151,7 +151,7 @@ class OpenStackFakes(object):
     def __init__(self):
         Flavor = collections.namedtuple(
             'Flavor',
-            ('id', 'name', 'ram', 'vcpus', 'is_public'))
+            ('id', 'name', 'ram', 'vcpus', 'is_public', 'disk'))
 
         flavors = (
             {
@@ -160,6 +160,7 @@ class OpenStackFakes(object):
                 'ram': 10,
                 'vcpus': 20,
                 'is_public': True,
+                'disk': 0,
             },
             {
                 'id': 2,
@@ -167,6 +168,7 @@ class OpenStackFakes(object):
                 'ram': 20,
                 'vcpus': 30,
                 'is_public': False,
+                'disk': 10,
             },
             {
                 'id': 3,
@@ -174,6 +176,7 @@ class OpenStackFakes(object):
                 'ram': 2,
                 'vcpus': 3,
                 'is_public': True,
+                'disk': 5,
             },
         )
 
