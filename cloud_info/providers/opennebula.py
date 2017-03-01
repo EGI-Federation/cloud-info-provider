@@ -296,12 +296,17 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
                 aux.update({'template_id': '%s#%s' % (ressch, mxn['term'])})
 
             occi_attrs = mxn['attributes']['occi']['compute']
+            if 'ephemeral_storage' in occi_attrs:
+                disk = occi_attrs['ephemeral_storage']['size']['Default']
+            else:
+                disk = 0
 
             aux.update({
                 'template_id': flid,
                 'template_cpu': occi_attrs['cores']['Default'],
                 'template_memory': int(occi_attrs['memory']['Default'] * 1024),
-                'template_description': mxn['title']
+                'template_description': mxn['title'],
+                'template_disk': disk,
             })
 
             flavors[flid] = aux
