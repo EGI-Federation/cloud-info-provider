@@ -1,0 +1,247 @@
+<%
+    static_compute_info = attributes['static_compute_info']
+    endpoints = attributes['endpoints']
+    templates = attributes['templates']
+    images = attributes['images']
+%>\
+
+# Cloud Computing Service
+dn: GLUE2ServiceID=${static_compute_info['compute_service_name']}_cloud.compute,GLUE2GroupID=cloud,${static_compute_info['suffix']}
+objectClass: GLUE2Entity
+objectClass: GLUE2Service
+objectClass: GLUE2ComputingService
+GLUE2ServiceAdminDomainForeignKey: ${static_compute_info['site_name']}
+GLUE2ServiceID: ${static_compute_info['compute_service_name']}_cloud.compute
+GLUE2ServiceQualityLevel: ${static_compute_info['compute_service_production_level']}
+GLUE2ServiceType: IaaS
+GLUE2ServiceCapability: ${static_compute_info['compute_capabilities']}
+# Proposed content by Alessandro for
+# GLUE2CloudComputingService
+dn: GLUE2ServiceID=<cloud computing service global unique ID>,GLUE2GroupID=resource,o=glue
+objectClass: GLUE2Entity
+objectClass: GLUE2Service
+objectClass: GLUE2CloudComputingService
+GLUE2EntityCreationTime:
+GLUE2EntityName:
+GLUE2EntityValidity:
+GLUE2EntityOtherInfo: <additional info 1>
+GLUE2EntityOtherInfo: <additional info n>
+GLUE2ServiceServiceForeignKey: <ServiceID>
+GLUE2ServiceAdminDomainForeignKey: <Site-Name (AdminDomainID)>
+GLUE2ServiceType: 
+GLUE2ServiceID:
+GLUE2ServiceQualityLevel:
+GLUE2ServiceComplexity:
+GLUE2ServiceStatusInfo:
+GLUE2ServiceCapability: capability 1
+GLUE2ServiceCapability: capability n
+GLUE2CloudComputingServiceSuspendedVM:
+GLUE2CloudComputingServicePendingVM:
+GLUE2CloudComputingServiceHaltedVM:
+GLUE2CloudComputingServiceTotalVM:
+GLUE2CloudComputingServiceRunningVM:
+GLUE2CloudComputingServiceAUP:
+# End of proposed content by Alessandro 
+
+# Computing Manager
+dn: GLUE2ManagerID=${static_compute_info['compute_service_name']}_cloud.compute_manager,GLUE2ServiceID=${static_compute_info['compute_service_name']}_cloud.compute,GLUE2GroupID=cloud,${static_compute_info['suffix']}
+objectClass: GLUE2Entity
+objectClass: GLUE2Manager
+objectClass: GLUE2ComputingManager
+GLUE2ManagerID: ${static_compute_info['compute_service_name']}_cloud.compute_manager
+GLUE2ManagerProductName: ${static_compute_info['compute_hypervisor']}
+GLUE2ManagerServiceForeignKey: ${static_compute_info['compute_service_name']}_cloud.compute
+GLUE2ComputingManagerComputingServiceForeignKey: ${static_compute_info['compute_service_name']}_cloud.compute
+GLUE2EntityName: Cloud Manager for ${static_compute_info['compute_service_name']}
+GLUE2ManagerProductVersion: ${static_compute_info['compute_hypervisor_version']}
+GLUE2ComputingManagerTotalLogicalCPUs: ${static_compute_info['compute_total_cores']}
+GLUE2ComputingManagerWorkingAreaTotal: ${static_compute_info['compute_total_ram']}
+# Proposed content by Alessandro for
+# GLUE2CloudComputingManager
+dn: GLUE2ManagerID=<ManagerID>,GLUE2ServiceID=<ServiceID>,GLUE2GroupID=resource,o=glue
+objectClass: GLUE2Entity
+objectClass: GLUE2Manager
+objectClass: GLUE2CloudComputingManager
+GLUE2EntityCreationTime:
+GLUE2EntityName:
+GLUE2EntityValidity:
+GLUE2EntityOtherInfo: <additional info 1>
+GLUE2EntityOtherInfo: <additional info n>
+GLUE2ManagerID: <ManagerID>
+GLUE2ManagerProductName:
+GLUE2ManagerProductVersion:
+
+GLUE2CloudComputingManagerCloudComputingServiceForeignKey: <ServiceID>
+GLUE2ManagerServiceForeignKey: <ServiceID>
+
+GLUE2CloudComputingManagerTotalCPUs:
+GLUE2CloudComputingManagerTotalAccelerators:
+GLUE2CloudComputingManagerTotalRAM:
+GLUE2CloudComputingManagerInstanceMaxCPU:
+GLUE2CloudComputingManagerInstanceMinCPU:
+GLUE2CloudComputingManagerInstanceMaxAccelerators:
+GLUE2CloudComputingManagerInstanceMinAccelerators:
+GLUE2CloudComputingManagerInstanceMaxRAM:
+GLUE2CloudComputingManagerInstanceMinRAM:
+GLUE2CloudComputingManagerInstanceMaxDedicatedRAM:
+GLUE2CloudComputingManagerInstanceMinDedicatedRAM:
+GLUE2CloudComputingManagerNetworkVirtualizationType:
+GLUE2CloudComputingManagerCPUVirtualizationType:
+GLUE2CloudComputingManagerAcceleratorVirtualizationType:
+GLUE2CloudComputingManagerVirtualdiskFormat:
+GLUE2CloudComputingManagerFailover:
+GLUE2CloudComputingManagerLiveMigration:
+GLUE2CloudComputingManagerVMBackupRestore:
+# End of proposed content by Alessandro 
+
+
+# List of Cloud Computing Endpoints
+% for url, endpoint in endpoints['endpoints'].items():
+dn: GLUE2EndpointID=${endpoint['endpoint_url']}_${endpoint['compute_api_type']}_${endpoint['compute_api_version']}_${endpoint['compute_api_authn_method']},GLUE2ServiceID=${endpoint['compute_service_name']}_cloud.compute,GLUE2GroupID=cloud,${endpoint['suffix']}
+objectClass: GLUE2Entity
+objectClass: GLUE2Endpoint
+objectClass: GLUE2ComputingEndpoint
+GLUE2EndpointHealthState: ok
+GLUE2EndpointID: ${endpoint['endpoint_url']}_${endpoint['compute_api_type']}_${endpoint['compute_api_version']}_${endpoint['compute_api_authn_method']}
+GLUE2EndpointInterfaceName: ${endpoint['compute_api_type']}
+GLUE2EndpointQualityLevel: ${endpoint['compute_production_level']}
+GLUE2EndpointServiceForeignKey: ${endpoint['compute_service_name']}_cloud.compute
+GLUE2EndpointServingState: ${endpoint['compute_production_level']}
+GLUE2EndpointURL: ${endpoint['endpoint_url']}
+GLUE2ComputingEndpointComputingServiceForeignKey: ${endpoint['compute_service_name']}_cloud.compute
+GLUE2EndpointCapability: ${endpoint['compute_capabilities']}
+GLUE2EndpointImplementationName: ${endpoint['compute_middleware']}
+GLUE2EndpointImplementationVersion: ${endpoint['compute_middleware_version']}
+GLUE2EndpointImplementor: ${endpoint['compute_middleware_developer']}
+GLUE2EndpointInterfaceVersion: ${endpoint['compute_api_version']}
+#GLUE2EndpointSemantics:
+#GLUE2EndpointSupportedProfile:
+GLUE2EntityOtherInfo: Authn=${endpoint['compute_api_authn_method']}
+GLUE2EndpointTechnology: ${endpoint['compute_api_endpoint_technology']}
+# Proposed content by Alessandro for
+# GLUE2CloudComputingEndpoint
+# (one entry for each endpoint provided)
+dn: GLUE2EndpointID=<endpoint global unique ID>,GLUE2ServiceID=<cloud computing service global unique ID>,GLUE2GroupID=resource,o=glue
+objectClass: GLUE2Entity
+objectClass: GLUE2Endpoint
+objectClass: GLUE2CloudComputingEndpoint
+GLUE2EntityCreationTime:
+GLUE2EntityName:
+GLUE2EntityValidity:
+GLUE2EntityOtherInfo: <additional info 1>
+GLUE2EntityOtherInfo: <additional info n>
+
+GLUE2EndpointServiceForeignKey: <ServiceID>
+GLUE2CloudComputingEndpointCloudComputingServiceForeignKey: <ServiceID>
+
+GLUE2EndpointID:
+GLUE2EndpointURL: 
+GLUE2EndpointCapability:
+GLUE2EndpointTechnology:
+GLUE2EndpointInterfaceName:
+GLUE2EndpointInterfaceVersion:
+GLUE2EndpointInterfaceExtension:
+GLUE2EndpointWSDL:
+GLUE2EndpointSupportedProfile:
+GLUE2EndpointSemantics:
+GLUE2EndpointImplementor:
+GLUE2EndpointImplementationName:
+GLUE2EndpointImplementationVersion:
+GLUE2EndpointQualityLevel:
+GLUE2EndpointHealthStateInfo:
+GLUE2EndpointHealthState:
+GLUE2EndpointServingState:
+GLUE2EndpointStartTime:
+GLUE2EndpointIssuerCA:
+GLUE2EndpointTrustedCA:
+GLUE2EndpointTrustedCA:
+GLUE2EndpointDowntimeAnnounce:
+GLUE2EndpointDowntimeStart:
+GLUE2EndpointDowntimeEnd:
+GLUE2EndpointDowntimeInfo: See the GOC DB for downtimes: https://goc.egi.eu/
+GLUE2CloudComputingEndpointContextualizationName:
+GLUE2CloudComputingEndpointContextualizationVersion:
+# End of proposed content by Alessandro 
+% endfor
+
+# List of templates
+# No more a GLUE2ExecutionEnvironment?
+% for template_id, template in templates.items():
+dn: GLUE2ResourceID=${template['template_id']}_${template['compute_service_name']},GLUE2ServiceID=${template['compute_service_name']}_cloud.compute,GLUE2GroupID=cloud,${template['suffix']}
+objectClass: GLUE2Entity
+objectClass: GLUE2Resource
+objectClass: GLUE2ExecutionEnvironment
+GLUE2ExecutionEnvironmentConnectivityIn: TRUE
+GLUE2ExecutionEnvironmentConnectivityOut: TRUE
+GLUE2ExecutionEnvironmentVirtualMachine: TRUE
+GLUE2ExecutionEnvironmentMainMemorySize: ${template['template_memory']}
+GLUE2ExecutionEnvironmentPlatform: ${template['template_platform']}
+GLUE2ExecutionEnvironmentOSFamily: linux
+GLUE2ResourceManagerForeignKey: ${endpoint['compute_service_name']}_cloud.compute_manager
+GLUE2EntityName: ${template['template_id']}
+GLUE2ExecutionEnvironmentComputingManagerForeignKey: ${endpoint['compute_service_name']}_cloud.compute_manager
+GLUE2ExecutionEnvironmentCPUModel: virtual model
+GLUE2ExecutionEnvironmentCPUMultiplicity: multicpu-multicore
+GLUE2ExecutionEnvironmentCPUVendor: virtual vendor
+GLUE2ExecutionEnvironmentLogicalCPUs: ${template['template_cpu']}
+GLUE2ExecutionEnvironmentPhysicalCPUs: ${template['template_cpu']}
+# Proposed content by Alessandro for
+# No multicore a GLUE2ExecutionEnvironment?
+# End of proposed content by Alessandro 
+% endfor
+
+# List of images
+% for image_id, image in images.items():
+<%
+    if image['image_description'] is None:
+        image['image_description'] = ('%(image_name)s version '
+            '%(image_version)s on '
+            '%(image_os_family)s %(image_os_name)s '
+            '%(image_os_version)s '
+            '%(image_platform)s' % image)
+%>\
+dn: GLUE2ApplicationEnvironmentID=${image['image_id']}_${endpoint['compute_service_name']},GLUE2ServiceID=${endpoint['compute_service_name']}_cloud.compute,GLUE2GroupID=cloud,${endpoint['suffix']}
+objectClass: GLUE2Entity
+objectClass: GLUE2ApplicationEnvironment
+GLUE2ApplicationEnvironmentAppName: ${image['image_name']}
+GLUE2ApplicationEnvironmentAppVersion: ${image['image_version']}
+GLUE2ApplicationEnvironmentRepository: ${image['image_marketplace_id']}
+GLUE2ApplicationEnvironmentDescription: ${image['image_description']}
+GLUE2EntityName: ${image['image_id']}
+GLUE2ApplicationEnvironmentComputingManagerForeignKey: ${endpoint['compute_service_name']}_cloud.compute_manager
+# Proposed content by Alessandro for
+dn: GLUE2CloudComputingImageID=<Image ID>,GLUE2ShareID=<share ID>,GLUE2ServiceID=<serviceID>,GLUE2GroupID=resource,o=glue
+
+GLUE2EntityCreationTime:
+GLUE2EntityName:
+GLUE2EntityValidity:
+GLUE2CloudComputingImageID:
+GLUE2EntityOtherInfo:
+
+GLUE2CloudComputingImageIDForEndpoint:
+GLUE2CloudComputingImageMarketPlaceID:
+GLUE2CloudComputingImageOSPlatform:
+GLUE2CloudComputingImageOSFamily:
+GLUE2CloudComputingImageOSName:
+GLUE2CloudComputingImageOSVersion:
+GLUE2CloudComputingImageDiskSize:
+GLUE2CloudComputingImageRecommendedCPU:
+GLUE2CloudComputingImageRecommendedAcceleratorType:
+GLUE2CloudComputingImageRecommendedAccelerators:
+GLUE2CloudComputingImageRecommendedRAM:
+GLUE2CloudComputingImageMinCPU:
+GLUE2CloudComputingImageMinAccelerators:
+GLUE2CloudComputingImageMinRAM:
+GLUE2CloudComputingImageAccessInfo:
+GLUE2CloudComputingImageDefaultUserName:
+GLUE2CloudComputingImageDefaultPassword:
+GLUE2CloudComputingImageInstalledsoftware:
+
+objectClass: GLUE2Entity
+objectClass: GLUE2CloudComputingImage
+
+GLUE2CloudComputingImageCloudComputingManagerForeignKey: <ManagerID>
+# End of proposed content by Alessandro 
+% endfor
+
+# :vim set ft=ldif:
