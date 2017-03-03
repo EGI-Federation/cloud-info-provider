@@ -5,7 +5,7 @@
     images = attributes['images']
 %>\
 
-# Cloud Computing Service - GLUE2CloudComputingService
+## Cloud Computing Service - GLUE2CloudComputingService
 dn: GLUE2ServiceID=${static_compute_info['compute_service_name']}_cloud.compute,GLUE2GroupID=resource,${static_compute_info['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2Service
@@ -15,25 +15,25 @@ GLUE2ServiceServiceForeignKey: ${static_compute_info['compute_service_name']}_cl
 GLUE2ServiceAdminDomainForeignKey: ${static_compute_info['site_name']}
 GLUE2ServiceType: IaaS
 GLUE2ServiceQualityLevel: ${static_compute_info['compute_service_production_level']}
-# XXX multiple entries could be present
+## XXX multiple entries could be present
 GLUE2ServiceCapability: ${static_compute_info['compute_capabilities']}
-# TODO find information for this attributes
-# GLUE2EntityCreationTime:
-# GLUE2EntityName:
-# GLUE2EntityValidity:
-# XXX multiple entries could be present
-# GLUE2EntityOtherInfo: <additional info 1>
-# GLUE2ServiceComplexity:
-# GLUE2ServiceStatusInfo:
-# GLUE2CloudComputingServiceSuspendedVM:
-# GLUE2CloudComputingServicePendingVM:
-# GLUE2CloudComputingServiceHaltedVM:
-# GLUE2CloudComputingServiceTotalVM:
-# GLUE2CloudComputingServiceRunningVM:
-# GLUE2CloudComputingServiceAUP:
+## TODO find information for this attributes
+## GLUE2EntityCreationTime:
+## GLUE2EntityName:
+## GLUE2EntityValidity:
+## XXX multiple entries could be present
+## GLUE2EntityOtherInfo: <additional info 1>
+## GLUE2ServiceComplexity:
+## GLUE2ServiceStatusInfo:
+## GLUE2CloudComputingServiceSuspendedVM:
+## GLUE2CloudComputingServicePendingVM:
+## GLUE2CloudComputingServiceHaltedVM:
+## GLUE2CloudComputingServiceTotalVM:
+## GLUE2CloudComputingServiceRunningVM:
+## GLUE2CloudComputingServiceAUP:
 
 
-# Computing Manager - GLUE2CloudComputingManager
+## Computing Manager - GLUE2CloudComputingManager
 dn: GLUE2ManagerID=${static_compute_info['compute_service_name']}_cloud.compute_manager,GLUE2ServiceID=${static_compute_info['compute_service_name']}_cloud.compute,GLUE2GroupID=resource,${static_compute_info['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2Manager
@@ -46,31 +46,31 @@ GLUE2ManagerServiceForeignKey: ${static_compute_info['compute_service_name']}_cl
 GLUE2CloudComputingManagerCloudComputingServiceForeignKey: ${static_compute_info['compute_service_name']}_cloud.compute
 GLUE2CloudComputingManagerTotalCPUs: ${static_compute_info['compute_total_cores']}
 GLUE2CloudComputingManagerTotalRAM: ${static_compute_info['compute_total_ram']}
-# TODO find information for this attributes
-#GLUE2EntityCreationTime:
-#GLUE2EntityValidity:
-# XXX multiple entries could be present
-#GLUE2EntityOtherInfo: <additional info n>
-#GLUE2CloudComputingManagerTotalAccelerators:
-#GLUE2CloudComputingManagerInstanceMaxCPU:
-#GLUE2CloudComputingManagerInstanceMinCPU:
-#GLUE2CloudComputingManagerInstanceMaxAccelerators:
-#GLUE2CloudComputingManagerInstanceMinAccelerators:
-#GLUE2CloudComputingManagerInstanceMaxRAM:
-#GLUE2CloudComputingManagerInstanceMinRAM:
-#GLUE2CloudComputingManagerInstanceMaxDedicatedRAM:
-#GLUE2CloudComputingManagerInstanceMinDedicatedRAM:
-#GLUE2CloudComputingManagerNetworkVirtualizationType:
-#GLUE2CloudComputingManagerCPUVirtualizationType:
-#GLUE2CloudComputingManagerAcceleratorVirtualizationType:
-#GLUE2CloudComputingManagerVirtualdiskFormat:
-#GLUE2CloudComputingManagerFailover:
-#GLUE2CloudComputingManagerLiveMigration:
-#GLUE2CloudComputingManagerVMBackupRestore:
+## TODO find information for this attributes
+##GLUE2EntityCreationTime:
+##GLUE2EntityValidity:
+## XXX multiple entries could be present
+##GLUE2EntityOtherInfo: <additional info n>
+##GLUE2CloudComputingManagerTotalAccelerators:
+##GLUE2CloudComputingManagerInstanceMaxCPU:
+##GLUE2CloudComputingManagerInstanceMinCPU:
+##GLUE2CloudComputingManagerInstanceMaxAccelerators:
+##GLUE2CloudComputingManagerInstanceMinAccelerators:
+##GLUE2CloudComputingManagerInstanceMaxRAM:
+##GLUE2CloudComputingManagerInstanceMinRAM:
+##GLUE2CloudComputingManagerInstanceMaxDedicatedRAM:
+##GLUE2CloudComputingManagerInstanceMinDedicatedRAM:
+##GLUE2CloudComputingManagerNetworkVirtualizationType:
+##GLUE2CloudComputingManagerCPUVirtualizationType:
+##GLUE2CloudComputingManagerAcceleratorVirtualizationType:
+##GLUE2CloudComputingManagerVirtualdiskFormat:
+##GLUE2CloudComputingManagerFailover:
+##GLUE2CloudComputingManagerLiveMigration:
+##GLUE2CloudComputingManagerVMBackupRestore:
 
 
-# List of Cloud Computing Endpoints - GLUE2CloudComputingEndpoint
-# one entry for each endpoint provided
+## List of Cloud Computing Endpoints - GLUE2CloudComputingEndpoint
+## one entry for each endpoint provided
 % for url, endpoint in endpoints['endpoints'].items():
 dn: GLUE2EndpointID=${endpoint['endpoint_url']}_${endpoint['compute_api_type']}_${endpoint['compute_api_version']}_${endpoint['compute_api_authn_method']},GLUE2ServiceID=${endpoint['compute_service_name']}_cloud.compute,GLUE2GroupID=resource,${endpoint['suffix']}
 objectClass: GLUE2Entity
@@ -90,37 +90,37 @@ GLUE2EndpointImplementor: ${endpoint['compute_middleware_developer']}
 GLUE2EndpointImplementationName: ${endpoint['compute_middleware']}
 GLUE2EndpointImplementationVersion: ${endpoint['compute_middleware_version']}
 GLUE2EndpointDowntimeInfo: See the GOC DB for downtimes: https://goc.egi.eu/
-# XXX multiple entries could be present
+## XXX multiple entries could be present
 GLUE2EntityOtherInfo: Authn=${endpoint['compute_api_authn_method']}
-# TODO find information for this attributes
-#GLUE2EntityCreationTime:
-#GLUE2EntityName:
-#GLUE2EntityValidity:
-#GLUE2EndpointSemantics:
-#GLUE2EndpointSupportedProfile:
-#GLUE2EndpointInterfaceExtension:
-#GLUE2EndpointWSDL:
-#GLUE2EndpointHealthStateInfo:
-#GLUE2EndpointStartTime:
-#GLUE2EndpointIssuerCA:
-#GLUE2EndpointTrustedCA:
-#GLUE2EndpointTrustedCA:
-#GLUE2EndpointDowntimeAnnounce:
-#GLUE2EndpointDowntimeStart:
-#GLUE2EndpointDowntimeEnd:
-#GLUE2CloudComputingEndpointContextualizationName:
-#GLUE2CloudComputingEndpointContextualizationVersion:
+## TODO find information for this attributes
+##GLUE2EntityCreationTime:
+##GLUE2EntityName:
+##GLUE2EntityValidity:
+##GLUE2EndpointSemantics:
+##GLUE2EndpointSupportedProfile:
+##GLUE2EndpointInterfaceExtension:
+##GLUE2EndpointWSDL:
+##GLUE2EndpointHealthStateInfo:
+##GLUE2EndpointStartTime:
+##GLUE2EndpointIssuerCA:
+##GLUE2EndpointTrustedCA:
+##GLUE2EndpointTrustedCA:
+##GLUE2EndpointDowntimeAnnounce:
+##GLUE2EndpointDowntimeStart:
+##GLUE2EndpointDowntimeEnd:
+##GLUE2CloudComputingEndpointContextualizationName:
+##GLUE2CloudComputingEndpointContextualizationVersion:
 % endfor
 
-# List of templates - GLUE2CloudComputingInstanceType
+## List of templates - GLUE2CloudComputingInstanceType
 % for template_id, template in templates.items():
-# XXX no more present?
-#GLUE2ExecutionEnvironmentVirtualMachine: TRUE
-#GLUE2ExecutionEnvironmentOSFamily: linux
-#GLUE2ExecutionEnvironmentCPUModel: virtual model
-#GLUE2ExecutionEnvironmentCPUMultiplicity: multicpu-multicore
-#GLUE2ExecutionEnvironmentCPUVendor: virtual vendor
-# FIXME Need to find share ID
+## XXX no more present?
+##GLUE2ExecutionEnvironmentVirtualMachine: TRUE
+##GLUE2ExecutionEnvironmentOSFamily: linux
+##GLUE2ExecutionEnvironmentCPUModel: virtual model
+##GLUE2ExecutionEnvironmentCPUMultiplicity: multicpu-multicore
+##GLUE2ExecutionEnvironmentCPUVendor: virtual vendor
+## FIXME Need to find share ID
 dn: GLUE2ResourceID=${template['template_id']}_${template['compute_service_name']},GLUE2ShareID=<share ID>,GLUE2ServiceID=${template['compute_service_name']}_cloud.compute,GLUE2GroupID=resource,${template['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2Resource
@@ -134,22 +134,22 @@ GLUE2CloudComputingInstanceTypevCPU: ${template['template_cpu']}
 GLUE2CloudComputingInstanceTypeRAM: ${template['template_memory']}
 GLUE2CloudComputingInstanceTypeNetworkIn: TRUE
 GLUE2CloudComputingInstanceTypeNetworkOut: TRUE
-# TODO find information for this attributes
-#GLUE2CloudComputingInstanceTypeIDForEndpoint:
-#GLUE2CloudComputingInstanceTypeMarketPlaceID:
-#GLUE2CloudComputingInstanceTypeEphemeralStorage:
-#GLUE2CloudComputingInstanceTypeDisk:
-#GLUE2CloudComputingInstanceTypeNetworkPortsIn:
-#GLUE2CloudComputingInstanceTypeNetworkPortsOut:
-#GLUE2CloudComputingInstanceTypeNetworkInfo:
-#GLUE2CloudComputingInstanceTypeOtherHardware:
-#GLUE2EntityCreationTime:
-#GLUE2EntityValidity:
-# XXX multiple entries could be present
-#GLUE2EntityOtherInfo: <additional info 1>
+## TODO find information for this attributes
+##GLUE2CloudComputingInstanceTypeIDForEndpoint:
+##GLUE2CloudComputingInstanceTypeMarketPlaceID:
+##GLUE2CloudComputingInstanceTypeEphemeralStorage:
+##GLUE2CloudComputingInstanceTypeDisk:
+##GLUE2CloudComputingInstanceTypeNetworkPortsIn:
+##GLUE2CloudComputingInstanceTypeNetworkPortsOut:
+##GLUE2CloudComputingInstanceTypeNetworkInfo:
+##GLUE2CloudComputingInstanceTypeOtherHardware:
+##GLUE2EntityCreationTime:
+##GLUE2EntityValidity:
+## XXX multiple entries could be present
+##GLUE2EntityOtherInfo: <additional info 1>
 % endfor
 
-# List of images
+## List of images
 % for image_id, image in images.items():
 <%
     if image['image_description'] is None:
@@ -159,14 +159,14 @@ GLUE2CloudComputingInstanceTypeNetworkOut: TRUE
             '%(image_os_version)s '
             '%(image_platform)s' % image)
 %>\
-# XXX no more existing?
-# Or need to use OSName and OSVersion
-#GLUE2ApplicationEnvironmentAppName: ${image['image_name']}
-#GLUE2ApplicationEnvironmentAppVersion: ${image['image_version']}
-# XXX no more existing?
-# or need to use OtherInfo attribute
-#GLUE2ApplicationEnvironmentDescription: ${image['image_description']}
-# FIXME Need to find share ID
+## XXX no more existing?
+## Or need to use OSName and OSVersion
+##GLUE2ApplicationEnvironmentAppName: ${image['image_name']}
+##GLUE2ApplicationEnvironmentAppVersion: ${image['image_version']}
+## XXX no more existing?
+## or need to use OtherInfo attribute
+##GLUE2ApplicationEnvironmentDescription: ${image['image_description']}
+## FIXME Need to find share ID
 dn: GLUE2CloudComputingImageID=${image['image_id']}_${endpoint['compute_service_name']},GLUE2ShareID=<share ID>,GLUE2ServiceID=${endpoint['compute_service_name']}_cloud.compute,GLUE2GroupID=resource,${endpoint['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2CloudComputingImage
@@ -174,28 +174,28 @@ GLUE2EntityName: ${image['image_id']}
 GLUE2CloudComputingImageID: ${image['image_id']}
 GLUE2CloudComputingImageMarketPlaceID: ${image['image_marketplace_id']}
 GLUE2CloudComputingImageCloudComputingManagerForeignKey: ${endpoint['compute_service_name']}_cloud.compute_manager
-# TODO find information for this attributes
-#GLUE2CloudComputingImageIDForEndpoint:
-#GLUE2CloudComputingImageOSPlatform:
-#GLUE2CloudComputingImageOSFamily:
-#GLUE2CloudComputingImageOSName:
-#GLUE2CloudComputingImageOSVersion:
-#GLUE2CloudComputingImageDiskSize:
-#GLUE2CloudComputingImageRecommendedCPU:
-#GLUE2CloudComputingImageRecommendedAcceleratorType:
-#GLUE2CloudComputingImageRecommendedAccelerators:
-#GLUE2CloudComputingImageRecommendedRAM:
-#GLUE2CloudComputingImageMinCPU:
-#GLUE2CloudComputingImageMinAccelerators:
-#GLUE2CloudComputingImageMinRAM:
-#GLUE2CloudComputingImageAccessInfo:
-#GLUE2CloudComputingImageInstalledsoftware:
-#GLUE2EntityCreationTime:
-#GLUE2EntityValidity:
-#GLUE2EntityOtherInfo:
-# XXX we might want to skip this infomration
-#GLUE2CloudComputingImageDefaultUserName:
-#GLUE2CloudComputingImageDefaultPassword:
+## TODO find information for this attributes
+##GLUE2CloudComputingImageIDForEndpoint:
+##GLUE2CloudComputingImageOSPlatform:
+##GLUE2CloudComputingImageOSFamily:
+##GLUE2CloudComputingImageOSName:
+##GLUE2CloudComputingImageOSVersion:
+##GLUE2CloudComputingImageDiskSize:
+##GLUE2CloudComputingImageRecommendedCPU:
+##GLUE2CloudComputingImageRecommendedAcceleratorType:
+##GLUE2CloudComputingImageRecommendedAccelerators:
+##GLUE2CloudComputingImageRecommendedRAM:
+##GLUE2CloudComputingImageMinCPU:
+##GLUE2CloudComputingImageMinAccelerators:
+##GLUE2CloudComputingImageMinRAM:
+##GLUE2CloudComputingImageAccessInfo:
+##GLUE2CloudComputingImageInstalledsoftware:
+##GLUE2EntityCreationTime:
+##GLUE2EntityValidity:
+##GLUE2EntityOtherInfo:
+## XXX we might want to skip this infomration
+##GLUE2CloudComputingImageDefaultUserName:
+##GLUE2CloudComputingImageDefaultPassword:
 % endfor
 
-# vim:set ft=ldif:
+## vim:set ft=ldif:
