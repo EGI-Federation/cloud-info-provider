@@ -166,20 +166,17 @@ class StorageBDIITEst(BaseTest):
         static_storage_info = dict(endpoints, **DATA.site_info)
         static_storage_info.pop('endpoints')
 
+        for url, endpoint in endpoints['endpoints'].items():
+            endpoint.update(static_storage_info)
+
+        info = {}
+        info.update({'endpoints': endpoints})
+        info.update({'static_storage_info': static_storage_info})
+
         bdii = cloud_info.core.StorageBDII(self.opts)
         self.assertIsNotNone(bdii.render())
 
-        m_format_calls = [mock.call("storage_service", static_storage_info)]
-
-        for url, endpoint in endpoints['endpoints'].items():
-            endpoint.setdefault('endpoint_url', url)
-            m_format_calls.append(mock.call('storage_endpoint',
-                                  endpoint, extra=static_storage_info))
-
-        m_format_calls.append(mock.call('storage_capacity',
-                              static_storage_info))
-
-        m_format.assert_has_calls(m_format_calls)
+        m_format.assert_has_calls([mock.call("storage", info)])
 
     @mock.patch.object(cloud_info.core.StorageBDII, '_get_info_from_providers')
     def test_render_empty(self, m_get_info):
@@ -226,7 +223,7 @@ class ComputeBDIITest(BaseTest):
         bdii = cloud_info.core.ComputeBDII(self.opts)
         self.assertIsNotNone(bdii.render())
 
-        m_format.assert_has_calls([mock.call("compute_bdii", info)])
+        m_format.assert_has_calls([mock.call("compute", info)])
 
     @mock.patch.object(cloud_info.core.ComputeBDII, '_get_info_from_providers')
     def test_render_empty(self, m_get_info):

@@ -60,13 +60,9 @@ class StorageBDII(BaseBDII):
     def __init__(self, opts):
         super(StorageBDII, self).__init__(opts)
 
-        self.templates = ('storage_service',
-                          'storage_endpoint',
-                          'storage_capacity')
+        self.templates = ['storage']
 
     def render(self):
-        output = []
-
         endpoints = self._get_info_from_providers('get_storage_endpoints')
 
         if not endpoints.get('endpoints'):
@@ -76,26 +72,21 @@ class StorageBDII(BaseBDII):
         static_storage_info = dict(endpoints, **site_info)
         static_storage_info.pop('endpoints')
 
-        output.append(self._format_template('storage_service',
-                                            static_storage_info))
-
         for url, endpoint in endpoints['endpoints'].items():
-            endpoint.setdefault('endpoint_url', url)
-            output.append(self._format_template('storage_endpoint',
-                                                endpoint,
-                                                extra=static_storage_info))
+            endpoint.update(static_storage_info)
 
-        output.append(self._format_template('storage_capacity',
-                                            static_storage_info))
+        info = {}
+        info.update({'endpoints': endpoints})
+        info.update({'static_storage_info': static_storage_info})
 
-        return '\n'.join(output)
+        return self._format_template('storage', info)
 
 
 class ComputeBDII(BaseBDII):
     def __init__(self, opts):
         super(ComputeBDII, self).__init__(opts)
 
-        self.templates = ['compute_bdii']
+        self.templates = ['compute']
 
     def render(self):
         endpoints = self._get_info_from_providers('get_compute_endpoints')
@@ -125,7 +116,7 @@ class ComputeBDII(BaseBDII):
         info.update({'templates': templates})
         info.update({'images': images})
 
-        return self._format_template('compute_bdii', info)
+        return self._format_template('compute', info)
 
 
 class CloudBDII(BaseBDII):
