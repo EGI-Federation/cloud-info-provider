@@ -21,8 +21,8 @@ GLUE2ServiceCapability: ${static_compute_info['compute_capabilities']}
 # GLUE2EntityCreationTime:
 # GLUE2EntityName:
 # GLUE2EntityValidity:
+# XXX multiple entries could be present
 # GLUE2EntityOtherInfo: <additional info 1>
-# GLUE2EntityOtherInfo: <additional info n>
 # GLUE2ServiceComplexity:
 # GLUE2ServiceStatusInfo:
 # GLUE2CloudComputingServiceSuspendedVM:
@@ -49,7 +49,7 @@ GLUE2CloudComputingManagerTotalRAM: ${static_compute_info['compute_total_ram']}
 # TODO find information for this attributes
 #GLUE2EntityCreationTime:
 #GLUE2EntityValidity:
-#GLUE2EntityOtherInfo: <additional info 1>
+# XXX multiple entries could be present
 #GLUE2EntityOtherInfo: <additional info n>
 #GLUE2CloudComputingManagerTotalAccelerators:
 #GLUE2CloudComputingManagerInstanceMaxCPU:
