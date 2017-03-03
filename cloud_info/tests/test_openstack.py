@@ -114,7 +114,7 @@ class OpenStackProviderTest(unittest.TestCase):
 
         self.assert_resources(expected_templates,
                               templates,
-                              template="compute_bdii.ldif",
+                              template="compute.ldif",
                               ignored_fields=[
                                   "compute_service_name",
                                   "image_name",
@@ -157,7 +157,7 @@ class OpenStackProviderTest(unittest.TestCase):
 
         self.assert_resources(expected_templates,
                               templates,
-                              template="compute_bdii.ldif",
+                              template="compute.ldif",
                               ignored_fields=[
                                   "compute_service_name",
                                   "image_name",
@@ -196,7 +196,7 @@ class OpenStackProviderTest(unittest.TestCase):
 
         self.assert_resources(expected_templates,
                               templates,
-                              template="compute_bdii.ldif",
+                              template="compute.ldif",
                               ignored_fields=[
                                   "compute_service_name",
                                   "image_name",
@@ -237,7 +237,7 @@ class OpenStackProviderTest(unittest.TestCase):
 
         self.assert_resources(expected_templates,
                               templates,
-                              template="compute_bdii.ldif",
+                              template="compute.ldif",
                               ignored_fields=[
                                   "compute_service_name",
                                   "image_name",
@@ -302,7 +302,7 @@ class OpenStackProviderTest(unittest.TestCase):
 
         self.assert_resources(expected_images,
                               images,
-                              template="compute_bdii.ldif",
+                              template="compute.ldif",
                               ignored_fields=["compute_service_name"])
 
     def test_get_endpoints_with_defaults_from_static(self):
