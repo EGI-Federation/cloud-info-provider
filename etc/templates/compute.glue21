@@ -147,6 +147,7 @@ GLUE2CloudComputingInstanceTypeNetworkOut: TRUE
 ##GLUE2EntityValidity:
 ## XXX multiple entries could be present
 ##GLUE2EntityOtherInfo: <additional info 1>
+
 % endfor
 
 ## List of images
@@ -196,6 +197,7 @@ GLUE2CloudComputingImageCloudComputingManagerForeignKey: ${endpoint['compute_ser
 ## XXX we might want to skip this infomration
 ##GLUE2CloudComputingImageDefaultUserName:
 ##GLUE2CloudComputingImageDefaultPassword:
+
 % endfor
 
 ## vim:set ft=ldif:
