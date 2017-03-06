@@ -5,6 +5,7 @@
     images = attributes['images']
     compute_service_id = static_compute_info['compute_service_name'] + '_cloud.compute'
     compute_service_manager = compute_service_id + '_manager'
+    compute_service_share = compute_service_id + '_share'
 %>\
 
 ## Cloud Computing Service - GLUE2CloudComputingService
@@ -70,6 +71,37 @@ GLUE2CloudComputingManagerTotalRAM: ${static_compute_info['compute_total_ram']}
 ##GLUE2CloudComputingManagerLiveMigration:
 ##GLUE2CloudComputingManagerVMBackupRestore:
 
+## Computing share - GLUE2CloudComputingShare
+dn: GLUE2ShareID=${compute_service_share},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${static_compute_info['suffix']}
+objectClass: GLUE2Entity
+objectClass: GLUE2Share
+objectClass: GLUE2CloudComputingShare
+GLUE2ShareID: ${compute_service_share}
+GLUE2ShareServiceForeignKey: ${compute_service_id}
+GLUE2CloudComputingShareCloudComputingServiceForeignKey: ${compute_service_id}
+## TODO find information for this attributes
+##GLUE2ShareEndpointForeignKey: <EndpointID>
+##GLUE2ShareResourceForeignKey: cream-02.cnaf.infn.it
+##GLUE2CloudComputingShareCloudComputingEndpointForeignKey: <EndpointID>
+##GLUE2ComputingShareExecutionEnvironmentForeignKey: cream-02.cnaf.infn.it +++++++++++++++ controllare ++++++++++++++++++
+##GLUE2EntityCreationTime:
+##GLUE2EntityName:
+##GLUE2EntityValidity:
+##GLUE2EntityOtherInfo: <additional info 1>
+##GLUE2EntityOtherInfo: <additional info n>
+##GLUE2ShareDescription:
+##GLUE2CloudComputingShareTotalVM:
+##GLUE2CloudComputingShareRunningVM:
+##GLUE2CloudComputingSharePendingVM:
+##GLUE2CloudComputingShareSuspendedVM:
+##GLUE2CloudComputingShareHaltedVM:
+##GLUE2CloudComputingShareMaxVM:
+##GLUE2CloudComputingShareInstanceMaxCPU:
+##GLUE2CloudComputingShareInstanceMaxAccelerators:
+##GLUE2CloudComputingShareInstanceMaxRAM:
+##GLUE2CloudComputingShareNetworkInfo:
+##GLUE2CloudComputingShareSLA:
+
 
 ## List of Cloud Computing Endpoints - GLUE2CloudComputingEndpoint
 ## one entry for each endpoint provided
@@ -123,7 +155,7 @@ GLUE2EntityOtherInfo: Authn=${endpoint['compute_api_authn_method']}
 ##GLUE2ExecutionEnvironmentCPUMultiplicity: multicpu-multicore
 ##GLUE2ExecutionEnvironmentCPUVendor: virtual vendor
 ## FIXME Need to find share ID
-dn: GLUE2ResourceID=${template['template_id']}_${template['compute_service_name']},GLUE2ShareID=<share ID>,GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${template['suffix']}
+dn: GLUE2ResourceID=${template['template_id']}_${template['compute_service_name']},GLUE2ShareID=${compute_service_share},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${template['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2Resource
 objectClass: GLUE2CloudComputingInstanceType
