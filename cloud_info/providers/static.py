@@ -137,7 +137,7 @@ class StaticProvider(providers.BaseProvider):
                                    'shares',
                                    None,
                                    fields,
-                                   prefix='share_')
+                                   prefix='')
         return shares['shares']
 
     def get_compute_endpoints(self):
