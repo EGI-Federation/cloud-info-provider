@@ -211,6 +211,10 @@ class OpenStackProvider(providers.BaseProvider):
 
         return obj_name[start:end]
 
+    def get_compute_shares(self):
+        # XXX Once possible implement dynamic retrieval of shares
+        return self.static.get_compute_shares()
+
     def get_compute_endpoints(self):
         # Hard-coded defaults for supported endpoints types
         supported_endpoints = {
