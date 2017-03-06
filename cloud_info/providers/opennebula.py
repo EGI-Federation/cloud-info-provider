@@ -286,18 +286,27 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
             with open(template_file, 'r') as fd:
                 jd = json.load(fd)
 
+            mxn = jd['mixins'][0]
+
             aux = defaults.copy()
             if ressch is None:
-                flid = '%s#%s' % (jd['mixins'][0]['scheme'].rstrip('#'), jd['mixins'][0]['term'])  # noqa
+                flid = '%s#%s' % (mxn['scheme'].rstrip('#'), mxn['term'])
             else:
-                flid = '%s#%s' % (ressch, jd['mixins'][0]['term'])
-                aux.update({'template_id': '%s#%s' % (ressch, jd['mixins'][0]['term'])})  # noqa
+                flid = '%s#%s' % (ressch, mxn['term'])
+                aux.update({'template_id': '%s#%s' % (ressch, mxn['term'])})
+
+            occi_attrs = mxn['attributes']['occi']['compute']
+            if 'ephemeral_storage' in occi_attrs:
+                disk = occi_attrs['ephemeral_storage']['size']['Default']
+            else:
+                disk = 0
 
             aux.update({
                 'template_id': flid,
-                'template_cpu': jd['mixins'][0]['attributes']['occi']['compute']['cores']['Default'],  # noqa
-                'template_memory': int(jd['mixins'][0]['attributes']['occi']['compute']['memory']['Default'] * 1024),  # noqa
-                'template_description': jd['mixins'][0]['title']
+                'template_cpu': occi_attrs['cores']['Default'],
+                'template_memory': int(occi_attrs['memory']['Default'] * 1024),
+                'template_description': mxn['title'],
+                'template_disk': disk,
             })
 
             flavors[flid] = aux

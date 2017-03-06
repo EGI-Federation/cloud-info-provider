@@ -52,6 +52,10 @@ GLUE2EndpointTechnology: ${endpoint['compute_api_endpoint_technology']}
 
 % endfor
 % for template_id, template in templates.items():
+<%
+    if template['template_disk'] is None:
+        template['template_disk'] = 0
+%>\
 dn: GLUE2ResourceID=${template['template_id']}_${template['compute_service_name']},GLUE2ServiceID=${template['compute_service_name']}_cloud.compute,GLUE2GroupID=cloud,${template['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2Resource
@@ -70,6 +74,7 @@ GLUE2ExecutionEnvironmentCPUMultiplicity: multicpu-multicore
 GLUE2ExecutionEnvironmentCPUVendor: virtual vendor
 GLUE2ExecutionEnvironmentLogicalCPUs: ${template['template_cpu']}
 GLUE2ExecutionEnvironmentPhysicalCPUs: ${template['template_cpu']}
+GLUE2EntityOtherInfo: disk=${template['template_disk']}
 
 % endfor
 % for image_id, image in images.items():

@@ -97,7 +97,8 @@ class OpenStackProviderTest(unittest.TestCase):
                 'template_cpu': f.vcpus,
                 'template_id': '%s#%s' % (url, name),
                 'template_platform': 'amd64',
-                'template_network': 'private'
+                'template_network': 'private',
+                'template_disk': f.disk,
             }
 
         self.provider.legacy_occi_os = True
@@ -137,7 +138,8 @@ class OpenStackProviderTest(unittest.TestCase):
                 'template_cpu': f.vcpus,
                 'template_id': '%s#%s' % (url, name),
                 'template_platform': 'i686',
-                'template_network': 'private'
+                'template_network': 'private',
+                'template_disk': f.disk,
             }
 
         self.provider.legacy_occi_os = True
@@ -178,7 +180,8 @@ class OpenStackProviderTest(unittest.TestCase):
                 'template_cpu': f.vcpus,
                 'template_id': '%s#%s' % (url, f.id),
                 'template_platform': 'amd64',
-                'template_network': 'private'
+                'template_network': 'private',
+                'template_disk': f.disk,
             }
 
         with utils.nested(
@@ -216,7 +219,8 @@ class OpenStackProviderTest(unittest.TestCase):
                 'template_cpu': f.vcpus,
                 'template_id': '%s#%s' % (url, f.id),
                 'template_platform': 'i686',
-                'template_network': 'private'
+                'template_network': 'private',
+                'template_disk': f.disk,
             }
 
         with utils.nested(
