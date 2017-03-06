@@ -4,12 +4,10 @@
 ## dn: GLUE2GroupID=cloud,${attributes['suffix']}
 ## objectClass: GLUE2Group
 ## GLUE2GroupID: cloud
-
 ## TODO validate endpoint global unique ID
 ## TODO validate ServiceID
 ## FIXME static_compute_info is not an attribute (not pushed inside core.py)
 ## dn: GLUE2GroupID=CloudComputingInstances,GLUE2EndpointID=${static_compute_info['compute_service_name']}_cloud,GLUE2ServiceID=${attributes['compute_service_name']},GLUE2GroupID=resource,${static_compute_info['suffix']}
 ##objectClass: GLUE2Group
 ##GLUE2GroupID: CloudComputingInstances
-
 ## vim:set ft=ldif:
