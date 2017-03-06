@@ -2,12 +2,11 @@
     static_compute_info = attributes['static_compute_info']
     endpoints = attributes['endpoints']
     templates = attributes['templates']
+    shares = attributes['shares']
     images = attributes['images']
     compute_service_id = static_compute_info['compute_service_name'] + '_cloud.compute'
     compute_service_manager = compute_service_id + '_manager'
-    compute_service_share = compute_service_id + '_share'
 %>\
-
 ## Cloud Computing Service - GLUE2CloudComputingService
 dn: GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${static_compute_info['suffix']}
 objectClass: GLUE2Entity
@@ -72,15 +71,23 @@ GLUE2CloudComputingManagerTotalRAM: ${static_compute_info['compute_total_ram']}
 ##GLUE2CloudComputingManagerVMBackupRestore:
 
 ## Computing share - GLUE2CloudComputingShare
-dn: GLUE2ShareID=${compute_service_share},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${static_compute_info['suffix']}
+## XXX multiple share can be present
+% for share_id, share in shares.items():
+dn: GLUE2ShareID=${compute_service_id}_${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${static_compute_info['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2Share
 objectClass: GLUE2CloudComputingShare
-GLUE2ShareID: ${compute_service_share}
+GLUE2ShareID: ${compute_service_id}_${share_id}
 GLUE2ShareServiceForeignKey: ${compute_service_id}
 GLUE2CloudComputingShareCloudComputingServiceForeignKey: ${compute_service_id}
+## XXX endpoints should be an array
+##% for endpoint_id in shares['endpoints'].items():
+GLUE2ShareEndpointForeignKey: ${share['endpoints']}
+##% endfor
+GLUE2CloudComputingShareInstanceMaxCPU: ${share['instance_max_cpu']}
+GLUE2CloudComputingShareInstanceMaxRAM: ${share['instance_max_ram']}
+GLUE2CloudComputingShareSLA: ${share['sla']}
 ## TODO find information for this attributes
-##GLUE2ShareEndpointForeignKey: <EndpointID>
 ##GLUE2ShareResourceForeignKey: cream-02.cnaf.infn.it
 ##GLUE2CloudComputingShareCloudComputingEndpointForeignKey: <EndpointID>
 ##GLUE2ComputingShareExecutionEnvironmentForeignKey: cream-02.cnaf.infn.it +++++++++++++++ controllare ++++++++++++++++++
@@ -96,11 +103,10 @@ GLUE2CloudComputingShareCloudComputingServiceForeignKey: ${compute_service_id}
 ##GLUE2CloudComputingShareSuspendedVM:
 ##GLUE2CloudComputingShareHaltedVM:
 ##GLUE2CloudComputingShareMaxVM:
-##GLUE2CloudComputingShareInstanceMaxCPU:
 ##GLUE2CloudComputingShareInstanceMaxAccelerators:
-##GLUE2CloudComputingShareInstanceMaxRAM:
 ##GLUE2CloudComputingShareNetworkInfo:
-##GLUE2CloudComputingShareSLA:
+% endfor
+
 
 
 ## List of Cloud Computing Endpoints - GLUE2CloudComputingEndpoint
