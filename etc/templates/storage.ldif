@@ -1,0 +1,53 @@
+<%
+    static_storage_info = attributes['static_storage_info']
+    endpoints = attributes['endpoints']
+%>\
+dn: GLUE2ServiceID=${static_storage_info['storage_service_name']}_cloud.storage,GLUE2GroupID=cloud,${static_storage_info['suffix']}
+objectClass: GLUE2Entity
+objectClass: GLUE2Service
+objectClass: GLUE2StorageService
+GLUE2ServiceAdminDomainForeignKey: ${static_storage_info['site_name']}
+GLUE2ServiceID: ${static_storage_info['storage_service_name']}_cloud.storage
+GLUE2ServiceQualityLevel: ${static_storage_info['storage_service_production_level']}
+GLUE2ServiceType: STaaS
+GLUE2ServiceCapability: ${static_storage_info['storage_capabilities']}
+
+dn: GLUE2ManagerID=${static_storage_info['storage_service_name']}_cloud.storage_manager,GLUE2ServiceID=${static_storage_info['storage_service_name']}_cloud.storage,GLUE2GroupID=cloud,${static_storage_info['suffix']}
+objectClass: GLUE2Entity
+objectClass: GLUE2Manager
+objectClass: GLUE2StorageManager
+GLUE2ManagerID: ${static_storage_info['storage_service_name']}_cloud.storage_manager
+GLUE2ManagerProductName: ${static_storage_info['storage_middleware']}
+GLUE2ManagerServiceForeignKey: ${static_storage_info['storage_service_name']}_cloud.storage
+GLUE2StorageManagerStorageServiceForeignKey: ${static_storage_info['storage_service_name']}_cloud.storage
+GLUE2EntityName: Cloud Storage Manager at ${static_storage_info['storage_service_name']}
+GLUE2ManagerProductVersion: ${static_storage_info['storage_middleware_version']}
+
+% for url, endpoint in endpoints['endpoints'].items():
+dn: GLUE2EndpointID=${url}_${endpoint['storage_api_type']}_${endpoint['storage_api_version']}_${endpoint['storage_api_authn_method']},GLUE2ServiceID=${endpoint['storage_service_name']}_cloud.storage,GLUE2GroupID=cloud,${endpoint['suffix']}
+objectClass: GLUE2Entity
+objectClass: GLUE2Endpoint
+objectClass: GLUE2StorageEndpoint
+GLUE2EndpointHealthState: ok
+GLUE2EndpointID: ${url}_${endpoint['storage_api_type']}_${endpoint['storage_api_version']}_${endpoint['storage_api_authn_method']}
+GLUE2EndpointInterfaceName: ${endpoint['storage_api_type']}
+GLUE2EndpointQualityLevel: ${endpoint['storage_production_level']}
+GLUE2EndpointServiceForeignKey: ${endpoint['storage_service_name']}_cloud.storage
+GLUE2EndpointServingState: ${endpoint['storage_production_level']}
+GLUE2EndpointURL: ${url}
+GLUE2StorageEndpointStorageServiceForeignKey: ${endpoint['storage_service_name']}_cloud.storage
+GLUE2EndpointCapability: ${endpoint['storage_capabilities']}
+GLUE2EndpointImplementationName: ${endpoint['storage_middleware']}
+GLUE2EndpointImplementationVersion: ${endpoint['storage_middleware_version']}
+GLUE2EndpointImplementor: ${endpoint['storage_middleware_developer']}
+GLUE2EndpointInterfaceVersion: ${endpoint['storage_api_version']}
+GLUE2EntityOtherInfo: Authn=${endpoint['storage_api_authn_method']}
+GLUE2EndpointTechnology: ${endpoint['storage_api_endpoint_technology']}
+
+% endfor
+dn: GLUE2StorageServiceCapacityID=${static_storage_info['storage_service_name']}_cloud.storage_capacity,GLUE2ServiceID=${static_storage_info['storage_service_name']}_cloud.storage,GLUE2GroupID=cloud,${static_storage_info['suffix']} objectClass: GLUE2Entity
+objectClass: GLUE2StorageServiceCapacity
+GLUE2StorageServiceCapacityID: ${static_storage_info['storage_service_name']}_cloud.storage_capacity
+GLUE2StorageServiceCapacityType: online
+GLUE2StorageServiceCapacityStorageServiceForeignKey: ${static_storage_info['storage_service_name']}_cloud.storage
+GLUE2StorageServiceCapacityTotalSize: ${static_storage_info['storage_total_storage']}
