@@ -109,8 +109,8 @@ class ComputeBDII(BaseBDII):
         self.templates = ['compute']
 
     def render(self):
+        # TODO(Retrieve information of each endpoint)
         endpoints = self._get_info_from_providers('get_compute_endpoints')
-        shares = self._get_info_from_providers('get_compute_shares')
 
         if not endpoints.get('endpoints'):
             return ''
@@ -121,6 +121,9 @@ class ComputeBDII(BaseBDII):
 
         templates = self._get_info_from_providers('get_templates')
         images = self._get_info_from_providers('get_images')
+
+        # Get shares
+        shares = self._get_info_from_providers('get_compute_shares')
 
         for url, endpoint in endpoints['endpoints'].items():
             endpoint.update(static_compute_info)
