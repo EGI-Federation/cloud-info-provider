@@ -207,6 +207,7 @@ class ComputeBDIITest(BaseTest):
             DATA.site_info,
             DATA.compute_templates,
             DATA.compute_images,
+            DATA.compute_shares,
         )
         m_format.return_value = 'foo'
         endpoints = DATA.compute_endpoints
@@ -214,6 +215,7 @@ class ComputeBDIITest(BaseTest):
         static_compute_info.pop('endpoints')
         templates = DATA.compute_templates
         images = DATA.compute_images
+        shares = DATA.compute_shares
 
         for url, endpoint in endpoints['endpoints'].items():
             endpoint.update(static_compute_info)
@@ -229,6 +231,7 @@ class ComputeBDIITest(BaseTest):
         info.update({'static_compute_info': static_compute_info})
         info.update({'templates': templates})
         info.update({'images': images})
+        info.update({'shares': shares})
 
         bdii = cloud_info.core.ComputeBDII(self.opts)
         self.assertIsNotNone(bdii.render())
