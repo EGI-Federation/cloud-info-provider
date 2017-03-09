@@ -72,20 +72,22 @@ GLUE2CloudComputingManagerTotalRAM: ${static_compute_info['compute_total_ram']}
 
 ## Computing share - GLUE2CloudComputingShare
 ## XXX multiple share can be present
-% for share_id, share in shares.items():
-dn: GLUE2ShareID=${compute_service_id}_${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${static_compute_info['suffix']}
+##% for counter, share in enumerate(shares):
+% for vo, share in shares.items():
+dn: GLUE2ShareID=${compute_service_id}_share_${vo},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${static_compute_info['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2Share
 objectClass: GLUE2CloudComputingShare
-GLUE2ShareID: ${compute_service_id}_${share_id}
+GLUE2ShareID: ${compute_service_id}_share${vo}
 GLUE2ShareServiceForeignKey: ${compute_service_id}
 GLUE2CloudComputingShareCloudComputingServiceForeignKey: ${compute_service_id}
 ## XXX endpoints should be an array
 ##% for endpoint_id in shares['endpoints'].items():
-GLUE2ShareEndpointForeignKey: ${share['endpoints']}
+##GLUE2ShareEndpointForeignKey: ${share['endpoints']}
 ##% endfor
 GLUE2CloudComputingShareInstanceMaxCPU: ${share['instance_max_cpu']}
 GLUE2CloudComputingShareInstanceMaxRAM: ${share['instance_max_ram']}
+Project: ${share['project']}
 GLUE2CloudComputingShareSLA: ${share['sla']}
 ## TODO find information for this attributes
 ##GLUE2ShareResourceForeignKey: cream-02.cnaf.infn.it
@@ -161,7 +163,7 @@ GLUE2EntityOtherInfo: Authn=${endpoint['compute_api_authn_method']}
 ##GLUE2ExecutionEnvironmentCPUMultiplicity: multicpu-multicore
 ##GLUE2ExecutionEnvironmentCPUVendor: virtual vendor
 ## FIXME Need to find share ID
-dn: GLUE2ResourceID=${template['template_id']}_${template['compute_service_name']},GLUE2ShareID=${compute_service_share},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${template['suffix']}
+dn: GLUE2ResourceID=${template['template_id']}_${template['compute_service_name']},GLUE2ShareID=${compute_service_id}_share1,GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${template['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2Resource
 objectClass: GLUE2CloudComputingInstanceType
@@ -208,7 +210,7 @@ GLUE2CloudComputingInstanceTypeNetworkOut: TRUE
 ## or need to use OtherInfo attribute
 ##GLUE2ApplicationEnvironmentDescription: ${image['image_description']}
 ## FIXME Need to find share ID
-dn: GLUE2CloudComputingImageID=${image['image_id']}_${endpoint['compute_service_name']},GLUE2ShareID=<share ID>,GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${static_compute_info['suffix']}
+dn: GLUE2CloudComputingImageID=${image['image_id']}_${endpoint['compute_service_name']},GLUE2ShareID=${compute_service_id}_share1,GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${static_compute_info['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2CloudComputingImage
 GLUE2EntityName: ${image['image_id']}
