@@ -149,6 +149,20 @@ class Data(object):
             }
         }
 
+    @property
+    def compute_shares(self):
+        return {
+            'fedcloud.egi.eu': {
+                'sla': 'https://egi.eu/sla/fedcloud',
+                'project': 'fedcloud',
+            },
+            'training.egi.eu': {
+                'sla': 'https://egi.eu/sla/training',
+                'project': 'training',
+            },
+        }
+
+
 DATA = Data()
 
 
