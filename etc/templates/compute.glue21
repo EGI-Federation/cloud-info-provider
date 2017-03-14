@@ -58,26 +58,26 @@ GLUE2CloudComputingManagerCloudComputingServiceForeignKey: ${compute_service_id}
 GLUE2CloudComputingManagerTotalCPUs: ${static_compute_info['compute_total_cores']}
 GLUE2CloudComputingManagerTotalRAM: ${static_compute_info['compute_total_ram']}
 ## TODO find information for this attributes
-##GLUE2EntityCreationTime:
-##GLUE2EntityValidity:
+## GLUE2EntityCreationTime:
+## GLUE2EntityValidity:
 ## XXX multiple entries could be present
-##GLUE2EntityOtherInfo: <additional info n>
-##GLUE2CloudComputingManagerTotalAccelerators:
-##GLUE2CloudComputingManagerInstanceMaxCPU:
-##GLUE2CloudComputingManagerInstanceMinCPU:
-##GLUE2CloudComputingManagerInstanceMaxAccelerators:
-##GLUE2CloudComputingManagerInstanceMinAccelerators:
-##GLUE2CloudComputingManagerInstanceMaxRAM:
-##GLUE2CloudComputingManagerInstanceMinRAM:
-##GLUE2CloudComputingManagerInstanceMaxDedicatedRAM:
-##GLUE2CloudComputingManagerInstanceMinDedicatedRAM:
-##GLUE2CloudComputingManagerNetworkVirtualizationType:
-##GLUE2CloudComputingManagerCPUVirtualizationType:
-##GLUE2CloudComputingManagerAcceleratorVirtualizationType:
-##GLUE2CloudComputingManagerVirtualdiskFormat:
-##GLUE2CloudComputingManagerFailover:
-##GLUE2CloudComputingManagerLiveMigration:
-##GLUE2CloudComputingManagerVMBackupRestore:
+## GLUE2EntityOtherInfo: <additional info n>
+## GLUE2CloudComputingManagerTotalAccelerators:
+## GLUE2CloudComputingManagerInstanceMaxCPU:
+## GLUE2CloudComputingManagerInstanceMinCPU:
+## GLUE2CloudComputingManagerInstanceMaxAccelerators:
+## GLUE2CloudComputingManagerInstanceMinAccelerators:
+## GLUE2CloudComputingManagerInstanceMaxRAM:
+## GLUE2CloudComputingManagerInstanceMinRAM:
+## GLUE2CloudComputingManagerInstanceMaxDedicatedRAM:
+## GLUE2CloudComputingManagerInstanceMinDedicatedRAM:
+## GLUE2CloudComputingManagerNetworkVirtualizationType:
+## GLUE2CloudComputingManagerCPUVirtualizationType:
+## GLUE2CloudComputingManagerAcceleratorVirtualizationType:
+## GLUE2CloudComputingManagerVirtualdiskFormat:
+## GLUE2CloudComputingManagerFailover:
+## GLUE2CloudComputingManagerLiveMigration:
+## GLUE2CloudComputingManagerVMBackupRestore:
 
 ##
 ## List of Cloud Computing Endpoints - GLUE2CloudComputingEndpoint
@@ -113,23 +113,23 @@ GLUE2EndpointDowntimeInfo: See the GOC DB for downtimes: https://goc.egi.eu/
 ## XXX multiple entries could be present
 GLUE2EntityOtherInfo: Authn=${endpoint['compute_api_authn_method']}
 ## TODO find information for this attributes
-##GLUE2EntityCreationTime:
-##GLUE2EntityName:
-##GLUE2EntityValidity:
-##GLUE2EndpointSemantics:
-##GLUE2EndpointSupportedProfile:
-##GLUE2EndpointInterfaceExtension:
-##GLUE2EndpointWSDL:
-##GLUE2EndpointHealthStateInfo:
-##GLUE2EndpointStartTime:
-##GLUE2EndpointIssuerCA:
-##GLUE2EndpointTrustedCA:
-##GLUE2EndpointTrustedCA:
-##GLUE2EndpointDowntimeAnnounce:
-##GLUE2EndpointDowntimeStart:
-##GLUE2EndpointDowntimeEnd:
-##GLUE2CloudComputingEndpointContextualizationName:
-##GLUE2CloudComputingEndpointContextualizationVersion:
+## GLUE2EntityCreationTime:
+## GLUE2EntityName:
+## GLUE2EntityValidity:
+## GLUE2EndpointSemantics:
+## GLUE2EndpointSupportedProfile:
+## GLUE2EndpointInterfaceExtension:
+## GLUE2EndpointWSDL:
+## GLUE2EndpointHealthStateInfo:
+## GLUE2EndpointStartTime:
+## GLUE2EndpointIssuerCA:
+## GLUE2EndpointTrustedCA:
+## GLUE2EndpointTrustedCA:
+## GLUE2EndpointDowntimeAnnounce:
+## GLUE2EndpointDowntimeStart:
+## GLUE2EndpointDowntimeEnd:
+## GLUE2CloudComputingEndpointContextualizationName:
+## GLUE2CloudComputingEndpointContextualizationVersion:
 
 % endfor
 ##
@@ -162,22 +162,22 @@ GLUE2CloudComputingShareInstanceMaxRAM: ${share['instance_max_ram']}
 Project: ${share['project']}
 GLUE2CloudComputingShareSLA: ${share['sla']}
 ## TODO find information for this attributes
-##GLUE2ShareResourceForeignKey: cream-02.cnaf.infn.it
-##GLUE2ComputingShareExecutionEnvironmentForeignKey: cream-02.cnaf.infn.it +++++++++++++++ controllare ++++++++++++++++++
-##GLUE2EntityCreationTime:
-##GLUE2EntityName:
-##GLUE2EntityValidity:
-##GLUE2EntityOtherInfo: <additional info 1>
-##GLUE2EntityOtherInfo: <additional info n>
-##GLUE2ShareDescription:
-##GLUE2CloudComputingShareTotalVM:
-##GLUE2CloudComputingShareRunningVM:
-##GLUE2CloudComputingSharePendingVM:
-##GLUE2CloudComputingShareSuspendedVM:
-##GLUE2CloudComputingShareHaltedVM:
-##GLUE2CloudComputingShareMaxVM:
-##GLUE2CloudComputingShareInstanceMaxAccelerators:
-##GLUE2CloudComputingShareNetworkInfo:
+## GLUE2ShareResourceForeignKey: cream-02.cnaf.infn.it
+## GLUE2ComputingShareExecutionEnvironmentForeignKey: cream-02.cnaf.infn.it +++++++++++++++ controllare ++++++++++++++++++
+## GLUE2EntityCreationTime:
+## GLUE2EntityName:
+## GLUE2EntityValidity:
+## GLUE2EntityOtherInfo: <additional info 1>
+## GLUE2EntityOtherInfo: <additional info n>
+## GLUE2ShareDescription:
+## GLUE2CloudComputingShareTotalVM:
+## GLUE2CloudComputingShareRunningVM:
+## GLUE2CloudComputingSharePendingVM:
+## GLUE2CloudComputingShareSuspendedVM:
+## GLUE2CloudComputingShareHaltedVM:
+## GLUE2CloudComputingShareMaxVM:
+## GLUE2CloudComputingShareInstanceMaxAccelerators:
+## GLUE2CloudComputingShareNetworkInfo:
 
 ##
 ## List of images
@@ -193,10 +193,10 @@ GLUE2CloudComputingShareSLA: ${share['sla']}
 %>\
 ## XXX no more existing?
 ## Or need to use OSName and OSVersion
-##GLUE2ApplicationEnvironmentAppName: ${image['image_name']}
-##GLUE2ApplicationEnvironmentAppVersion: ${image['image_version']}
+## GLUE2ApplicationEnvironmentAppName: ${image['image_name']}
+## GLUE2ApplicationEnvironmentAppVersion: ${image['image_version']}
 ## or need to use OtherInfo attribute
-##GLUE2ApplicationEnvironmentDescription: ${image['image_description']}
+## GLUE2ApplicationEnvironmentDescription: ${image['image_description']}
 dn: GLUE2CloudComputingImageID=${image['image_id']},GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${static_compute_info['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2CloudComputingImage
@@ -206,27 +206,27 @@ GLUE2CloudComputingImageID: ${image['image_id']}
 GLUE2CloudComputingImageMarketPlaceID: ${image['image_marketplace_id']}
 GLUE2CloudComputingImageCloudComputingManagerForeignKey: ${compute_service_manager}
 ## TODO find information for this attributes
-##GLUE2CloudComputingImageIDForEndpoint:
-##GLUE2CloudComputingImageOSPlatform:
-##GLUE2CloudComputingImageOSFamily:
-##GLUE2CloudComputingImageOSName:
-##GLUE2CloudComputingImageOSVersion:
-##GLUE2CloudComputingImageDiskSize:
-##GLUE2CloudComputingImageRecommendedCPU:
-##GLUE2CloudComputingImageRecommendedAcceleratorType:
-##GLUE2CloudComputingImageRecommendedAccelerators:
-##GLUE2CloudComputingImageRecommendedRAM:
-##GLUE2CloudComputingImageMinCPU:
-##GLUE2CloudComputingImageMinAccelerators:
-##GLUE2CloudComputingImageMinRAM:
-##GLUE2CloudComputingImageAccessInfo:
-##GLUE2CloudComputingImageInstalledsoftware:
-##GLUE2EntityCreationTime:
-##GLUE2EntityValidity:
-##GLUE2EntityOtherInfo:
-## XXX we might want to skip this infomration
-##GLUE2CloudComputingImageDefaultUserName:
-##GLUE2CloudComputingImageDefaultPassword:
+## GLUE2CloudComputingImageIDForEndpoint:
+## GLUE2CloudComputingImageOSPlatform:
+## GLUE2CloudComputingImageOSFamily:
+## GLUE2CloudComputingImageOSName:
+## GLUE2CloudComputingImageOSVersion:
+## GLUE2CloudComputingImageDiskSize:
+## GLUE2CloudComputingImageRecommendedCPU:
+## GLUE2CloudComputingImageRecommendedAcceleratorType:
+## GLUE2CloudComputingImageRecommendedAccelerators:
+## GLUE2CloudComputingImageRecommendedRAM:
+## GLUE2CloudComputingImageMinCPU:
+## GLUE2CloudComputingImageMinAccelerators:
+## GLUE2CloudComputingImageMinRAM:
+## GLUE2CloudComputingImageAccessInfo:
+## GLUE2CloudComputingImageInstalledsoftware:
+## GLUE2EntityCreationTime:
+## GLUE2EntityValidity:
+## GLUE2EntityOtherInfo:
+## XXX we might want to skip this information
+## GLUE2CloudComputingImageDefaultUserName:
+## GLUE2CloudComputingImageDefaultPassword:
 
 % endfor
 ##
@@ -234,11 +234,11 @@ GLUE2CloudComputingImageCloudComputingManagerForeignKey: ${compute_service_manag
 ##
 % for template_id, template in share['templates'].items():
 ## XXX no more present?
-##GLUE2ExecutionEnvironmentVirtualMachine: TRUE
-##GLUE2ExecutionEnvironmentOSFamily: linux
-##GLUE2ExecutionEnvironmentCPUModel: virtual model
-##GLUE2ExecutionEnvironmentCPUMultiplicity: multicpu-multicore
-##GLUE2ExecutionEnvironmentCPUVendor: virtual vendor
+## GLUE2ExecutionEnvironmentVirtualMachine: TRUE
+## GLUE2ExecutionEnvironmentOSFamily: linux
+## GLUE2ExecutionEnvironmentCPUModel: virtual model
+## GLUE2ExecutionEnvironmentCPUMultiplicity: multicpu-multicore
+## GLUE2ExecutionEnvironmentCPUVendor: virtual vendor
 dn: GLUE2ResourceID=${template['template_id']},GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${template['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2Resource
@@ -253,18 +253,18 @@ GLUE2CloudComputingInstanceTypeRAM: ${template['template_memory']}
 GLUE2CloudComputingInstanceTypeNetworkIn: TRUE
 GLUE2CloudComputingInstanceTypeNetworkOut: TRUE
 ## TODO find information for this attributes
-##GLUE2CloudComputingInstanceTypeIDForEndpoint:
-##GLUE2CloudComputingInstanceTypeMarketPlaceID:
-##GLUE2CloudComputingInstanceTypeEphemeralStorage:
-##GLUE2CloudComputingInstanceTypeDisk:
-##GLUE2CloudComputingInstanceTypeNetworkPortsIn:
-##GLUE2CloudComputingInstanceTypeNetworkPortsOut:
-##GLUE2CloudComputingInstanceTypeNetworkInfo:
-##GLUE2CloudComputingInstanceTypeOtherHardware:
-##GLUE2EntityCreationTime:
-##GLUE2EntityValidity:
+## GLUE2CloudComputingInstanceTypeIDForEndpoint:
+## GLUE2CloudComputingInstanceTypeMarketPlaceID:
+## GLUE2CloudComputingInstanceTypeEphemeralStorage:
+## GLUE2CloudComputingInstanceTypeDisk:
+## GLUE2CloudComputingInstanceTypeNetworkPortsIn:
+## GLUE2CloudComputingInstanceTypeNetworkPortsOut:
+## GLUE2CloudComputingInstanceTypeNetworkInfo:
+## GLUE2CloudComputingInstanceTypeOtherHardware:
+## GLUE2EntityCreationTime:
+## GLUE2EntityValidity:
 ## XXX multiple entries could be present
-##GLUE2EntityOtherInfo: <additional info 1>
+## GLUE2EntityOtherInfo: <additional info 1>
 
 % endfor
 % endfor
@@ -293,11 +293,11 @@ GLUE2PolicyRule: VO:${vo}
 GLUE2PolicyUserDomainForeignKey: ${vo}
 % endfor
 ## TODO find information for this attributes
-##GLUE2EntityCreationTime: 2016-02-18T14:42:49Z
-##GLUE2EntityName: Access control rules for Endpoint cream-02.cnaf.infn.it_org.glite.ce.CREAM
-##GLUE2EntityOtherInfo: InfoProviderName=glite-ce-glue2-endpoint-static
-##GLUE2EntityOtherInfo: InfoProviderVersion=1.1
-##GLUE2EntityOtherInfo: InfoProviderHost=cream-02.cnaf.infn.it
+## GLUE2EntityCreationTime: 2016-02-18T14:42:49Z
+## GLUE2EntityName: Access control rules for Endpoint cream-02.cnaf.infn.it_org.glite.ce.CREAM
+## GLUE2EntityOtherInfo: InfoProviderName=glite-ce-glue2-endpoint-static
+## GLUE2EntityOtherInfo: InfoProviderVersion=1.1
+## GLUE2EntityOtherInfo: InfoProviderHost=cream-02.cnaf.infn.it
 % endfor
 
 ##
@@ -316,13 +316,13 @@ GLUE2PolicyScheme: org.glite.standard
 GLUE2MappingPolicyShareForeignKey: ${share_id}
 GLUE2PolicyRule: VO:${vo}
 # XXX do we need to support groups?
-#GLUE2PolicyRule: VOMS:/ops/Role=lcgadmin
-#GLUE2PolicyRule: VOMS:/ops/Role=pilot
+# GLUE2PolicyRule: VOMS:/ops/Role=lcgadmin
+# GLUE2PolicyRule: VOMS:/ops/Role=pilot
 GLUE2PolicyUserDomainForeignKey: ${vo}
 ## TODO find information for this attributes
 ## GLUE2EntityCreationTime: 2016-02-18T14:42:49Z
-##GLUE2EntityOtherInfo: InfoProviderName=glite-ce-glue2-share-static
-##GLUE2EntityOtherInfo: InfoProviderVersion=1.1
-##GLUE2EntityOtherInfo: InfoProviderHost=cream-02.cnaf.infn.it
+## GLUE2EntityOtherInfo: InfoProviderName=glite-ce-glue2-share-static
+## GLUE2EntityOtherInfo: InfoProviderVersion=1.1
+## GLUE2EntityOtherInfo: InfoProviderHost=cream-02.cnaf.infn.it
 % endfor
 ## vim:set ft=ldif:
