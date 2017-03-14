@@ -16,13 +16,13 @@ objectClass: GLUE2Entity
 objectClass: GLUE2Service
 objectClass: GLUE2CloudComputingService
 GLUE2ServiceID: ${compute_service_id}
-## XXX Is this required?
-##GLUE2ServiceServiceForeignKey: ${compute_service_id}
+# XXX Is this required?
+# XXX not sure about this attribute value
+GLUE2ServiceServiceForeignKey: ${compute_service_id}
 GLUE2ServiceAdminDomainForeignKey: ${static_compute_info['site_name']}
 GLUE2ServiceType: IaaS
 GLUE2ServiceQualityLevel: ${static_compute_info['compute_service_production_level']}
-## XXX need to split as it comes as a text represeantion of an array
-% for capability in ast.literal_eval(static_compute_info['compute_capabilities']):
+% for capability in static_compute_info['compute_capabilities']:
 GLUE2ServiceCapability: ${capability}
 % endfor
 ## TODO find information for this attributes
@@ -51,7 +51,9 @@ GLUE2ManagerID: ${compute_service_manager}
 GLUE2ManagerProductName: ${static_compute_info['compute_hypervisor']}
 GLUE2ManagerProductVersion: ${static_compute_info['compute_hypervisor_version']}
 GLUE2EntityName: Cloud Manager for ${static_compute_info['compute_service_name']}
+# XXX not sure about this attribute value
 GLUE2ManagerServiceForeignKey: ${compute_service_id}
+# XXX not sure about this attribute value
 GLUE2CloudComputingManagerCloudComputingServiceForeignKey: ${compute_service_id}
 GLUE2CloudComputingManagerTotalCPUs: ${static_compute_info['compute_total_cores']}
 GLUE2CloudComputingManagerTotalRAM: ${static_compute_info['compute_total_ram']}
@@ -86,6 +88,8 @@ GLUE2CloudComputingManagerTotalRAM: ${static_compute_info['compute_total_ram']}
         endpoint['compute_api_type'], endpoint['compute_api_version'],
         endpoint['compute_api_authn_method']))
 %>\
+# XXX is the endpoint_id still appropriate
+# XXX can't we simplify and use endpoint_url?
 dn: GLUE2EndpointID=${endpoint_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${endpoint['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2Endpoint
@@ -93,7 +97,9 @@ objectClass: GLUE2CloudComputingEndpoint
 GLUE2EndpointServiceForeignKey: ${compute_service_id}
 GLUE2EndpointID: ${endpoint_id}
 GLUE2EndpointURL: ${endpoint['endpoint_url']}
-GLUE2EndpointCapability: ${endpoint['compute_capabilities']}
+% for capability in endpoint['compute_capabilities']:
+GLUE2EndpointCapability: ${capability}
+% endfor
 GLUE2EndpointQualityLevel: ${endpoint['compute_production_level']}
 GLUE2EndpointInterfaceName: ${endpoint['compute_api_type']}
 GLUE2EndpointHealthState: ok
@@ -148,6 +154,8 @@ GLUE2CloudComputingShareCloudComputingServiceForeignKey: ${compute_service_id}
         endpoint['compute_api_authn_method']))
 %>\
 GLUE2ShareEndpointForeignKey: ${endpoint_id}
+# XXX is it really appropriate?
+GLUE2CloudComputingShareCloudComputingEndpointForeignKey: ${endpoint_id}
 % endfor
 GLUE2CloudComputingShareInstanceMaxCPU: ${share['instance_max_cpu']}
 GLUE2CloudComputingShareInstanceMaxRAM: ${share['instance_max_ram']}
@@ -155,7 +163,6 @@ Project: ${share['project']}
 GLUE2CloudComputingShareSLA: ${share['sla']}
 ## TODO find information for this attributes
 ##GLUE2ShareResourceForeignKey: cream-02.cnaf.infn.it
-##GLUE2CloudComputingShareCloudComputingEndpointForeignKey: <EndpointID>
 ##GLUE2ComputingShareExecutionEnvironmentForeignKey: cream-02.cnaf.infn.it +++++++++++++++ controllare ++++++++++++++++++
 ##GLUE2EntityCreationTime:
 ##GLUE2EntityName:
@@ -188,13 +195,13 @@ GLUE2CloudComputingShareSLA: ${share['sla']}
 ## Or need to use OSName and OSVersion
 ##GLUE2ApplicationEnvironmentAppName: ${image['image_name']}
 ##GLUE2ApplicationEnvironmentAppVersion: ${image['image_version']}
-## XXX no more existing?
 ## or need to use OtherInfo attribute
 ##GLUE2ApplicationEnvironmentDescription: ${image['image_description']}
 dn: GLUE2CloudComputingImageID=${image['image_id']},GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${static_compute_info['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2CloudComputingImage
-GLUE2EntityName: ${image['image_id']}
+# XXX Appropriate?
+GLUE2EntityName: ${image['image_name']}
 GLUE2CloudComputingImageID: ${image['image_id']}
 GLUE2CloudComputingImageMarketPlaceID: ${image['image_marketplace_id']}
 GLUE2CloudComputingImageCloudComputingManagerForeignKey: ${compute_service_manager}
@@ -232,7 +239,6 @@ GLUE2CloudComputingImageCloudComputingManagerForeignKey: ${compute_service_manag
 ##GLUE2ExecutionEnvironmentCPUModel: virtual model
 ##GLUE2ExecutionEnvironmentCPUMultiplicity: multicpu-multicore
 ##GLUE2ExecutionEnvironmentCPUVendor: virtual vendor
-## FIXME Need to find share ID
 dn: GLUE2ResourceID=${template['template_id']},GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${template['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2Resource
@@ -261,5 +267,62 @@ GLUE2CloudComputingInstanceTypeNetworkOut: TRUE
 ##GLUE2EntityOtherInfo: <additional info 1>
 
 % endfor
+% endfor
+
+##
+## Access Policy - GLUE2AccessPolicy
+##
+## XXX here we might want to filter endpoints
+% for endpoint_url, endpoint in endpoints['endpoints'].items():
+<%
+    endpoint_id =  ("%s_%s_%s_%s" % (endpoint['endpoint_url'],
+        endpoint['compute_api_type'], endpoint['compute_api_version'],
+        endpoint['compute_api_authn_method']))
+%>\
+dn: GLUE2PolicyID=${endpoint_id}_Policy,GLUE2EndpointID=${endpoint_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${static_compute_info['suffix']}
+objectClass: GLUE2Entity
+objectClass: GLUE2Policy
+objectClass: GLUE2AccessPolicy
+GLUE2PolicyID: ${endpoint_id}_Policy
+GLUE2AccessPolicyEndpointForeignKey: ${endpoint_id}
+GLUE2PolicyScheme: org.glite.standard
+% for vo, share in shares.items():
+GLUE2PolicyRule: VO:${vo}
+% endfor
+% for vo, share in shares.items():
+GLUE2PolicyUserDomainForeignKey: ${vo}
+% endfor
+## TODO find information for this attributes
+##GLUE2EntityCreationTime: 2016-02-18T14:42:49Z
+##GLUE2EntityName: Access control rules for Endpoint cream-02.cnaf.infn.it_org.glite.ce.CREAM
+##GLUE2EntityOtherInfo: InfoProviderName=glite-ce-glue2-endpoint-static
+##GLUE2EntityOtherInfo: InfoProviderVersion=1.1
+##GLUE2EntityOtherInfo: InfoProviderHost=cream-02.cnaf.infn.it
+% endfor
+
+##
+## Mapping Policy - GLUE2MappingPolicy
+##
+% for vo, share in shares.items():
+<%
+    share_id = ("%s_share_%s_%s" % (compute_service_id, vo, share['project']))
+%>\
+dn: GLUE2PolicyID=${share_id}_Policy,GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${static_compute_info['suffix']}
+objectClass: GLUE2Entity
+objectClass: GLUE2Policy
+objectClass: GLUE2MappingPolicy
+GLUE2PolicyID: ${share_id}_Policy
+GLUE2PolicyScheme: org.glite.standard
+GLUE2MappingPolicyShareForeignKey: ${share_id}
+GLUE2PolicyRule: VO:${vo}
+# XXX do we need to support groups?
+#GLUE2PolicyRule: VOMS:/ops/Role=lcgadmin
+#GLUE2PolicyRule: VOMS:/ops/Role=pilot
+GLUE2PolicyUserDomainForeignKey: ${vo}
+## TODO find information for this attributes
+## GLUE2EntityCreationTime: 2016-02-18T14:42:49Z
+##GLUE2EntityOtherInfo: InfoProviderName=glite-ce-glue2-share-static
+##GLUE2EntityOtherInfo: InfoProviderVersion=1.1
+##GLUE2EntityOtherInfo: InfoProviderHost=cream-02.cnaf.infn.it
 % endfor
 ## vim:set ft=ldif:
