@@ -39,7 +39,7 @@ class BaseBDII(object):
                                          '%s.%s' % (tpl, template_extension))
             self.templates_files[tpl] = template_file
 
-    def _get_info_from_providers(self, method, provider_opts = None):
+    def _get_info_from_providers(self, method, provider_opts=None):
         # XXX Temporarily update dynamic provider parameters
         # XXX Required to be able to pass a custom project to the provider
         # XXX to retrieve project-specific templates and images
