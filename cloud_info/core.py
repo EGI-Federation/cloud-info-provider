@@ -109,36 +109,47 @@ class ComputeBDII(BaseBDII):
         self.templates = ['compute']
 
     def render(self):
-        # TODO(Retrieve information of each endpoint)
+        info = {}
+
+        # Retrieve global site information
+        # XXX Validate if really project agnostic
+        # XXX Here it uses the "default" project from the CLI parameters
+        site_info = self._get_info_from_providers('get_site_info')
         endpoints = self._get_info_from_providers('get_compute_endpoints')
 
         if not endpoints.get('endpoints'):
             return ''
 
-        site_info = self._get_info_from_providers('get_site_info')
         static_compute_info = dict(endpoints, **site_info)
         static_compute_info.pop('endpoints')
-
-        templates = self._get_info_from_providers('get_templates')
-        images = self._get_info_from_providers('get_images')
-
-        # Get shares
-        shares = self._get_info_from_providers('get_compute_shares')
 
         for url, endpoint in endpoints['endpoints'].items():
             endpoint.update(static_compute_info)
 
-        for template_id, template in templates.items():
-            template.update(static_compute_info)
+        # Get shares / projects and related images and templates
+        shares = self._get_info_from_providers('get_compute_shares')
 
-        for image_id, image in images.items():
-            image.update(static_compute_info)
+        for share_id, share in shares.items():
+            project = share['project']
+            sla = share['sla']
 
-        info = {}
-        info.update({'endpoints': endpoints})
+            images = self._get_info_from_providers('get_images',
+                    {'os_tenant_name': project})
+
+            templates = self._get_info_from_providers('get_templates',
+                    {'os_tenant_name': project})
+
+            for template_id, template in templates.items():
+                template.update(static_compute_info)
+
+            for image_id, image in images.items():
+                image.update(static_compute_info)
+
+            share['images'] = images
+            share['templates'] = templates
+
         info.update({'static_compute_info': static_compute_info})
-        info.update({'templates': templates})
-        info.update({'images': images})
+        info.update({'endpoints': endpoints})
         info.update({'shares': shares})
 
         return self._format_template('compute', info)
