@@ -68,6 +68,7 @@ GLUE2EntityValidity: ${validity}
 GLUE2ManagerProductName: ${static_compute_info['compute_hypervisor']}
 GLUE2ManagerProductVersion: ${static_compute_info['compute_hypervisor_version']}
 GLUE2ManagerServiceForeignKey: ${compute_service_id}
+# XXX not sure about this attribute value
 GLUE2CloudComputingManagerCloudComputingServiceForeignKey: ${compute_service_id}
 % if static_compute_info['compute_network_virt_type']:
 GLUE2CloudComputingManagerNetworkVirtualizationType: ${static_compute_info['compute_network_virt_type']}
@@ -195,6 +196,8 @@ GLUE2CloudComputingShareMaxVM: ${share_max_vm}
         endpoint['compute_endpoint_url']
         ))
 %>\
+# XXX is the endpoint_id still appropriate
+# XXX can't we simplify and use endpoint_url?
 dn: GLUE2EndpointID=${endpoint_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${endpoint['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2Endpoint
@@ -376,5 +379,62 @@ GLUE2PolicyRule: ${rule}
 GLUE2PolicyUserDomainForeignKey: ${vo}
 
 ## End of shares
+% endfor
+
+##
+## Access Policy - GLUE2AccessPolicy
+##
+## XXX here we might want to filter endpoints
+% for endpoint_url, endpoint in endpoints['endpoints'].items():
+<%
+    endpoint_id =  ("%s_%s_%s_%s" % (endpoint['endpoint_url'],
+        endpoint['compute_api_type'], endpoint['compute_api_version'],
+        endpoint['compute_api_authn_method']))
+%>\
+dn: GLUE2PolicyID=${endpoint_id}_Policy,GLUE2EndpointID=${endpoint_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${static_compute_info['suffix']}
+objectClass: GLUE2Entity
+objectClass: GLUE2Policy
+objectClass: GLUE2AccessPolicy
+GLUE2PolicyID: ${endpoint_id}_Policy
+GLUE2AccessPolicyEndpointForeignKey: ${endpoint_id}
+GLUE2PolicyScheme: org.glite.standard
+% for vo, share in shares.items():
+GLUE2PolicyRule: VO:${vo}
+% endfor
+% for vo, share in shares.items():
+GLUE2PolicyUserDomainForeignKey: ${vo}
+% endfor
+## TODO find information for this attributes
+##GLUE2EntityCreationTime: 2016-02-18T14:42:49Z
+##GLUE2EntityName: Access control rules for Endpoint cream-02.cnaf.infn.it_org.glite.ce.CREAM
+##GLUE2EntityOtherInfo: InfoProviderName=glite-ce-glue2-endpoint-static
+##GLUE2EntityOtherInfo: InfoProviderVersion=1.1
+##GLUE2EntityOtherInfo: InfoProviderHost=cream-02.cnaf.infn.it
+% endfor
+
+##
+## Mapping Policy - GLUE2MappingPolicy
+##
+% for vo, share in shares.items():
+<%
+    share_id = ("%s_share_%s_%s" % (compute_service_id, vo, share['project']))
+%>\
+dn: GLUE2PolicyID=${share_id}_Policy,GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${static_compute_info['suffix']}
+objectClass: GLUE2Entity
+objectClass: GLUE2Policy
+objectClass: GLUE2MappingPolicy
+GLUE2PolicyID: ${share_id}_Policy
+GLUE2PolicyScheme: org.glite.standard
+GLUE2MappingPolicyShareForeignKey: ${share_id}
+GLUE2PolicyRule: VO:${vo}
+# XXX do we need to support groups?
+#GLUE2PolicyRule: VOMS:/ops/Role=lcgadmin
+#GLUE2PolicyRule: VOMS:/ops/Role=pilot
+GLUE2PolicyUserDomainForeignKey: ${vo}
+## TODO find information for this attributes
+## GLUE2EntityCreationTime: 2016-02-18T14:42:49Z
+##GLUE2EntityOtherInfo: InfoProviderName=glite-ce-glue2-share-static
+##GLUE2EntityOtherInfo: InfoProviderVersion=1.1
+##GLUE2EntityOtherInfo: InfoProviderHost=cream-02.cnaf.infn.it
 % endfor
 ## vim:set ft=ldif:
