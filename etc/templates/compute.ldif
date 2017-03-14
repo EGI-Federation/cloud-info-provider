@@ -7,7 +7,6 @@
     templates = {template_id: template for vo, share in shares.items() for template_id, template in share['templates'].items()}
     images = {image_id: image for vo, share in shares.items() for image_id, image in share['images'].items()}
 %>\
-
 dn: GLUE2ServiceID=${static_compute_info['compute_service_name']}_cloud.compute,GLUE2GroupID=cloud,${static_compute_info['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2Service
