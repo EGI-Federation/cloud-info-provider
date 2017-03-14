@@ -405,11 +405,11 @@ GLUE2PolicyRule: VO:${vo}
 GLUE2PolicyUserDomainForeignKey: ${vo}
 % endfor
 ## TODO find information for this attributes
-##GLUE2EntityCreationTime: 2016-02-18T14:42:49Z
-##GLUE2EntityName: Access control rules for Endpoint cream-02.cnaf.infn.it_org.glite.ce.CREAM
-##GLUE2EntityOtherInfo: InfoProviderName=glite-ce-glue2-endpoint-static
-##GLUE2EntityOtherInfo: InfoProviderVersion=1.1
-##GLUE2EntityOtherInfo: InfoProviderHost=cream-02.cnaf.infn.it
+## GLUE2EntityCreationTime: 2016-02-18T14:42:49Z
+## GLUE2EntityName: Access control rules for Endpoint cream-02.cnaf.infn.it_org.glite.ce.CREAM
+## GLUE2EntityOtherInfo: InfoProviderName=glite-ce-glue2-endpoint-static
+## GLUE2EntityOtherInfo: InfoProviderVersion=1.1
+## GLUE2EntityOtherInfo: InfoProviderHost=cream-02.cnaf.infn.it
 % endfor
 
 ##
@@ -428,13 +428,13 @@ GLUE2PolicyScheme: org.glite.standard
 GLUE2MappingPolicyShareForeignKey: ${share_id}
 GLUE2PolicyRule: VO:${vo}
 # XXX do we need to support groups?
-#GLUE2PolicyRule: VOMS:/ops/Role=lcgadmin
-#GLUE2PolicyRule: VOMS:/ops/Role=pilot
+# GLUE2PolicyRule: VOMS:/ops/Role=lcgadmin
+# GLUE2PolicyRule: VOMS:/ops/Role=pilot
 GLUE2PolicyUserDomainForeignKey: ${vo}
 ## TODO find information for this attributes
 ## GLUE2EntityCreationTime: 2016-02-18T14:42:49Z
-##GLUE2EntityOtherInfo: InfoProviderName=glite-ce-glue2-share-static
-##GLUE2EntityOtherInfo: InfoProviderVersion=1.1
-##GLUE2EntityOtherInfo: InfoProviderHost=cream-02.cnaf.infn.it
+## GLUE2EntityOtherInfo: InfoProviderName=glite-ce-glue2-share-static
+## GLUE2EntityOtherInfo: InfoProviderVersion=1.1
+## GLUE2EntityOtherInfo: InfoProviderHost=cream-02.cnaf.infn.it
 % endfor
 ## vim:set ft=ldif:
