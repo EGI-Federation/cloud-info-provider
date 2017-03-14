@@ -1,13 +1,16 @@
+##
+## GLUE 2.1 template for the compute-related information
+##
 <%
     static_compute_info = attributes['static_compute_info']
     endpoints = attributes['endpoints']
-    templates = attributes['templates']
     shares = attributes['shares']
-    images = attributes['images']
     compute_service_id = static_compute_info['compute_service_name'] + '_cloud.compute'
     compute_service_manager = compute_service_id + '_manager'
 %>\
+##
 ## Cloud Computing Service - GLUE2CloudComputingService
+##
 dn: GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${static_compute_info['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2Service
@@ -34,8 +37,9 @@ GLUE2ServiceCapability: ${static_compute_info['compute_capabilities']}
 ## GLUE2CloudComputingServiceRunningVM:
 ## GLUE2CloudComputingServiceAUP:
 
-
+##
 ## Computing Manager - GLUE2CloudComputingManager
+##
 dn: GLUE2ManagerID=${compute_service_manager},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${static_compute_info['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2Manager
@@ -70,56 +74,21 @@ GLUE2CloudComputingManagerTotalRAM: ${static_compute_info['compute_total_ram']}
 ##GLUE2CloudComputingManagerLiveMigration:
 ##GLUE2CloudComputingManagerVMBackupRestore:
 
-## Computing share - GLUE2CloudComputingShare
-## XXX multiple share can be present
-##% for counter, share in enumerate(shares):
-% for vo, share in shares.items():
-dn: GLUE2ShareID=${compute_service_id}_share_${vo},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${static_compute_info['suffix']}
-objectClass: GLUE2Entity
-objectClass: GLUE2Share
-objectClass: GLUE2CloudComputingShare
-GLUE2ShareID: ${compute_service_id}_share${vo}
-GLUE2ShareServiceForeignKey: ${compute_service_id}
-GLUE2CloudComputingShareCloudComputingServiceForeignKey: ${compute_service_id}
-## XXX endpoints should be an array
-##% for endpoint_id in shares['endpoints'].items():
-##GLUE2ShareEndpointForeignKey: ${share['endpoints']}
-##% endfor
-GLUE2CloudComputingShareInstanceMaxCPU: ${share['instance_max_cpu']}
-GLUE2CloudComputingShareInstanceMaxRAM: ${share['instance_max_ram']}
-Project: ${share['project']}
-GLUE2CloudComputingShareSLA: ${share['sla']}
-## TODO find information for this attributes
-##GLUE2ShareResourceForeignKey: cream-02.cnaf.infn.it
-##GLUE2CloudComputingShareCloudComputingEndpointForeignKey: <EndpointID>
-##GLUE2ComputingShareExecutionEnvironmentForeignKey: cream-02.cnaf.infn.it +++++++++++++++ controllare ++++++++++++++++++
-##GLUE2EntityCreationTime:
-##GLUE2EntityName:
-##GLUE2EntityValidity:
-##GLUE2EntityOtherInfo: <additional info 1>
-##GLUE2EntityOtherInfo: <additional info n>
-##GLUE2ShareDescription:
-##GLUE2CloudComputingShareTotalVM:
-##GLUE2CloudComputingShareRunningVM:
-##GLUE2CloudComputingSharePendingVM:
-##GLUE2CloudComputingShareSuspendedVM:
-##GLUE2CloudComputingShareHaltedVM:
-##GLUE2CloudComputingShareMaxVM:
-##GLUE2CloudComputingShareInstanceMaxAccelerators:
-##GLUE2CloudComputingShareNetworkInfo:
-% endfor
-
-
-
+##
 ## List of Cloud Computing Endpoints - GLUE2CloudComputingEndpoint
-## one entry for each endpoint provided
+##
 % for url, endpoint in endpoints['endpoints'].items():
-dn: GLUE2EndpointID=${endpoint['endpoint_url']}_${endpoint['compute_api_type']}_${endpoint['compute_api_version']}_${endpoint['compute_api_authn_method']},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${endpoint['suffix']}
+<%
+    endpoint_id = ("%s_%s_%s_%s" % (endpoint['endpoint_url'],
+        endpoint['compute_api_type'], endpoint['compute_api_version'],
+        endpoint['compute_api_authn_method']))
+%>\
+dn: GLUE2EndpointID=${endpoint_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${endpoint['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2Endpoint
 objectClass: GLUE2CloudComputingEndpoint
 GLUE2EndpointServiceForeignKey: ${compute_service_id}
-GLUE2EndpointID: ${endpoint['endpoint_url']}_${endpoint['compute_api_type']}_${endpoint['compute_api_version']}_${endpoint['compute_api_authn_method']}
+GLUE2EndpointID: ${endpoint_id}
 GLUE2EndpointURL: ${endpoint['endpoint_url']}
 GLUE2EndpointCapability: ${endpoint['compute_capabilities']}
 GLUE2EndpointQualityLevel: ${endpoint['compute_production_level']}
@@ -152,48 +121,58 @@ GLUE2EntityOtherInfo: Authn=${endpoint['compute_api_authn_method']}
 ##GLUE2EndpointDowntimeEnd:
 ##GLUE2CloudComputingEndpointContextualizationName:
 ##GLUE2CloudComputingEndpointContextualizationVersion:
-% endfor
 
-## List of templates - GLUE2CloudComputingInstanceType
-% for template_id, template in templates.items():
-## XXX no more present?
-##GLUE2ExecutionEnvironmentVirtualMachine: TRUE
-##GLUE2ExecutionEnvironmentOSFamily: linux
-##GLUE2ExecutionEnvironmentCPUModel: virtual model
-##GLUE2ExecutionEnvironmentCPUMultiplicity: multicpu-multicore
-##GLUE2ExecutionEnvironmentCPUVendor: virtual vendor
-## FIXME Need to find share ID
-dn: GLUE2ResourceID=${template['template_id']}_${template['compute_service_name']},GLUE2ShareID=${compute_service_id}_share1,GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${template['suffix']}
+% endfor
+##
+## Computing share - GLUE2CloudComputingShare
+##
+% for vo, share in shares.items():
+<%
+    share_id = ("%s_share_%s_%s" % (compute_service_id, vo, share['project']))
+%>\
+dn: GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${static_compute_info['suffix']}
 objectClass: GLUE2Entity
-objectClass: GLUE2Resource
-objectClass: GLUE2CloudComputingInstanceType
-GLUE2ResourceID: ${template['template_id']}_${template['compute_service_name']}
-GLUE2EntityName: ${template['template_id']}
-GLUE2ResourceManagerForeignKey: ${compute_service_manager}
-GLUE2CloudComputingInstanceTypeCloudComputingManagerForeignKey: ${compute_service_manager}
-GLUE2CloudComputingInstanceTypePlatform: ${template['template_platform']}
-GLUE2CloudComputingInstanceTypevCPU: ${template['template_cpu']}
-GLUE2CloudComputingInstanceTypeRAM: ${template['template_memory']}
-GLUE2CloudComputingInstanceTypeNetworkIn: TRUE
-GLUE2CloudComputingInstanceTypeNetworkOut: TRUE
-## TODO find information for this attributes
-##GLUE2CloudComputingInstanceTypeIDForEndpoint:
-##GLUE2CloudComputingInstanceTypeMarketPlaceID:
-##GLUE2CloudComputingInstanceTypeEphemeralStorage:
-##GLUE2CloudComputingInstanceTypeDisk:
-##GLUE2CloudComputingInstanceTypeNetworkPortsIn:
-##GLUE2CloudComputingInstanceTypeNetworkPortsOut:
-##GLUE2CloudComputingInstanceTypeNetworkInfo:
-##GLUE2CloudComputingInstanceTypeOtherHardware:
-##GLUE2EntityCreationTime:
-##GLUE2EntityValidity:
-## XXX multiple entries could be present
-##GLUE2EntityOtherInfo: <additional info 1>
-
+objectClass: GLUE2Share
+objectClass: GLUE2CloudComputingShare
+GLUE2ShareID: ${share_id}
+GLUE2ShareServiceForeignKey: ${compute_service_id}
+GLUE2CloudComputingShareCloudComputingServiceForeignKey: ${compute_service_id}
+## XXX here we might want to filter endpoints
+% for url, endpoint in endpoints['endpoints'].items():
+<%
+    endpoint_id =  ("%s_%s_%s_%s" % (endpoint['endpoint_url'],
+        endpoint['compute_api_type'], endpoint['compute_api_version'],
+        endpoint['compute_api_authn_method']))
+%>\
+GLUE2ShareEndpointForeignKey: ${endpoint_id}
 % endfor
+GLUE2CloudComputingShareInstanceMaxCPU: ${share['instance_max_cpu']}
+GLUE2CloudComputingShareInstanceMaxRAM: ${share['instance_max_ram']}
+Project: ${share['project']}
+GLUE2CloudComputingShareSLA: ${share['sla']}
+## TODO find information for this attributes
+##GLUE2ShareResourceForeignKey: cream-02.cnaf.infn.it
+##GLUE2CloudComputingShareCloudComputingEndpointForeignKey: <EndpointID>
+##GLUE2ComputingShareExecutionEnvironmentForeignKey: cream-02.cnaf.infn.it +++++++++++++++ controllare ++++++++++++++++++
+##GLUE2EntityCreationTime:
+##GLUE2EntityName:
+##GLUE2EntityValidity:
+##GLUE2EntityOtherInfo: <additional info 1>
+##GLUE2EntityOtherInfo: <additional info n>
+##GLUE2ShareDescription:
+##GLUE2CloudComputingShareTotalVM:
+##GLUE2CloudComputingShareRunningVM:
+##GLUE2CloudComputingSharePendingVM:
+##GLUE2CloudComputingShareSuspendedVM:
+##GLUE2CloudComputingShareHaltedVM:
+##GLUE2CloudComputingShareMaxVM:
+##GLUE2CloudComputingShareInstanceMaxAccelerators:
+##GLUE2CloudComputingShareNetworkInfo:
 
+##
 ## List of images
-% for image_id, image in images.items():
+##
+% for image_id, image in share['images'].items():
 <%
     if image['image_description'] is None:
         image['image_description'] = ('%(image_name)s version '
@@ -209,8 +188,7 @@ GLUE2CloudComputingInstanceTypeNetworkOut: TRUE
 ## XXX no more existing?
 ## or need to use OtherInfo attribute
 ##GLUE2ApplicationEnvironmentDescription: ${image['image_description']}
-## FIXME Need to find share ID
-dn: GLUE2CloudComputingImageID=${image['image_id']}_${endpoint['compute_service_name']},GLUE2ShareID=${compute_service_id}_share1,GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${static_compute_info['suffix']}
+dn: GLUE2CloudComputingImageID=${image['image_id']},GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${static_compute_info['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2CloudComputingImage
 GLUE2EntityName: ${image['image_id']}
@@ -241,5 +219,44 @@ GLUE2CloudComputingImageCloudComputingManagerForeignKey: ${compute_service_manag
 ##GLUE2CloudComputingImageDefaultPassword:
 
 % endfor
+##
+## List of templates - GLUE2CloudComputingInstanceType
+##
+% for template_id, template in share['templates'].items():
+## XXX no more present?
+##GLUE2ExecutionEnvironmentVirtualMachine: TRUE
+##GLUE2ExecutionEnvironmentOSFamily: linux
+##GLUE2ExecutionEnvironmentCPUModel: virtual model
+##GLUE2ExecutionEnvironmentCPUMultiplicity: multicpu-multicore
+##GLUE2ExecutionEnvironmentCPUVendor: virtual vendor
+## FIXME Need to find share ID
+dn: GLUE2ResourceID=${template['template_id']},GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${template['suffix']}
+objectClass: GLUE2Entity
+objectClass: GLUE2Resource
+objectClass: GLUE2CloudComputingInstanceType
+GLUE2ResourceID: ${template['template_id']}
+GLUE2EntityName: ${template['template_id']}
+GLUE2ResourceManagerForeignKey: ${compute_service_manager}
+GLUE2CloudComputingInstanceTypeCloudComputingManagerForeignKey: ${compute_service_manager}
+GLUE2CloudComputingInstanceTypePlatform: ${template['template_platform']}
+GLUE2CloudComputingInstanceTypevCPU: ${template['template_cpu']}
+GLUE2CloudComputingInstanceTypeRAM: ${template['template_memory']}
+GLUE2CloudComputingInstanceTypeNetworkIn: TRUE
+GLUE2CloudComputingInstanceTypeNetworkOut: TRUE
+## TODO find information for this attributes
+##GLUE2CloudComputingInstanceTypeIDForEndpoint:
+##GLUE2CloudComputingInstanceTypeMarketPlaceID:
+##GLUE2CloudComputingInstanceTypeEphemeralStorage:
+##GLUE2CloudComputingInstanceTypeDisk:
+##GLUE2CloudComputingInstanceTypeNetworkPortsIn:
+##GLUE2CloudComputingInstanceTypeNetworkPortsOut:
+##GLUE2CloudComputingInstanceTypeNetworkInfo:
+##GLUE2CloudComputingInstanceTypeOtherHardware:
+##GLUE2EntityCreationTime:
+##GLUE2EntityValidity:
+## XXX multiple entries could be present
+##GLUE2EntityOtherInfo: <additional info 1>
 
+% endfor
+% endfor
 ## vim:set ft=ldif:
