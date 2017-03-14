@@ -131,13 +131,13 @@ class ComputeBDII(BaseBDII):
 
         for share_id, share in shares.items():
             project = share['project']
-            sla = share['sla']
 
             images = self._get_info_from_providers('get_images',
-                    {'os_tenant_name': project})
+                                                   {'os_tenant_name': project})
 
             templates = self._get_info_from_providers('get_templates',
-                    {'os_tenant_name': project})
+                                                      {'os_tenant_name':
+                                                          project})
 
             for template_id, template in templates.items():
                 template.update(static_compute_info)
