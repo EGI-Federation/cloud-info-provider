@@ -16,12 +16,15 @@ objectClass: GLUE2Entity
 objectClass: GLUE2Service
 objectClass: GLUE2CloudComputingService
 GLUE2ServiceID: ${compute_service_id}
-GLUE2ServiceServiceForeignKey: ${compute_service_id}
+## XXX Is this required?
+##GLUE2ServiceServiceForeignKey: ${compute_service_id}
 GLUE2ServiceAdminDomainForeignKey: ${static_compute_info['site_name']}
 GLUE2ServiceType: IaaS
 GLUE2ServiceQualityLevel: ${static_compute_info['compute_service_production_level']}
-## XXX multiple entries could be present
-GLUE2ServiceCapability: ${static_compute_info['compute_capabilities']}
+## XXX need to split as it comes as a text represeantion of an array
+% for capability in ast.literal_eval(static_compute_info['compute_capabilities']):
+GLUE2ServiceCapability: ${capability}
+% endfor
 ## TODO find information for this attributes
 ## GLUE2EntityCreationTime:
 ## GLUE2EntityName:
