@@ -314,10 +314,9 @@ objectClass: GLUE2MappingPolicy
 GLUE2PolicyID: ${share_id}_Policy
 GLUE2PolicyScheme: org.glite.standard
 GLUE2MappingPolicyShareForeignKey: ${share_id}
-GLUE2PolicyRule: VO:${vo}
-# XXX do we need to support groups?
-# GLUE2PolicyRule: VOMS:/ops/Role=lcgadmin
-# GLUE2PolicyRule: VOMS:/ops/Role=pilot
+% for rule in share['membership']:
+GLUE2PolicyRule: ${rule}
+% endfor
 GLUE2PolicyUserDomainForeignKey: ${vo}
 ## TODO find information for this attributes
 ## GLUE2EntityCreationTime: 2016-02-18T14:42:49Z
