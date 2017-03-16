@@ -133,7 +133,7 @@ class StaticProvider(providers.BaseProvider):
     def get_compute_shares(self):
         # FIXME endpoints could be an array
         fields = ('endpoints', 'instance_max_cpu', 'instance_max_ram',
-                  'project', 'sla')
+                  'project', 'sla', 'membership')
         shares = self._get_what('compute',
                                 'shares',
                                 None,
