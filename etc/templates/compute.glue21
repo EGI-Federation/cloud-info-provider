@@ -37,6 +37,7 @@ GLUE2ServiceCapability: ${capability}
 # GLUE2ServiceComplexity:
 # GLUE2ServiceStatusInfo:
 # GLUE2CloudComputingServiceAUP:
+
 ##
 ## Computing Manager - GLUE2CloudComputingManager
 ##
@@ -89,6 +90,11 @@ objectClass: GLUE2CloudComputingEndpoint
 GLUE2EndpointServiceForeignKey: ${compute_service_id}
 GLUE2EndpointID: ${endpoint_id}
 GLUE2EndpointURL: ${endpoint['endpoint_url']}
+% if endpoint['compute_api_type'] == 'OCCI':
+# Weee, I'am an OCCI endpoint!
+% elif endpoint['compute_api_type'] == 'OpenStack':
+# Weee, I'am an OpenStack endpoint!
+% endif
 % for capability in endpoint['compute_capabilities']:
 GLUE2EndpointCapability: ${capability}
 % endfor
@@ -192,6 +198,7 @@ objectClass: GLUE2CloudComputingImage
 # XXX Appropriate?
 GLUE2EntityName: ${image['image_name']}
 GLUE2CloudComputingImageID: ${image['image_id']}
+# Image native ID: ${image['image_native_id']}
 GLUE2CloudComputingImageMarketPlaceID: ${image['image_marketplace_id']}
 GLUE2CloudComputingImageCloudComputingManagerForeignKey: ${compute_service_manager}
 # TODO find information for this attributes
@@ -233,6 +240,7 @@ objectClass: GLUE2Entity
 objectClass: GLUE2Resource
 objectClass: GLUE2CloudComputingInstanceType
 GLUE2ResourceID: ${template['template_id']}
+# Template native ID: ${template['template_native_id']}
 GLUE2EntityName: ${template['template_id']}
 GLUE2ResourceManagerForeignKey: ${compute_service_manager}
 GLUE2CloudComputingInstanceTypeCloudComputingManagerForeignKey: ${compute_service_manager}
