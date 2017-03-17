@@ -388,7 +388,7 @@ GLUE2PolicyUserDomainForeignKey: ${vo}
 ## Access Policy - GLUE2AccessPolicy
 ##
 ## XXX here we might want to filter endpoints
-% for endpoint_url, endpoint in endpoints['endpoints'].items():
+% for endpoint_url, endpoint in endpoints.items():
 <%
     endpoint_id =  ("%s_%s_%s_%s" % (endpoint['endpoint_url'],
         endpoint['compute_api_type'], endpoint['compute_api_version'],
