@@ -9,6 +9,7 @@
     compute_service_id = static_compute_info['compute_service_name'] + '_cloud.compute'
     compute_service_manager = compute_service_id + '_manager'
     occi_endpoints = {endpoint_id: endpoint for endpoint_id, endpoint in endpoints.items() if endpoint['compute_api_type'] == 'OCCI'}
+    native_endpoints = {endpoint_id: endpoint for endpoint_id, endpoint in endpoints.items() if endpoint['compute_api_type'] in ('OpenStack', 'OpenNebula')}
 %>\
 ##
 ## Cloud Computing Service - GLUE2CloudComputingService
