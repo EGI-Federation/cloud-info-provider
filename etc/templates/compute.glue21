@@ -4,10 +4,11 @@
 <%
     static_compute_info = attributes['static_compute_info']
     suffix = static_compute_info['suffix']
-    endpoints = attributes['endpoints']
+    endpoints = attributes['endpoints']['endpoints']
     shares = attributes['shares']
     compute_service_id = static_compute_info['compute_service_name'] + '_cloud.compute'
     compute_service_manager = compute_service_id + '_manager'
+    occi_endpoints = {endpoint_id: endpoint for endpoint_id, endpoint in endpoints.items() if endpoint['compute_api_type'] == 'OCCI'}
 %>\
 ##
 ## Cloud Computing Service - GLUE2CloudComputingService
@@ -77,7 +78,7 @@ GLUE2CloudComputingManagerTotalRAM: ${static_compute_info['compute_total_ram']}
 ##
 ## List of Cloud Computing Endpoints - GLUE2CloudComputingEndpoint
 ##
-% for url, endpoint in endpoints['endpoints'].items():
+% for url, endpoint in endpoints.items():
 <%
     endpoint_id = ("%s_%s_%s_%s" % (endpoint['endpoint_url'],
         endpoint['compute_api_type'], endpoint['compute_api_version'],
@@ -144,7 +145,7 @@ GLUE2ShareID: ${share_id}
 GLUE2ShareServiceForeignKey: ${compute_service_id}
 GLUE2CloudComputingShareCloudComputingServiceForeignKey: ${compute_service_id}
 # XXX Assuming that all endpoints are in the same share
-% for url, endpoint in endpoints['endpoints'].items():
+% for url, endpoint in endpoints.items():
 <%
     endpoint_id =  ("%s_%s_%s_%s" % (endpoint['endpoint_url'],
         endpoint['compute_api_type'], endpoint['compute_api_version'],
@@ -269,7 +270,7 @@ GLUE2CloudComputingInstanceTypeNetworkOut: TRUE
 ## Access Policy - GLUE2AccessPolicy
 ##
 ## XXX here we might want to filter endpoints
-% for endpoint_url, endpoint in endpoints['endpoints'].items():
+% for endpoint_url, endpoint in endpoints.items():
 <%
     endpoint_id =  ("%s_%s_%s_%s" % (endpoint['endpoint_url'],
         endpoint['compute_api_type'], endpoint['compute_api_version'],
