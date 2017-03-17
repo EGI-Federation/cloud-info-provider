@@ -48,6 +48,12 @@ GLUE2CloudComputingServiceAUP: http://go.egi.eu/aup
 GLUE2ServiceComplexity: endpointType=2,share=${len(shares)}
 % for capability in static_compute_info['compute_capabilities']:
 GLUE2ServiceCapability: ${capability}
+# XXX Need to get this info using nova API?
+# GLUE2CloudComputingServiceSuspendedVM:
+# GLUE2CloudComputingServicePendingVM:
+# GLUE2CloudComputingServiceHaltedVM:
+# GLUE2CloudComputingServiceTotalVM:
+# GLUE2CloudComputingServiceRunningVM:
 % endfor
 GLUE2CloudComputingServiceTotalVM: ${len(instances)}
 GLUE2CloudComputingServiceRunningVM: ${len(running_instances)}
@@ -68,7 +74,6 @@ GLUE2EntityValidity: ${validity}
 GLUE2ManagerProductName: ${static_compute_info['compute_hypervisor']}
 GLUE2ManagerProductVersion: ${static_compute_info['compute_hypervisor_version']}
 GLUE2ManagerServiceForeignKey: ${compute_service_id}
-# XXX not sure about this attribute value
 GLUE2CloudComputingManagerCloudComputingServiceForeignKey: ${compute_service_id}
 % if static_compute_info['compute_network_virt_type']:
 GLUE2CloudComputingManagerNetworkVirtualizationType: ${static_compute_info['compute_network_virt_type']}
@@ -196,8 +201,6 @@ GLUE2CloudComputingShareMaxVM: ${share_max_vm}
         endpoint['compute_endpoint_url']
         ))
 %>\
-# XXX is the endpoint_id still appropriate
-# XXX can't we simplify and use endpoint_url?
 dn: GLUE2EndpointID=${endpoint_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${endpoint['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2Endpoint
@@ -391,25 +394,26 @@ GLUE2PolicyUserDomainForeignKey: ${vo}
         endpoint['compute_api_type'], endpoint['compute_api_version'],
         endpoint['compute_api_authn_method']))
 %>\
-dn: GLUE2PolicyID=${endpoint_id}_Policy,GLUE2EndpointID=${endpoint_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${static_compute_info['suffix']}
+dn: GLUE2PolicyID=${endpoint_id}_Policy,GLUE2EndpointID=${endpoint_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${suffix}
 objectClass: GLUE2Entity
 objectClass: GLUE2Policy
 objectClass: GLUE2AccessPolicy
 GLUE2PolicyID: ${endpoint_id}_Policy
 GLUE2AccessPolicyEndpointForeignKey: ${endpoint_id}
 GLUE2PolicyScheme: org.glite.standard
+ GLUE2EntityName: Access control rules for Endpoint ${endpoint_id}
 % for vo, share in shares.items():
 GLUE2PolicyRule: VO:${vo}
 % endfor
 % for vo, share in shares.items():
 GLUE2PolicyUserDomainForeignKey: ${vo}
 % endfor
-## TODO find information for this attributes
-## GLUE2EntityCreationTime: 2016-02-18T14:42:49Z
-## GLUE2EntityName: Access control rules for Endpoint cream-02.cnaf.infn.it_org.glite.ce.CREAM
-## GLUE2EntityOtherInfo: InfoProviderName=glite-ce-glue2-endpoint-static
-## GLUE2EntityOtherInfo: InfoProviderVersion=1.1
-## GLUE2EntityOtherInfo: InfoProviderHost=cream-02.cnaf.infn.it
+# XXX Still appropriate?
+# GLUE2EntityOtherInfo: InfoProviderName=glite-ce-glue2-endpoint-static
+# GLUE2EntityOtherInfo: InfoProviderVersion=1.1
+# TODO find information for this attributes
+# GLUE2EntityCreationTime: 2016-02-18T14:42:49Z
+# GLUE2EntityOtherInfo: InfoProviderHost=cream-02.cnaf.infn.it
 % endfor
 
 ##
@@ -419,7 +423,7 @@ GLUE2PolicyUserDomainForeignKey: ${vo}
 <%
     share_id = ("%s_share_%s_%s" % (compute_service_id, vo, share['project']))
 %>\
-dn: GLUE2PolicyID=${share_id}_Policy,GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${static_compute_info['suffix']}
+dn: GLUE2PolicyID=${share_id}_Policy,GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${suffix}
 objectClass: GLUE2Entity
 objectClass: GLUE2Policy
 objectClass: GLUE2MappingPolicy
@@ -430,10 +434,11 @@ GLUE2MappingPolicyShareForeignKey: ${share_id}
 GLUE2PolicyRule: ${rule}
 % endfor
 GLUE2PolicyUserDomainForeignKey: ${vo}
-## TODO find information for this attributes
-## GLUE2EntityCreationTime: 2016-02-18T14:42:49Z
-## GLUE2EntityOtherInfo: InfoProviderName=glite-ce-glue2-share-static
-## GLUE2EntityOtherInfo: InfoProviderVersion=1.1
-## GLUE2EntityOtherInfo: InfoProviderHost=cream-02.cnaf.infn.it
+# XXX Still appropriate?
+# GLUE2EntityOtherInfo: InfoProviderName=glite-ce-glue2-share-static
+# GLUE2EntityOtherInfo: InfoProviderVersion=1.1
+# TODO find information for this attributes
+# GLUE2EntityCreationTime: 2016-02-18T14:42:49Z
+# GLUE2EntityOtherInfo: InfoProviderHost=cream-02.cnaf.infn.it
 % endfor
 ## vim:set ft=ldif:
