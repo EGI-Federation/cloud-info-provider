@@ -301,6 +301,7 @@ class OpenStackProvider(providers.BaseProvider):
             'image_version': None,
             'image_marketplace_id': None,
             'image_id': None,
+            'image_native_id': None,
             'image_os_family': None,
             'image_os_name': None,
             'image_os_version': None,
