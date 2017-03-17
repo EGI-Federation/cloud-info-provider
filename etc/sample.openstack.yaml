@@ -38,6 +38,23 @@ compute:
             platform: amd64
             network: public
 
+    shares:
+        ops:
+            project: ops
+            sla: https://egi.eu/sla/ops
+            membership:
+                - VO:ops
+        fedcloud.egi.eu:
+            project: fedcloud
+            sla: https://egi.eu/sla/fedcloud
+            membership:
+                - VOMS:/fedcloud.egi.eu/Role=VMOperators
+        training.egi.eu:
+            project: training
+            sla: https://egi.eu/sla/training
+            membership:
+                - VO:training.egi.eu
+
     images:
 
         defaults:
