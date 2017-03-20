@@ -189,11 +189,11 @@ objectClass: GLUE2Entity
 objectClass: GLUE2Share
 objectClass: GLUE2CloudComputingShare
 GLUE2ShareID: ${share_id}
-GLUE2EntityName: Share in service ${service_id} for VO ${vo} (Project ${share['project']})
+GLUE2EntityName: Share in service ${compute_service_id} for VO ${vo} (Project ${share['project']})
 GLUE2EntityCreationTime: ${timestamp}
 GLUE2EntityValidity: ${validity}
 GLUE2ShareServiceForeignKey: ${compute_service_id}
-GLUE2ShareDescription: Share in service ${service_id} for VO ${vo} (Project ${share['project']})
+GLUE2ShareDescription: Share in service ${compute_service_id} for VO ${vo} (Project ${share['project']})
 GLUE2CloudComputingShareCloudComputingServiceForeignKey: ${compute_service_id}
 # XXX Assuming that all endpoints are in the same share, correct?
 % for url, endpoint in endpoints.items():
@@ -205,6 +205,7 @@ GLUE2CloudComputingShareCloudComputingServiceForeignKey: ${compute_service_id}
 GLUE2ShareEndpointForeignKey: ${endpoint_id}
 GLUE2CloudComputingShareCloudComputingEndpointForeignKey: ${endpoint_id}
 % endfor
+# XXX Should we get this from conf file?
 GLUE2CloudComputingShareInstanceMaxCPU: ${share['instance_max_cpu']}
 GLUE2CloudComputingShareInstanceMaxRAM: ${share['instance_max_ram']}
 GLUE2CloudComputingShareSLA: ${share['sla']}
