@@ -189,10 +189,13 @@ objectClass: GLUE2Entity
 objectClass: GLUE2Share
 objectClass: GLUE2CloudComputingShare
 GLUE2ShareID: ${share_id}
+GLUE2EntityName: Share in service ${service_id} for VO ${vo} (Project ${share['project']})
 GLUE2EntityCreationTime: ${timestamp}
+GLUE2EntityValidity: ${validity}
 GLUE2ShareServiceForeignKey: ${compute_service_id}
+GLUE2ShareDescription: Share in service ${service_id} for VO ${vo} (Project ${share['project']})
 GLUE2CloudComputingShareCloudComputingServiceForeignKey: ${compute_service_id}
-# XXX Assuming that all endpoints are in the same share
+# XXX Assuming that all endpoints are in the same share, correct?
 % for url, endpoint in endpoints.items():
 <%
     endpoint_id =  ("%s_%s_%s_%s" % (endpoint['endpoint_url'],
@@ -208,10 +211,6 @@ GLUE2CloudComputingShareSLA: ${share['sla']}
 # TODO find information for this attributes
 # GLUE2ShareResourceForeignKey: cream-02.cnaf.infn.it
 # GLUE2ComputingShareExecutionEnvironmentForeignKey: cream-02.cnaf.infn.it +++++++++++++++ controllare ++++++++++++++++++
-# GLUE2EntityName:
-# GLUE2EntityValidity:
-# GLUE2EntityOtherInfo: <additional info 1>
-# GLUE2ShareDescription:
 # GLUE2CloudComputingShareInstanceMaxAccelerators:
 # XXX Need to get this info using nova API?
 # GLUE2CloudComputingShareNetworkInfo:
