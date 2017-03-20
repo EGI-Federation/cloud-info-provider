@@ -189,6 +189,7 @@ objectClass: GLUE2Entity
 objectClass: GLUE2Share
 objectClass: GLUE2CloudComputingShare
 GLUE2ShareID: ${share_id}
+GLUE2EntityCreationTime: ${timestamp}
 GLUE2ShareServiceForeignKey: ${compute_service_id}
 GLUE2CloudComputingShareCloudComputingServiceForeignKey: ${compute_service_id}
 # XXX Assuming that all endpoints are in the same share
@@ -207,7 +208,6 @@ GLUE2CloudComputingShareSLA: ${share['sla']}
 # TODO find information for this attributes
 # GLUE2ShareResourceForeignKey: cream-02.cnaf.infn.it
 # GLUE2ComputingShareExecutionEnvironmentForeignKey: cream-02.cnaf.infn.it +++++++++++++++ controllare ++++++++++++++++++
-# GLUE2EntityCreationTime:
 # GLUE2EntityName:
 # GLUE2EntityValidity:
 # GLUE2EntityOtherInfo: <additional info 1>
@@ -448,21 +448,16 @@ objectClass: GLUE2Entity
 objectClass: GLUE2Policy
 objectClass: GLUE2AccessPolicy
 GLUE2PolicyID: ${endpoint_id}_Policy
+GLUE2EntityCreationTime: ${timestamp}
 GLUE2AccessPolicyEndpointForeignKey: ${endpoint_id}
 GLUE2PolicyScheme: org.glite.standard
- GLUE2EntityName: Access control rules for Endpoint ${endpoint_id}
+GLUE2EntityName: Access control rules for Endpoint ${endpoint_id}
 % for vo, share in shares.items():
 GLUE2PolicyRule: VO:${vo}
 % endfor
 % for vo, share in shares.items():
 GLUE2PolicyUserDomainForeignKey: ${vo}
 % endfor
-# XXX Still appropriate?
-# GLUE2EntityOtherInfo: InfoProviderName=glite-ce-glue2-endpoint-static
-# GLUE2EntityOtherInfo: InfoProviderVersion=1.1
-# TODO find information for this attributes
-# GLUE2EntityCreationTime: 2016-02-18T14:42:49Z
-# GLUE2EntityOtherInfo: InfoProviderHost=cream-02.cnaf.infn.it
 % endfor
 
 ##
@@ -477,17 +472,12 @@ objectClass: GLUE2Entity
 objectClass: GLUE2Policy
 objectClass: GLUE2MappingPolicy
 GLUE2PolicyID: ${share_id}_Policy
+GLUE2EntityCreationTime: ${timestamp}
 GLUE2PolicyScheme: org.glite.standard
 GLUE2MappingPolicyShareForeignKey: ${share_id}
 % for rule in share['membership']:
 GLUE2PolicyRule: ${rule}
 % endfor
 GLUE2PolicyUserDomainForeignKey: ${vo}
-# XXX Still appropriate?
-# GLUE2EntityOtherInfo: InfoProviderName=glite-ce-glue2-share-static
-# GLUE2EntityOtherInfo: InfoProviderVersion=1.1
-# TODO find information for this attributes
-# GLUE2EntityCreationTime: 2016-02-18T14:42:49Z
-# GLUE2EntityOtherInfo: InfoProviderHost=cream-02.cnaf.infn.it
 % endfor
 ## vim:set ft=ldif:
