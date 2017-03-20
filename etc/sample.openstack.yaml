@@ -13,7 +13,7 @@ compute:
     # Hypervisor version
     hypervisor_version: 0.0.0
     # OpenStack version
-    middleware_version: havana
+    middleware_version: Liberty
     # Service Production level (testing, candidate, production...)
     service_production_level: production
     # Service capabilities
@@ -29,7 +29,7 @@ compute:
         defaults:
             openstack_api_version: v2
             occi_api_version: 1.1
-            api_endpoint_technology: REST
+            api_endpoint_technology: webservice
             api_authn_method: X509-VOMS
             production_level: production
 
