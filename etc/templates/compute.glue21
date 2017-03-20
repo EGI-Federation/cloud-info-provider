@@ -12,6 +12,7 @@
     compute_service_id = static_compute_info['compute_service_name'] + '_cloud.compute'
     compute_service_manager = compute_service_id + '_manager'
     timestamp = datetime.datetime.now().isoformat()
+    validity = 3600
 %>\
 ##
 ## Cloud Computing Service - GLUE2CloudComputingService
@@ -21,7 +22,9 @@ objectClass: GLUE2Entity
 objectClass: GLUE2Service
 objectClass: GLUE2CloudComputingService
 GLUE2ServiceID: ${compute_service_id}
+GLUE2EntityName: Cloud Compute service on ${static_compute_info['site_name']}
 GLUE2EntityCreationTime: ${timestamp}
+GLUE2EntityValidity: ${validity}
 GLUE2ServiceAdminDomainForeignKey: ${static_compute_info['site_name']}
 GLUE2ServiceType: IaaS
 GLUE2ServiceQualityLevel: ${static_compute_info['compute_service_production_level']}
@@ -35,9 +38,6 @@ GLUE2ServiceCapability: ${capability}
 # GLUE2CloudComputingServiceTotalVM:
 # GLUE2CloudComputingServiceRunningVM:
 # TODO find information for this attributes
-# GLUE2EntityName:
-# GLUE2EntityValidity:
-# GLUE2EntityOtherInfo: <additional info 1>
 # GLUE2ServiceComplexity:
 # GLUE2ServiceStatusInfo:
 # GLUE2CloudComputingServiceAUP:
@@ -50,10 +50,11 @@ objectClass: GLUE2Entity
 objectClass: GLUE2Manager
 objectClass: GLUE2CloudComputingManager
 GLUE2ManagerID: ${compute_service_manager}
+GLUE2EntityName: Cloud Manager for ${static_compute_info['compute_service_name']}
 GLUE2EntityCreationTime: ${timestamp}
+GLUE2EntityValidity: ${validity}
 GLUE2ManagerProductName: ${static_compute_info['compute_hypervisor']}
 GLUE2ManagerProductVersion: ${static_compute_info['compute_hypervisor_version']}
-GLUE2EntityName: Cloud Manager for ${static_compute_info['compute_service_name']}
 GLUE2ManagerServiceForeignKey: ${compute_service_id}
 GLUE2CloudComputingManagerCloudComputingServiceForeignKey: ${compute_service_id}
 ## XXX Disabled for now
@@ -61,7 +62,6 @@ GLUE2CloudComputingManagerCloudComputingServiceForeignKey: ${compute_service_id}
 ##GLUE2CloudComputingManagerTotalRAM: ${static_compute_info['compute_total_ram']}
 # TODO find information for this attributes
 # GLUE2EntityValidity:
-# GLUE2EntityOtherInfo: <additional info n>
 # GLUE2CloudComputingManagerTotalAccelerators:
 # GLUE2CloudComputingManagerInstanceMaxCPU:
 # GLUE2CloudComputingManagerInstanceMinCPU:
@@ -94,10 +94,13 @@ objectClass: GLUE2Entity
 objectClass: GLUE2Share
 objectClass: GLUE2CloudComputingShare
 GLUE2ShareID: ${share_id}
+GLUE2EntityName: Share in service ${service_id} for VO ${vo} (Project ${share['project']})
 GLUE2EntityCreationTime: ${timestamp}
+GLUE2EntityValidity: ${validity}
 GLUE2ShareServiceForeignKey: ${compute_service_id}
+GLUE2ShareDescription: Share in service ${service_id} for VO ${vo} (Project ${share['project']})
 GLUE2CloudComputingShareCloudComputingServiceForeignKey: ${compute_service_id}
-# XXX Assuming that all endpoints are in the same share
+# XXX Assuming that all endpoints are in the same share, correct?
 % for url, endpoint in endpoints.items():
 <%
     endpoint_id =  ("%s_%s_%s_%s" % (endpoint['endpoint_url'],
@@ -113,10 +116,6 @@ GLUE2CloudComputingShareSLA: ${share['sla']}
 # TODO find information for this attributes
 # GLUE2ShareResourceForeignKey: cream-02.cnaf.infn.it
 # GLUE2ComputingShareExecutionEnvironmentForeignKey: cream-02.cnaf.infn.it +++++++++++++++ controllare ++++++++++++++++++
-# GLUE2EntityName:
-# GLUE2EntityValidity:
-# GLUE2EntityOtherInfo: <additional info 1>
-# GLUE2ShareDescription:
 # GLUE2CloudComputingShareInstanceMaxAccelerators:
 # XXX Need to get this info using nova API?
 # GLUE2CloudComputingShareNetworkInfo:
@@ -138,7 +137,12 @@ GLUE2CloudComputingShareSLA: ${share['sla']}
 % for url, endpoint in endpoints.items():
 <%
     native_endpoint = endpoint['compute_api_type'] == 'OCCI'
-    interface_name = 'eu.egi.cloud.vm-management.occi' if native_endpoint else 'org.openstack.compute'
+    if endpoint['compute_api_type'] == 'OpenStack':
+        interface_name = 'org.openstack.nova'
+    elif endpoint['compute_api_type'] == 'OpenNebula':
+        interface_name = 'org.opennebula.compute'
+    else:
+        interface_name = 'eu.egi.cloud.vm-management.occi'
     endpoint_id = ("%s_%s_%s_%s" % (endpoint['endpoint_url'],
         endpoint['compute_api_type'], endpoint['compute_api_version'],
         endpoint['compute_api_authn_method']))
@@ -149,6 +153,7 @@ objectClass: GLUE2Endpoint
 objectClass: GLUE2CloudComputingEndpoint
 GLUE2EndpointID: ${endpoint_id}
 GLUE2EntityCreationTime: ${timestamp}
+GLUE2EntityValidity: ${validity}
 GLUE2EndpointURL: ${endpoint['endpoint_url']}
 GLUE2EndpointServiceForeignKey: ${compute_service_id}
 ## XXX Filter cloud.vm.uploadImage from OCCI capabilities
@@ -168,7 +173,6 @@ GLUE2EndpointDowntimeInfo: See the GOC DB for downtimes: https://goc.egi.eu/
 GLUE2EntityOtherInfo: Authn=${endpoint['compute_api_authn_method']}
 # TODO find information for this attributes
 # GLUE2EntityName:
-# GLUE2EntityValidity:
 # GLUE2EndpointSemantics:
 # GLUE2EndpointSupportedProfile:
 # GLUE2EndpointInterfaceExtension:
@@ -204,6 +208,7 @@ objectClass: GLUE2CloudComputingImage
 GLUE2EntityName: ${image['image_name']}
 GLUE2CloudComputingImageID: ${img_id}
 GLUE2EntityCreationTime: ${timestamp}
+GLUE2EntityValidity: ${validity}
 GLUE2CloudComputingImageIDForEndpoint: ${img_id}
 GLUE2CloudComputingImageMarketPlaceID: ${image['image_marketplace_id']}
 GLUE2CloudComputingImageCloudComputingManagerForeignKey: ${compute_service_manager}
@@ -227,8 +232,6 @@ GLUE2EntityOtherInfo: ${image['image_description']}
 # GLUE2CloudComputingImageMinRAM:
 # GLUE2CloudComputingImageAccessInfo:
 # GLUE2CloudComputingImageInstalledsoftware:
-# GLUE2EntityValidity:
-# GLUE2EntityOtherInfo:
 # XXX To be retrieved from AppDB, cloudkeeper, metadata
 GLUE2CloudComputingImageDefaultUserName:
 # XXX Skipping dangerous information
@@ -249,6 +252,7 @@ objectClass: GLUE2Resource
 objectClass: GLUE2CloudComputingInstanceType
 GLUE2ResourceID: ${tpl_id}
 GLUE2EntityCreationTime: ${timestamp}
+GLUE2EntityValidity: ${validity}
 GLUE2EntityName: ${tpl_id}
 GLUE2CloudComputingInstanceTypeIDForEndpoint: ${tpl_id}
 GLUE2ResourceManagerForeignKey: ${compute_service_manager}
@@ -268,8 +272,6 @@ GLUE2CloudComputingInstanceTypeNetworkOut: TRUE
 # GLUE2CloudComputingInstanceTypeNetworkPortsOut:
 # GLUE2CloudComputingInstanceTypeNetworkInfo:
 # GLUE2CloudComputingInstanceTypeOtherHardware:
-# GLUE2EntityValidity:
-# GLUE2EntityOtherInfo: <additional info 1>
 
 % endfor
 % endfor
