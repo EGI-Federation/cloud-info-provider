@@ -48,6 +48,7 @@ GLUE2CloudComputingServiceAUP: http://go.egi.eu/aup
 GLUE2ServiceComplexity: endpointType=2,share=${len(shares)}
 % for capability in static_compute_info['compute_capabilities']:
 GLUE2ServiceCapability: ${capability}
+% endfor
 # XXX Need to get this info using nova API?
 # GLUE2CloudComputingServiceSuspendedVM:
 # GLUE2CloudComputingServicePendingVM:
@@ -172,6 +173,54 @@ GLUE2CloudComputingShareInstanceMaxAccelerators: ${share_max_accelerators}
 % if share_max_vm:
 GLUE2CloudComputingShareMaxVM: ${share_max_vm}
 % endif
+
+##
+## Computing share - GLUE2CloudComputingShare
+##
+## One share per VO, for all endpoints
+## OpenStack: one project per VO
+##
+% for vo, share in shares.items():
+<%
+    share_id = ("%s_share_%s_%s" % (compute_service_id, vo, share['project']))
+%>\
+dn: GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${suffix}
+objectClass: GLUE2Entity
+objectClass: GLUE2Share
+objectClass: GLUE2CloudComputingShare
+GLUE2ShareID: ${share_id}
+GLUE2ShareServiceForeignKey: ${compute_service_id}
+GLUE2CloudComputingShareCloudComputingServiceForeignKey: ${compute_service_id}
+# XXX Assuming that all endpoints are in the same share
+% for url, endpoint in endpoints.items():
+<%
+    endpoint_id =  ("%s_%s_%s_%s" % (endpoint['endpoint_url'],
+        endpoint['compute_api_type'], endpoint['compute_api_version'],
+        endpoint['compute_api_authn_method']))
+%>\
+GLUE2ShareEndpointForeignKey: ${endpoint_id}
+GLUE2CloudComputingShareCloudComputingEndpointForeignKey: ${endpoint_id}
+% endfor
+GLUE2CloudComputingShareInstanceMaxCPU: ${share['instance_max_cpu']}
+GLUE2CloudComputingShareInstanceMaxRAM: ${share['instance_max_ram']}
+GLUE2CloudComputingShareSLA: ${share['sla']}
+# TODO find information for this attributes
+# GLUE2ShareResourceForeignKey: cream-02.cnaf.infn.it
+# GLUE2ComputingShareExecutionEnvironmentForeignKey: cream-02.cnaf.infn.it +++++++++++++++ controllare ++++++++++++++++++
+# GLUE2EntityCreationTime:
+# GLUE2EntityName:
+# GLUE2EntityValidity:
+# GLUE2EntityOtherInfo: <additional info 1>
+# GLUE2ShareDescription:
+# GLUE2CloudComputingShareInstanceMaxAccelerators:
+# XXX Need to get this info using nova API?
+# GLUE2CloudComputingShareNetworkInfo:
+# GLUE2CloudComputingShareTotalVM:
+# GLUE2CloudComputingShareRunningVM:
+# GLUE2CloudComputingSharePendingVM:
+# GLUE2CloudComputingShareSuspendedVM:
+# GLUE2CloudComputingShareHaltedVM:
+# GLUE2CloudComputingShareMaxVM:
 
 ##
 ## List of Cloud Computing Endpoints - GLUE2CloudComputingEndpoint
