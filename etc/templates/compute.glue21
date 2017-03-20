@@ -11,7 +11,7 @@
     shares = attributes['shares']
     compute_service_id = static_compute_info['compute_service_name'] + '_cloud.compute'
     compute_service_manager = compute_service_id + '_manager'
-    timestamp = datetime.datetime.now().isoformat()
+    timestamp = datetime.now().isoformat()
     validity = 3600
 %>\
 ##
@@ -61,7 +61,6 @@ GLUE2CloudComputingManagerCloudComputingServiceForeignKey: ${compute_service_id}
 ##GLUE2CloudComputingManagerTotalCPUs: ${static_compute_info['compute_total_cores']}
 ##GLUE2CloudComputingManagerTotalRAM: ${static_compute_info['compute_total_ram']}
 # TODO find information for this attributes
-# GLUE2EntityValidity:
 # GLUE2CloudComputingManagerTotalAccelerators:
 # GLUE2CloudComputingManagerInstanceMaxCPU:
 # GLUE2CloudComputingManagerInstanceMinCPU:
@@ -94,11 +93,11 @@ objectClass: GLUE2Entity
 objectClass: GLUE2Share
 objectClass: GLUE2CloudComputingShare
 GLUE2ShareID: ${share_id}
-GLUE2EntityName: Share in service ${service_id} for VO ${vo} (Project ${share['project']})
+GLUE2EntityName: Share in service ${compute_service_id} for VO ${vo} (Project ${share['project']})
 GLUE2EntityCreationTime: ${timestamp}
 GLUE2EntityValidity: ${validity}
 GLUE2ShareServiceForeignKey: ${compute_service_id}
-GLUE2ShareDescription: Share in service ${service_id} for VO ${vo} (Project ${share['project']})
+GLUE2ShareDescription: Share in service ${compute_service_id} for VO ${vo} (Project ${share['project']})
 GLUE2CloudComputingShareCloudComputingServiceForeignKey: ${compute_service_id}
 # XXX Assuming that all endpoints are in the same share, correct?
 % for url, endpoint in endpoints.items():
@@ -110,6 +109,7 @@ GLUE2CloudComputingShareCloudComputingServiceForeignKey: ${compute_service_id}
 GLUE2ShareEndpointForeignKey: ${endpoint_id}
 GLUE2CloudComputingShareCloudComputingEndpointForeignKey: ${endpoint_id}
 % endfor
+# XXX Should we get this from conf file?
 GLUE2CloudComputingShareInstanceMaxCPU: ${share['instance_max_cpu']}
 GLUE2CloudComputingShareInstanceMaxRAM: ${share['instance_max_ram']}
 GLUE2CloudComputingShareSLA: ${share['sla']}
@@ -146,17 +146,24 @@ GLUE2CloudComputingShareSLA: ${share['sla']}
     endpoint_id = ("%s_%s_%s_%s" % (endpoint['endpoint_url'],
         endpoint['compute_api_type'], endpoint['compute_api_version'],
         endpoint['compute_api_authn_method']))
+    endpoint_name = ("%s (%s/%s) at %s" % (endpoint['compute_api_type'],
+        endpoint['compute_api_version'], endpoint['compute_api_authn_method'],
+        endpoint['endpoint_url']
+        ))
 %>\
 dn: GLUE2EndpointID=${endpoint_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${endpoint['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2Endpoint
 objectClass: GLUE2CloudComputingEndpoint
 GLUE2EndpointID: ${endpoint_id}
+# XXX appropriate?
+GLUE2EntityName: Cloud Computing Endpoint ${endpoint_name}
 GLUE2EntityCreationTime: ${timestamp}
 GLUE2EntityValidity: ${validity}
 GLUE2EndpointURL: ${endpoint['endpoint_url']}
 GLUE2EndpointServiceForeignKey: ${compute_service_id}
-## XXX Filter cloud.vm.uploadImage from OCCI capabilities
+# XXX Filter cloud.vm.uploadImage from OCCI capabilities?
+# XXX should we hide/update the capabilities?
 % for capability in endpoint['compute_capabilities']:
 GLUE2EndpointCapability: ${capability}
 % endfor
@@ -169,10 +176,9 @@ GLUE2EndpointInterfaceVersion: ${endpoint['compute_api_version']}
 GLUE2EndpointImplementor: ${endpoint['compute_middleware_developer']}
 GLUE2EndpointImplementationName: ${endpoint['compute_middleware']}
 GLUE2EndpointImplementationVersion: ${endpoint['compute_middleware_version']}
-GLUE2EndpointDowntimeInfo: See the GOC DB for downtimes: https://goc.egi.eu/
+GLUE2EndpointDowntimeInfo: See the GOC DB for downtimes: https://goc.egi.eu/gocdbpi/public/?method=get_downtime&ongoing_only=yes&topentity=${static_compute_info['site_name']}
 GLUE2EntityOtherInfo: Authn=${endpoint['compute_api_authn_method']}
 # TODO find information for this attributes
-# GLUE2EntityName:
 # GLUE2EndpointSemantics:
 # GLUE2EndpointSupportedProfile:
 # GLUE2EndpointInterfaceExtension:
