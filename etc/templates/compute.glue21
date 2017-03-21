@@ -251,7 +251,6 @@ GLUE2CloudComputingImageDefaultUserName:
 <%
     tpl_id = template['template_native_id'] if native_endpoint else template_id
 %>
-# GLUE2ExecutionEnvironmentCPUVendor: virtual vendor
 dn: GLUE2ResourceID=${tpl_id},GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${template['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2Resource
