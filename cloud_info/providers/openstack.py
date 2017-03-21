@@ -2,6 +2,9 @@ import logging
 import re
 import socket
 
+import re
+import requests
+
 from cloud_info import exceptions
 from cloud_info import providers
 from cloud_info import utils
@@ -210,6 +213,14 @@ class OpenStackProvider(providers.BaseProvider):
         end = obj_name.rfind("'")
 
         return obj_name[start:end]
+
+        # Retrieve a keystone authentication token
+        # XXX to be used as main authentication mean
+        self.keystone = ksclient.Client(auth_url=os_auth_url,
+                                    username=os_username,
+                                    password=os_password,
+                                    tenant_name=os_tenant_name)
+        self.auth_token = self.keystone.auth_token
 
     def get_compute_shares(self):
         # XXX Once possible implement dynamic retrieval of shares
