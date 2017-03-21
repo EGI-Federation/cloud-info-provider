@@ -145,12 +145,12 @@ class StaticProvider(providers.BaseProvider):
         global_fields = ('service_production_level', 'total_ram',
                          'total_cores', 'capabilities',
                          'hypervisor', 'hypervisor_version',
-                         'middleware', 'middleware_version',
-                         'middleware_developer',
                          'service_name')
         endpoint_fields = ('production_level', 'api_type', 'api_version',
                            'api_endpoint_technology', 'api_authn_method',
-                           'endpoint_url')
+                           'endpoint_url',
+                           'middleware', 'middleware_developer',
+                           'middleware_version')
         endpoints = self._get_what('compute',
                                    'endpoints',
                                    global_fields,
