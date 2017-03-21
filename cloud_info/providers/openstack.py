@@ -6,6 +6,9 @@ import functools
 import re
 import socket
 
+import re
+import requests
+
 from cloud_info import exceptions
 from cloud_info import providers
 from cloud_info import utils
