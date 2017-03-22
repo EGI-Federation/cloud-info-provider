@@ -3,7 +3,7 @@
 ##
 <%!
   from datetime import datetime
-%>
+%>\
 <%
     static_compute_info = attributes['static_compute_info']
     suffix = static_compute_info['suffix']
@@ -249,7 +249,7 @@ GLUE2EntityOtherInfo: ${image['image_description']}
 # GLUE2CloudComputingImageInstalledsoftware:
 # XXX To be retrieved from AppDB, cloudkeeper, metadata
 GLUE2CloudComputingImageDefaultUserName:
-# XXX Skipping dangerous information
+## XXX Skipping dangerous information
 ## GLUE2CloudComputingImageDefaultPassword:
 
 % endfor
@@ -259,7 +259,7 @@ GLUE2CloudComputingImageDefaultUserName:
 % for template_id, template in share['templates'].items():
 <%
     tpl_id = template['template_native_id'] if native_endpoint else template_id
-%>
+%>\
 dn: GLUE2ResourceID=${tpl_id},GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${template['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2Resource
