@@ -13,6 +13,10 @@
     compute_service_manager = compute_service_id + '_manager'
     timestamp = datetime.now().isoformat()
     validity = 3600
+    instances = {instance_id: instance for vo, share in shares.items() for instance_id, instance in share['instances'].items()}
+    running_instances = {instance_id: instance for instance_id, instance in instances.items() if instance['instance_status'] == 'ACTIVE'}
+    suspended_instances = {instance_id: instance for instance_id, instance in instances.items() if instance['instance_status'] == 'SUSPENDED'}
+    halted_instances = {instance_id: instance for instance_id, instance in instances.items() if instance['instance_status'] == 'SHUTOFF'}
 %>\
 ##
 ## Cloud Computing Service - GLUE2CloudComputingService
@@ -31,12 +35,13 @@ GLUE2ServiceQualityLevel: ${static_compute_info['compute_service_production_leve
 % for capability in static_compute_info['compute_capabilities']:
 GLUE2ServiceCapability: ${capability}
 % endfor
-# XXX Need to get this info using nova API?
-# GLUE2CloudComputingServiceSuspendedVM:
+GLUE2CloudComputingServiceTotalVM: ${len(instances)}
+GLUE2CloudComputingServiceRunningVM: ${len(running_instances)}
+GLUE2CloudComputingServiceSuspendedVM: ${len(suspended_instances)}
+# XXX status = SHUTOFF
+GLUE2CloudComputingServiceHaltedVM: ${len(halted_instances)}
+# XXX No PENDING status in OpenStack: use REBUILD?
 # GLUE2CloudComputingServicePendingVM:
-# GLUE2CloudComputingServiceHaltedVM:
-# GLUE2CloudComputingServiceTotalVM:
-# GLUE2CloudComputingServiceRunningVM:
 # TODO find information for this attributes
 # GLUE2ServiceComplexity:
 # GLUE2ServiceStatusInfo:
@@ -87,6 +92,10 @@ GLUE2CloudComputingManagerCloudComputingServiceForeignKey: ${compute_service_id}
 % for vo, share in shares.items():
 <%
     share_id = ("%s_share_%s_%s" % (compute_service_id, vo, share['project']))
+    share_instances = share['instances']
+    share_running_instances = {instance_id: instance for instance_id, instance in share_instances.items() if instance['instance_status'] == 'ACTIVE'}
+    share_suspended_instances = {instance_id: instance for instance_id, instance in share_instances.items() if instance['instance_status'] == 'SUSPENDED'}
+    share_halted_instances = {instance_id: instance for instance_id, instance in share_instances.items() if instance['instance_status'] == 'SHUTOFF'}
 %>\
 dn: GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${suffix}
 objectClass: GLUE2Entity
@@ -113,17 +122,17 @@ GLUE2CloudComputingShareCloudComputingEndpointForeignKey: ${endpoint_id}
 GLUE2CloudComputingShareInstanceMaxCPU: ${share['instance_max_cpu']}
 GLUE2CloudComputingShareInstanceMaxRAM: ${share['instance_max_ram']}
 GLUE2CloudComputingShareSLA: ${share['sla']}
+GLUE2CloudComputingShareTotalVM: ${len(share_instances)}
+GLUE2CloudComputingShareRunningVM: ${len(share_running_instances)}
+GLUE2CloudComputingShareSuspendedVM: ${len(share_suspended_instances)}
+GLUE2CloudComputingShareHaltedVM: ${len(share_halted_instances)}
 # TODO find information for this attributes
 # GLUE2ShareResourceForeignKey: cream-02.cnaf.infn.it
 # GLUE2ComputingShareExecutionEnvironmentForeignKey: cream-02.cnaf.infn.it +++++++++++++++ controllare ++++++++++++++++++
 # GLUE2CloudComputingShareInstanceMaxAccelerators:
 # XXX Need to get this info using nova API?
 # GLUE2CloudComputingShareNetworkInfo:
-# GLUE2CloudComputingShareTotalVM:
-# GLUE2CloudComputingShareRunningVM:
 # GLUE2CloudComputingSharePendingVM:
-# GLUE2CloudComputingShareSuspendedVM:
-# GLUE2CloudComputingShareHaltedVM:
 # GLUE2CloudComputingShareMaxVM:
 
 ##

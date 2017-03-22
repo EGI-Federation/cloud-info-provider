@@ -371,6 +371,36 @@ class OpenStackProvider(providers.BaseProvider):
             images[img_id] = aux_img
         return images
 
+    def get_instances(self):
+        instance_template = {
+            'instance_name': None,
+            'instance_image_id': None,
+            'instance_image_name': None,
+            'instance_template_id': None,
+            'instance_template_name': None,
+            'instance_status': None,
+        }
+
+        instances = {}
+
+        for instance in self.api.servers.list():
+            ret = instance_template.copy()
+            image_id = instance.image['id']
+            image = self.api.images.find(id=image_id)
+            template_id = instance.flavor['id']
+            template = self.api.flavors.find(id=template_id)
+            ret.update({
+                'instance_name': instance.name,
+                'instance_image_id': image_id,
+                'instance_image_name': image.name,
+                'instance_template_id': template_id,
+                'instance_template_name': template.name,
+                'instance_status': instance.status,
+            })
+            instances[instance.id] = ret
+
+        return instances
+
     @staticmethod
     def occify(term_name):
         '''Occifies a term_name so that it is compliant with GFD 185.'''

@@ -11,6 +11,9 @@ class BaseProvider(object):
     def get_templates(self):
         return {}
 
+    def get_shares(self):
+        return []
+
     def get_compute_endpoints(self):
         return {}
 

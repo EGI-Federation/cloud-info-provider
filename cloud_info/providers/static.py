@@ -130,6 +130,16 @@ class StaticProvider(providers.BaseProvider):
                                    prefix='template_')
         return templates['templates']
 
+    def get_instances(self):
+        fields = ('name', 'image_id', 'image_name', 'template_id',
+                  'template_name', 'status')
+        instances = self._get_what('compute',
+                                   'instances',
+                                   None,
+                                   fields,
+                                   prefix='instance_')
+        return instances['instances']
+
     def get_compute_shares(self):
         # FIXME endpoints could be an array
         fields = ('endpoints', 'instance_max_cpu', 'instance_max_ram',
