@@ -54,6 +54,7 @@ GLUE2CloudComputingServiceRunningVM: ${len(running_instances)}
 GLUE2CloudComputingServiceSuspendedVM: ${len(suspended_instances)}
 # XXX status = SHUTOFF
 GLUE2CloudComputingServiceHaltedVM: ${len(halted_instances)}
+# TODO find information for this attributes
 # XXX No PENDING status in OpenStack: use REBUILD?
 # GLUE2CloudComputingServicePendingVM:
 # GLUE2CloudComputingServiceHaltedVM:
@@ -188,9 +189,16 @@ GLUE2CloudComputingShareMaxVM: ${share_max_vm}
 <%
     share_id = ("%s_share_%s_%s" % (compute_service_id, vo, share['project']))
     share_instances = share['instances']
+
     share_running_instances = {instance_id: instance for instance_id, instance in share_instances.items() if instance['instance_status'] == 'ACTIVE'}
     share_suspended_instances = {instance_id: instance for instance_id, instance in share_instances.items() if instance['instance_status'] == 'SUSPENDED'}
     share_halted_instances = {instance_id: instance for instance_id, instance in share_instances.items() if instance['instance_status'] == 'SHUTOFF'}
+
+    share_templates_cpu = [tpl['template_cpu'] for tpl_id, tpl in share['templates'].items()]
+    share_template_max_cpu = max(share_templates_cpu)
+
+    share_templates_memory = [tpl['template_memory'] for tpl_id, tpl in share['templates'].items()]
+    share_template_max_memory = max(share_templates_memory)
 %>\
 dn: GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${suffix}
 objectClass: GLUE2Entity
@@ -213,9 +221,8 @@ GLUE2CloudComputingShareCloudComputingServiceForeignKey: ${compute_service_id}
 GLUE2ShareEndpointForeignKey: ${endpoint_id}
 GLUE2CloudComputingShareCloudComputingEndpointForeignKey: ${endpoint_id}
 % endfor
-# XXX Should we get this from conf file?
-GLUE2CloudComputingShareInstanceMaxCPU: ${share['instance_max_cpu']}
-GLUE2CloudComputingShareInstanceMaxRAM: ${share['instance_max_ram']}
+GLUE2CloudComputingShareInstanceMaxCPU: ${share_template_max_cpu}
+GLUE2CloudComputingShareInstanceMaxRAM: ${share_template_max_memory}
 GLUE2CloudComputingShareSLA: ${share['sla']}
 GLUE2CloudComputingShareTotalVM: ${len(share_instances)}
 GLUE2CloudComputingShareRunningVM: ${len(share_running_instances)}
@@ -225,7 +232,6 @@ GLUE2CloudComputingShareHaltedVM: ${len(share_halted_instances)}
 # GLUE2ShareResourceForeignKey: cream-02.cnaf.infn.it
 # GLUE2ComputingShareExecutionEnvironmentForeignKey: cream-02.cnaf.infn.it +++++++++++++++ controllare ++++++++++++++++++
 # GLUE2CloudComputingShareInstanceMaxAccelerators:
-# XXX Need to get this info using nova API?
 # GLUE2CloudComputingShareNetworkInfo:
 # GLUE2CloudComputingSharePendingVM:
 # GLUE2CloudComputingShareMaxVM:
