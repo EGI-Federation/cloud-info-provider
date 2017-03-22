@@ -1,13 +1,22 @@
 import logging
+import re
 
 from cloud_info import exceptions
 from cloud_info import providers
 from cloud_info import utils
 
+from six.moves.urllib.parse import urlparse
+
 try:
     import novaclient.client
 except ImportError:
     msg = 'Cannot import novaclient module.'
+    raise exceptions.OpenStackProviderException(msg)
+
+try:
+    import requests
+except ImportError:
+    msg = 'Cannot import requests module.'
     raise exceptions.OpenStackProviderException(msg)
 
 # Remove info log messages from output
@@ -72,6 +81,20 @@ class OpenStackProvider(providers.BaseProvider):
         self.legacy_occi_os = legacy_occi_os
 
     def get_compute_endpoints(self):
+        # Hard-coded defaults for supported endpoints types
+        supported_endpoints = {
+            'occi': {
+                'compute_api_type': 'OCCI',
+                'compute_middleware': 'ooi',
+                'compute_middleware_developer': 'CSIC',
+            },
+            'compute': {
+                'compute_api_type': 'OpenStack',
+                'compute_middleware': 'OpenStack Nova',
+                'compute_middleware_developer': 'OpenStack Foundation',
+            }
+        }
+
         ret = {
             'endpoints': {},
             'compute_middleware_developer': 'OpenStack',
@@ -84,25 +107,54 @@ class OpenStackProvider(providers.BaseProvider):
 
         endpoints = catalog['access']['serviceCatalog']
         for endpoint in endpoints:
-            if endpoint['type'] == 'occi':
-                e_type = 'OCCI'
-                e_version = defaults.get('endpoint_occi_api_version', '1.1')
-            elif endpoint['type'] == 'compute':
-                e_type = 'OpenStack'
-                e_version = defaults.get('endpoint_openstack_api_version', '2')
-            else:
-                continue
+            e_type = endpoint['type']
+            if e_type in supported_endpoints:
+                for ept in endpoint['endpoints']:
+                    e_id = ept['id']
+                    e_url = ept['publicURL']
+                    if e_type == 'occi':
+                        e_middleware_version = defaults.get(
+                            'compute_occi_middleware_version', '0.3.2')
+                        e_version = defaults.get('endpoint_occi_api_version',
+                                                 '1.1')
+                        try:
+                            headers = {'X-Auth-token': self.auth_token}
+                            request_url = "%s/-/" % e_url
+                            r = requests.get(request_url, headers=headers)
+                            if r.status_code == requests.codes.ok:
+                                header_server = r.headers['Server']
+                                e_middleware_version = re.search(
+                                    r'ooi/([0-9.]+)', header_server).group(1)
+                                e_version = re.search(
+                                    r'OCCI/([0-9.]+)',
+                                    header_server
+                                ).group(1)
+                        except requests.exceptions.RequestException as e:
+                            pass
+                        except IndexError as e:
+                            pass
+                    else:
+                        e_middleware_version = defaults.get(
+                            'compute_middleware_version', 'Mitaka')
+                        e_version = defaults.get(
+                            'endpoint_openstack_api_version',
+                            'v2'
+                        )
+                        try:
+                            # TODO(gwarf) Retrieve using API programatically
+                            e_version = urlparse(e_url).path.split('/')[1]
+                        except Exception as e:
+                            pass
 
-            for ept in endpoint['endpoints']:
-                e_id = ept['id']
-                e_url = ept['publicURL']
+                    e = defaults.copy()
+                    e.update(supported_endpoints[e_type])
+                    e.update({
+                        'compute_endpoint_url': e_url,
+                        'compute_middleware_version': e_middleware_version,
+                        'compute_api_version': e_version
+                    })
 
-                e = defaults.copy()
-                e.update({'compute_endpoint_url': e_url,
-                          'compute_api_type': e_type,
-                          'compute_api_version': e_version})
-
-                ret['endpoints'][e_id] = e
+                    ret['endpoints'][e_id] = e
 
         return ret
 
