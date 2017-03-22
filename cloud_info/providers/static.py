@@ -160,7 +160,9 @@ class StaticProvider(providers.BaseProvider):
                            'api_endpoint_technology', 'api_authn_method',
                            'endpoint_url',
                            'middleware', 'middleware_developer',
-                           'middleware_version')
+                           'middleware_version',
+                           'occi_api_version',
+                           'occi_middleware_version')
         endpoints = self._get_what('compute',
                                    'endpoints',
                                    global_fields,

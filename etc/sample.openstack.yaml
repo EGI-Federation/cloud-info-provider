@@ -12,8 +12,6 @@ compute:
     hypervisor: Foo Hypervisor
     # Hypervisor version
     hypervisor_version: 0.0.0
-    # OpenStack version
-    middleware_version: Liberty
     # Service Production level (testing, candidate, production...)
     service_production_level: production
     # Service capabilities
@@ -27,8 +25,12 @@ compute:
         # are in the catalog: occi and openstack. So as to 
         # specify a version, set the two options below.
         defaults:
-            openstack_api_version: v2
-            occi_api_version: 1.1
+            # Needs to be set for OpenStack
+            compute_middleware_version: Liberty
+            # Should be retrieved automatically by the provider
+            # compute_api_version: v2
+            # occi_middleware_version: 0.3.2
+            # occi_api_version: 1.1
             api_endpoint_technology: webservice
             api_authn_method: X509-VOMS
             production_level: production
