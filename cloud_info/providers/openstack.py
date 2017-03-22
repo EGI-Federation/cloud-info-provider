@@ -217,23 +217,24 @@ class OpenStackProvider(providers.BaseProvider):
         # Retrieve a keystone authentication token
         # XXX to be used as main authentication mean
         self.keystone = ksclient.Client(auth_url=os_auth_url,
-                                    username=os_username,
-                                    password=os_password,
-                                    tenant_name=os_tenant_name)
+                                        username=os_username,
+                                        password=os_password,
+                                        tenant_name=os_tenant_name)
         self.auth_token = self.keystone.auth_token
 
     def _get_endpoint_versions(self, endpoint_url, endpoint_type):
         ret = {
-                'compute_middleware_version': None,
-                'compute_api_version': None,
+            'compute_middleware_version': None,
+            'compute_api_version': None,
         }
 
         defaults = self.static.get_compute_endpoint_defaults(prefix=True)
 
-        e_middleware_version = defaults.get(
-                ('compute_%s_middleware_version' % endpoint_type), 'UNKNOWN')
-        e_version = defaults.get(('compute_%s_api_version' % endpoint_type),
-            'UNKNOWN')
+        mw_version_key = 'compute_%s_middleware_version' % endpoint_type
+        api_version_key = 'compute_%s_api_version' % endpoint_type
+
+        e_middleware_version = defaults.get(mw_version_key, 'UNKNOWN')
+        e_version = defaults.get(api_version_key, 'UNKNOWN')
 
         if endpoint_type == 'occi':
             try:
@@ -243,23 +244,23 @@ class OpenStackProvider(providers.BaseProvider):
                 if r.status_code == requests.codes.ok:
                     header_server = r.headers['Server']
                     e_middleware_version = re.search(r'ooi/([0-9.]+)',
-                                        header_server).group(1)
+                                                     header_server).group(1)
                     e_version = re.search(r'OCCI/([0-9.]+)',
-                                        header_server).group(1)
-            except requests.exceptions.RequestException as e:
+                                          header_server).group(1)
+            except requests.exceptions.RequestException:
                 pass
-            except IndexError as e:
+            except IndexError:
                 pass
         elif endpoint_type == 'compute':
             try:
                 # TODO(gwarf) Retrieve using API programatically
                 e_version = urlparse(endpoint_url).path.split('/')[1]
-            except Exception as e:
+            except Exception:
                 pass
 
         ret.update({
             'compute_middleware_version': e_middleware_version,
-            'compute_api_version' : e_version,
+            'compute_api_version': e_version,
         })
 
         return ret
