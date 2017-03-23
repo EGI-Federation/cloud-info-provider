@@ -219,7 +219,8 @@ class OpenStackProvider(providers.BaseProvider):
         self.keystone = ksclient.Client(auth_url=os_auth_url,
                                         username=os_username,
                                         password=os_password,
-                                        tenant_name=os_tenant_name)
+                                        tenant_name=os_tenant_name,
+                                        insecure=insecure)
         self.auth_token = self.keystone.auth_token
 
     def _get_endpoint_versions(self, endpoint_url, endpoint_type):
