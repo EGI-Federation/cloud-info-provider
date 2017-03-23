@@ -241,30 +241,28 @@ GLUE2CloudComputingImageID: ${img_id}
 GLUE2EntityCreationTime: ${timestamp}
 GLUE2EntityValidity: ${validity}
 GLUE2CloudComputingImageIDForEndpoint: ${img_id}
-GLUE2CloudComputingImageMarketPlaceID: ${image['image_marketplace_id']}
 GLUE2CloudComputingImageCloudComputingManagerForeignKey: ${compute_service_manager}
 # XXX Shouldn't we add a CloudComputingEndpointForeignKey?
 GLUE2CloudComputingImageCloudComputingEndpointForeignKey: ${endpoint_id}
-GLUE2CloudComputingImageCloudComputingManagerForeignKey: ${compute_service_manager}
+GLUE2CloudComputingImageMarketPlaceID: ${image['image_marketplace_id']}
 GLUE2CloudComputingImageOSName: ${image['image_name']}
 GLUE2CloudComputingImageOSVersion: ${image['image_version']}
+GLUE2CloudComputingImageOSFamily: ${image['image_os_family]}
+GLUE2CloudComputingImageOSPlatform: ${image['image_platform']}
 # XXX appropriate?
 GLUE2EntityOtherInfo: ${image['image_description']}
 # TODO find information for this attributes
-# GLUE2CloudComputingImageOSPlatform:
-# GLUE2CloudComputingImageOSFamily:
+# GLUE2CloudComputingImageDefaultUserName:
 # GLUE2CloudComputingImageDiskSize:
 # GLUE2CloudComputingImageRecommendedCPU:
-# GLUE2CloudComputingImageRecommendedAcceleratorType:
-# GLUE2CloudComputingImageRecommendedAccelerators:
 # GLUE2CloudComputingImageRecommendedRAM:
 # GLUE2CloudComputingImageMinCPU:
 # GLUE2CloudComputingImageMinAccelerators:
 # GLUE2CloudComputingImageMinRAM:
 # GLUE2CloudComputingImageAccessInfo:
 # GLUE2CloudComputingImageInstalledsoftware:
-# XXX To be retrieved from AppDB, cloudkeeper, metadata
-GLUE2CloudComputingImageDefaultUserName:
+# GLUE2CloudComputingImageRecommendedAcceleratorType:
+# GLUE2CloudComputingImageRecommendedAccelerators:
 ## XXX Skipping dangerous information
 ## GLUE2CloudComputingImageDefaultPassword:
 
@@ -298,8 +296,6 @@ GLUE2CloudComputingInstanceTypeNetworkOut: TRUE
 # GLUE2CloudComputingInstanceTypeMarketPlaceID:
 # GLUE2CloudComputingInstanceTypeEphemeralStorage:
 # GLUE2CloudComputingInstanceTypeDisk:
-# GLUE2CloudComputingInstanceTypeNetworkPortsIn:
-# GLUE2CloudComputingInstanceTypeNetworkPortsOut:
 # GLUE2CloudComputingInstanceTypeNetworkInfo:
 # GLUE2CloudComputingInstanceTypeOtherHardware:
 
