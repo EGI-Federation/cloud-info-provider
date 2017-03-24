@@ -270,11 +270,11 @@ GLUE2EntityOtherInfo: ${image['image_description']}
 # XXX hv:size in AppDB
 # XXX not in atrope?
 # XXX not in cloudkeeper?
-# GLUE2CloudComputingImageDiskSize:
+GLUE2CloudComputingImageDiskSize: ${image['image_size']}
 # XXX not in AppDB?
 # XXX not in atrope?
 # XXX not in cloudkeeper?
-# GLUE2CloudComputingImageDefaultUserName:
+GLUE2CloudComputingImageDefaultUserName: ${image['image_default_username']}
 # GLUE2CloudComputingImageAccessInfo:
 # GLUE2CloudComputingImageInstalledsoftware:
 # GLUE2CloudComputingImageMinAccelerators:
