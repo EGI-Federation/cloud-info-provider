@@ -307,11 +307,11 @@ GLUE2CloudComputingInstanceTypeRAM: ${template['template_memory']}
 GLUE2CloudComputingInstanceTypeNetworkIn: TRUE
 GLUE2CloudComputingInstanceTypeNetworkOut: TRUE
 GLUE2CloudComputingInstanceTypeNetworkInfo: ${share['network_info']}
+GLUE2CloudComputingInstanceTypeEphemeralStorage: ${template['template_ephemeral']}
+GLUE2CloudComputingInstanceTypeDisk: ${template['template_disk']}
 # TODO find information for this attributes
 # XXX Templates are not taken from the AppDB
 # GLUE2CloudComputingInstanceTypeMarketPlaceID:
-# GLUE2CloudComputingInstanceTypeEphemeralStorage:
-# GLUE2CloudComputingInstanceTypeDisk:
 # GLUE2CloudComputingInstanceTypeOtherHardware:
 
 % endfor
