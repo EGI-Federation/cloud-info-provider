@@ -52,6 +52,50 @@ compute:
             api_version: 0.0
             api_endpoint_technology: REST
 
+    shares:
+        ops:
+            project: ops
+            sla: https://egi.eu/sla/ops
+            # infiniband, gigabiteethernet...
+            network_info: UNKNOWN
+            membership:
+                - VO:ops
+        fedcloud.egi.eu:
+            project: fedcloud
+            sla: https://egi.eu/sla/fedcloud
+            # infiniband, gigabiteethernet...
+            network_info: UNKNOWN
+            membership:
+                - VOMS:/fedcloud.egi.eu/Role=VMOperators
+        training.egi.eu:
+            project: training
+            sla: https://egi.eu/sla/training
+            # infiniband, gigabiteethernet...
+            network_info: UNKNOWN
+            membership:
+                - VO:training.egi.eu
+
+    templates:
+        defaults:
+            platform: amd64
+            network: public
+
+        resource_tpl#small:
+            memory: 1024
+            cpu: 1
+
+        resource_tpl#medium:
+            memory: 4096
+            cpu: 2
+
+        resource_tpl#large:
+            memory: 8196
+            cpu: 4
+
+        resource_tpl#extra_large:
+            memory: 16384
+            cpu: 8
+
     # Images are retreived automatically by the endpoint
     images:
         defaults:

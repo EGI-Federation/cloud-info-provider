@@ -30,10 +30,13 @@ site:
 
 compute:
     # Total number of cores available
-    total_cores: 0
+    total_cores: UNKNOWN
     # Total RAM available (GB)
-    total_ram: 0
+    total_ram: UNKNOWN
+    max_dedicated_ram: UNKNOWN
+    min_dedicated_ram: UNKNOWN
     # Accelerators (GPU, FPGA, MIC...)
+    total_accelerators: 0
     max_accelerators: 0
     min_accelerators: 0
     # Virtualization types
@@ -72,6 +75,29 @@ compute:
         https://cloud-service03.example.org:8787:
             endpoint_url: https://cloud-service03.example.org:8787
             api_authn_method: User/Password
+
+    shares:
+        ops:
+            project: ops
+            sla: https://egi.eu/sla/ops
+            # infiniband, gigabiteethernet...
+            network_info: UNKNOWN
+            membership:
+                - VO:ops
+        fedcloud.egi.eu:
+            project: fedcloud
+            sla: https://egi.eu/sla/fedcloud
+            # infiniband, gigabiteethernet...
+            network_info: UNKNOWN
+            membership:
+                - VOMS:/fedcloud.egi.eu/Role=VMOperators
+        training.egi.eu:
+            project: training
+            sla: https://egi.eu/sla/training
+            # infiniband, gigabiteethernet...
+            network_info: UNKNOWN
+            membership:
+                - VO:training.egi.eu
 
     templates:
         defaults:
