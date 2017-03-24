@@ -22,7 +22,8 @@ compute:
     service_production_level: production
     # Service capabilities
     capabilities:
-        - cloud.managementSystem
+        # capacity of dynamically deploying a virtual machine image
+        - executionmanagement.dynamicvmdeploy
 
     endpoints:
         defaults:
