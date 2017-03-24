@@ -339,9 +339,10 @@ GLUE2EntityName: Access control rules for Endpoint ${endpoint_id}
 % for vo, share in shares.items():
 GLUE2PolicyRule: VO:${vo}
 % endfor
-% for vo, share in shares.items():
-GLUE2PolicyUserDomainForeignKey: ${vo}
-% endfor
+# XXX Should probably be removed
+# % for vo, share in shares.items():
+# GLUE2PolicyUserDomainForeignKey: ${vo}
+# % endfor
 % endfor
 
 ##
