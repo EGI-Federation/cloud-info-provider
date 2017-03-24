@@ -202,7 +202,7 @@ GLUE2EndpointInterfaceVersion: ${endpoint['compute_api_version']}
 GLUE2EndpointImplementor: ${endpoint['compute_middleware_developer']}
 GLUE2EndpointImplementationName: ${endpoint['compute_middleware']}
 GLUE2EndpointImplementationVersion: ${endpoint['compute_middleware_version']}
-GLUE2EndpointDowntimeInfo: See the GOC DB for downtimes: https://goc.egi.eu/gocdbpi/public/?method=get_downtime&ongoing_only=yes&topentity=${static_compute_info['site_name']}
+GLUE2EndpointDowntimeInfo: See the GOC DB for downtimes: https://goc.egi.eu/portal/index.php?Page_Type=Downtimes_Calendar&site=${static_compute_info['site_name']}
 GLUE2EntityOtherInfo: Authn=${endpoint['compute_api_authn_method']}
 # TODO find information for this attributes
 # GLUE2EndpointSemantics:
