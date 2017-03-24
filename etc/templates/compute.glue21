@@ -343,8 +343,8 @@ GLUE2PolicyRule: VO:${vo}
 # % for vo, share in shares.items():
 # GLUE2PolicyUserDomainForeignKey: ${vo}
 # % endfor
-% endfor
 
+% endfor
 ##
 ## Mapping Policy - GLUE2MappingPolicy
 ##
@@ -364,5 +364,6 @@ GLUE2MappingPolicyShareForeignKey: ${share_id}
 GLUE2PolicyRule: ${rule}
 % endfor
 GLUE2PolicyUserDomainForeignKey: ${vo}
+
 % endfor
 ## vim:set ft=ldif:
