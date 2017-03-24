@@ -194,7 +194,7 @@ GLUE2EndpointServiceForeignKey: ${compute_service_id}
 GLUE2EndpointCapability: ${capability}
 % endfor
 GLUE2EndpointQualityLevel: ${endpoint['compute_production_level']}
-GLUE2EndpointInterfaceName: ${endpoint['compute_api_type']}
+GLUE2EndpointInterfaceName: ${interface_name}
 GLUE2EndpointHealthState: ok
 GLUE2EndpointServingState: ${endpoint['compute_production_level']}
 GLUE2EndpointTechnology: ${endpoint['compute_api_endpoint_technology']}
