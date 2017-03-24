@@ -23,8 +23,10 @@ compute:
     service_production_level: production
     # Service capabilities
     capabilities:
-        # capacity of dynamically deploying a virtual machine image
+        # dynamically deploying a virtual machine image
         - executionmanagement.dynamicvmdeploy
+        # srecording, reporting, and analyzing the usage of resources
+        - security.accounting
 
     endpoints:
         # Default values for the endpoints. We will
