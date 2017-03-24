@@ -247,20 +247,37 @@ GLUE2CloudComputingImageCloudComputingEndpointForeignKey: ${endpoint_id}
 GLUE2CloudComputingImageMarketPlaceID: ${image['image_marketplace_id']}
 GLUE2CloudComputingImageOSName: ${image['image_name']}
 GLUE2CloudComputingImageOSVersion: ${image['image_version']}
+# XXX sl:os in AppDB
+# XXX not in atrope?
+# XXX not in cloudkeeper?
 GLUE2CloudComputingImageOSFamily: ${image['image_os_family]}
 GLUE2CloudComputingImageOSPlatform: ${image['image_platform']}
-# XXX appropriate?
+# XXX ad:core_recommended in AppDB
+# XXX not in atrope?
+GLUE2CloudComputingImageRecommendedCPU: ${image['image_recommended_cpu']}
+# XXX ad:ram_recommended in AppDB
+# XXX not in atrope?
+GLUE2CloudComputingImageRecommendedRAM: ${image['image_recommended_ram']}
+# XXX hv:core_minimum in AppDB
+# XXX not in atrope?
+# XXX not in cloudkeeper?
+GLUE2CloudComputingImageMinCPU: ${image['image_minimal_cpu']}
+# XXX hv:ram_minimum in AppDB
+# XXX not in atrope?
+# XXX not in cloudkeeper?
+GLUE2CloudComputingImageMinRAM: ${image['image_minimal_ram']}
 GLUE2EntityOtherInfo: ${image['image_description']}
-# TODO find information for this attributes
-# GLUE2CloudComputingImageDefaultUserName:
+# XXX hv:size in AppDB
+# XXX not in atrope?
+# XXX not in cloudkeeper?
 # GLUE2CloudComputingImageDiskSize:
-# GLUE2CloudComputingImageRecommendedCPU:
-# GLUE2CloudComputingImageRecommendedRAM:
-# GLUE2CloudComputingImageMinCPU:
-# GLUE2CloudComputingImageMinAccelerators:
-# GLUE2CloudComputingImageMinRAM:
+# XXX not in AppDB?
+# XXX not in atrope?
+# XXX not in cloudkeeper?
+# GLUE2CloudComputingImageDefaultUserName:
 # GLUE2CloudComputingImageAccessInfo:
 # GLUE2CloudComputingImageInstalledsoftware:
+# GLUE2CloudComputingImageMinAccelerators:
 # GLUE2CloudComputingImageRecommendedAcceleratorType:
 # GLUE2CloudComputingImageRecommendedAccelerators:
 ## XXX Skipping dangerous information
@@ -293,6 +310,7 @@ GLUE2CloudComputingInstanceTypeRAM: ${template['template_memory']}
 GLUE2CloudComputingInstanceTypeNetworkIn: TRUE
 GLUE2CloudComputingInstanceTypeNetworkOut: TRUE
 # TODO find information for this attributes
+# XXX Templates are not taken from the AppDB
 # GLUE2CloudComputingInstanceTypeMarketPlaceID:
 # GLUE2CloudComputingInstanceTypeEphemeralStorage:
 # GLUE2CloudComputingInstanceTypeDisk:
