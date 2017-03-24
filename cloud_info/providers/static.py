@@ -154,8 +154,9 @@ class StaticProvider(providers.BaseProvider):
         global_fields = ('service_production_level', 'total_ram',
                          'total_cores', 'capabilities',
                          'hypervisor', 'hypervisor_version',
+                         'max_dedicated_ram', 'min_dedicated_ram',
                          'max_accelerators', 'min_accelerators',
-                         'accelerators_virt_type',
+                         'total_accelerators', 'accelerators_virt_type',
                          'network_virt_type', 'cpu_virt_type',
                          'service_name')
         endpoint_fields = ('production_level', 'api_type', 'api_version',
