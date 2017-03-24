@@ -77,18 +77,19 @@ GLUE2CloudComputingManagerInstanceMaxCPU: ${template_max_cpu}
 GLUE2CloudComputingManagerInstanceMinCPU: ${template_min_cpu}
 GLUE2CloudComputingManagerInstanceMaxRAM: ${template_max_memory}
 GLUE2CloudComputingManagerInstanceMinRAM: ${template_min_memory}
+GLUE2CloudComputingManagerNetworkVirtualizationType: ${static_compute_info['compute_network_virt_type']}
+GLUE2CloudComputingManagerCPUVirtualizationType: ${static_compute_info['compute_cpu_virt_type']}
+GLUE2CloudComputingManagerAcceleratorVirtualizationType: ${static_compute_info['compute_accelerators_virt_type']}
+
+GLUE2CloudComputingManagerInstanceMaxAccelerators: ${static_compute_info['compute_max_accelerators']}
+GLUE2CloudComputingManagerInstanceMinAccelerators: ${static_compute_info['compute_min_accelerators']}
 ## XXX Disabled for now
 ##GLUE2CloudComputingManagerTotalCPUs: ${static_compute_info['compute_total_cores']}
 ##GLUE2CloudComputingManagerTotalRAM: ${static_compute_info['compute_total_ram']}
 # TODO find information for this attributes
 # GLUE2CloudComputingManagerTotalAccelerators:
-# GLUE2CloudComputingManagerInstanceMaxAccelerators:
-# GLUE2CloudComputingManagerInstanceMinAccelerators:
 # GLUE2CloudComputingManagerInstanceMaxDedicatedRAM:
 # GLUE2CloudComputingManagerInstanceMinDedicatedRAM:
-# GLUE2CloudComputingManagerNetworkVirtualizationType:
-# GLUE2CloudComputingManagerCPUVirtualizationType:
-# GLUE2CloudComputingManagerAcceleratorVirtualizationType:
 # GLUE2CloudComputingManagerVirtualdiskFormat:
 # GLUE2CloudComputingManagerFailover:
 # GLUE2CloudComputingManagerLiveMigration:

@@ -33,16 +33,17 @@ compute:
     total_cores: 0
     # Total RAM available (GB)
     total_ram: 0
+    # Accelerators (GPU, FPGA, MIC...)
+    max_accelerators: 0
+    min_accelerators: 0
+    # Virtualization types
+    network_virt_type: UNKNOWN
+    cpu_virt_type: UNKNOWN
+    accelerators_virt_type: UNKNOWN
     # Hypervisor name (e.g. KVM, Xen, etc.)
     hypervisor: Foo Hypervisor
     # Hypervisor version
     hypervisor_version: 0.0.0
-    # Middleware used (e.g. OpenNebula, CloudStack, OpenStack, etc)
-    middleware: A Middleware
-    # Middleware version
-    middleware_version: v1.0
-    # Middleware developer
-    middleware_developer: Middleware Developer
     # Service Production level (testing, candidate, production...)
     service_production_level: production
     # Service capabilities
