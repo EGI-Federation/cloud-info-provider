@@ -127,7 +127,7 @@ GLUE2EntityValidity: ${validity}
 GLUE2ShareServiceForeignKey: ${compute_service_id}
 GLUE2ShareDescription: Share in service ${compute_service_id} for VO ${vo} (Project ${share['project']})
 GLUE2CloudComputingShareCloudComputingServiceForeignKey: ${compute_service_id}
-# XXX Assuming that all endpoints are in the same share, correct?
+# FIXME Need to display only endpoints related to the current share/project/VO
 % for url, endpoint in endpoints.items():
 <%
     endpoint_id =  ("%s_%s_%s_%s" % (endpoint['endpoint_url'],
@@ -336,6 +336,7 @@ GLUE2EntityCreationTime: ${timestamp}
 GLUE2AccessPolicyEndpointForeignKey: ${endpoint_id}
 GLUE2PolicyScheme: org.glite.standard
 GLUE2EntityName: Access control rules for Endpoint ${endpoint_id}
+# FIXME Need to display only the project/VO configured for this endpoint
 % for vo, share in shares.items():
 GLUE2PolicyRule: VO:${vo}
 % endfor
