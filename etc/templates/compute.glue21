@@ -251,7 +251,7 @@ GLUE2CloudComputingImageOSVersion: ${image['image_version']}
 # XXX sl:os in AppDB
 # XXX not in atrope?
 # XXX not in cloudkeeper?
-GLUE2CloudComputingImageOSFamily: ${image['image_os_family]}
+GLUE2CloudComputingImageOSFamily: ${image['image_os_family']}
 GLUE2CloudComputingImageOSPlatform: ${image['image_platform']}
 # XXX ad:core_recommended in AppDB
 # XXX not in atrope?
