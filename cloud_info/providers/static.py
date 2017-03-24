@@ -131,8 +131,7 @@ class StaticProvider(providers.BaseProvider):
         return templates['templates']
 
     def get_instances(self):
-        fields = ('name', 'image_id', 'image_name', 'template_id',
-                  'template_name', 'status')
+        fields = ('name', 'image_id', 'template_id','status')
         instances = self._get_what('compute',
                                    'instances',
                                    None,
