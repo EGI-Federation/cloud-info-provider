@@ -52,8 +52,6 @@ GLUE2CloudComputingServiceSuspendedVM: ${len(suspended_instances)}
 # XXX status = SHUTOFF
 GLUE2CloudComputingServiceHaltedVM: ${len(halted_instances)}
 # TODO find information for this attributes
-# XXX No PENDING status in OpenStack: use REBUILD?
-# GLUE2CloudComputingServicePendingVM:
 # GLUE2ServiceComplexity:
 # GLUE2ServiceStatusInfo:
 # GLUE2CloudComputingServiceAUP:
