@@ -46,7 +46,7 @@ GLUE2EntityValidity: ${validity}
 GLUE2ServiceAdminDomainForeignKey: ${site_name}
 GLUE2ServiceType: org.cloud.iaas
 GLUE2ServiceQualityLevel: ${static_compute_info['compute_service_production_level']}
-GLUE2ServiceStatusInfo:  ${http://argo.egi.eu/lavoisier/status_report-sf?site=%s % site_name}
+GLUE2ServiceStatusInfo:  ${"http://argo.egi.eu/lavoisier/status_report-sf?site=%s" % site_name}
 GLUE2CloudComputingServiceAUP: http://go.egi.eu/aup
 # XXX Hardcoded entpointType value (2 for OCCI + native)
 GLUE2ServiceComplexity: endpointType=2,share=${len(shares)},resource=(len(templates)}
@@ -162,12 +162,15 @@ GLUE2CloudComputingShareNetworkInfo: ${share['network_info']}
 ##
 % for url, endpoint in endpoints.items():
 <%
-    native_endpoint = endpoint['compute_api_type'] == 'OCCI'
+    native_endpoint = endpoint['compute_api_type'] != 'OCCI'
     if endpoint['compute_api_type'] == 'OpenStack':
         interface_name = 'org.openstack.nova'
+        endpoint_semantics = 'UNKNOWN'
     elif endpoint['compute_api_type'] == 'OpenNebula':
         interface_name = 'org.opennebula.compute'
+        endpoint_semantics = 'UNKNOWN'
     else:
+        endpoint_semantics = 'http://occi-wg.org/about/specification'
         interface_name = 'eu.egi.cloud.vm-management.occi'
     endpoint_id = ("%s_%s_%s_%s" % (endpoint['endpoint_url'],
         endpoint['compute_api_type'], endpoint['compute_api_version'],
@@ -182,7 +185,6 @@ objectClass: GLUE2Entity
 objectClass: GLUE2Endpoint
 objectClass: GLUE2CloudComputingEndpoint
 GLUE2EndpointID: ${endpoint_id}
-# XXX appropriate?
 GLUE2EntityName: Cloud Computing Endpoint ${endpoint_name}
 GLUE2EntityCreationTime: ${timestamp}
 GLUE2EntityValidity: ${validity}
@@ -203,9 +205,9 @@ GLUE2EndpointImplementor: ${endpoint['compute_middleware_developer']}
 GLUE2EndpointImplementationName: ${endpoint['compute_middleware']}
 GLUE2EndpointImplementationVersion: ${endpoint['compute_middleware_version']}
 GLUE2EndpointDowntimeInfo: See the GOC DB for downtimes: https://goc.egi.eu/portal/index.php?Page_Type=Downtimes_Calendar&site=${site_name}
+GLUE2EndpointSemantics: ${endpoint_semantics}
 GLUE2EntityOtherInfo: Authn=${endpoint['compute_api_authn_method']}
 # TODO find information for this attributes
-# GLUE2EndpointSemantics:
 # GLUE2EndpointSupportedProfile:
 # GLUE2EndpointInterfaceExtension:
 # GLUE2EndpointHealthStateInfo:
@@ -220,9 +222,9 @@ GLUE2EntityOtherInfo: Authn=${endpoint['compute_api_authn_method']}
 ##
 ## List of images
 ##
-% for image_id, image in share['images'].items():
+% for image_native_id, image in share['images'].items():
 <%
-    img_id = image['image_native_id'] if native_endpoint else image_id
+    img_id = image['image_native_id'] if native_endpoint else image['image_id']
     if image['image_description'] is None:
         image['image_description'] = ('%(image_name)s version '
             '%(image_version)s on '
@@ -284,9 +286,9 @@ GLUE2CloudComputingImageDefaultUserName: ${image['image_default_username']}
 ##
 ## List of templates - GLUE2CloudComputingInstanceType
 ##
-% for template_id, template in share['templates'].items():
+% for template_native_id, template in share['templates'].items():
 <%
-    tpl_id = template['template_native_id'] if native_endpoint else template_id
+    tpl_id = template['template_native_id'] if native_endpoint else template['template_id']
 %>\
 dn: GLUE2ResourceID=${tpl_id},GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${template['suffix']}
 objectClass: GLUE2Entity
