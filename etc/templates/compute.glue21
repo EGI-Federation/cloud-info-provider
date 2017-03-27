@@ -162,7 +162,7 @@ GLUE2CloudComputingShareNetworkInfo: ${share['network_info']}
     native_endpoint = endpoint['compute_api_type'] != 'OCCI'
     if endpoint['compute_api_type'] == 'OpenStack':
         interface_name = 'org.openstack.nova'
-        endpoint_semantics = 'UNKNOWN'
+        endpoint_semantics = 'https://developer.openstack.org/api-ref/compute'
     elif endpoint['compute_api_type'] == 'OpenNebula':
         interface_name = 'org.opennebula.compute'
         endpoint_semantics = 'UNKNOWN'
