@@ -17,8 +17,6 @@
     timestamp = datetime.now().isoformat()
     validity = 3600
 
-    templates = {template_id: template for vo, share in shares.items() for template_id, template in share['templates'].items()}
-
     instances = {instance_id: instance for vo, share in shares.items() for instance_id, instance in share['instances'].items()}
     running_instances = {instance_id: instance for instance_id, instance in instances.items() if instance['instance_status'] == 'ACTIVE'}
     suspended_instances = {instance_id: instance for instance_id, instance in instances.items() if instance['instance_status'] == 'SUSPENDED'}
@@ -48,8 +46,7 @@ GLUE2ServiceType: org.cloud.iaas
 GLUE2ServiceQualityLevel: ${static_compute_info['compute_service_production_level']}
 GLUE2ServiceStatusInfo:  ${"http://argo.egi.eu/lavoisier/status_report-sf?site=%s" % site_name}
 GLUE2CloudComputingServiceAUP: http://go.egi.eu/aup
-# XXX Hardcoded entpointType value (2 for OCCI + native)
-GLUE2ServiceComplexity: endpointType=2,share=${len(shares)},resource=(len(templates)}
+GLUE2ServiceComplexity: endpointType=2,share=${len(shares)}
 % for capability in static_compute_info['compute_capabilities']:
 GLUE2ServiceCapability: ${capability}
 % endfor
