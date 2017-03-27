@@ -41,7 +41,7 @@ GLUE2EntityName: Cloud Compute service on ${static_compute_info['site_name']}
 GLUE2EntityCreationTime: ${timestamp}
 GLUE2EntityValidity: ${validity}
 GLUE2ServiceAdminDomainForeignKey: ${static_compute_info['site_name']}
-GLUE2ServiceType: IaaS
+GLUE2ServiceType: org.cloud.iaas
 GLUE2ServiceQualityLevel: ${static_compute_info['compute_service_production_level']}
 % for capability in static_compute_info['compute_capabilities']:
 GLUE2ServiceCapability: ${capability}
