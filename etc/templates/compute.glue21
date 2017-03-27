@@ -7,6 +7,7 @@
 <%
     static_compute_info = attributes['static_compute_info']
     suffix = static_compute_info['suffix']
+    site_name = static_compute_info['site_name']
     endpoints = attributes['endpoints']['endpoints']
     shares = attributes['shares']
 
@@ -15,6 +16,8 @@
 
     timestamp = datetime.now().isoformat()
     validity = 3600
+
+    templates = {template_id: template for vo, share in shares.items() for template_id, template in share['templates'].items()}
 
     instances = {instance_id: instance for vo, share in shares.items() for instance_id, instance in share['instances'].items()}
     running_instances = {instance_id: instance for instance_id, instance in instances.items() if instance['instance_status'] == 'ACTIVE'}
@@ -37,24 +40,23 @@ objectClass: GLUE2Entity
 objectClass: GLUE2Service
 objectClass: GLUE2CloudComputingService
 GLUE2ServiceID: ${compute_service_id}
-GLUE2EntityName: Cloud Compute service on ${static_compute_info['site_name']}
+GLUE2EntityName: Cloud Compute service on ${site_name}
 GLUE2EntityCreationTime: ${timestamp}
 GLUE2EntityValidity: ${validity}
-GLUE2ServiceAdminDomainForeignKey: ${static_compute_info['site_name']}
+GLUE2ServiceAdminDomainForeignKey: ${site_name}
 GLUE2ServiceType: org.cloud.iaas
 GLUE2ServiceQualityLevel: ${static_compute_info['compute_service_production_level']}
+GLUE2ServiceStatusInfo:  ${http://argo.egi.eu/lavoisier/status_report-sf?site=%s % site_name}
+GLUE2CloudComputingServiceAUP: http://go.egi.eu/aup
+# XXX Hardcoded entpointType value (2 for OCCI + native)
+GLUE2ServiceComplexity: endpointType=2,share=${len(shares)},resource=(len(templates)}
 % for capability in static_compute_info['compute_capabilities']:
 GLUE2ServiceCapability: ${capability}
 % endfor
 GLUE2CloudComputingServiceTotalVM: ${len(instances)}
 GLUE2CloudComputingServiceRunningVM: ${len(running_instances)}
 GLUE2CloudComputingServiceSuspendedVM: ${len(suspended_instances)}
-# XXX status = SHUTOFF
 GLUE2CloudComputingServiceHaltedVM: ${len(halted_instances)}
-# TODO find information for this attributes
-# GLUE2ServiceComplexity:
-# GLUE2ServiceStatusInfo:
-# GLUE2CloudComputingServiceAUP:
 
 ##
 ## Computing Manager - GLUE2CloudComputingManager
@@ -200,7 +202,7 @@ GLUE2EndpointInterfaceVersion: ${endpoint['compute_api_version']}
 GLUE2EndpointImplementor: ${endpoint['compute_middleware_developer']}
 GLUE2EndpointImplementationName: ${endpoint['compute_middleware']}
 GLUE2EndpointImplementationVersion: ${endpoint['compute_middleware_version']}
-GLUE2EndpointDowntimeInfo: See the GOC DB for downtimes: https://goc.egi.eu/portal/index.php?Page_Type=Downtimes_Calendar&site=${static_compute_info['site_name']}
+GLUE2EndpointDowntimeInfo: See the GOC DB for downtimes: https://goc.egi.eu/portal/index.php?Page_Type=Downtimes_Calendar&site=${site_name}
 GLUE2EntityOtherInfo: Authn=${endpoint['compute_api_authn_method']}
 # TODO find information for this attributes
 # GLUE2EndpointSemantics:
