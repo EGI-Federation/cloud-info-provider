@@ -16,8 +16,6 @@
     timestamp = datetime.now().isoformat()
     validity = 3600
 
-    templates = {template_id: template for vo, share in shares.items() for template_id, template in share['templates'].items()}
-
     instances = {instance_id: instance for vo, share in shares.items() for instance_id, instance in share['instances'].items()}
     running_instances = {instance_id: instance for instance_id, instance in instances.items() if instance['instance_status'] == 'ACTIVE'}
     suspended_instances = {instance_id: instance for instance_id, instance in instances.items() if instance['instance_status'] == 'SUSPENDED'}
