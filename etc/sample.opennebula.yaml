@@ -5,20 +5,26 @@ site:
 
 compute:
     # Total number of cores available
-    total_cores: 0
+    total_cores: UNKNOWN
     # Total RAM available (GB)
-    total_ram: 0
+    total_ram: UNKNOWN
+    max_dedicated_ram: UNKNOWN
+    min_dedicated_ram: UNKNOWN
     # Accelerators (GPU, FPGA, MIC...)
-    max_accelerators: 0
-    min_accelerators: 0
+    total_accelerators: UNKNOWN
+    max_accelerators: UNKNOWN
+    min_accelerators: UNKNOWN
     # Virtualization types
     network_virt_type: UNKNOWN
     cpu_virt_type: UNKNOWN
     accelerators_virt_type: UNKNOWN
     # Hypervisor name (e.g. KVM, Xen, etc.)
-    hypervisor: Foo Hypervisor
+    hypervisor: UNKNOWN
     # Hypervisor version
-    hypervisor_version: 0.0.0
+    hypervisor_version: UNKNOWN
+    # Supported images' virtual disk format
+    virtual_disk_formats:
+        - 'OVA'
     # Middleware used (e.g. OpenNebula, CloudStack, OpenStack, etc)
     middleware: OpenNebula
     # Middleware version

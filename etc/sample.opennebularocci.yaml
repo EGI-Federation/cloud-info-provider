@@ -11,9 +11,9 @@ compute:
     max_dedicated_ram: UNKNOWN
     min_dedicated_ram: UNKNOWN
     # Accelerators (GPU, FPGA, MIC...)
-    total_accelerators: 0
-    max_accelerators: 0
-    min_accelerators: 0
+    total_accelerators: UNKNOWN
+    max_accelerators: UNKNOWN
+    min_accelerators: UNKNOWN
     # Virtualization types
     network_virt_type: UNKNOWN
     cpu_virt_type: UNKNOWN
@@ -22,6 +22,9 @@ compute:
     hypervisor: Foo Hypervisor
     # Hypervisor version
     hypervisor_version: 0.0.0
+    # Supported images' virtual disk format
+    virtual_disk_formats:
+        - 'OVA'
     # Middleware used (e.g. OpenNebula, CloudStack, OpenStack, etc)
     middleware: OpenNebula
     # Middleware version

@@ -11,17 +11,20 @@ compute:
     max_dedicated_ram: UNKNOWN
     min_dedicated_ram: UNKNOWN
     # Accelerators (GPU, FPGA, MIC...)
-    total_accelerators: 0
-    max_accelerators: 0
-    min_accelerators: 0
+    total_accelerators: UNKNOWN
+    max_accelerators: UNKNOWN
+    min_accelerators: UNKNOWN
     # Virtualization types
     network_virt_type: UNKNOWN
     cpu_virt_type: UNKNOWN
     accelerators_virt_type: UNKNOWN
-    # Hypervisor name
-    hypervisor: Foo Hypervisor
+    # Hypervisor name (e.g. KVM, Xen, etc.)
+    hypervisor: UNKNOWN
     # Hypervisor version
-    hypervisor_version: 0.0.0
+    hypervisor_version: UNKNOWN
+    # Supported images' virtual disk format
+    virtual_disk_formats:
+        - 'OVA'
     # Service Production level (testing, candidate, production...)
     service_production_level: production
     # Service capabilities
