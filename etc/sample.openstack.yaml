@@ -37,8 +37,8 @@ compute:
     endpoints:
         # Default values for the endpoints. We will
         # produce entries for two kind of endpoints if they
-        # are in the catalog: occi and openstack. So as to 
-        # specify a version, set the two options below.
+        # are in the catalog: occi and native (OpenStack). So as to
+        # specify a version, set the options below.
         defaults:
             # Needs to be set for OpenStack
             compute_middleware_version: Liberty
@@ -53,22 +53,22 @@ compute:
     shares:
         ops:
             project: ops
-            sla: https://egi.eu/sla/ops
-            # infiniband, gigabiteethernet...
+            sla: UNKNOWN
+            # Type of network: infiniband, gigabiteethernet...
             network_info: UNKNOWN
             membership:
                 - VO:ops
         fedcloud.egi.eu:
             project: fedcloud
             sla: https://egi.eu/sla/fedcloud
-            # infiniband, gigabiteethernet...
+            # Type of network: infiniband, gigabiteethernet...
             network_info: UNKNOWN
             membership:
                 - VOMS:/fedcloud.egi.eu/Role=VMOperators
         training.egi.eu:
             project: training
             sla: https://egi.eu/sla/training
-            # infiniband, gigabiteethernet...
+            # Type of network: infiniband, gigabiteethernet...
             network_info: UNKNOWN
             membership:
                 - VO:training.egi.eu
@@ -77,6 +77,10 @@ compute:
         defaults:
             platform: amd64
             network: public
+            # Inbound connection true Or false
+            network_in: UNKNOWN
+            # Outbound connection true or true
+            network_out: true
 
     images:
         defaults:

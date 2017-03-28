@@ -46,7 +46,7 @@ compute:
     # Hypervisor name (e.g. KVM, Xen, etc.)
     hypervisor: Foo Hypervisor
     # Hypervisor version
-    hypervisor_version: 0.0.0
+    hypervisor_version: 0.42
     # Supported images' virtual disk format
     virtual_disk_formats:
         - 'OVA'
@@ -61,10 +61,16 @@ compute:
 
     endpoints:
         defaults:
+            # Default endpoint API type
             api_type: OCCI
-            api_version: 1.1
-            api_endpoint_technology: REST
+            api_endpoint_technology: webservice
             api_authn_method: X509-VOMS
+            # Defaults for native endpoint
+            compute_middleware_version: Liberty
+            compute_api_version: v2
+            # Defaults for OCCI endpoint
+            occi_api_version: 1.1
+            occi_middleware_version: 0.3.2
             production_level: unknown
 
         https://cloud-service01.example.org:8787:
@@ -82,22 +88,22 @@ compute:
     shares:
         ops:
             project: ops
-            sla: https://egi.eu/sla/ops
-            # infiniband, gigabiteethernet...
+            sla: UNKNOWN
+            # Type of network: infiniband, gigabiteethernet...
             network_info: UNKNOWN
             membership:
                 - VO:ops
         fedcloud.egi.eu:
             project: fedcloud
             sla: https://egi.eu/sla/fedcloud
-            # infiniband, gigabiteethernet...
+            # Type of network: infiniband, gigabiteethernet...
             network_info: UNKNOWN
             membership:
                 - VOMS:/fedcloud.egi.eu/Role=VMOperators
         training.egi.eu:
             project: training
             sla: https://egi.eu/sla/training
-            # infiniband, gigabiteethernet...
+            # Type of network: infiniband, gigabiteethernet...
             network_info: UNKNOWN
             membership:
                 - VO:training.egi.eu
@@ -106,6 +112,10 @@ compute:
         defaults:
             platform: amd64
             network: public
+            # Inbound connection true Or false
+            network_in: UNKNOWN
+            # Outbound connection true or true
+            network_out: true
 
         resource_tpl#small:
             memory: 1024

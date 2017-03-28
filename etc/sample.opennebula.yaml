@@ -25,12 +25,6 @@ compute:
     # Supported images' virtual disk format
     virtual_disk_formats:
         - 'OVA'
-    # Middleware used (e.g. OpenNebula, CloudStack, OpenStack, etc)
-    middleware: OpenNebula
-    # Middleware version
-    middleware_version: 0.0
-    # Middleware developer
-    middleware_developer: OpenNebula Team
     # Service Production level (testing, candidate, production...)
     service_production_level: production
     # Service capabilities
@@ -42,8 +36,22 @@ compute:
 
     # Available endpoint need to be defined manually
     endpoints:
+        # Default values for the endpoints. We will
+        # produce entries for two kind of endpoints if they
+        # are in the catalog: occi and native (OpenNebula). So as to
+        # specify a version, set the options below.
         defaults:
-            api_authn_method: X509-VOMS
+            # Middleware used (e.g. OpenNebula, CloudStack, OpenStack, etc)
+            compute_middleware: OpenNebula
+            # Middleware developer
+            compute_middleware_developer: OpenNebula Team
+            compute_middleware_version: 4.6
+            # Should be retrieved automatically by the provider
+            # compute_api_version: v2
+            # occi_middleware_version: 0.3.2
+            # occi_api_version: 1.1
+            api_endpoint_technology: webservice
+            api_authn_method: User/Password
             production_level: production
 
         https://cloud-service01.example.org:2633/RPC2:
@@ -61,22 +69,22 @@ compute:
     shares:
         ops:
             project: ops
-            sla: https://egi.eu/sla/ops
-            # infiniband, gigabiteethernet...
+            sla: UNKNOWN
+            # Type of network: infiniband, gigabiteethernet...
             network_info: UNKNOWN
             membership:
                 - VO:ops
         fedcloud.egi.eu:
             project: fedcloud
             sla: https://egi.eu/sla/fedcloud
-            # infiniband, gigabiteethernet...
+            # Type of network: infiniband, gigabiteethernet...
             network_info: UNKNOWN
             membership:
                 - VOMS:/fedcloud.egi.eu/Role=VMOperators
         training.egi.eu:
             project: training
             sla: https://egi.eu/sla/training
-            # infiniband, gigabiteethernet...
+            # Type of network: infiniband, gigabiteethernet...
             network_info: UNKNOWN
             membership:
                 - VO:training.egi.eu
@@ -85,6 +93,10 @@ compute:
         defaults:
             platform: amd64
             network: public
+            # Inbound connection true Or false
+            network_in: UNKNOWN
+            # Outbound connection true or true
+            network_out: true
 
         resource_tpl#small:
             memory: 1024
@@ -105,5 +117,10 @@ compute:
     # Images are retreived automatically by the endpoint
     images:
         defaults:
+            # Set to False or comment the line below if you want to show
+            # all the images installed in the site (also snapshots). Otherwise
+            # only images with a valid marketplace ID (set by the marketplace
+            # custom property) are shown
+            require_marketplace_id: true
             platform: amd64
             schema: template
