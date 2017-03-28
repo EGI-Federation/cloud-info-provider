@@ -154,6 +154,7 @@ class StaticProvider(providers.BaseProvider):
         global_fields = ('service_production_level', 'total_ram',
                          'total_cores', 'capabilities',
                          'hypervisor', 'hypervisor_version',
+                         'virtual_disk_formats',
                          'max_dedicated_ram', 'min_dedicated_ram',
                          'max_accelerators', 'min_accelerators',
                          'total_accelerators', 'accelerators_virt_type',

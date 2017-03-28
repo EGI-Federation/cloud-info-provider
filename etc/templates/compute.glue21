@@ -85,8 +85,10 @@ GLUE2CloudComputingManagerInstanceMaxDedicatedRAM: ${static_compute_info['comput
 GLUE2CloudComputingManagerInstanceMinDedicatedRAM: ${static_compute_info['compute_min_dedicated_ram']}
 GLUE2CloudComputingManagerInstanceMaxAccelerators: ${static_compute_info['compute_max_accelerators']}
 GLUE2CloudComputingManagerInstanceMinAccelerators: ${static_compute_info['compute_min_accelerators']}
+% for virtual_disk_format in static_compute_info['compute_virtual_disk_formats']:
+GLUE2CloudComputingManagerVirtualdiskFormat: ${virtual_disk_format}
+% endfor
 # TODO find information for this attributes
-# GLUE2CloudComputingManagerVirtualdiskFormat:
 # GLUE2CloudComputingManagerFailover:
 # GLUE2CloudComputingManagerLiveMigration:
 # GLUE2CloudComputingManagerVMBackupRestore:
