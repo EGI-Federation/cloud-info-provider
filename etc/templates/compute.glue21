@@ -181,8 +181,10 @@ GLUE2CloudComputingShareMaxVM: ${share_max_vm}
 ##
 ## Computing share - GLUE2CloudComputingShare
 ##
-## One share per VO, for all endpoints
-## OpenStack: one project per VO
+## One share per VO, for all endpoints supporting this project
+## Images and templates are linked to a share
+##
+## OpenStack: one project per VO and two endpoints (OpenStack + native)
 ##
 % for vo, share in shares.items():
 <%
@@ -198,6 +200,10 @@ GLUE2CloudComputingShareMaxVM: ${share_max_vm}
 
     share_templates_memory = [tpl['template_memory'] for tpl_id, tpl in share['templates'].items()]
     share_template_max_memory = max(share_templates_memory)
+
+    endpoints = share['endpoints']['endpoints']
+    images = share['images']
+    templates = share['templates']
 %>\
 dn: GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${suffix}
 objectClass: GLUE2Entity
@@ -210,10 +216,9 @@ GLUE2EntityValidity: ${validity}
 GLUE2ShareServiceForeignKey: ${compute_service_id}
 GLUE2ShareDescription: Share in service ${compute_service_id} for VO ${vo} (Project ${share['project']})
 GLUE2CloudComputingShareCloudComputingServiceForeignKey: ${compute_service_id}
-# FIXME Need to display only endpoints related to the current share/project/VO
 % for url, endpoint in endpoints.items():
 <%
-    endpoint_id =  ("%s_%s_%s_%s" % (endpoint['endpoint_url'],
+    endpoint_id = ("%s_%s_%s_%s" % (endpoint['endpoint_url'],
         endpoint['compute_api_type'], endpoint['compute_api_version'],
         endpoint['compute_api_authn_method']))
 %>\
@@ -449,14 +454,13 @@ GLUE2PolicyUserDomainForeignKey: ${vo}
 ##
 ## Access Policy - GLUE2AccessPolicy
 ##
-## XXX here we might want to filter endpoints
 % for endpoint_url, endpoint in endpoints.items():
 <%
     endpoint_id =  ("%s_%s_%s_%s" % (endpoint['endpoint_url'],
         endpoint['compute_api_type'], endpoint['compute_api_version'],
         endpoint['compute_api_authn_method']))
 %>\
-dn: GLUE2PolicyID=${endpoint_id}_Policy,GLUE2EndpointID=${endpoint_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${suffix}
+dn: GLUE2PolicyID=${endpoint_id}_${vo}_Policy,GLUE2EndpointID=${endpoint_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${suffix}
 objectClass: GLUE2Entity
 objectClass: GLUE2Policy
 objectClass: GLUE2AccessPolicy
@@ -464,20 +468,13 @@ GLUE2PolicyID: ${endpoint_id}_Policy
 GLUE2EntityCreationTime: ${timestamp}
 GLUE2AccessPolicyEndpointForeignKey: ${endpoint_id}
 GLUE2PolicyScheme: org.glite.standard
-GLUE2EntityName: Access control rules for Endpoint ${endpoint_id}
-# FIXME Need to display only the project/VO configured for this endpoint
-% for vo, share in shares.items():
+GLUE2EntityName: Access control rules for ${vo} on ${endpoint_id}
 GLUE2PolicyRule: VO:${vo}
-% endfor
 
 % endfor
 ##
 ## Mapping Policy - GLUE2MappingPolicy
 ##
-% for vo, share in shares.items():
-<%
-    share_id = ("%s_share_%s_%s" % (compute_service_id, vo, share['project']))
-%>\
 dn: GLUE2PolicyID=${share_id}_Policy,GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${suffix}
 objectClass: GLUE2Entity
 objectClass: GLUE2Policy
@@ -491,5 +488,6 @@ GLUE2PolicyRule: ${rule}
 % endfor
 GLUE2PolicyUserDomainForeignKey: ${vo}
 
+## End of shares
 % endfor
 ## vim:set ft=ldif:
