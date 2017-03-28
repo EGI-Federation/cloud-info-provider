@@ -8,7 +8,6 @@
     static_compute_info = attributes['static_compute_info']
     suffix = static_compute_info['suffix']
     site_name = static_compute_info['site_name']
-    endpoints = attributes['endpoints']['endpoints']
     shares = attributes['shares']
 
     compute_service_id = static_compute_info['compute_service_name'] + '_cloud.compute'
@@ -95,8 +94,10 @@ GLUE2CloudComputingManagerInstanceMinAccelerators: ${static_compute_info['comput
 ##
 ## Computing share - GLUE2CloudComputingShare
 ##
-## One share per VO, for all endpoints
-## OpenStack: one project per VO
+## One share per VO, for all endpoints supporting this project
+## Images and templates are linked to a share
+##
+## OpenStack: one project per VO and two endpoints (OpenStack + native)
 ##
 % for vo, share in shares.items():
 <%
@@ -112,6 +113,10 @@ GLUE2CloudComputingManagerInstanceMinAccelerators: ${static_compute_info['comput
 
     share_templates_memory = [tpl['template_memory'] for tpl_id, tpl in share['templates'].items()]
     share_template_max_memory = max(share_templates_memory)
+
+    endpoints = share['endpoints']['endpoints']
+    images = share['images']
+    templates = share['templates']
 %>\
 dn: GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${suffix}
 objectClass: GLUE2Entity
@@ -124,10 +129,9 @@ GLUE2EntityValidity: ${validity}
 GLUE2ShareServiceForeignKey: ${compute_service_id}
 GLUE2ShareDescription: Share in service ${compute_service_id} for VO ${vo} (Project ${share['project']})
 GLUE2CloudComputingShareCloudComputingServiceForeignKey: ${compute_service_id}
-# FIXME Need to display only endpoints related to the current share/project/VO
 % for url, endpoint in endpoints.items():
 <%
-    endpoint_id =  ("%s_%s_%s_%s" % (endpoint['endpoint_url'],
+    endpoint_id = ("%s_%s_%s_%s" % (endpoint['endpoint_url'],
         endpoint['compute_api_type'], endpoint['compute_api_version'],
         endpoint['compute_api_authn_method']))
 %>\
@@ -187,8 +191,6 @@ GLUE2EntityCreationTime: ${timestamp}
 GLUE2EntityValidity: ${validity}
 GLUE2EndpointURL: ${endpoint['endpoint_url']}
 GLUE2EndpointServiceForeignKey: ${compute_service_id}
-# XXX Filter cloud.vm.uploadImage from OCCI capabilities?
-# XXX should we hide/update the capabilities?
 % for capability in endpoint['compute_capabilities']:
 GLUE2EndpointCapability: ${capability}
 % endfor
@@ -219,9 +221,20 @@ GLUE2EntityOtherInfo: Authn=${endpoint['compute_api_authn_method']}
 ##
 ## List of images
 ##
-% for image_native_id, image in share['images'].items():
+% for image_native_id, image in images.items():
+
 <%
     img_id = image['image_native_id'] if native_endpoint else image['image_id']
+
+    fields =  {'image_version', 'image_os_family', 'image_os_name',
+               'image_os_version', 'image_marketplace_id', 
+               'image_recommended_cpu', 'image_recommended_ram',
+               'image_minimal_cpu', 'image_minimal_ram',
+               'image_size', 'image_default_username'}
+    for field in fields:
+      if image[field] is None:
+          image[field] = 'UNKNOWN'
+
     if image['image_description'] is None:
         image['image_description'] = ('%(image_name)s version '
             '%(image_version)s on '
@@ -241,8 +254,8 @@ GLUE2CloudComputingImageCloudComputingManagerForeignKey: ${compute_service_manag
 # XXX Shouldn't we add a CloudComputingEndpointForeignKey?
 GLUE2CloudComputingImageCloudComputingEndpointForeignKey: ${endpoint_id}
 GLUE2CloudComputingImageMarketPlaceID: ${image['image_marketplace_id']}
-GLUE2CloudComputingImageOSName: ${image['image_name']}
-GLUE2CloudComputingImageOSVersion: ${image['image_version']}
+GLUE2CloudComputingImageOSName: ${image['image_os_name']}
+GLUE2CloudComputingImageOSVersion: ${image['image_os_version']}
 # XXX sl:os in AppDB
 # XXX not in atrope?
 # XXX not in cloudkeeper?
@@ -283,7 +296,7 @@ GLUE2CloudComputingImageDefaultUserName: ${image['image_default_username']}
 ##
 ## List of templates - GLUE2CloudComputingInstanceType
 ##
-% for template_native_id, template in share['templates'].items():
+% for template_native_id, template in templates.items():
 <%
     tpl_id = template['template_native_id'] if native_endpoint else template['template_id']
 %>\
@@ -315,18 +328,16 @@ GLUE2CloudComputingInstanceTypeDisk: ${template['template_disk']}
 
 % endfor
 % endfor
-% endfor
 ##
 ## Access Policy - GLUE2AccessPolicy
 ##
-## XXX here we might want to filter endpoints
 % for endpoint_url, endpoint in endpoints.items():
 <%
     endpoint_id =  ("%s_%s_%s_%s" % (endpoint['endpoint_url'],
         endpoint['compute_api_type'], endpoint['compute_api_version'],
         endpoint['compute_api_authn_method']))
 %>\
-dn: GLUE2PolicyID=${endpoint_id}_Policy,GLUE2EndpointID=${endpoint_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${suffix}
+dn: GLUE2PolicyID=${endpoint_id}_${vo}_Policy,GLUE2EndpointID=${endpoint_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${suffix}
 objectClass: GLUE2Entity
 objectClass: GLUE2Policy
 objectClass: GLUE2AccessPolicy
@@ -334,20 +345,13 @@ GLUE2PolicyID: ${endpoint_id}_Policy
 GLUE2EntityCreationTime: ${timestamp}
 GLUE2AccessPolicyEndpointForeignKey: ${endpoint_id}
 GLUE2PolicyScheme: org.glite.standard
-GLUE2EntityName: Access control rules for Endpoint ${endpoint_id}
-# FIXME Need to display only the project/VO configured for this endpoint
-% for vo, share in shares.items():
+GLUE2EntityName: Access control rules for ${vo} on ${endpoint_id}
 GLUE2PolicyRule: VO:${vo}
-% endfor
 
 % endfor
 ##
 ## Mapping Policy - GLUE2MappingPolicy
 ##
-% for vo, share in shares.items():
-<%
-    share_id = ("%s_share_%s_%s" % (compute_service_id, vo, share['project']))
-%>\
 dn: GLUE2PolicyID=${share_id}_Policy,GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${suffix}
 objectClass: GLUE2Entity
 objectClass: GLUE2Policy
@@ -361,5 +365,6 @@ GLUE2PolicyRule: ${rule}
 % endfor
 GLUE2PolicyUserDomainForeignKey: ${vo}
 
+## End of shares
 % endfor
 ## vim:set ft=ldif:

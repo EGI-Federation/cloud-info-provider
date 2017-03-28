@@ -115,22 +115,27 @@ class ComputeBDII(BaseBDII):
         # XXX Validate if really project agnostic
         # XXX Here it uses the "default" project from the CLI parameters
         site_info = self._get_info_from_providers('get_site_info')
-        endpoints = self._get_info_from_providers('get_compute_endpoints')
-
-        if not endpoints.get('endpoints'):
-            return ''
-
-        static_compute_info = dict(endpoints, **site_info)
-        static_compute_info.pop('endpoints')
-
-        for url, endpoint in endpoints['endpoints'].items():
-            endpoint.update(static_compute_info)
 
         # Get shares / projects and related images and templates
         shares = self._get_info_from_providers('get_compute_shares')
 
         for share_id, share in shares.items():
             project = share['project']
+
+            endpoints = self._get_info_from_providers('get_compute_endpoints',
+                                                      {'os_tenant_name':
+                                                          project})
+
+            if not endpoints.get('endpoints'):
+                return ''
+
+            # Collect static information for endpoints
+            static_compute_info = dict(endpoints, **site_info)
+            static_compute_info.pop('endpoints')
+
+            # Add same static information to all endpoints
+            for url, endpoint in endpoints['endpoints'].items():
+                endpoint.update(static_compute_info)
 
             images = self._get_info_from_providers('get_images',
                                                    {'os_tenant_name': project})
@@ -152,9 +157,18 @@ class ComputeBDII(BaseBDII):
             share['images'] = images
             share['templates'] = templates
             share['instances'] = instances
+            share['endpoints'] = endpoints
+
+        # XXX Avoid creating a new list
+        endpoints = {endpoint_id: endpoint for share_id, share in
+                shares.items() for endpoint_id,
+                endpoint in share['endpoints'].items()}
+
+        # XXX Avoid redoing what was done in the previous shares loop
+        static_compute_info = dict(endpoints, **site_info)
+        static_compute_info.pop('endpoints')
 
         info.update({'static_compute_info': static_compute_info})
-        info.update({'endpoints': endpoints})
         info.update({'shares': shares})
 
         return self._format_template('compute', info)
