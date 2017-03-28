@@ -5,7 +5,7 @@ site:
 
 compute:
     # Total number of cores available
-    total_cores: 0
+    total_cores: UNKNOWN
     # Total RAM available (GB)
     total_ram: 0
     max_dedicated_ram: 0
