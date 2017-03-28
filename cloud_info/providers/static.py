@@ -122,7 +122,8 @@ class StaticProvider(providers.BaseProvider):
         return images['images']
 
     def get_templates(self):
-        fields = ('platform', 'network', 'memory', 'ephemeral', 'disk', 'cpu')
+        fields = ('platform', 'network', 'network_in', 'network_out',
+                  'memory', 'ephemeral', 'disk', 'cpu')
         templates = self._get_what('compute',
                                    'templates',
                                    None,

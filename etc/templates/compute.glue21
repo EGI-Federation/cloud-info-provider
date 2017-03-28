@@ -318,8 +318,8 @@ GLUE2CloudComputingInstanceTypeCloudComputingEndpointForeignKey: ${endpoint_id}
 GLUE2CloudComputingInstanceTypePlatform: ${template['template_platform']}
 GLUE2CloudComputingInstanceTypevCPU: ${template['template_cpu']}
 GLUE2CloudComputingInstanceTypeRAM: ${template['template_memory']}
-GLUE2CloudComputingInstanceTypeNetworkIn: TRUE
-GLUE2CloudComputingInstanceTypeNetworkOut: TRUE
+GLUE2CloudComputingInstanceTypeNetworkIn: ${template['template_network_in']}
+GLUE2CloudComputingInstanceTypeNetworkOut: ${template['template_network_out']}
 GLUE2CloudComputingInstanceTypeNetworkInfo: ${share['network_info']}
 GLUE2CloudComputingInstanceTypeEphemeralStorage: ${template['template_ephemeral']}
 GLUE2CloudComputingInstanceTypeDisk: ${template['template_disk']}
