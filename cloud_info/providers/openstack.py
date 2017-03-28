@@ -8,6 +8,7 @@ import socket
 
 import re
 import requests
+import socket
 
 from cloud_info import exceptions
 from cloud_info import providers
@@ -308,6 +309,7 @@ class OpenStackProvider(providers.BaseProvider):
             verify = SSL.VERIFY_NONE
         else:
             verify = SSL.VERIFY_PEER
+=======
 
         try:
             scheme = urlparse(endpoint_url).scheme
