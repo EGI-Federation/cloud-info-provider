@@ -4,6 +4,7 @@ import socket
 
 import re
 import requests
+import socket
 
 from cloud_info import exceptions
 from cloud_info import providers
@@ -265,6 +266,64 @@ class OpenStackProvider(providers.BaseProvider):
         })
 
         return ret
+
+    def _get_endpoint_ca_information(self, endpoint_url):
+        ca_info = {
+                'issuer': 'UNKNOWN',
+                'trusted_cas': [ 'UNKNOWN' ],
+                }
+
+        if self.insecure:
+            verify = SSL.VERIFY_NONE
+        else:
+            verify = SSL.VERIFY_PEER
+
+        try:
+            scheme = urlparse(endpoint_url).scheme
+            host = urlparse(endpoint_url).hostname
+            port = urlparse(endpoint_url).port
+
+            if scheme == 'https':
+                ctx = SSL.Context(SSL.SSLv23_METHOD)
+                ctx.set_options(SSL.OP_NO_SSLv2)
+                ctx.set_options(SSL.OP_NO_SSLv3)
+                ctx.set_verify(verify, lambda conn, cert, errnum, depth, ok: ok)
+                if not self.insecure:
+                   ctx.load_verify_locations(self.cacert)
+
+                client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                client.connect((host, port))
+
+                print("Connected to %s" % client.getpeername)
+
+                client_ssl = SSL.Connection(ctx, client)
+                client_ssl.set_connect_state()
+                #client_ssl.connect((host, port))
+                client_ssl.send('0')
+                #client_ssl.set_tlsext_host_name(host)
+                #client_ssl.do_handshake()
+
+                cert = client_ssl.get_peer_certificate()
+                issuer = cert.get_issuer().commonName
+
+                # XXX Do we want the root issuer cert?
+                # XXX Validate if top-most cert is the last one
+                # cert_chain = client_ssl.get_peer_cert_chain()
+                # last_cert = cert_chain[-1]
+                # issuer = last_cert.get_issuer().commonName
+
+                client_ca_list = client_ssl.get_client_ca_list()
+
+                client_ssl.shutdown()
+                client_ssl.close()
+
+                ca_info['issuer'] = issuer
+                ca_info['trusted_cas'] = client_ca_list
+        except SSL.Error as e:
+            print e.message
+            # pass
+
+        return ca_info
 
     def get_compute_shares(self):
         # FIXME link the share with the corresponding endpoints

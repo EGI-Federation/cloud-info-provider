@@ -208,13 +208,15 @@ GLUE2EndpointImplementationVersion: ${endpoint['compute_middleware_version']}
 GLUE2EndpointDowntimeInfo: See the GOC DB for downtimes: https://goc.egi.eu/portal/index.php?Page_Type=Downtimes_Calendar&site=${site_name}
 GLUE2EndpointSemantics: ${endpoint_semantics}
 GLUE2EntityOtherInfo: Authn=${endpoint['compute_api_authn_method']}
+GLUE2EndpointIssuerCA: ${endpoint['endpoint_issuer']}
+% for trusted_ca in endpoint['endpoint_trusted_cas']:
+GLUE2EndpointTrustedCA: ${trusted_ca}
+% endfor
 # TODO find information for this attributes
 # GLUE2EndpointSupportedProfile:
 # GLUE2EndpointInterfaceExtension:
 # GLUE2EndpointHealthStateInfo:
 # GLUE2EndpointStartTime:
-# GLUE2EndpointIssuerCA:
-# GLUE2EndpointTrustedCA:
 ## XXX Disabled for now
 ## GLUE2EndpointDowntimeAnnounce:
 ## GLUE2EndpointDowntimeStart:
