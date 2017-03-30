@@ -161,8 +161,8 @@ class ComputeBDII(BaseBDII):
 
         # XXX Avoid creating a new list
         endpoints = {endpoint_id: endpoint for share_id, share in
-                shares.items() for endpoint_id,
-                endpoint in share['endpoints'].items()}
+                     shares.items() for endpoint_id,
+                     endpoint in share['endpoints'].items()}
 
         # XXX Avoid redoing what was done in the previous shares loop
         static_compute_info = dict(endpoints, **site_info)

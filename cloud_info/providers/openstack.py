@@ -279,11 +279,8 @@ class OpenStackProvider(providers.BaseProvider):
         return ret
 
     def _get_endpoint_ca_information(self, endpoint_url, insecure, cacert):
-        '''Return the certificate issuer and trusted CAs list of an HTTPS endpoint.'''
-        ca_info = {
-                'issuer': 'UNKNOWN',
-                'trusted_cas': [ 'UNKNOWN' ],
-                }
+        '''Return the cer issuer and trusted CAs list of an HTTPS endpoint.'''
+        ca_info = {'issuer': 'UNKNOWN', 'trusted_cas': ['UNKNOWN']}
 
         if insecure:
             verify = SSL.VERIFY_NONE
@@ -299,9 +296,9 @@ class OpenStackProvider(providers.BaseProvider):
                 ctx = SSL.Context(SSL.SSLv23_METHOD)
                 ctx.set_options(SSL.OP_NO_SSLv2)
                 ctx.set_options(SSL.OP_NO_SSLv3)
-                ctx.set_verify(verify, lambda conn, cert, errnum, depth, ok: ok)
+                ctx.set_verify(verify, lambda conn, cert, errno, depth, ok: ok)
                 if not insecure:
-                   ctx.load_verify_locations(cacert)
+                    ctx.load_verify_locations(cacert)
 
                 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 client.connect((host, port))
