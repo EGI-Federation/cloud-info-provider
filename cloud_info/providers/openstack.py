@@ -309,7 +309,6 @@ class OpenStackProvider(providers.BaseProvider):
             verify = SSL.VERIFY_NONE
         else:
             verify = SSL.VERIFY_PEER
-=======
 
         try:
             scheme = urlparse(endpoint_url).scheme
