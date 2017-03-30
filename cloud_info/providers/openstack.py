@@ -231,6 +231,7 @@ class OpenStackProvider(providers.BaseProvider):
         self.keystone_trusted_cas = e_cert_info['trusted_cas']
 
     def _get_endpoint_versions(self, endpoint_url, endpoint_type):
+        '''Return the API and middleware versions of a compute endpoint.'''
         ret = {
             'compute_middleware_version': None,
             'compute_api_version': None,
@@ -278,6 +279,7 @@ class OpenStackProvider(providers.BaseProvider):
         return ret
 
     def _get_endpoint_ca_information(self, endpoint_url, insecure, cacert):
+        '''Return the certificate issuer and trusted CAs list of an HTTPS endpoint.'''
         ca_info = {
                 'issuer': 'UNKNOWN',
                 'trusted_cas': [ 'UNKNOWN' ],
