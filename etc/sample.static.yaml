@@ -30,19 +30,21 @@ site:
 
 compute:
     # Total number of cores available
-    total_cores: UNKNOWN
+    total_cores: 0
     # Total RAM available (GB)
-    total_ram: UNKNOWN
-    max_dedicated_ram: UNKNOWN
-    min_dedicated_ram: UNKNOWN
-    # Accelerators (GPU, FPGA, MIC...)
-    total_accelerators: 0
-    max_accelerators: 0
-    min_accelerators: 0
-    # Virtualization types
+    total_ram: 0
+    max_dedicated_ram: 0
+    min_dedicated_ram: 0
+    # Uncomment to publish information about accelerators
+    # accelerators_virt_type should be type:virt
+    # type can be GPU, FPGA, MIC...
+    # virt can be vgpu, hardware, emulation, paravirtualization...
+    # accelerators_virt_type:
+    # total_accelerators: 0
+    # max_accelerators: 0
+    # min_accelerators: 0
     network_virt_type: UNKNOWN
     cpu_virt_type: UNKNOWN
-    accelerators_virt_type: UNKNOWN
     # Hypervisor name (e.g. KVM, Xen, etc.)
     hypervisor: Foo Hypervisor
     # Hypervisor version

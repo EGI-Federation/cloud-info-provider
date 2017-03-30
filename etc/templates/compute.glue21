@@ -71,20 +71,26 @@ GLUE2ManagerServiceForeignKey: ${compute_service_id}
 GLUE2CloudComputingManagerCloudComputingServiceForeignKey: ${compute_service_id}
 GLUE2CloudComputingManagerNetworkVirtualizationType: ${static_compute_info['compute_network_virt_type']}
 GLUE2CloudComputingManagerCPUVirtualizationType: ${static_compute_info['compute_cpu_virt_type']}
+% if static_compute_info['compute_accelerators_virt_type']:
 GLUE2CloudComputingManagerAcceleratorVirtualizationType: ${static_compute_info['compute_accelerators_virt_type']}
-# XXX TotalCPU and TotalRAM are disabled
-# XXX the 3 should probably be handled in the same way
+% endif
 GLUE2CloudComputingManagerTotalCPUs: ${static_compute_info['compute_total_cores']}
 GLUE2CloudComputingManagerTotalRAM: ${static_compute_info['compute_total_ram']}
+% if static_compute_info['compute_total_accelerators']:
 GLUE2CloudComputingManagerTotalAccelerators: ${static_compute_info['compute_total_accelerators']}
+% endif
 GLUE2CloudComputingManagerInstanceMaxCPU: ${template_max_cpu}
 GLUE2CloudComputingManagerInstanceMinCPU: ${template_min_cpu}
 GLUE2CloudComputingManagerInstanceMaxRAM: ${template_max_memory}
 GLUE2CloudComputingManagerInstanceMinRAM: ${template_min_memory}
 GLUE2CloudComputingManagerInstanceMaxDedicatedRAM: ${static_compute_info['compute_max_dedicated_ram']}
 GLUE2CloudComputingManagerInstanceMinDedicatedRAM: ${static_compute_info['compute_min_dedicated_ram']}
+% if static_compute_info['compute_max_accelerators']:
 GLUE2CloudComputingManagerInstanceMaxAccelerators: ${static_compute_info['compute_max_accelerators']}
+% endif
+% if static_compute_info['compute_min_accelerators']:
 GLUE2CloudComputingManagerInstanceMinAccelerators: ${static_compute_info['compute_min_accelerators']}
+% endif
 % for virtual_disk_format in static_compute_info['compute_virtual_disk_formats']:
 GLUE2CloudComputingManagerVirtualdiskFormat: ${virtual_disk_format}
 % endfor
