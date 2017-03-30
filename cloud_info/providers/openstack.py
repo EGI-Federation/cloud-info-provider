@@ -334,10 +334,10 @@ class OpenStackProvider(providers.BaseProvider):
         '''Return the DN of an X509Name object.'''
         # XXX shortest/easiest way to get the DN of the X509Name
         # str(X509Name): <X509Name object 'DN'>
-        # return str(x509name)[17:-1]
+        # return str(x509name)[18:-2]
         obj_name = str(x509name)
-        start = obj_name.find("'")
-        end = obj_name.rfind("'") + 1
+        start = obj_name.find("'") + 1
+        end = obj_name.rfind("'")
 
         return obj_name[start:end]
 
