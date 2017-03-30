@@ -224,6 +224,12 @@ class OpenStackProvider(providers.BaseProvider):
                                         insecure=insecure)
         self.auth_token = self.keystone.auth_token
 
+        # Retieve information about Keystone endpoint SSL configuration
+        e_cert_info = self._get_endpoint_ca_information(os_auth_url, insecure,
+                                                        cacert)
+        self.keystone_cert_issuer = e_cert_info['issuer']
+        self.keystone_trusted_cas = e_cert_info['trusted_cas']
+
     def _get_endpoint_versions(self, endpoint_url, endpoint_type):
         ret = {
             'compute_middleware_version': None,
@@ -267,13 +273,13 @@ class OpenStackProvider(providers.BaseProvider):
 
         return ret
 
-    def _get_endpoint_ca_information(self, endpoint_url):
+    def _get_endpoint_ca_information(self, endpoint_url, insecure, cacert):
         ca_info = {
                 'issuer': 'UNKNOWN',
                 'trusted_cas': [ 'UNKNOWN' ],
                 }
 
-        if self.insecure:
+        if insecure:
             verify = SSL.VERIFY_NONE
         else:
             verify = SSL.VERIFY_PEER
@@ -288,20 +294,16 @@ class OpenStackProvider(providers.BaseProvider):
                 ctx.set_options(SSL.OP_NO_SSLv2)
                 ctx.set_options(SSL.OP_NO_SSLv3)
                 ctx.set_verify(verify, lambda conn, cert, errnum, depth, ok: ok)
-                if not self.insecure:
-                   ctx.load_verify_locations(self.cacert)
+                if not insecure:
+                   ctx.load_verify_locations(cacert)
 
                 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 client.connect((host, port))
 
-                print("Connected to %s" % client.getpeername)
-
                 client_ssl = SSL.Connection(ctx, client)
                 client_ssl.set_connect_state()
-                #client_ssl.connect((host, port))
-                client_ssl.send('0')
-                #client_ssl.set_tlsext_host_name(host)
-                #client_ssl.do_handshake()
+                client_ssl.set_tlsext_host_name(host)
+                client_ssl.do_handshake()
 
                 cert = client_ssl.get_peer_certificate()
                 issuer = cert.get_issuer().commonName
