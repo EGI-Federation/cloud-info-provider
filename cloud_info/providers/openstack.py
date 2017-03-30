@@ -302,8 +302,11 @@ class OpenStackProvider(providers.BaseProvider):
         return ret
 
     def _get_endpoint_ca_information(self, endpoint_url, insecure, cacert):
-        '''Return the cer issuer and trusted CAs list of an HTTPS endpoint.'''
-        ca_info = {'issuer': 'UNKNOWN', 'trusted_cas': ['UNKNOWN']}
+        '''Return the certificate issuer and trusted CAs list of an HTTPS endpoint.'''
+        ca_info = {
+                'issuer': 'UNKNOWN',
+                'trusted_cas': [ 'UNKNOWN' ],
+                }
 
         if insecure:
             verify = SSL.VERIFY_NONE
