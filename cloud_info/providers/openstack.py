@@ -310,7 +310,7 @@ class OpenStackProvider(providers.BaseProvider):
                 client_ssl.do_handshake()
 
                 cert = client_ssl.get_peer_certificate()
-                issuer = cert.get_issuer().commonName
+                issuer = self._get_dn(cert.get_issuer())
 
                 # XXX Do we want the root issuer cert?
                 # XXX Validate if top-most cert is the last one
@@ -319,17 +319,28 @@ class OpenStackProvider(providers.BaseProvider):
                 # issuer = last_cert.get_issuer().commonName
 
                 client_ca_list = client_ssl.get_client_ca_list()
+                trusted_cas = [self._get_dn(ca) for ca in client_ca_list]
 
                 client_ssl.shutdown()
                 client_ssl.close()
 
                 ca_info['issuer'] = issuer
-                ca_info['trusted_cas'] = client_ca_list
-        except SSL.Error as e:
-            print e.message
-            # pass
+                ca_info['trusted_cas'] = trusted_cas
+        except SSL.Error:
+            pass
 
         return ca_info
+
+    def _get_dn(self, x509name):
+        '''Return the DN of an X509Name object.'''
+        # XXX shortest/easiest way to get the DN of the X509Name
+        # str(X509Name): <X509Name object 'DN'>
+        # return str(x509name)[17:-1]
+        obj_name = str(x509name)
+        start = obj_name.find("'")
+        end = obj_name.rfind("'") + 1
+
+        return obj_name[start:end]
 
     def get_compute_shares(self):
         # FIXME link the share with the corresponding endpoints
