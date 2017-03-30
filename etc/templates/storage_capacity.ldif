@@ -1,7 +1,0 @@
-dn: GLUE2StorageServiceCapacityID=${attributes['storage_service_name']}_cloud.storage_capacity,GLUE2ServiceID=${attributes['storage_service_name']}_cloud.storage,GLUE2GroupID=cloud,${attributes['suffix']}
-objectClass: GLUE2Entity
-objectClass: GLUE2StorageServiceCapacity
-GLUE2StorageServiceCapacityID: ${attributes['storage_service_name']}_cloud.storage_capacity
-GLUE2StorageServiceCapacityType: online
-GLUE2StorageServiceCapacityStorageServiceForeignKey: ${attributes['storage_service_name']}_cloud.storage
-GLUE2StorageServiceCapacityTotalSize: ${attributes['storage_total_storage']}
