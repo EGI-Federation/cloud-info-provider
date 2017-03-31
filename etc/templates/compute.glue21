@@ -210,6 +210,11 @@ GLUE2CloudComputingShareMaxVM: ${share_max_vm}
     endpoints = share['endpoints']['endpoints']
     images = share['images']
     templates = share['templates']
+
+    if share['instance_max_accelerators']:
+      share_max_accelerators = share['instance_max_accelerators']
+    else:
+      share_max_accelerators = static_compute_info['compute_max_accelerators']
 %>\
 dn: GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${suffix}
 objectClass: GLUE2Entity
