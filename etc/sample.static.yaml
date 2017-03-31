@@ -35,14 +35,13 @@ compute:
     total_ram: 0
     max_dedicated_ram: 0
     min_dedicated_ram: 0
-    # Uncomment to publish information about accelerators
     # accelerators_virt_type should be type:virt
     # type can be GPU, FPGA, MIC...
     # virt can be vgpu, hardware, emulation, paravirtualization...
     # accelerators_virt_type:
-    # total_accelerators: 0
-    # max_accelerators: 0
-    # min_accelerators: 0
+    total_accelerators: 0
+    max_accelerators: 0
+    min_accelerators: 0
     network_virt_type: UNKNOWN
     cpu_virt_type: UNKNOWN
     # Hypervisor name (e.g. KVM, Xen, etc.)

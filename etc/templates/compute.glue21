@@ -76,21 +76,15 @@ GLUE2CloudComputingManagerAcceleratorVirtualizationType: ${static_compute_info['
 % endif
 GLUE2CloudComputingManagerTotalCPUs: ${static_compute_info['compute_total_cores']}
 GLUE2CloudComputingManagerTotalRAM: ${static_compute_info['compute_total_ram']}
-% if static_compute_info['compute_total_accelerators']:
 GLUE2CloudComputingManagerTotalAccelerators: ${static_compute_info['compute_total_accelerators']}
-% endif
 GLUE2CloudComputingManagerInstanceMaxCPU: ${template_max_cpu}
 GLUE2CloudComputingManagerInstanceMinCPU: ${template_min_cpu}
 GLUE2CloudComputingManagerInstanceMaxRAM: ${template_max_memory}
 GLUE2CloudComputingManagerInstanceMinRAM: ${template_min_memory}
 GLUE2CloudComputingManagerInstanceMaxDedicatedRAM: ${static_compute_info['compute_max_dedicated_ram']}
 GLUE2CloudComputingManagerInstanceMinDedicatedRAM: ${static_compute_info['compute_min_dedicated_ram']}
-% if static_compute_info['compute_max_accelerators']:
 GLUE2CloudComputingManagerInstanceMaxAccelerators: ${static_compute_info['compute_max_accelerators']}
-% endif
-% if static_compute_info['compute_min_accelerators']:
 GLUE2CloudComputingManagerInstanceMinAccelerators: ${static_compute_info['compute_min_accelerators']}
-% endif
 % for virtual_disk_format in static_compute_info['compute_virtual_disk_formats']:
 GLUE2CloudComputingManagerVirtualdiskFormat: ${virtual_disk_format}
 % endfor
@@ -154,11 +148,10 @@ GLUE2CloudComputingShareRunningVM: ${len(share_running_instances)}
 GLUE2CloudComputingShareSuspendedVM: ${len(share_suspended_instances)}
 GLUE2CloudComputingShareHaltedVM: ${len(share_halted_instances)}
 GLUE2CloudComputingShareNetworkInfo: ${share['network_info']}
+GLUE2CloudComputingShareInstanceMaxAccelerators: ${share['instance_max_accelerators']}
 # TODO find information for this attributes
 # GLUE2ShareResourceForeignKey: cream-02.cnaf.infn.it
 # GLUE2ComputingShareExecutionEnvironmentForeignKey: cream-02.cnaf.infn.it +++++++++++++++ controllare ++++++++++++++++++
-# GLUE2CloudComputingShareInstanceMaxAccelerators:
-# GLUE2CloudComputingSharePendingVM:
 # GLUE2CloudComputingShareMaxVM:
 
 ##
