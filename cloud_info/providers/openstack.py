@@ -341,10 +341,6 @@ class OpenStackProvider(providers.BaseProvider):
 
         return obj_name[start:end]
 
-    def get_compute_shares(self):
-        # FIXME link the share with the corresponding endpoints
-        return self.static.get_compute_shares()
-
     def get_compute_endpoints(self):
         # Hard-coded defaults for supported endpoints types
         supported_endpoints = {
