@@ -160,7 +160,6 @@ GLUE2CloudComputingShareInstanceMaxAccelerators: ${share_max_accelerators}
 GLUE2CloudComputingShareMaxVM: ${share['share_max_vm']}
 # TODO find information for this attributes
 # GLUE2ShareResourceForeignKey: cream-02.cnaf.infn.it
-# GLUE2ComputingShareExecutionEnvironmentForeignKey: cream-02.cnaf.infn.it +++++++++++++++ controllare ++++++++++++++++++
 
 ##
 ## List of Cloud Computing Endpoints - GLUE2CloudComputingEndpoint
