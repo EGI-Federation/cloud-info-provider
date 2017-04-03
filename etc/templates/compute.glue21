@@ -157,10 +157,10 @@ GLUE2CloudComputingShareSuspendedVM: ${len(share_suspended_instances)}
 GLUE2CloudComputingShareHaltedVM: ${len(share_halted_instances)}
 GLUE2CloudComputingShareNetworkInfo: ${share['network_info']}
 GLUE2CloudComputingShareInstanceMaxAccelerators: ${share_max_accelerators}
+GLUE2CloudComputingShareMaxVM: ${share['share_max_vm']}
 # TODO find information for this attributes
 # GLUE2ShareResourceForeignKey: cream-02.cnaf.infn.it
 # GLUE2ComputingShareExecutionEnvironmentForeignKey: cream-02.cnaf.infn.it +++++++++++++++ controllare ++++++++++++++++++
-# GLUE2CloudComputingShareMaxVM:
 
 ##
 ## List of Cloud Computing Endpoints - GLUE2CloudComputingEndpoint
