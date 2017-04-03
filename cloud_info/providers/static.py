@@ -161,6 +161,7 @@ class StaticProvider(providers.BaseProvider):
                          'max_accelerators', 'min_accelerators',
                          'total_accelerators', 'accelerators_virt_type',
                          'network_virt_type', 'cpu_virt_type',
+                         'failover', 'live_migration', 'vm_backup_restore',
                          'service_name')
         endpoint_fields = ('production_level', 'api_type', 'api_version',
                            'api_endpoint_technology', 'api_authn_method',

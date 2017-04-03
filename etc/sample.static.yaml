@@ -65,6 +65,12 @@ compute:
         - executionmanagement.dynamicvmdeploy
         # srecording, reporting, and analyzing the usage of resources
         - security.accounting
+    # Automatic failover to another host
+    failover: false
+    # Migration to another host without downtime
+    live_migration: false
+    # Backup and restoration of VMs
+    vm_backup_restore: false
 
     endpoints:
         defaults:

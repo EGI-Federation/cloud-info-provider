@@ -92,10 +92,9 @@ GLUE2CloudComputingManagerInstanceMinAccelerators: ${static_compute_info['comput
 % for virtual_disk_format in static_compute_info['compute_virtual_disk_formats']:
 GLUE2CloudComputingManagerVirtualdiskFormat: ${virtual_disk_format}
 % endfor
-# TODO find information for this attributes
-# GLUE2CloudComputingManagerFailover:
-# GLUE2CloudComputingManagerLiveMigration:
-# GLUE2CloudComputingManagerVMBackupRestore:
+GLUE2CloudComputingManagerFailover: ${static_compute_info['compute_failover']}
+GLUE2CloudComputingManagerLiveMigration: ${static_compute_info['compute_live_migration']}
+GLUE2CloudComputingManagerVMBackupRestore: ${static_compute_info['compute_vm_backup_restore']}
 
 ##
 ## Computing share - GLUE2CloudComputingShare
