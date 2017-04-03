@@ -38,12 +38,18 @@ compute:
     # accelerators_virt_type should be type:virt
     # type can be GPU, FPGA, MIC...
     # virt can be vgpu, hardware, emulation, paravirtualization...
-    # accelerators_virt_type:
+    # accelerators_virt_type: UNKNOWN
     total_accelerators: 0
+    # Site-wide default for max_accelerators
+    # can be configured at a share level
     max_accelerators: 0
     min_accelerators: 0
-    network_virt_type: UNKNOWN
-    cpu_virt_type: UNKNOWN
+    # Uncomment to configure Network virtualization type
+    # Can be: none, vswithc, ebtables, vlan, firewall
+    # network_virt_type: UNKNOWN
+    # Uncomment to configure CPU virtualization type
+    # Can be: emulation, paravirtualization, hardware
+    # cpu_virt_type: UNKNOWN
     # Hypervisor name (e.g. KVM, Xen, etc.)
     hypervisor: Foo Hypervisor
     # Hypervisor version

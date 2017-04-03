@@ -69,8 +69,12 @@ GLUE2ManagerProductName: ${static_compute_info['compute_hypervisor']}
 GLUE2ManagerProductVersion: ${static_compute_info['compute_hypervisor_version']}
 GLUE2ManagerServiceForeignKey: ${compute_service_id}
 GLUE2CloudComputingManagerCloudComputingServiceForeignKey: ${compute_service_id}
+% if static_compute_info['compute_network_virt_type']:
 GLUE2CloudComputingManagerNetworkVirtualizationType: ${static_compute_info['compute_network_virt_type']}
+% endif
+% if static_compute_info['compute_cpu_virt_type']:
 GLUE2CloudComputingManagerCPUVirtualizationType: ${static_compute_info['compute_cpu_virt_type']}
+% endif
 % if static_compute_info['compute_accelerators_virt_type']:
 GLUE2CloudComputingManagerAcceleratorVirtualizationType: ${static_compute_info['compute_accelerators_virt_type']}
 % endif
