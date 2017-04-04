@@ -149,6 +149,10 @@ class ComputeBDII(BaseBDII):
                                                       {'os_tenant_name':
                                                           project})
 
+            quotas = self._get_info_from_providers('get_compute_quotas',
+                                                   {'os_tenant_name':
+                                                       project})
+
             for template_id, template in templates.items():
                 template.update(static_compute_info)
 
