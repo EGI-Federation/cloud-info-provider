@@ -72,6 +72,11 @@ compute:
     # Backup and restoration of VMs
     vm_backup_restore: false
 
+    quotas:
+        # Default values for quotas
+        defaults:
+            instances: 10
+
     endpoints:
         defaults:
             # Default endpoint API type

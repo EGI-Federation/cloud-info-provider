@@ -47,6 +47,11 @@ compute:
     # Backup and restoration of VMs
     vm_backup_restore: false
 
+    quotas:
+        # Default values for quotas
+        defaults:
+            # instances: 10
+
     endpoints:
         # Default values for the endpoints. We will
         # produce entries for two kind of endpoints if they

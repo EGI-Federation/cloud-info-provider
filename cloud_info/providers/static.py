@@ -143,7 +143,7 @@ class StaticProvider(providers.BaseProvider):
     def get_compute_shares(self):
         # FIXME endpoints could be an array
         fields = ('endpoints', 'instance_max_cpu', 'instance_max_ram',
-                  'instance_max_accelerators', 'max_vm',
+                  'instance_max_accelerators',
                   'project', 'sla', 'network_info', 'membership')
         shares = self._get_what('compute',
                                 'shares',
@@ -151,6 +151,20 @@ class StaticProvider(providers.BaseProvider):
                                 fields,
                                 prefix='')
         return shares['shares']
+
+    def get_compute_quotas(self):
+        fields = ('instances', 'cores', 'ram',
+                  'floating_ips', 'fixed_ips', 'metadata_items',
+                  'injected_files', 'injected_file_content_bytes',
+                  'injected_file_path_bytes', 'key_pairs',
+                  'security_groups', 'security_group_rules',
+                  'server_groups', 'server_group_members')
+        quotas = self._get_what('compute',
+                                 'quotas',
+                                 None,
+                                 fields,
+                                 prefix='compute_')
+        return quotas['quotas']
 
     def get_compute_endpoints(self):
         global_fields = ('service_production_level', 'total_ram',
@@ -224,6 +238,10 @@ class StaticProvider(providers.BaseProvider):
     def get_compute_endpoint_defaults(self, prefix=False):
         prefix = 'compute_' if prefix else ''
         return self._get_defaults('compute', 'endpoints', prefix=prefix)
+
+    def get_compute_quotas_defaults(self, prefix=False):
+        prefix = 'compute_' if prefix else ''
+        return self._get_defaults('compute', 'quotas', prefix=prefix)
 
     def get_storage_endpoint_defaults(self, prefix=False):
         prefix = 'storage_' if prefix else ''

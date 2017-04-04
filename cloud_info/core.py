@@ -148,6 +148,10 @@ class ComputeBDII(BaseBDII):
                                                       {'os_tenant_name':
                                                           project})
 
+            quotas = self._get_info_from_providers('get_compute_quotas',
+                                                   {'os_tenant_name':
+                                                       project})
+
             for template_id, template in templates.items():
                 template.update(static_compute_info)
 
@@ -158,6 +162,7 @@ class ComputeBDII(BaseBDII):
             share['templates'] = templates
             share['instances'] = instances
             share['endpoints'] = endpoints
+            share['quotas'] = quotas
 
         # XXX Avoid creating a new list
         endpoints = {endpoint_id: endpoint for share_id, share in

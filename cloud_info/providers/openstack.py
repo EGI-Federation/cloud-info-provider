@@ -514,6 +514,32 @@ class OpenStackProvider(providers.BaseProvider):
 
         return instances
 
+    def get_compute_quotas(self):
+        '''Return the quotas set for the current project.'''
+
+        quota_resources = ['instances', 'cores', 'ram',
+                           'floating_ips', 'fixed_ips', 'metadata_items',
+                           'injected_files', 'injected_file_content_bytes',
+                           'injected_file_path_bytes', 'key_pairs',
+                           'security_groups', 'security_group_rules',
+                           'server_groups', 'server_group_members']
+
+        defaults = self.static.get_compute_quotas_defaults(prefix=False)
+        quotas = defaults.copy()
+
+        try:
+            project_quotas = self.api.quotas.get(self.os_tenant_name)
+            for resource in quota_resources:
+                try:
+                    quotas[resource] = getattr(project_quotas, resource)
+                except AttributeError:
+                    pass
+        except Forbidden:
+            # Should we raise an error and make this mandatory?
+            pass
+
+        return quotas
+
     @staticmethod
     def occify(term_name):
         '''Occifies a term_name so that it is compliant with GFD 185.'''

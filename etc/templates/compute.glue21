@@ -127,6 +127,12 @@ GLUE2CloudComputingManagerVMBackupRestore: ${static_compute_info['compute_vm_bac
       share_max_accelerators = share['instance_max_accelerators']
     else:
       share_max_accelerators = static_compute_info['compute_max_accelerators']
+
+    quotas = share['quotas']
+    if quotas.has_key('instances'):
+        share_max_vm = quotas['instances']
+    else:
+        share_max_vm = False
 %>\
 dn: GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${suffix}
 objectClass: GLUE2Entity
@@ -157,7 +163,9 @@ GLUE2CloudComputingShareSuspendedVM: ${len(share_suspended_instances)}
 GLUE2CloudComputingShareHaltedVM: ${len(share_halted_instances)}
 GLUE2CloudComputingShareNetworkInfo: ${share['network_info']}
 GLUE2CloudComputingShareInstanceMaxAccelerators: ${share_max_accelerators}
-GLUE2CloudComputingShareMaxVM: ${share['share_max_vm']}
+% if share_max_vm:
+GLUE2CloudComputingShareMaxVM: ${share_max_vm}
+% endif
 # TODO find information for this attributes
 # GLUE2ShareResourceForeignKey: cream-02.cnaf.infn.it
 
