@@ -223,6 +223,7 @@ class OpenStackProvider(providers.BaseProvider):
                                         tenant_name=os_tenant_name,
                                         insecure=insecure)
         self.auth_token = self.keystone.auth_token
+        self.os_tenant_id = self.keystone.get_project_id(os_tenant_name)
 
         # Retieve information about Keystone endpoint SSL configuration
         e_cert_info = self._get_endpoint_ca_information(os_auth_url, insecure,
@@ -528,7 +529,7 @@ class OpenStackProvider(providers.BaseProvider):
         quotas = defaults.copy()
 
         try:
-            project_quotas = self.api.quotas.get(self.os_tenant_name)
+            project_quotas = self.api.quotas.get(self.os_tenant_id)
             for resource in quota_resources:
                 try:
                     quotas[resource] = getattr(project_quotas, resource)
