@@ -311,11 +311,11 @@ class OpenStackProviderTest(unittest.TestCase):
                 '03e087c8fb3b495c9a360bcba3abf914': {
                     'compute_api_type': 'OCCI',
                     'compute_api_version': '11.11',
-                    'endpoint_url': 'https://cloud.example.org:8787/'},
+                    'compute_endpoint_url': 'https://cloud.example.org:8787/'},
                 '1b7f14c87d8c42ad962f4d3a5fd13a77': {
                     'compute_api_type': 'OpenStack',
                     'compute_api_version': '99.99',
-                    'endpoint_url': 'https://cloud.example.org:8774/v1.1/ce2d'}
+                    'compute_endpoint_url': 'https://cloud.example.org:8774/v1.1/ce2d'}
             },
             'compute_middleware_developer': 'OpenStack',
             'compute_middleware': 'OpenStack Nova',
@@ -342,11 +342,11 @@ class OpenStackProviderTest(unittest.TestCase):
                 '03e087c8fb3b495c9a360bcba3abf914': {
                     'compute_api_type': 'OCCI',
                     'compute_api_version': '1.1',
-                    'endpoint_url': 'https://cloud.example.org:8787/'},
+                    'compute_endpoint_url': 'https://cloud.example.org:8787/'},
                 '1b7f14c87d8c42ad962f4d3a5fd13a77': {
                     'compute_api_type': 'OpenStack',
                     'compute_api_version': '2',
-                    'endpoint_url': 'https://cloud.example.org:8774/v1.1/ce2d'}
+                    'compute_endpoint_url': 'https://cloud.example.org:8774/v1.1/ce2d'}
             },
             'compute_middleware_developer': 'OpenStack',
             'compute_middleware': 'OpenStack Nova',
