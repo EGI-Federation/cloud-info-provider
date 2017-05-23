@@ -1,4 +1,3 @@
-import logging
 import json
 import os
 import string
@@ -53,15 +52,18 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
 
         objects = {}
         for obj in doc.getchildren():
-            objects[self._get_xml_string(obj, 'ID')] = self._recurse_dict(obj)[1]
+            objects[self._get_xml_string(obj, 'ID')] = \
+                self._recurse_dict(obj)[1]
         return objects
 
     def _get_one_templates(self):
-        response = self.server_proxy.one.templatepool.info(self.on_auth, -2, -1, -1)
+        response = self.server_proxy.one.templatepool.info(
+            self.on_auth, -2, -1, -1)
         return self._handle_response(response)
 
     def _get_one_images(self):
-        response = self.server_proxy.one.imagepool.info(self.on_auth, -2, -1, -1)
+        response = self.server_proxy.one.imagepool.info(
+            self.on_auth, -2, -1, -1)
         return self._handle_response(response)
 
     def get_images(self):
@@ -88,10 +90,14 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
             aux_tpl['image_id'] = self._gen_id(tpl['name'], tpl_id, img_schema)
 
             if 'template' in tpl:
-                aux_tpl['image_marketplace_id'] = tpl['template'].get('cloudkeeper_appliance_mpuri')
-                aux_tpl['image_description'] = tpl['template'].get('cloudkeeper_appliance_description')
-                aux_tpl['image_version'] = tpl['template'].get('cloudkeeper_appliance_version')
-                aux_tpl['image_platform'] = tpl['template'].get('cloudkeeper_appliance_architecture')
+                aux_tpl['image_marketplace_id'] = tpl['template'].get(
+                    'cloudkeeper_appliance_mpuri')
+                aux_tpl['image_description'] = tpl['template'].get(
+                    'cloudkeeper_appliance_description')
+                aux_tpl['image_version'] = tpl['template'].get(
+                    'cloudkeeper_appliance_version')
+                aux_tpl['image_platform'] = tpl['template'].get(
+                    'cloudkeeper_appliance_architecture')
 
             if (self.vmcatcher_images and not aux_tpl['image_marketplace_id']):
                 continue
@@ -102,24 +108,26 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
     def populate_parser(parser):
         parser.add_argument(
             '--on-auth',
-            metavar = '<auth>',
-            default = utils.env('ON_AUTH') or 'oneadmin:opennebula',
-            help = ('Specify authorization information. For core drivers, '
-                    'it should be <username>:<password>. '
-                    'Defaults to env[ON_USERNAME] or oneadmin:opennebula, in order.'))
+            metavar='<auth>',
+            default=utils.env('ON_AUTH') or 'oneadmin:opennebula',
+            help=('Specify authorization information. For core drivers, '
+                  'it should be <username>:<password>. '
+                  'Defaults to env[ON_USERNAME] or oneadmin:opennebula.'))
 
         parser.add_argument(
             '--on-rpcxml-endpoint',
-            metavar = '<auth-url>',
-            default = utils.env('ON_RPCXML_ENDPOINT') or 'http://localhost:2633/RPC2',
-            help = ('Specify OpenNebula XML RPC endpoint. '
-                    'Defaults to env[ON_RPCXML_ENDPOINT] or http://localhost:2633/RPC2, in order.'))
+            metavar='<auth-url>',
+            default=utils.env('ON_RPCXML_ENDPOINT')
+                    or 'http://localhost:2633/RPC2',
+            help=('Specify OpenNebula XML RPC endpoint. '
+                  'Defaults to env[ON_RPCXML_ENDPOINT]'
+                  ' or http://localhost:2633/RPC2.'))
 
         parser.add_argument(
             '--vmcatcher-images',
-            action = 'store_true',
-            default = False,
-            help = ('If set, include only information on images that '
+            action='store_true',
+            default=False,
+            help=('If set, include only information on images that '
                   'have vmcatcher metadata, ignoring the others.'))
 
     @staticmethod
@@ -130,7 +138,9 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
 
     @staticmethod
     def _recurse_dict(element):
-        return (element.tag.lower(), dict(map(OpenNebulaProvider._recurse_dict, element)) or element.text)
+        return (element.tag.lower(),
+                dict(map(OpenNebulaProvider._recurse_dict, element))
+                or element.text)
 
     @staticmethod
     def _get_xml_string(xml, tag):
@@ -146,9 +156,11 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
             tc = tc[key]
         return tc
 
+
 class OpenNebulaProvider(OpenNebulaBaseProvider):
     def __init__(self, opts):
         super(OpenNebulaProvider, self).__init__(opts)
+
 
 class IndigoONProvider(OpenNebulaBaseProvider):
     def __init__(self, opts):
@@ -173,15 +185,20 @@ class IndigoONProvider(OpenNebulaBaseProvider):
             aux_tpl = template.copy()
             aux_tpl.update(defaults)
 
-            aux_tpl['template_id'] = self._gen_id(tpl['name'], tpl_id, img_schema)
+            aux_tpl['template_id'] = self._gen_id(
+                tpl['name'], tpl_id, img_schema)
 
             if 'template' in tpl:
-                aux_tpl['template_description'] = tpl['template'].get('description')
+                aux_tpl['template_description'] = tpl['template'].get(
+                    'description')
                 aux_tpl['template_cpu'] = tpl['template'].get('cpu')
                 aux_tpl['template_memory'] = tpl['template'].get('memory')
-                aux_tpl['image_marketplace_id'] = tpl['template'].get('cloudkeeper_appliance_mpuri')
-                aux_tpl['image_description'] = tpl['template'].get('cloudkeeper_appliance_description')
-                aux_tpl['image_version'] = tpl['template'].get('cloudkeeper_appliance_version')
+                aux_tpl['image_marketplace_id'] = tpl['template'].get(
+                    'cloudkeeper_appliance_mpuri')
+                aux_tpl['image_description'] = tpl['template'].get(
+                    'cloudkeeper_appliance_description')
+                aux_tpl['image_version'] = tpl['template'].get(
+                    'cloudkeeper_appliance_version')
 
             if (self.vmcatcher_images and not aux_tpl['image_marketplace_id']):
                 continue
@@ -198,10 +215,6 @@ class IndigoONProvider(OpenNebulaBaseProvider):
         }
         defaults = self.static.get_image_defaults(prefix=True)
 
-        # XXX need to call this or tests will fail
-        # as ONe images will be returned here instead of ONe templates
-        self._get_one_templates()
-
         images = {}
         for img_id, img in self._get_one_images().items():
             aux_img = image.copy()
@@ -215,11 +228,14 @@ class IndigoONProvider(OpenNebulaBaseProvider):
                 for name, value in aux.items():
                     aux_img[name] = value
 
-                aux_img['image_marketplace_id'] = aux.get('cloudkeeper_appliance_mpuri')
-                aux_img['image_version'] = aux.get('cloudkeeper_appliance_version')
-                aux_img['image_description'] = (aux.get('cloudkeeper_appliance_description') or
-                                                aux.get('description') or
-                                                aux.get('cloudkeeper_appliance_title'))
+                aux_img['image_marketplace_id'] = aux.get(
+                    'cloudkeeper_appliance_mpuri')
+                aux_img['image_version'] = aux.get(
+                    'cloudkeeper_appliance_version')
+                aux_img['image_description'] = (
+                    aux.get('cloudkeeper_appliance_description') or
+                    aux.get('description') or
+                    aux.get('cloudkeeper_appliance_title'))
 
             if (self.vmcatcher_images and not aux_img['image_marketplace_id']):
                 continue
@@ -229,13 +245,12 @@ class IndigoONProvider(OpenNebulaBaseProvider):
 
 class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
     def __init__(self, opts):
-        super(OpenNebulaROCCIProvider, self).__init__(opts)
         self.rocci_template_dir = opts.rocci_template_dir
-
         if not self.rocci_template_dir:
             msg = ('ERROR, You must provide a rocci_template_dir '
                    'via --rocci-template-dir')
             raise exceptions.OpenNebulaProviderException(msg)
+        super(OpenNebulaROCCIProvider, self).__init__(opts)
 
     def get_templates(self):
         """Get flavors from rOCCI-server configuration."""
@@ -256,13 +271,15 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
 
             occi_attrs = self._traverse(mxn, 'attributes', 'occi', 'compute')
             if not occi_attrs:
-                msg = 'Failed to get compute attributes for mixin in %s' % (mxn_file)
+                msg = 'Failed to get compute attributes' \
+                    ' for mixin in %s' % (mxn_file)
                 raise exceptions.OpenNebulaProviderException(msg)
 
             flid = '%s#%s' % (mxn['scheme'].rstrip('#'), mxn['term'])
             cores = self._traverse(occi_attrs, 'cores', 'Default') or 0
             memory = self._traverse(occi_attrs, 'memory', 'Default') or 0
-            disk = self._traverse(occi_attrs, 'ephemeral_storage', 'size', 'Default') or 0
+            disk = self._traverse(
+                occi_attrs, 'ephemeral_storage', 'size', 'Default') or 0
 
             aux = template.copy()
             aux.update({
@@ -278,9 +295,9 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
 
     @staticmethod
     def _absolute_file_paths(directory):
-       for dirpath,_,filenames in os.walk(directory):
-           for f in filenames:
-               yield os.path.abspath(os.path.join(dirpath, f))
+        for dirpath, _, filenames in os.walk(directory):
+            for f in filenames:
+                yield os.path.abspath(os.path.join(dirpath, f))
 
     @staticmethod
     def _read_mixin(json_file):
@@ -291,7 +308,6 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
         if not first:
             msg = 'Failed to find a mixin in %s' % (json_file)
             raise exceptions.OpenNebulaProviderException(msg)
-
         return first
 
     @staticmethod
@@ -301,9 +317,10 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
 
         parser.add_argument(
             '--rocci-template-dir',
-            metavar = '<rocci-template-dir>',
-            default = '/etc/occi-server/backends/opennebula/fixtures/resource_tpl',
-            help = 'Location of the rOCCI-server resource template definitions.')
+            metavar='<rocci-template-dir>',
+            default='/etc/occi-server/backends/opennebula'
+                    '/fixtures/resource_tpl',
+            help='Location of the rOCCI-server resource template definitions.')
 
     @staticmethod
     def _gen_id(image_name, image_id, schema):
