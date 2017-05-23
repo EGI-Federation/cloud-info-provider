@@ -75,6 +75,8 @@ class Data(object):
             'compute_service_name': socket.getfqdn(),
             'endpoints': {
                 'https://cloud-service01.example.org:8787': {
+                    'compute_endpoint_url':
+                        'https://cloud-service01.example.org:8787',
                     'compute_api_authn_method': 'X509-VOMS',
                     'compute_api_endpoint_technology': 'REST',
                     'compute_api_type': 'OCCI',
@@ -82,6 +84,8 @@ class Data(object):
                     'compute_production_level': 'unknown',
                 },
                 'https://cloud-service02.example.org:8787': {
+                    'compute_endpoint_url':
+                        'https://cloud-service02.example.org:8787',
                     'compute_api_authn_method': 'X509',
                     'compute_api_endpoint_technology': 'REST',
                     'compute_api_type': 'OCCI',
@@ -89,6 +93,8 @@ class Data(object):
                     'compute_production_level': 'testing',
                 },
                 'https://cloud-service03.example.org:8787': {
+                    'compute_endpoint_url':
+                        'https://cloud-service03.example.org:8787',
                     'compute_api_authn_method': 'User/Password',
                     'compute_api_endpoint_technology': 'REST',
                     'compute_api_type': 'OCCI',

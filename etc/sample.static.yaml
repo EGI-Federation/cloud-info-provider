@@ -59,12 +59,15 @@ compute:
             production_level: unknown
 
         https://cloud-service01.example.org:8787:
+            endpoint_url: https://cloud-service01.example.org:8787
 
         https://cloud-service02.example.org:8787:
+            endpoint_url: https://cloud-service02.example.org:8787
             api_authn_method: X509
             production_level: testing
 
         https://cloud-service03.example.org:8787:
+            endpoint_url: https://cloud-service03.example.org:8787
             api_authn_method: User/Password
 
     templates:
@@ -79,11 +82,11 @@ compute:
         resource_tpl#medium:
             memory: 4096
             cpu: 2
-        
+
         resource_tpl#large:
             memory: 8196
             cpu: 4
-        
+
         resource_tpl#extra_large:
             memory: 16384
             cpu: 8

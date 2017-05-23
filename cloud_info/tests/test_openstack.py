@@ -315,7 +315,8 @@ class OpenStackProviderTest(unittest.TestCase):
                 '1b7f14c87d8c42ad962f4d3a5fd13a77': {
                     'compute_api_type': 'OpenStack',
                     'compute_api_version': '99.99',
-                    'compute_endpoint_url': 'https://cloud.example.org:8774/v1.1/ce2d'}
+                    'compute_endpoint_url':
+                        'https://cloud.example.org:8774/v1.1/ce2d'}
             },
             'compute_middleware_developer': 'OpenStack',
             'compute_middleware': 'OpenStack Nova',
@@ -346,7 +347,8 @@ class OpenStackProviderTest(unittest.TestCase):
                 '1b7f14c87d8c42ad962f4d3a5fd13a77': {
                     'compute_api_type': 'OpenStack',
                     'compute_api_version': '2',
-                    'compute_endpoint_url': 'https://cloud.example.org:8774/v1.1/ce2d'}
+                    'compute_endpoint_url':
+                        'https://cloud.example.org:8774/v1.1/ce2d'}
             },
             'compute_middleware_developer': 'OpenStack',
             'compute_middleware': 'OpenStack Nova',
