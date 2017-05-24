@@ -178,7 +178,7 @@ class IndigoONProvider(OpenNebulaBaseProvider):
             'template_network': 'private',
         }
         defaults = self.static.get_image_defaults(prefix=True)
-        img_schema = defaults.get('image_schema', 'template')
+        img_schema = defaults.get('template_schema', 'template')
 
         templates = {}
         for tpl_id, tpl in self._get_one_templates().items():
@@ -187,6 +187,7 @@ class IndigoONProvider(OpenNebulaBaseProvider):
 
             aux_tpl['template_id'] = self._gen_id(
                 tpl['name'], tpl_id, img_schema)
+            aux_tpl['template_name'] = tpl['name']
 
             if 'template' in tpl:
                 aux_tpl['template_description'] = tpl['template'].get(
