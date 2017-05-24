@@ -97,7 +97,7 @@ class OpenStackProvider(providers.BaseProvider):
                 e_url = ept['publicURL']
 
                 e = defaults.copy()
-                e.update({'endpoint_url': e_url,
+                e.update({'compute_endpoint_url': e_url,
                           'compute_api_type': e_type,
                           'compute_api_version': e_version})
 
