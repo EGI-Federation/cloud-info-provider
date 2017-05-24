@@ -132,7 +132,8 @@ class OpenNebulaROCCIProviderTest(OpenNebulaBaseProviderTest):
         super(OpenNebulaROCCIProviderTest, self).__init__(*args, **kwargs)
         self.provider_class = opennebula.OpenNebulaROCCIProvider
         self.expected_images = FAKES.opennebula_rocci_provider_expected_images
-        self.expected_templates = {}
+        self.expected_templates = \
+            FAKES.opennebula_rocci_provider_expected_templates
 
     def setUp(self):
         class FakeProvider(self.provider_class):
@@ -156,13 +157,12 @@ class OpenNebulaROCCIProviderTest(OpenNebulaBaseProviderTest):
         class Opts(object):
             on_auth = 'foo'
             on_rpcxml_endpoint = 'bar'
-            rocci_template_dir = 'foobar'
+            rocci_template_dir = FAKES.rocci_dir
             vmcatcher_images = False
 
         self.provider = FakeProvider(Opts())
 
     def test_get_templates(self):
-        # TODO(real test with rOCCI-server mixin)
         self.assertDictEqual(
             self.expected_templates, self.provider.get_templates())
 
