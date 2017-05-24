@@ -1,5 +1,7 @@
 import collections
+import os.path
 import socket
+import yaml
 
 
 class Data(object):
@@ -273,3 +275,32 @@ class OpenStackFakes(object):
             self.catalog['access']['serviceCatalog'].append(service)
 
 OS_FAKES = OpenStackFakes()
+
+
+class OpenNebulaFakes(object):
+    def __init__(self):
+        cwd = os.path.dirname(__file__)
+
+        with open(os.path.join(cwd, 'one.imagepool.xml'), 'r') as f:
+            self.imagepool = f.read()
+
+        with open(os.path.join(cwd, 'one.templatepool.xml'), 'r') as f:
+            self.templatepool = f.read()
+
+        with open(os.path.join(
+            cwd, 'opennebula_base_provider_images.json'), 'r') as f:
+            self.opennebula_base_provider_expected_images = yaml.safe_load(f)
+
+        with open(os.path.join(
+            cwd, 'opennebula_rocci_provider_images.json'), 'r') as f:
+            self.opennebula_rocci_provider_expected_images = yaml.safe_load(f)
+
+        with open(os.path.join(
+            cwd, 'indigo_on_provider_images.json'), 'r') as f:
+            self.indigo_on_provider_expected_images = yaml.safe_load(f)
+
+        with open(os.path.join(
+            cwd, 'indigo_on_provider_templates.json'), 'r') as f:
+            self.indigo_on_provider_expected_templates = yaml.safe_load(f)
+
+ONE_FAKES = OpenNebulaFakes()

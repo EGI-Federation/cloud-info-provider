@@ -5,6 +5,9 @@ import xml.etree.ElementTree
 
 from cloud_info import exceptions
 from cloud_info.providers import opennebula
+from cloud_info.tests import data
+
+FAKES = data.ONE_FAKES
 
 
 class OpenNebulaBaseProviderOptionsTest(unittest.TestCase):
@@ -85,7 +88,7 @@ class OpenNebulaBaseProviderTest(unittest.TestCase):
         super(OpenNebulaBaseProviderTest, self).__init__(*args, **kwargs)
         self.provider_class = opennebula.OpenNebulaBaseProvider
         self.maxDiff = None
-        self.expected_images = {}
+        self.expected_images = FAKES.opennebula_base_provider_expected_images
 
     def setUp(self):
         class FakeProvider(self.provider_class):
@@ -101,7 +104,7 @@ class OpenNebulaBaseProviderTest(unittest.TestCase):
                 self.xml_parser = xml.etree.ElementTree
                 self.server_proxy = mock.Mock()
                 self.server_proxy.one.templatepool.info.return_value = (
-                    'OK', '<TEMPLATE_POOL></TEMPLATE_POOL>')
+                    'OK', FAKES.templatepool)
 
         class Opts(object):
             on_auth = 'oneadmin:opennebula'
@@ -114,6 +117,9 @@ class OpenNebulaBaseProviderTest(unittest.TestCase):
         self.assertDictEqual(
             self.expected_images, self.provider.get_images())
 
+    def test_get_templates(self):
+        self.assertDictEqual({}, self.provider.get_templates())
+
 
 class OpenNebulaProviderTest(OpenNebulaBaseProviderTest):
     def __init__(self, *args, **kwargs):
@@ -125,6 +131,7 @@ class OpenNebulaROCCIProviderTest(OpenNebulaBaseProviderTest):
     def __init__(self, *args, **kwargs):
         super(OpenNebulaROCCIProviderTest, self).__init__(*args, **kwargs)
         self.provider_class = opennebula.OpenNebulaROCCIProvider
+        self.expected_images = FAKES.opennebula_rocci_provider_expected_images
         self.expected_templates = {}
 
     def setUp(self):
@@ -142,9 +149,9 @@ class OpenNebulaROCCIProviderTest(OpenNebulaBaseProviderTest):
                 self.static.get_template_defaults.return_value = {}
                 self.server_proxy = mock.Mock()
                 self.server_proxy.one.templatepool.info.return_value = (
-                    'OK', '<TEMPLATE_POOL></TEMPLATE_POOL>')
+                    'OK', FAKES.templatepool)
                 self.server_proxy.one.imagepool.info.return_value = (
-                    'OK', '<IMAGE_POOL></IMAGE_POOL>')
+                    'OK', FAKES.imagepool)
 
         class Opts(object):
             on_auth = 'foo'
@@ -155,6 +162,7 @@ class OpenNebulaROCCIProviderTest(OpenNebulaBaseProviderTest):
         self.provider = FakeProvider(Opts())
 
     def test_get_templates(self):
+        # TODO(real test with rOCCI-server mixin)
         self.assertDictEqual(
             self.expected_templates, self.provider.get_templates())
 
@@ -163,8 +171,8 @@ class IndigoONProviderTest(OpenNebulaBaseProviderTest):
     def __init__(self, *args, **kwargs):
         super(IndigoONProviderTest, self).__init__(*args, **kwargs)
         self.provider_class = opennebula.IndigoONProvider
-        self.expected_images = {}
-        self.expected_templates = {}
+        self.expected_images = FAKES.indigo_on_provider_expected_images
+        self.expected_templates = FAKES.indigo_on_provider_expected_templates
 
     def setUp(self):
         class FakeProvider(self.provider_class):
@@ -180,9 +188,9 @@ class IndigoONProviderTest(OpenNebulaBaseProviderTest):
                 self.static.get_template_defaults.return_value = {}
                 self.server_proxy = mock.Mock()
                 self.server_proxy.one.templatepool.info.return_value = (
-                    'OK', '<TEMPLATE_POOL></TEMPLATE_POOL>')
+                    'OK', FAKES.templatepool)
                 self.server_proxy.one.imagepool.info.return_value = (
-                    'OK', '<IMAGE_POOL></IMAGE_POOL>')
+                    'OK', FAKES.imagepool)
 
         class Opts(object):
             on_auth = 'foo'
