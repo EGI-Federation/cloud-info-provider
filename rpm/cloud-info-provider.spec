@@ -57,10 +57,10 @@ rm -rf $RPM_BUILD_ROOT
 - Updated OpenNebula provider
 - Add disk size as OtherInfo of Resource templates
 - Usage of a single template for storage info
-* Mon Jan 01 2017 Alvaro Lopez Garcia <aloga@ifca.unican.es> 0.7.0
+* Sun Jan 01 2017 Alvaro Lopez Garcia <aloga@ifca.unican.es> 0.7.0
 - Use templating engine.
 - Bugfixes.
-* Mon Aug 03 2016 Baptiste Grenier <baptiste.grenier@egi.eu>
+* Wed Aug 03 2016 Baptiste Grenier <baptiste.grenier@egi.eu>
 - Use Mako for templates.
 - Rename python packages and packages.
 * Mon Jul 18 2016 Alvaro Lopez Garcia <aloga@ifca.unican.es>
