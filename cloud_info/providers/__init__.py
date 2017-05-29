@@ -6,16 +6,16 @@ class BaseProvider(object):
         return {}
 
     def get_images(self):
-        return []
+        return {}
 
     def get_templates(self):
-        return []
+        return {}
 
     def get_compute_endpoints(self):
-        return []
+        return {}
 
     def get_storage_endpoints(self):
-        return []
+        return {}
 
     @staticmethod
     def populate_parser(parser):

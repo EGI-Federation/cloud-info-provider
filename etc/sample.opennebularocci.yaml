@@ -55,41 +55,24 @@ compute:
             production_level: production
 
         https://cloud-service01.example.org:2633/RPC2:
+            endpoint_url: https://cloud-service01.example.org:2633/RPC2
             api_type: ON-XML-RPC
             api_version: 2
             api_endpoint_technology: REST
 
         https://cloud-service02.example.org:9869:
+            endpoint_url: https://cloud-service02.example.org:9869
             api_type: Sunstone GUI
             api_version: 4.6
 
+    # Templates are retreived automatically from rOCCI-server
     templates:
         defaults:
             platform: amd64
             network: public
-            # Uncomment the line above if you want to override the schema
-            # present in the template_dir
-            #schema: resource_tpl
-
-    # Uncomment the lines below if you want to specify statically the templates
-        resource_tpl#small:
-            memory: 1024
-            cpu: 1
-    
-        resource_tpl#medium:
-            memory: 4096
-            cpu: 2
-        
-        resource_tpl#large:
-            memory: 8196
-            cpu: 4
-        
-        resource_tpl#extra_large:
-            memory: 16384
-            cpu: 8
 
     # Images are retreived automatically by the endpoint
     images:
         defaults:
             platform: amd64
-            schema: http://my.rocci.server.hostname.com/occi/infrastructure/os_tpl
+            schema: http://occi.server.hostname.com/occi/infrastructure/os_tpl

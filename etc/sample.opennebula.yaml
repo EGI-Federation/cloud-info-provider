@@ -49,43 +49,25 @@ compute:
     capabilities:
         - cloud.managementSystem
 
+    # Available endpoint need to be defined manually
     endpoints:
         defaults:
             api_authn_method: User/Password
             production_level: production
 
         https://cloud-service01.example.org:2633/RPC2:
+            endpoint_url: https://cloud-service01.example.org:2633/RPC2
             api_type: ON-XML-RPC
             api_version: 2
             api_endpoint_technology: REST
 
         https://cloud-service02.example.org:9869:
+            endpoint_url: https://cloud-service02.example.org:9869
             api_type: Sunstone GUI
             api_version: 4.6
-
-    templates:
-        defaults:
-            platform: amd64
-            network: public
-
-        resource_tpl#small:
-            memory: 1024
-            cpu: 1
-
-        resource_tpl#medium:
-            memory: 4096
-            cpu: 2
-        
-        resource_tpl#large:
-            memory: 8196
-            cpu: 4
-        
-        resource_tpl#extra_large:
-            memory: 16384
-            cpu: 8
 
     # Images are retreived automatically by the endpoint
     images:
         defaults:
             platform: amd64
-            schema: os_tpl
+            schema: template

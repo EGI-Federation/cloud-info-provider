@@ -1,7 +1,8 @@
-import cgi
 import collections
+import json
 import os.path
 import socket
+import yaml
 
 
 class Data(object):
@@ -149,7 +150,6 @@ class Data(object):
             }
         }
 
-
 DATA = Data()
 
 
@@ -279,33 +279,35 @@ OS_FAKES = OpenStackFakes()
 
 
 class OpenNebulaFakes(object):
-    response_doc = (
-        '<?xml version="1.0" encoding="UTF-8"?>'
-        '<methodResponse>'
-        '<params>'
-        '<param><value><array><data>'
-        '<value><boolean>1</boolean></value>'
-        '<value><string>'
-        '%(response)s'
-        '</string></value>'
-        '<value><i4>0</i4></value>'
-        '</data></array></value></param>'
-        '</params>'
-        '</methodResponse>'
-    )
-
     def __init__(self):
         cwd = os.path.dirname(__file__)
-        with open(os.path.join(cwd, 'one.imagepool.info.xml'), 'r') as f:
+        self.rocci_dir = os.path.join(cwd, 'rocci_samples', 'resource_tpl')
+        sdir = os.path.join(cwd, 'one_samples')
+
+        with open(os.path.join(sdir, 'one.imagepool.xml'), 'r') as f:
             self.imagepool = f.read()
 
-        self.imagepool = cgi.escape(self.imagepool)
-        self.imagepool = self.response_doc % {'response': self.imagepool}
-
-        with open(os.path.join(cwd, 'one.templatepool.info.xml'), 'r') as f:
+        with open(os.path.join(sdir, 'one.templatepool.xml'), 'r') as f:
             self.templatepool = f.read()
 
-        self.templatepool = cgi.escape(self.templatepool)
-        self.templatepool = self.response_doc % {'response': self.templatepool}
+        with open(os.path.join(
+            sdir, 'opennebula_base_provider_images.json'), 'r') as f:
+            self.opennebula_base_provider_expected_images = yaml.safe_load(f)
+
+        with open(os.path.join(
+            sdir, 'opennebula_rocci_provider_images.json'), 'r') as f:
+            self.opennebula_rocci_provider_expected_images = yaml.safe_load(f)
+
+        with open(os.path.join(
+            sdir, 'opennebula_rocci_provider_templates.json'), 'r') as f:
+            self.opennebula_rocci_provider_expected_templates = json.load(f)
+
+        with open(os.path.join(
+            sdir, 'indigo_on_provider_images.json'), 'r') as f:
+            self.indigo_on_provider_expected_images = yaml.safe_load(f)
+
+        with open(os.path.join(
+            sdir, 'indigo_on_provider_templates.json'), 'r') as f:
+            self.indigo_on_provider_expected_templates = yaml.safe_load(f)
 
 ONE_FAKES = OpenNebulaFakes()

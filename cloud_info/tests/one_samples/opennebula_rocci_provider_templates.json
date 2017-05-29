@@ -1,0 +1,101 @@
+{
+  "http://fedcloud.egi.eu/occi/compute/flavour/1.0#large": {
+    "template_cpu": 4,
+    "template_description": "Large Instance - 4 cores and 4 GB RAM",
+    "template_disk": 40,
+    "template_id": "http://fedcloud.egi.eu/occi/compute/flavour/1.0#large",
+    "template_memory": 4096,
+    "template_network": "private",
+    "template_platform": "amd64"
+  },
+  "http://fedcloud.egi.eu/occi/compute/flavour/1.0#medium": {
+    "template_cpu": 2,
+    "template_description": "Medium Instance - 2 cores and 2 GB RAM",
+    "template_disk": 20,
+    "template_id": "http://fedcloud.egi.eu/occi/compute/flavour/1.0#medium",
+    "template_memory": 2048,
+    "template_network": "private",
+    "template_platform": "amd64"
+  },
+  "http://fedcloud.egi.eu/occi/compute/flavour/1.0#mem_large": {
+    "template_cpu": 4,
+    "template_description": "Large Instance - 4 cores and 16 GB RAM",
+    "template_disk": 40,
+    "template_id": "http://fedcloud.egi.eu/occi/compute/flavour/1.0#mem_large",
+    "template_memory": 16384,
+    "template_network": "private",
+    "template_platform": "amd64"
+  },
+  "http://fedcloud.egi.eu/occi/compute/flavour/1.0#mem_medium": {
+    "template_cpu": 2,
+    "template_description": "Medium Instance - 2 cores and 8 GB RAM",
+    "template_disk": 20,
+    "template_id": "http://fedcloud.egi.eu/occi/compute/flavour/1.0#mem_medium",
+    "template_memory": 8192,
+    "template_network": "private",
+    "template_platform": "amd64"
+  },
+  "http://fedcloud.egi.eu/occi/compute/flavour/1.0#mem_small": {
+    "template_cpu": 1,
+    "template_description": "Small Instance - 1 core and 4 GB RAM",
+    "template_disk": 10,
+    "template_id": "http://fedcloud.egi.eu/occi/compute/flavour/1.0#mem_small",
+    "template_memory": 4096,
+    "template_network": "private",
+    "template_platform": "amd64"
+  },
+  "http://fedcloud.egi.eu/occi/compute/flavour/1.0#small": {
+    "template_cpu": 1,
+    "template_description": "Small Instance - 1 core and 1 GB RAM",
+    "template_disk": 10,
+    "template_id": "http://fedcloud.egi.eu/occi/compute/flavour/1.0#small",
+    "template_memory": 1024,
+    "template_network": "private",
+    "template_platform": "amd64"
+  },
+  "http://fedcloud.egi.eu/occi/infrastructure/resource_tpl#atlas": {
+    "template_cpu": 32,
+    "template_description": "Atlas Instance - 32 cores and 64 GB RAM",
+    "template_disk": 40,
+    "template_id": "http://fedcloud.egi.eu/occi/infrastructure/resource_tpl#atlas",
+    "template_memory": 65536,
+    "template_network": "private",
+    "template_platform": "amd64"
+  },
+  "http://fedcloud.egi.eu/occi/infrastructure/resource_tpl#extra_large": {
+    "template_cpu": 8,
+    "template_description": "Extra Large Instance - 8 cores and 8 GB RAM",
+    "template_disk": 40,
+    "template_id": "http://fedcloud.egi.eu/occi/infrastructure/resource_tpl#extra_large",
+    "template_memory": 8192,
+    "template_network": "private",
+    "template_platform": "amd64"
+  },
+  "http://fedcloud.egi.eu/occi/infrastructure/resource_tpl#goliath": {
+    "template_cpu": 16,
+    "template_description": "Goliath Instance - 16 cores and 64 GB RAM",
+    "template_disk": 40,
+    "template_id": "http://fedcloud.egi.eu/occi/infrastructure/resource_tpl#goliath",
+    "template_memory": 65536,
+    "template_network": "private",
+    "template_platform": "amd64"
+  },
+  "http://fedcloud.egi.eu/occi/infrastructure/resource_tpl#mammoth": {
+    "template_cpu": 16,
+    "template_description": "Mammoth Instance - 16 cores and 32 GB RAM",
+    "template_disk": 40,
+    "template_id": "http://fedcloud.egi.eu/occi/infrastructure/resource_tpl#mammoth",
+    "template_memory": 32768,
+    "template_network": "private",
+    "template_platform": "amd64"
+  },
+  "http://fedcloud.egi.eu/occi/infrastructure/resource_tpl#mem_extra_large": {
+    "template_cpu": 8,
+    "template_description": "Extra Large Instance - 8 cores and 32 GB RAM",
+    "template_disk": 40,
+    "template_id": "http://fedcloud.egi.eu/occi/infrastructure/resource_tpl#mem_extra_large",
+    "template_memory": 32768,
+    "template_network": "private",
+    "template_platform": "amd64"
+  }
+}
