@@ -6,7 +6,7 @@
 
 Summary: Information provider for Cloud Compute and Cloud Storage services for BDII
 Name: cloud-info-provider
-Version: 0.7.0
+Version: 0.8.0
 Release: 1%{?dist}
 Group: Applications/Internet
 License: ASL 2.0
@@ -52,6 +52,11 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/cloud-info-provider/
 
 %changelog
+* Mon May 29 2017 Baptiste Grenier <baptiste.grenier@egi.eu> 0.8.0
+- Require a endpoint_url to be set for compute endpoints
+- Updated OpenNebula provider
+- Add disk size as OtherInfo of Resource templates
+- Usage of a single template for storage info
 * Mon Jan 01 2017 Alvaro Lopez Garcia <aloga@ifca.unican.es> 0.7.0
 - Use templating engine.
 - Bugfixes.

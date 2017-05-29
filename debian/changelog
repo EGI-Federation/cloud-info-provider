@@ -1,3 +1,17 @@
+python-cloud-info-provider (0.8.0-1) xenial; urgency=medium
+
+  [ Boris Parak ]
+  * Require a endpoint_url to be set for compute endpoints
+  * Updated OpenNebula provider
+
+  [ Alvaro Lopez Garcia and Enol Fernandez ]
+  * Add disk size as OtherInfo of Resource templates
+
+  [ Baptiste Grenier ]
+  * Usage of a single template for storage info
+
+ -- Baptiste Grenier <baptiste.grenier@egi.eu>  Mon, 29 May 2017 17:00:03 +0100
+
 python-cloud-info-provider (0.7.0-1) trusty; urgency=medium
 
   [ Baptiste Grenier ]
