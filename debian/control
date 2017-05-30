@@ -7,8 +7,7 @@ Build-Depends:
  debhelper (>= 7.0.50),
  dh-python,
  python-all (>= 2.7),
- python-all-dev (>= 2.7),
- python-support
+ python-all-dev (>= 2.7)
 Build-Depends-Indep:
  python-pbr (>= 0.6),
  python-setuptools

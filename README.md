@@ -30,6 +30,59 @@ probably need:
 Packages are available at [EGI's AppDB](https://appdb.egi.eu/store/software/cloud.info.provider).
 Use the appropriate repos for your distribution and install using the usual tools.
 
+#### Building the packages using docker containers
+
+[https://docs.openstack.org/developer/pbr/](python-pbr) is used for building
+the python module and is available through the OpenStack repositories.
+
+The version is set according to the repository information (tags, commits,...)
+
+##### Building a RPM
+
+* The OpenStack repositories are only used to get the `python-pbr` build
+  dependency.
+* On CentOS 6 install `centos-release-openstack` instead of
+  `centos-release-openstack-liberty`
+
+
+```
+# Checkout tag to be packaged
+git clone https://github.com/EGI-FCTF/cloud-info-provider.git
+cd cloud-info-provider
+git checkout X.X.X
+# Create a source tarball
+python setup.py sdist
+# Building in a container using the tarball
+docker run --rm -v $(pwd):/source -v $HOME/rpmbuild:/root/rpmbuild -it centos:7
+yum install centos-release-openstack-liberty \
+            rpm-build \
+            python-pbr python-setuptools
+echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros
+mkdir -p ~/rpmbuild/SOURCES
+cp /source/dist/cloud_info_provider-*.tar.gz ~/rpmbuild/SOURCES/
+cp /source/rpm/cloud-info-provider.spec ~/rpmbuild/SPECS/
+rpmbuild -ba ~/rpmbuild/SPECS/cloud-info-provider.spec
+```
+
+The RPM will be available into the ~/rpmbuild directory.
+
+##### Building a deb
+
+```
+# Checkout tag to be packaged
+git clone https://github.com/EGI-FCTF/cloud-info-provider.git
+cd cloud-info-provider
+git checkout X.X.X
+docker run --rm -v $(pwd):/source -v $HOME/debs:/root/debs -it ubuntu:xenial
+apt update
+apt install devscripts debhelper git python-all-dev python-pbr python-setuptools
+cd /source
+debuild --no-tgz-check binary
+cp ../*.deb ~/debs
+```
+
+The deb will be available into the ~/debs directory.
+
 ### From source
 
 Get the source by cloning this repo and do a pip install:
