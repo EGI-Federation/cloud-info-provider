@@ -422,23 +422,27 @@ class OpenStackProvider(providers.BaseProvider):
     def get_images(self):
         images = {}
 
+        # image_native_id: middleware image ID
+        # image_id: OCCI image ID
         template = {
             'image_name': None,
+            'image_id': None,
+            'image_native_id': None,
             'image_description': None,
             'image_version': None,
             'image_marketplace_id': None,
-            'image_id': None,
-            'image_native_id': None,
+            'image_platform': 'amd64',
             'image_os_family': None,
             'image_os_name': None,
             'image_os_version': None,
-            'image_platform': 'amd64',
-            'image_recommended_ram': None,
+            'image_minimal_cpu': None,
             'image_recommended_cpu': None,
             'image_minimal_ram': None,
-            'image_minimal_cpu': None,
+            'image_recommended_ram': None,
+            'image_minimal_accel': None,
+            'image_recommended_accel': None,
+            'image_accel_type': None,
             'image_size': None,
-            'image_default_username': None,
         }
         defaults = self.static.get_image_defaults(prefix=True)
         img_sch = defaults.get('image_schema', 'os')
