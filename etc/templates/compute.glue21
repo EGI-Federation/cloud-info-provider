@@ -211,6 +211,7 @@ GLUE2EndpointCapability: ${capability}
 GLUE2EndpointQualityLevel: ${endpoint['compute_production_level']}
 GLUE2EndpointInterfaceName: ${interface_name}
 GLUE2EndpointHealthState: ok
+GLUE2EndpointHealthStateInfo: Endpoint functioning properly
 GLUE2EndpointServingState: ${endpoint['compute_production_level']}
 GLUE2EndpointTechnology: ${endpoint['compute_api_endpoint_technology']}
 GLUE2EndpointInterfaceVersion: ${endpoint['compute_api_version']}
@@ -227,7 +228,6 @@ GLUE2EndpointTrustedCA: ${trusted_ca}
 # TODO find information for this attributes
 # GLUE2EndpointSupportedProfile:
 # GLUE2EndpointInterfaceExtension:
-# GLUE2EndpointHealthStateInfo:
 # GLUE2EndpointStartTime:
 ## XXX Disabled for now
 ## GLUE2EndpointDowntimeAnnounce:
@@ -326,7 +326,6 @@ GLUE2EntityName: ${tpl_id}
 GLUE2CloudComputingInstanceTypeIDForEndpoint: ${tpl_id}
 GLUE2ResourceManagerForeignKey: ${compute_service_manager}
 GLUE2CloudComputingInstanceTypeCloudComputingManagerForeignKey: ${compute_service_manager}
-# XXX Shouldn't we add a CloudComputingEndpointForeignKey?
 GLUE2CloudComputingInstanceTypeCloudComputingEndpointForeignKey: ${endpoint_id}
 GLUE2CloudComputingInstanceTypePlatform: ${template['template_platform']}
 GLUE2CloudComputingInstanceTypevCPU: ${template['template_cpu']}
@@ -336,10 +335,6 @@ GLUE2CloudComputingInstanceTypeNetworkOut: ${template['template_network_out']}
 GLUE2CloudComputingInstanceTypeNetworkInfo: ${share['network_info']}
 GLUE2CloudComputingInstanceTypeEphemeralStorage: ${template['template_ephemeral']}
 GLUE2CloudComputingInstanceTypeDisk: ${template['template_disk']}
-# TODO find information for this attributes
-# XXX Templates are not taken from the AppDB
-# GLUE2CloudComputingInstanceTypeMarketPlaceID:
-# GLUE2CloudComputingInstanceTypeOtherHardware:
 
 % endfor
 % endfor
