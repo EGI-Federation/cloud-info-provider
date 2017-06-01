@@ -243,7 +243,7 @@ GLUE2EndpointTrustedCA: ${trusted_ca}
     img_id = image['image_native_id'] if native_endpoint else image['image_id']
 
     fields =  {'image_version', 'image_os_family', 'image_os_name',
-               'image_os_version', 'image_marketplace_id' }
+               'image_os_version', 'image_marketplace_id', 'image_size'}
     for field in fields:
       if image[field] is None:
           image[field] = 'UNKNOWN'
