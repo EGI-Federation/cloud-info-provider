@@ -147,7 +147,7 @@ GLUE2ShareDescription: Share in service ${compute_service_id} for VO ${vo} (Proj
 GLUE2CloudComputingShareCloudComputingServiceForeignKey: ${compute_service_id}
 % for url, endpoint in endpoints.items():
 <%
-    endpoint_id = ("%s_%s_%s_%s" % (endpoint['endpoint_url'],
+    endpoint_id = ("%s_%s_%s_%s" % (endpoint['compute_endpoint_url'],
         endpoint['compute_api_type'], endpoint['compute_api_version'],
         endpoint['compute_api_authn_method']))
 %>\
@@ -187,12 +187,12 @@ GLUE2CloudComputingShareMaxVM: ${share_max_vm}
     else:
         endpoint_semantics = 'http://occi-wg.org/about/specification'
         interface_name = 'eu.egi.cloud.vm-management.occi'
-    endpoint_id = ("%s_%s_%s_%s" % (endpoint['endpoint_url'],
+    endpoint_id = ("%s_%s_%s_%s" % (endpoint['compute_endpoint_url'],
         endpoint['compute_api_type'], endpoint['compute_api_version'],
         endpoint['compute_api_authn_method']))
     endpoint_name = ("%s (%s/%s) at %s" % (endpoint['compute_api_type'],
         endpoint['compute_api_version'], endpoint['compute_api_authn_method'],
-        endpoint['endpoint_url']
+        endpoint['compute_endpoint_url']
         ))
 %>\
 dn: GLUE2EndpointID=${endpoint_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${endpoint['suffix']}
@@ -203,7 +203,7 @@ GLUE2EndpointID: ${endpoint_id}
 GLUE2EntityName: Cloud Computing Endpoint ${endpoint_name}
 GLUE2EntityCreationTime: ${timestamp}
 GLUE2EntityValidity: ${validity}
-GLUE2EndpointURL: ${endpoint['endpoint_url']}
+GLUE2EndpointURL: ${endpoint['compute_endpoint_url']}
 GLUE2EndpointServiceForeignKey: ${compute_service_id}
 % for capability in endpoint['compute_capabilities']:
 GLUE2EndpointCapability: ${capability}
@@ -337,7 +337,7 @@ GLUE2CloudComputingInstanceTypeDisk: ${template['template_disk']}
 ##
 % for endpoint_url, endpoint in endpoints.items():
 <%
-    endpoint_id =  ("%s_%s_%s_%s" % (endpoint['endpoint_url'],
+    endpoint_id =  ("%s_%s_%s_%s" % (endpoint['compute_endpoint_url'],
         endpoint['compute_api_type'], endpoint['compute_api_version'],
         endpoint['compute_api_authn_method']))
 %>\
