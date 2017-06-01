@@ -299,7 +299,7 @@ GLUE2EntityOtherInfo: traffic_in:${traffic_in}
 % for traffic_out in image['image_traffic_out']:
 GLUE2EntityOtherInfo: traffic_out:${traffic_out}
 % endfor
-# GLUE2CloudComputingImageAccessInfo:
+GLUE2CloudComputingImageAccessInfo: ${image['image_access_info']}
 # GLUE2CloudComputingImageInstalledsoftware:
 
 % endfor

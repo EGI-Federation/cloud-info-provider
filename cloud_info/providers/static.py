@@ -118,7 +118,7 @@ class StaticProvider(providers.BaseProvider):
                   'minimal_cpu', 'recommended_cpu',
                   'minimal_ram', 'recommended_ram',
                   'minimal_accel', 'recommended_accel', 'accel_type',
-                  'traffic_in', 'traffic_out')
+                  'traffic_in', 'traffic_out', 'access_info')
         images = self._get_what('compute',
                                 'images',
                                 None,
