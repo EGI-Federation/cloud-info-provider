@@ -293,6 +293,12 @@ GLUE2CloudComputingImageRecommendedAcceleratorType: ${image['image_accel_type']}
 % endif
 GLUE2EntityOtherInfo: description:${image['image_description']}
 GLUE2CloudComputingImageDiskSize: ${image['image_size']}
+% for traffic_in in image['image_traffic_in']:
+GLUE2EntityOtherInfo: traffic_in:${traffic_in}
+% endfor
+% for traffic_out in image['image_traffic_out']:
+GLUE2EntityOtherInfo: traffic_out:${traffic_out}
+% endfor
 # GLUE2CloudComputingImageAccessInfo:
 # GLUE2CloudComputingImageInstalledsoftware:
 

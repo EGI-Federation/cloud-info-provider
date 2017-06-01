@@ -443,6 +443,8 @@ class OpenStackProvider(providers.BaseProvider):
             'image_recommended_accel': None,
             'image_accel_type': None,
             'image_size': None,
+            'image_traffic_in': [],
+            'image_traffic_out': [],
         }
         defaults = self.static.get_image_defaults(prefix=True)
         img_sch = defaults.get('image_schema', 'os')
