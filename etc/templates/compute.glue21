@@ -246,7 +246,7 @@ GLUE2EndpointTrustedCA: ${trusted_ca}
                'image_os_version', 'image_marketplace_id', 
                'image_recommended_cpu', 'image_recommended_ram',
                'image_minimal_cpu', 'image_minimal_ram',
-               'image_size', 'image_default_username'}
+               'image_size'}
     for field in fields:
       if image[field] is None:
           image[field] = 'UNKNOWN'
