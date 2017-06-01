@@ -447,6 +447,7 @@ class OpenStackProvider(providers.BaseProvider):
             'image_traffic_out': [],
             'image_access_info': 'none',
             'image_context_format': None,
+            'image_software': [],
         }
         defaults = self.static.get_image_defaults(prefix=True)
         img_sch = defaults.get('image_schema', 'os')

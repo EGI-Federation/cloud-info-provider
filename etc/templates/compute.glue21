@@ -303,7 +303,9 @@ GLUE2CloudComputingImageAccessInfo: ${image['image_access_info']}
 % if image['image_context_format'] and image['image_context_format'] != None:
 GLUE2EntityOtherInfo: context_format:${image['image_context_format']}
 % endif
-# GLUE2CloudComputingImageInstalledsoftware:
+% for software in image['image_software']:
+GLUE2CloudComputingImageInstalledsoftware: ${software}
+% endfor
 
 % endfor
 ##
