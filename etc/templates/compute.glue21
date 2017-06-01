@@ -267,46 +267,37 @@ GLUE2EntityCreationTime: ${timestamp}
 GLUE2EntityValidity: ${validity}
 GLUE2CloudComputingImageIDForEndpoint: ${img_id}
 GLUE2CloudComputingImageCloudComputingManagerForeignKey: ${compute_service_manager}
-# XXX Shouldn't we add a CloudComputingEndpointForeignKey?
 GLUE2CloudComputingImageCloudComputingEndpointForeignKey: ${endpoint_id}
 GLUE2CloudComputingImageMarketPlaceID: ${image['image_marketplace_id']}
 GLUE2CloudComputingImageOSName: ${image['image_os_name']}
 GLUE2CloudComputingImageOSVersion: ${image['image_os_version']}
-# XXX sl:os in AppDB
-# XXX not in atrope?
-# XXX not in cloudkeeper?
 GLUE2CloudComputingImageOSFamily: ${image['image_os_family']}
 GLUE2CloudComputingImageOSPlatform: ${image['image_platform']}
-# XXX ad:core_recommended in AppDB
-# XXX not in atrope?
-GLUE2CloudComputingImageRecommendedCPU: ${image['image_recommended_cpu']}
-# XXX ad:ram_recommended in AppDB
-# XXX not in atrope?
-GLUE2CloudComputingImageRecommendedRAM: ${image['image_recommended_ram']}
-# XXX hv:core_minimum in AppDB
-# XXX not in atrope?
-# XXX not in cloudkeeper?
+% if image['image_minimal_cpu'] and image['image_minimal_cpu'] != None
 GLUE2CloudComputingImageMinCPU: ${image['image_minimal_cpu']}
-# XXX hv:ram_minimum in AppDB
-# XXX not in atrope?
-# XXX not in cloudkeeper?
+% endif
+% if image['image_recommended_cpu'] and image['image_recommended_cpu'] != None
+GLUE2CloudComputingImageRecommendedCPU: ${image['image_recommended_cpu']}
+% endif
+% if image['image_minimal_ram'] and image['image_minimal_ram'] != None
 GLUE2CloudComputingImageMinRAM: ${image['image_minimal_ram']}
-GLUE2EntityOtherInfo: ${image['image_description']}
-# XXX hv:size in AppDB
-# XXX not in atrope?
-# XXX not in cloudkeeper?
+% endif
+% if image['image_recommended_ram'] and image['image_recommended_ram'] != None
+GLUE2CloudComputingImageRecommendedRAM: ${image['image_recommended_ram']}
+% endif
+% if image['image_minimal_accel'] and image['image_minimal_accel'] != None
+GLUE2CloudComputingImageMinAccelerators: ${image['image_minimal_accel']}
+% endif
+% if image['image_recommended_accel'] and image['image_recommended_accel'] != None
+GLUE2CloudComputingImageRecommendedAccelerators: ${image['image_recommended_accel']}
+% endif
+% if image['image_accel_type'] and image['image_accel_type'] != None
+GLUE2CloudComputingImageRecommendedAcceleratorType: ${image['image_accel_type']}
+% endif
+GLUE2EntityOtherInfo: description:${image['image_description']}
 GLUE2CloudComputingImageDiskSize: ${image['image_size']}
-# XXX not in AppDB?
-# XXX not in atrope?
-# XXX not in cloudkeeper?
-GLUE2CloudComputingImageDefaultUserName: ${image['image_default_username']}
 # GLUE2CloudComputingImageAccessInfo:
 # GLUE2CloudComputingImageInstalledsoftware:
-# GLUE2CloudComputingImageMinAccelerators:
-# GLUE2CloudComputingImageRecommendedAcceleratorType:
-# GLUE2CloudComputingImageRecommendedAccelerators:
-## XXX Skipping dangerous information
-## GLUE2CloudComputingImageDefaultPassword:
 
 % endfor
 ##
