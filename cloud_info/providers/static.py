@@ -112,8 +112,12 @@ class StaticProvider(providers.BaseProvider):
         return site_info
 
     def get_images(self):
-        fields = ('name', 'version', 'marketplace_id', 'os_family', 'os_name',
-                  'os_version', 'platform')
+        fields = ('name', 'id', 'native_id', 'description', 'version',
+                  'marketplace_id', 'platform',
+                  'os_family', 'os_name', 'os_version',
+                  'minimal_cpu', 'recommended_cpu',
+                  'minimal_ram', 'recommended_ram',
+                  'minimal_accel', 'recommended_accel', 'accel_type')
         images = self._get_what('compute',
                                 'images',
                                 None,
