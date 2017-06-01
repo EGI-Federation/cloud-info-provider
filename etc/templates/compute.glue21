@@ -273,25 +273,25 @@ GLUE2CloudComputingImageOSName: ${image['image_os_name']}
 GLUE2CloudComputingImageOSVersion: ${image['image_os_version']}
 GLUE2CloudComputingImageOSFamily: ${image['image_os_family']}
 GLUE2CloudComputingImageOSPlatform: ${image['image_platform']}
-% if image['image_minimal_cpu'] and image['image_minimal_cpu'] != None
+% if image['image_minimal_cpu'] and image['image_minimal_cpu'] != None:
 GLUE2CloudComputingImageMinCPU: ${image['image_minimal_cpu']}
 % endif
-% if image['image_recommended_cpu'] and image['image_recommended_cpu'] != None
+% if image['image_recommended_cpu'] and image['image_recommended_cpu'] != None:
 GLUE2CloudComputingImageRecommendedCPU: ${image['image_recommended_cpu']}
 % endif
-% if image['image_minimal_ram'] and image['image_minimal_ram'] != None
+% if image['image_minimal_ram'] and image['image_minimal_ram'] != None:
 GLUE2CloudComputingImageMinRAM: ${image['image_minimal_ram']}
 % endif
-% if image['image_recommended_ram'] and image['image_recommended_ram'] != None
+% if image['image_recommended_ram'] and image['image_recommended_ram'] != None:
 GLUE2CloudComputingImageRecommendedRAM: ${image['image_recommended_ram']}
 % endif
-% if image['image_minimal_accel'] and image['image_minimal_accel'] != None
+% if image['image_minimal_accel'] and image['image_minimal_accel'] != None:
 GLUE2CloudComputingImageMinAccelerators: ${image['image_minimal_accel']}
 % endif
-% if image['image_recommended_accel'] and image['image_recommended_accel'] != None
+% if image['image_recommended_accel'] and image['image_recommended_accel'] != None:
 GLUE2CloudComputingImageRecommendedAccelerators: ${image['image_recommended_accel']}
 % endif
-% if image['image_accel_type'] and image['image_accel_type'] != None
+% if image['image_accel_type'] and image['image_accel_type'] != None:
 GLUE2CloudComputingImageRecommendedAcceleratorType: ${image['image_accel_type']}
 % endif
 GLUE2EntityOtherInfo: description:${image['image_description']}
