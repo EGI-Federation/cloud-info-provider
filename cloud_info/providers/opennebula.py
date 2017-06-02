@@ -12,8 +12,8 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
         super(OpenNebulaBaseProvider, self).__init__(opts)
 
         try:
-            import xml.etree.ElementTree
-            import xmlrpclib
+            import defusedxml.ElementTree
+            import defusedxml.xmlrpc
         except ImportError:
             msg = 'Cannot import xml.etree and/or xmlrpclib.'
             raise exceptions.OpenNebulaProviderException(msg)
@@ -35,8 +35,9 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
             raise exceptions.OpenNebulaProviderException(msg)
 
         self.static = providers.static.StaticProvider(opts)
-        self.xml_parser = xml.etree.ElementTree
-        self.server_proxy = xmlrpclib.ServerProxy(self.on_rpcxml_endpoint)
+        self.xml_parser = defusedxml.ElementTree
+        self.server_proxy = defusedxml.xmlrpc.ServerProxy(
+            self.on_rpcxml_endpoint)
 
     def _handle_response(self, response):
         if not response:
