@@ -20,7 +20,8 @@ Section: python
 Depends: ${python:Depends}, ${misc:Depends},
  python-yaml,
  python-mako,
- python-six
+ python-six,
+ python-defusedxml
 #Recommends: bdii
 Suggests: python-novaclient
 Provides: ${python:Provides}

@@ -21,6 +21,7 @@ Requires: python-argparse
 Requires: python-yaml
 Requires: python-mako
 Requires: python-six
+Requires: ptyhon-defusedxml
 #Recommends: bdii
 #Recommends: python-novaclient
 Obsoletes: cloud-info-provider-service
