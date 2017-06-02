@@ -166,10 +166,10 @@ class StaticProvider(providers.BaseProvider):
                   'security_groups', 'security_group_rules',
                   'server_groups', 'server_group_members')
         quotas = self._get_what('compute',
-                                 'quotas',
-                                 None,
-                                 fields,
-                                 prefix='compute_')
+                                'quotas',
+                                None,
+                                fields,
+                                prefix='compute_')
         return quotas['quotas']
 
     def get_compute_endpoints(self):
