@@ -10,3 +10,5 @@ env:
     - TOXENV=py27
     - TOXENV=py34
     - TOXENV=pep8
+
+sudo: false
