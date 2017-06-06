@@ -54,9 +54,8 @@ git checkout X.X.X
 python setup.py sdist
 # Building in a container using the tarball
 docker run --rm -v $(pwd):/source -v $HOME/rpmbuild:/root/rpmbuild -it centos:7
-yum install centos-release-openstack-liberty \
-            rpm-build \
-            python-pbr python-setuptools
+yum install centos-release-openstack-liberty rpm-build
+yum install python-pbr python-setuptools
 echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros
 mkdir -p ~/rpmbuild/SOURCES
 cp /source/dist/cloud_info_provider-*.tar.gz ~/rpmbuild/SOURCES/
