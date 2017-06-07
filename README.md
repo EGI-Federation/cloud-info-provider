@@ -25,6 +25,8 @@ probably need:
  - if you are generating information for OpenStack, you will also need
  to install python-novaclient.
 
+On RHEL you will also need to enable the [EPEL repository](http://fedoraproject.org/wiki/EPEL) for python-defusedxml.
+
 ### Binary packages
 
 Packages are available at [EGI's AppDB](https://appdb.egi.eu/store/software/cloud.info.provider).

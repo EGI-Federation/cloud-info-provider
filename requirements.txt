@@ -2,3 +2,4 @@ Mako
 PyYAML
 six
 pbr
+defusedxml
