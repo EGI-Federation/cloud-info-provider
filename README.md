@@ -28,24 +28,24 @@ probably need:
 ### Binary packages
 
 Packages are available at [EGI's AppDB](https://appdb.egi.eu/store/software/cloud.info.provider).
-Use the appropriate repos for your distribution and install using the usual tools.
+Use the appropriate repository for your distribution and install using the usual tools.
 
 #### Building the packages using docker containers
 
-[https://docs.openstack.org/developer/pbr/](python-pbr) is used for building
+[python-pbr](https://docs.openstack.org/developer/pbr/) is used for building
 the python module and is available through the OpenStack repositories.
 
-The version is set according to the repository information (tags, commits,...)
+The version is set according to the repository information (tags, commits,...).
 
 ##### Building a RPM
 
 * The OpenStack repositories are only used to get the `python-pbr` build
   dependency.
 * On CentOS 6 install `centos-release-openstack` instead of
-  `centos-release-openstack-liberty`
+  `centos-release-openstack-liberty`.
 
 
-```
+```sh
 # Checkout tag to be packaged
 git clone https://github.com/EGI-FCTF/cloud-info-provider.git
 cd cloud-info-provider
@@ -63,15 +63,16 @@ cp /source/rpm/cloud-info-provider.spec ~/rpmbuild/SPECS/
 rpmbuild -ba ~/rpmbuild/SPECS/cloud-info-provider.spec
 ```
 
-The RPM will be available into the ~/rpmbuild directory.
+The RPM will be available into the `~/rpmbuild` directory.
 
 ##### Building a deb
 
-```
+```sh
 # Checkout tag to be packaged
 git clone https://github.com/EGI-FCTF/cloud-info-provider.git
 cd cloud-info-provider
 git checkout X.X.X
+# Building in a container using the source files
 docker run --rm -v $(pwd):/source -v $HOME/debs:/root/debs -it ubuntu:xenial
 apt update
 apt install devscripts debhelper git python-all-dev python-pbr python-setuptools
@@ -80,23 +81,23 @@ debuild --no-tgz-check clean binary
 cp ../*.deb ~/debs
 ```
 
-The deb will be available into the ~/debs directory.
+The deb will be available into the `~/debs` directory.
 
 ### From source
 
-Get the source by cloning this repo and do a pip install:
+Get the source by cloning this repo and do a pip install.
 
 As pip will have to copy files to /etc/cloud-info-provider directory, the
 installation user should be able to write to it, so it is recommended to create
 it before using pip.
 
-``` sh
+```sh
 sudo mkdir /etc/cloud-info-provider
 sudo chgrp you_user /etc/cloud-info-provider
 sudo chmod g+rwx /etc/cloud-info-provider
 ```
 
-```
+```sh
 git clone https://github.com/EGI-FCTF/cloud-info-provider
 cd cloud-info-provider
 pip install .
@@ -131,7 +132,7 @@ There are three different maps in the yaml file considered by the provider:
     `--glite-site-info-static` option).
     Any other information is only relevant to generate a LDIF for a complete 
     site-BDII (*this is not the recommended deployment mode*).
-   
+
  * `compute` should be present for those sites providing a IaaS computing
     service. It describes the available resources, service endpoints,
     the available VM images and the templates to run those images.
@@ -148,7 +149,7 @@ to connect to the underlying service. Use the `--help` option for a complete
 listing of options.
 
 For example for OpenStack, use a command line similar to the following:
-```
+```sh
 cloud-info-provider-service --yaml-file /etc/cloud-info-provider/static.yaml \
     --middleware OpenStack --os-username <username> --os-password <password> \
     --os-tenant-name <tenant> --os-auth-url <auth-url>
@@ -163,7 +164,6 @@ OCCI support for OpenStack, use the `legacy-occi-os` command line option. This
 will produce output with ids compatible with your setup instead of the current
 default that supports [ooi](https://launchpad.net/ooi).
 
-
 ## Running the provider in a resource-BDII
 
 This is the normal deployment mode for the cloud provider. It should be installed
@@ -177,7 +177,7 @@ host as rOCCI-server).
 In `/var/lib/bdii/gip/provider/` create a `cloud-info-provider` file that 
 calls the provider with the correct options for your site:
 
-```
+```sh
 #!/bin/sh
 
 cloud-info-provider-service --yaml /etc/cloud-info-provider/openstack.yaml \
@@ -188,11 +188,11 @@ cloud-info-provider-service --yaml /etc/cloud-info-provider/openstack.yaml \
 ```
 
 Give execution permission:
-```
+```sh
 chmod +x /var/lib/bdii/gip/provider/cloud-info-provider
 ```
 and test it:
-```
+```sh
 /var/lib/bdii/gip/provider/cloud-info-provider
 ```
 It should output the full ldif describing your site.
@@ -200,12 +200,12 @@ It should output the full ldif describing your site.
 ### Start the bdii service
 
 Once the provider script is working, start the bdii service:
-```
+```sh
 service bdii start
 ```
 
 The ldap server should contain all your cloud resource information:
-```
+```sh
 ldapsearch -x -h localhost -p 2170 -b o=glue
 ```
 
@@ -219,7 +219,6 @@ Add your cloud-info-provider to your site-BDII by adding a new URL that looks li
 ```
 ldap://<cloud-info-provier-hostname>:2170/GLUE2GroupID=cloud,o=glue
 ```
-
 
 ## Other deployment modes
 
