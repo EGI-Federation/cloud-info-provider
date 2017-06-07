@@ -209,7 +209,7 @@ The ldap server should contain all your cloud resource information:
 ldapsearch -x -h localhost -p 2170 -b o=glue
 ```
 
-### Adding the resource provider to the site-BDII
+### Adding the resource provider to the site-BDII
 
 Sites should have a dedicated host for the site-BDII. Information on how to
 set up this machine is avaiable in the EGI.eu wiki at
