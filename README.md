@@ -76,7 +76,7 @@ docker run --rm -v $(pwd):/source -v $HOME/debs:/root/debs -it ubuntu:xenial
 apt update
 apt install devscripts debhelper git python-all-dev python-pbr python-setuptools
 cd /source
-debuild --no-tgz-check binary
+debuild --no-tgz-check clean binary
 cp ../*.deb ~/debs
 ```
 
