@@ -1,18 +1,18 @@
 import argparse
 import sys
-import unittest
 
 import mock
 
 from cloud_info import exceptions
 from cloud_info.providers import openstack as os_provider
+from cloud_info.tests import base
 from cloud_info.tests import data
 from cloud_info.tests import utils as utils
 
 FAKES = data.OS_FAKES
 
 
-class OpenStackProviderOptionsTest(unittest.TestCase):
+class OpenStackProviderOptionsTest(base.TestCase):
     def test_populate_parser(self):
         parser = argparse.ArgumentParser()
         provider = os_provider.OpenStackProvider
@@ -61,8 +61,10 @@ class OpenStackProviderOptionsTest(unittest.TestCase):
         self.assertRaises(exceptions.OpenStackProviderException, provider, o)
 
 
-class OpenStackProviderTest(unittest.TestCase):
+class OpenStackProviderTest(base.TestCase):
     def setUp(self):
+        super(OpenStackProviderTest, self).setUp()
+
         class FakeProvider(os_provider.OpenStackProvider):
             def __init__(self, opts):
                 self.api = mock.Mock()
