@@ -3,7 +3,6 @@ import re
 import socket
 
 import re
-import requests
 import socket
 
 from cloud_info import exceptions
@@ -42,7 +41,7 @@ except ImportError:
 try:
     from OpenSSL import SSL
 except ImportError:
-    msg = 'Cannot import requests module.'
+    msg = 'Cannot import pyOpenSSL module.'
     raise exceptions.OpenStackProviderException(msg)
 
 # Remove info log messages from output
