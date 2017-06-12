@@ -4,21 +4,22 @@ from cloud_info import exceptions
 from cloud_info import providers
 from cloud_info import utils
 
+try:
+    import novaclient.client
+except ImportError:
+    msg = 'Cannot import novaclient module.'
+    raise exceptions.OpenStackProviderException(msg)
+
+# Remove info log messages from output
+logging.getLogger('requests').setLevel(logging.WARNING)
+logging.getLogger('urllib3').setLevel(logging.WARNING)
+logging.getLogger('novaclient.client').setLevel(logging.WARNING)
+logging.getLogger('keystoneclient').setLevel(logging.WARNING)
+
 
 class OpenStackProvider(providers.BaseProvider):
     def __init__(self, opts):
         super(OpenStackProvider, self).__init__(opts)
-
-        try:
-            import novaclient.client
-        except ImportError:
-            msg = 'Cannot import novaclient module.'
-            raise exceptions.OpenStackProviderException(msg)
-
-        # Remove info log messages from output
-        logging.getLogger('requests').setLevel(logging.WARNING)
-        logging.getLogger('urllib3').setLevel(logging.WARNING)
-        logging.getLogger('novaclient.client').setLevel(logging.WARNING)
 
         (os_username, os_password, os_tenant_name, os_auth_url,
          cacert, insecure, legacy_occi_os) = (opts.os_username,

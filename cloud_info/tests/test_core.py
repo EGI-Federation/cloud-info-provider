@@ -37,13 +37,21 @@ class FakeBDIIOpts(object):
     template_extension = ''
 
 
+class FakeProvider(object):
+    def __init__(self, opts):
+        pass
+
+    def method(self):
+        pass
+
+
 class BaseTest(base.TestCase):
     def setUp(self):
         super(BaseTest, self).setUp()
 
         cloud_info.core.SUPPORTED_MIDDLEWARE = {
-            'static': mock.MagicMock(),
-            'foo middleware': mock.MagicMock(),
+            'static': 'cloud_info.tests.test_core.FakeProvider',
+            'foo middleware': 'cloud_info.tests.test_core.FakeProvider',
         }
 
         self.opts = FakeBDIIOpts()
@@ -86,13 +94,13 @@ class BaseBDIITest(BaseTest):
 
         for s, d, e in cases:
             with utils.nested(
-                mock.patch.object(bdii.static_provider, 'foomethod'),
-                mock.patch.object(bdii.dynamic_provider, 'foomethod')
+                mock.patch.object(bdii.static_provider, 'method'),
+                mock.patch.object(bdii.dynamic_provider, 'method')
             ) as (m_static, m_dynamic):
                 m_static.return_value = s
                 m_dynamic.return_value = d
 
-                self.assertEqual(e, bdii._get_info_from_providers('foomethod'))
+                self.assertEqual(e, bdii._get_info_from_providers('method'))
 
     def test_load_templates(self):
         self.opts.template_dir = 'foobar'
@@ -236,4 +244,5 @@ class ComputeBDIITest(BaseTest):
             DATA.compute_images,
         )
         bdii = cloud_info.core.ComputeBDII(self.opts)
+        self.assertFalse(bdii.render())
         self.assertEqual('', bdii.render())
