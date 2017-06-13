@@ -68,7 +68,7 @@ class StaticProvider(providers.BaseProvider):
         else:
             return 'o=glue'
 
-    def get_site_info(self):
+    def get_site_info(self, **kwargs):
         if 'site' in self.yaml:
             data = self.yaml['site']
         else:
@@ -111,7 +111,7 @@ class StaticProvider(providers.BaseProvider):
 
         return site_info
 
-    def get_images(self):
+    def get_images(self, **kwargs):
         fields = ('name', 'id', 'native_id', 'description', 'version',
                   'marketplace_id', 'platform',
                   'os_family', 'os_name', 'os_version',
@@ -127,7 +127,7 @@ class StaticProvider(providers.BaseProvider):
                                 prefix='image_')
         return images['images']
 
-    def get_templates(self):
+    def get_templates(self, **kwargs):
         fields = ('platform', 'network', 'network_in', 'network_out',
                   'memory', 'ephemeral', 'disk', 'cpu')
         templates = self._get_what('compute',
@@ -137,7 +137,7 @@ class StaticProvider(providers.BaseProvider):
                                    prefix='template_')
         return templates['templates']
 
-    def get_instances(self):
+    def get_instances(self, **kwargs):
         fields = ('name', 'image_id', 'template_id', 'status')
         instances = self._get_what('compute',
                                    'instances',
@@ -146,7 +146,7 @@ class StaticProvider(providers.BaseProvider):
                                    prefix='instance_')
         return instances['instances']
 
-    def get_compute_shares(self):
+    def get_compute_shares(self, **kwargs):
         fields = ('instance_max_cpu', 'instance_max_ram',
                   'instance_max_accelerators',
                   'project', 'sla', 'network_info', 'membership')
@@ -157,7 +157,7 @@ class StaticProvider(providers.BaseProvider):
                                 prefix='')
         return shares['shares']
 
-    def get_compute_quotas(self):
+    def get_compute_quotas(self, **kwargs):
         fields = ('instances', 'cores', 'ram',
                   'floating_ips', 'fixed_ips', 'metadata_items',
                   'injected_files', 'injected_file_content_bytes',
@@ -171,7 +171,7 @@ class StaticProvider(providers.BaseProvider):
                                 prefix='compute_')
         return quotas['quotas']
 
-    def get_compute_endpoints(self):
+    def get_compute_endpoints(self, **kwargs):
         global_fields = ('service_production_level', 'total_ram',
                          'total_cores', 'capabilities',
                          'hypervisor', 'hypervisor_version',
@@ -197,7 +197,7 @@ class StaticProvider(providers.BaseProvider):
             endpoints['compute_service_name'] = socket.getfqdn()
         return endpoints
 
-    def get_storage_endpoints(self):
+    def get_storage_endpoints(self, **kwargs):
         global_fields = ('service_production_level', 'total_storage',
                          'capabilities', 'middleware',
                          'middleware_version', 'middleware_developer',

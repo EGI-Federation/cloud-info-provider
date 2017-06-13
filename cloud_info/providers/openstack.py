@@ -341,7 +341,7 @@ class OpenStackProvider(providers.BaseProvider):
 
         return obj_name[start:end]
 
-    def get_compute_endpoints(self):
+    def get_compute_endpoints(self, **kwargs):
         # Hard-coded defaults for supported endpoints types
         supported_endpoints = {
             'occi': {
@@ -391,7 +391,7 @@ class OpenStackProvider(providers.BaseProvider):
                 ret['endpoints'][e_id] = e
         return ret
 
-    def get_templates(self):
+    def get_templates(self, **kwargs):
         """Return templates/flavors selected accroding to --select-flavors"""
         flavors = {}
 
@@ -418,7 +418,7 @@ class OpenStackProvider(providers.BaseProvider):
                 flavors[flavor.id] = aux
         return flavors
 
-    def get_images(self):
+    def get_images(self, **kwargs):
         images = {}
 
         # image_native_id: middleware image ID
@@ -501,7 +501,7 @@ class OpenStackProvider(providers.BaseProvider):
             images[img_id] = aux_img
         return images
 
-    def get_instances(self):
+    def get_instances(self, **kwargs):
         instance_template = {
             'instance_name': None,
             'instance_image_id': None,
@@ -523,7 +523,7 @@ class OpenStackProvider(providers.BaseProvider):
 
         return instances
 
-    def get_compute_quotas(self):
+    def get_compute_quotas(self, **kwargs):
         '''Return the quotas set for the current project.'''
 
         quota_resources = ['instances', 'cores', 'ram',
