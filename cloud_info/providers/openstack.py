@@ -398,7 +398,7 @@ class OpenStackProvider(providers.BaseProvider):
         parser.add_argument(
             '--os-cacert',
             metavar='<ca-certificate>',
-            default=utils.env('OS_CACERT', default=None),
+            default=utils.env('OS_CACERT', default=requests.certs.where()),
             help='Specify a CA bundle file to use in '
             'verifying a TLS (https) server certificate. '
             'Defaults to env[OS_CACERT].')
