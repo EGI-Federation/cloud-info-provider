@@ -4,3 +4,10 @@ six
 pbr
 # For OpenNebula provider
 # defusedxml
+# For OpenStack
+#requests
+#pyOpenSSL
+#python-keystoneclient
+#python-novaclient
+#python-glanceclient
+#keystoneauth1

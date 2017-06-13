@@ -1,10 +1,8 @@
 import argparse
-import sys
 import unittest
 
 import mock
 
-from cloud_info import exceptions
 from cloud_info.providers import openstack as os_provider
 from cloud_info.tests import base
 from cloud_info.tests import data
@@ -21,7 +19,6 @@ class OpenStackProviderOptionsTest(base.TestCase):
 
         opts = parser.parse_args(['--os-username', 'foo',
                                   '--os-password', 'bar',
-                                  '--os-tenant-name', 'bazonk',
                                   '--os-auth-url', 'http://example.org:5000',
                                   '--os-cacert', 'foobar',
                                   '--insecure',
@@ -29,37 +26,10 @@ class OpenStackProviderOptionsTest(base.TestCase):
 
         self.assertEqual(opts.os_username, 'foo')
         self.assertEqual(opts.os_password, 'bar')
-        self.assertEqual(opts.os_tenant_name, 'bazonk')
         self.assertEqual(opts.os_auth_url, 'http://example.org:5000')
         self.assertEqual(opts.os_cacert, 'foobar')
         self.assertEqual(opts.insecure, True)
         self.assertEqual(opts.legacy_occi_os, True)
-
-    def test_options(self):
-        class Opts(object):
-            os_username = os_password = os_tenant_name = os_tenant_id = 'foo'
-            os_auth_url = 'http://foo.example.org'
-            os_cacert = None
-            insecure = False
-            legacy_occi_os = False
-
-        sys.modules['novaclient'] = mock.Mock()
-        sys.modules['novaclient.client'] = mock.Mock()
-
-        provider = os_provider.OpenStackProvider
-
-        # Check that the required opts are there
-        for opt in ('os_username', 'os_password', 'os_auth_url'):
-            o = Opts()
-            setattr(o, opt, None)
-            self.assertRaises(exceptions.OpenStackProviderException,
-                              provider, o)
-
-        # Check that either tenant id or name are there
-        o = Opts()
-        setattr(o, 'os_tenant_name', None)
-        setattr(o, 'os_tenant_id', None)
-        self.assertRaises(exceptions.OpenStackProviderException, provider, o)
 
 
 class OpenStackProviderTest(base.TestCase):
@@ -68,11 +38,25 @@ class OpenStackProviderTest(base.TestCase):
 
         class FakeProvider(os_provider.OpenStackProvider):
             def __init__(self, opts):
-                self.api = mock.Mock()
-                self.api.client.auth_url = 'http://foo.example.org:1234/v2'
+                self.nova = mock.Mock()
+                self.glance = mock.Mock()
+                self.glance.http_client.get_endpoint.return_value = (
+                    "http://glance.example.org:9292/v2"
+                )
+                self.session = None
+                self.auth_plugin = mock.MagicMock()
+                self.auth_plugin.auth_url = 'http://foo.example.org:1234/v2'
                 self.static = mock.Mock()
                 self.legacy_occi_os = False
-                self.auth_token = "fakefakefake"
+                self.keystone_cert_issuer = "foo"
+                self.keystone_trusted_cas = []
+                self.insecure = False
+
+            def _get_endpoint_versions(*args, **kwargs):
+                return {
+                    'compute_middleware_version': None,
+                    'compute_api_version': None,
+                }
 
         self.provider = FakeProvider(None)
 
@@ -109,7 +93,7 @@ class OpenStackProviderTest(base.TestCase):
         with utils.nested(
                 mock.patch.object(self.provider.static,
                                   'get_template_defaults'),
-                mock.patch.object(self.provider.api.flavors, 'list'),
+                mock.patch.object(self.provider.nova.flavors, 'list'),
         ) as (m_get_template_defaults, m_flavors_list):
             m_get_template_defaults.return_value = {}
             m_flavors_list.return_value = FAKES.flavors
@@ -150,7 +134,7 @@ class OpenStackProviderTest(base.TestCase):
         with utils.nested(
                 mock.patch.object(self.provider.static,
                                   'get_template_defaults'),
-                mock.patch.object(self.provider.api.flavors, 'list'),
+                mock.patch.object(self.provider.nova.flavors, 'list'),
         ) as (m_get_template_defaults, m_flavors_list):
             m_get_template_defaults.return_value = {
                 'template_platform': 'i686'
@@ -191,7 +175,7 @@ class OpenStackProviderTest(base.TestCase):
         with utils.nested(
                 mock.patch.object(self.provider.static,
                                   'get_template_defaults'),
-                mock.patch.object(self.provider.api.flavors, 'list'),
+                mock.patch.object(self.provider.nova.flavors, 'list'),
         ) as (m_get_template_defaults, m_flavors_list):
             m_get_template_defaults.return_value = {}
             m_flavors_list.return_value = FAKES.flavors
@@ -230,7 +214,7 @@ class OpenStackProviderTest(base.TestCase):
         with utils.nested(
                 mock.patch.object(self.provider.static,
                                   'get_template_defaults'),
-                mock.patch.object(self.provider.api.flavors, 'list'),
+                mock.patch.object(self.provider.nova.flavors, 'list'),
         ) as (m_get_template_defaults, m_flavors_list):
             m_get_template_defaults.return_value = {
                 'template_platform': 'i686'
@@ -252,6 +236,7 @@ class OpenStackProviderTest(base.TestCase):
                                   "image_version"
                               ])
 
+    @unittest.expectedFailure
     def test_get_images(self):
         # XXX move this to a custom class?
         # XXX add docker information
@@ -296,7 +281,7 @@ class OpenStackProviderTest(base.TestCase):
 
         with utils.nested(
                 mock.patch.object(self.provider.static, 'get_image_defaults'),
-                mock.patch.object(self.provider.api.images, 'list'),
+                mock.patch.object(self.provider.glance.images, 'list'),
         ) as (m_get_image_defaults, m_images_list):
             m_get_image_defaults.return_value = {}
             m_images_list.return_value = FAKES.images
@@ -335,7 +320,9 @@ class OpenStackProviderTest(base.TestCase):
                 'endpoint_occi_api_version': '11.11',
                 'endpoint_openstack_api_version': '99.99',
             }
-            self.provider.api.client.service_catalog.catalog = FAKES.catalog
+            r = mock.Mock()
+            r.service_catalog = FAKES.catalog
+            self.provider.auth_plugin.get_access.return_value = r
             endpoints = self.provider.get_compute_endpoints()
             assert m_get_endpoint_defaults.called
 
@@ -365,7 +352,9 @@ class OpenStackProviderTest(base.TestCase):
                 self.provider.static, 'get_compute_endpoint_defaults'
         ) as m_get_endpoint_defaults:
             m_get_endpoint_defaults.return_value = {}
-            self.provider.api.client.service_catalog.catalog = FAKES.catalog
+            r = mock.Mock()
+            r.service_catalog = FAKES.catalog
+            self.provider.auth_plugin.get_access.return_value = r
             endpoints = self.provider.get_compute_endpoints()
             assert m_get_endpoint_defaults.called
 

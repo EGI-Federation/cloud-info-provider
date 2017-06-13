@@ -11,6 +11,8 @@ testtools>=0.9.34
 mock
 requests
 pyOpenSSL
-python-novaclient
 python-keystoneclient
+python-novaclient
+python-glanceclient
+keystoneauth1
 defusedxml
