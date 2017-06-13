@@ -225,10 +225,12 @@ class OpenStackProvider(providers.BaseProvider):
         self.os_tenant_id = self.keystone.get_project_id(os_tenant_name)
 
         # Retieve information about Keystone endpoint SSL configuration
-        e_cert_info = self._get_endpoint_ca_information(os_auth_url, insecure,
-                                                        cacert)
+        e_cert_info = self._get_endpoint_ca_information(opts.os_auth_url,
+                                                        opts.insecure,
+                                                        opts.os_cacert)
         self.keystone_cert_issuer = e_cert_info['issuer']
         self.keystone_trusted_cas = e_cert_info['trusted_cas']
+        self.os_cacert = opts.os_cacert
 
     def _get_endpoint_versions(self, endpoint_url, endpoint_type):
         '''Return the API and middleware versions of a compute endpoint.'''
@@ -247,13 +249,17 @@ class OpenStackProvider(providers.BaseProvider):
 
         if endpoint_type == 'occi':
             try:
-                headers = {'X-Auth-token': self.auth_token}
-                request_url = "%s/-/" % endpoint_url
                 if self.insecure:
                     verify = False
                 else:
                     verify = self.os_cacert
-                r = requests.get(request_url, headers=headers, verify=verify)
+
+                request_url = "%s/-/" % endpoint_url
+
+                r = self.session.get(request_url,
+                                     authenticated=True,
+                                     verify=verify)
+
                 if r.status_code == requests.codes.ok:
                     header_server = r.headers['Server']
                     e_middleware_version = re.search(r'ooi/([0-9.]+)',
@@ -310,12 +316,6 @@ class OpenStackProvider(providers.BaseProvider):
 
                 cert = client_ssl.get_peer_certificate()
                 issuer = self._get_dn(cert.get_issuer())
-
-                # XXX Do we want the root issuer cert?
-                # XXX Validate if top-most cert is the last one
-                # cert_chain = client_ssl.get_peer_cert_chain()
-                # last_cert = cert_chain[-1]
-                # issuer = last_cert.get_issuer().commonName
 
                 client_ca_list = client_ssl.get_client_ca_list()
                 trusted_cas = [self._get_dn(ca) for ca in client_ca_list]
@@ -511,7 +511,7 @@ class OpenStackProvider(providers.BaseProvider):
 
         instances = {}
 
-        for instance in self.api.servers.list():
+        for instance in self.nova.servers.list():
             ret = instance_template.copy()
             ret.update({
                 'instance_name': instance.name,
@@ -537,7 +537,7 @@ class OpenStackProvider(providers.BaseProvider):
         quotas = defaults.copy()
 
         try:
-            project_quotas = self.api.quotas.get(self.os_tenant_id)
+            project_quotas = self.nova.quotas.get(self.os_tenant_id)
             for resource in quota_resources:
                 try:
                     quotas[resource] = getattr(project_quotas, resource)
@@ -568,19 +568,14 @@ class OpenStackProvider(providers.BaseProvider):
         plugin = loading_base.get_plugin_loader(default_auth)
 
         for opt in plugin.get_options():
-            # FIXME(aloga): the code below has been commented. This commit has
-            # been cherry picked from another branch that took into account the
-            # VOs and configured projects. The code below needs to be
-            # uncommented whenever Glue2.1 is in place.
-
             # NOTE(aloga): we do not want a project to be passed from the CLI,
             # as we will iterate over it for each configured VO and project.
             # However, as the plugin is expecting them when parsing the
             # arguments we need to set them to None before calling the
             # load_auth_from_argparse_arguments method in the __init__ method
             # of this class.
-            # if opt.name in ("project-name", "project-id"):
-            #    continue
+            if opt.name in ("project-name", "project-id"):
+                continue
             parser.add_argument(*opt.argparse_args,
                                 default=opt.argparse_default,
                                 metavar=opt.metavar,

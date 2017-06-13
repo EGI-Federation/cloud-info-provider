@@ -123,7 +123,7 @@ class ComputeBDII(BaseBDII):
             project = share['project']
 
             endpoints = self._get_info_from_providers('get_compute_endpoints',
-                                                      {'os_tenant_name':
+                                                      {'os_project_name':
                                                           project})
 
             if not endpoints.get('endpoints'):
@@ -138,18 +138,19 @@ class ComputeBDII(BaseBDII):
                 endpoint.update(static_compute_info)
 
             images = self._get_info_from_providers('get_images',
-                                                   {'os_tenant_name': project})
+                                                   {'os_project_name':
+                                                       project})
 
             templates = self._get_info_from_providers('get_templates',
-                                                      {'os_tenant_name':
+                                                      {'os_project_name':
                                                           project})
 
             instances = self._get_info_from_providers('get_instances',
-                                                      {'os_tenant_name':
+                                                      {'os_project_name':
                                                           project})
 
             quotas = self._get_info_from_providers('get_compute_quotas',
-                                                   {'os_tenant_name':
+                                                   {'os_project_name':
                                                        project})
 
             for template_id, template in templates.items():
