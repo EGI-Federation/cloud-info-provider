@@ -88,6 +88,7 @@ class OpenStackProviderTest(base.TestCase):
                 'template_platform': 'amd64',
                 'template_network': 'private',
                 'template_disk': f.disk,
+                'template_ephemeral': f.ephemeral,
             }
 
         self.provider.legacy_occi_os = True
@@ -137,10 +138,11 @@ class OpenStackProviderTest(base.TestCase):
                 'template_memory': f.ram,
                 'template_cpu': f.vcpus,
                 'template_id': '%s#%s' % (url, name),
-                'template_native_id': "%s" % f.id,
+                'template_native_id': "%s" % f.name,
                 'template_platform': 'i686',
                 'template_network': 'private',
                 'template_disk': f.disk,
+                'template_ephemeral': f.ephemeral,
             }
 
         self.provider.legacy_occi_os = True
@@ -195,6 +197,7 @@ class OpenStackProviderTest(base.TestCase):
                 'template_platform': 'amd64',
                 'template_network': 'private',
                 'template_disk': f.disk,
+                'template_ephemeral': f.ephemeral,
             }
 
         with utils.nested(
@@ -359,6 +362,7 @@ class OpenStackProviderTest(base.TestCase):
                 'template_platform': 'i686',
                 'template_network': 'private',
                 'template_disk': f.disk,
+                'template_ephemeral': f.ephemeral,
             }
 
         self.provider.select_flavors = 'public'
