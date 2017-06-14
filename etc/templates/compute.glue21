@@ -16,6 +16,8 @@
     timestamp = datetime.now().isoformat()
     validity = 3600
 
+    all_endpoints = {url: endpoint for vo, share in shares.items() for url, endpoint in share['endpoints']['endpoints'].items()}
+
     instances = {instance_id: instance for vo, share in shares.items() for instance_id, instance in share['instances'].items()}
     running_instances = {instance_id: instance for instance_id, instance in instances.items() if instance['instance_status'] == 'ACTIVE'}
     suspended_instances = {instance_id: instance for instance_id, instance in instances.items() if instance['instance_status'] == 'SUSPENDED'}
@@ -112,6 +114,76 @@ GLUE2CloudComputingManagerVirtualdiskFormat: ${virtual_disk_format}
 GLUE2CloudComputingManagerFailover: ${static_compute_info['compute_failover']}
 GLUE2CloudComputingManagerLiveMigration: ${static_compute_info['compute_live_migration']}
 GLUE2CloudComputingManagerVMBackupRestore: ${static_compute_info['compute_vm_backup_restore']}
+
+##
+## List of Cloud Computing Endpoints - GLUE2CloudComputingEndpoint
+##
+## Images and templates are linked to each endpoints
+##
+## Native endpoints use native image and template IDs
+## OCCI endpoints use OCCI-specific images and templates IDs
+##
+
+% for url, endpoint in all_endpoints.items():
+<%
+    native_endpoint = endpoint['compute_api_type'] != 'OCCI'
+    if endpoint['compute_api_type'] == 'OpenStack':
+        interface_name = 'org.openstack.nova'
+        endpoint_semantics = 'https://developer.openstack.org/api-ref/compute'
+    elif endpoint['compute_api_type'] == 'OpenNebula':
+        interface_name = 'org.opennebula.compute'
+        endpoint_semantics = 'UNKNOWN'
+    else:
+        endpoint_semantics = 'http://occi-wg.org/about/specification'
+        interface_name = 'eu.egi.cloud.vm-management.occi'
+    endpoint_id = ("%s_%s_%s_%s" % (endpoint['compute_endpoint_url'],
+        endpoint['compute_api_type'], endpoint['compute_api_version'],
+        endpoint['compute_api_authn_method']))
+    endpoint_name = ("%s (%s/%s) at %s" % (endpoint['compute_api_type'],
+        endpoint['compute_api_version'], endpoint['compute_api_authn_method'],
+        endpoint['compute_endpoint_url']
+        ))
+%>\
+dn: GLUE2EndpointID=${endpoint_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${endpoint['suffix']}
+objectClass: GLUE2Entity
+objectClass: GLUE2Endpoint
+objectClass: GLUE2CloudComputingEndpoint
+GLUE2EndpointID: ${endpoint_id}
+GLUE2EntityName: Cloud Computing Endpoint ${endpoint_name}
+GLUE2EntityCreationTime: ${timestamp}
+GLUE2EntityValidity: ${validity}
+GLUE2EndpointURL: ${endpoint['compute_endpoint_url']}
+GLUE2EndpointServiceForeignKey: ${compute_service_id}
+% for capability in endpoint['compute_capabilities']:
+GLUE2EndpointCapability: ${capability}
+% endfor
+GLUE2EndpointQualityLevel: ${endpoint['compute_production_level']}
+GLUE2EndpointInterfaceName: ${interface_name}
+GLUE2EndpointHealthState: ok
+GLUE2EndpointHealthStateInfo: Endpoint functioning properly
+GLUE2EndpointServingState: ${endpoint['compute_production_level']}
+GLUE2EndpointTechnology: ${endpoint['compute_api_endpoint_technology']}
+GLUE2EndpointInterfaceVersion: ${endpoint['compute_api_version']}
+GLUE2EndpointImplementor: ${endpoint['compute_middleware_developer']}
+GLUE2EndpointImplementationName: ${endpoint['compute_middleware']}
+GLUE2EndpointImplementationVersion: ${endpoint['compute_middleware_version']}
+GLUE2EndpointDowntimeInfo: See the GOC DB for downtimes: https://goc.egi.eu/portal/index.php?Page_Type=Downtimes_Calendar&site=${site_name}
+GLUE2EndpointSemantics: ${endpoint_semantics}
+GLUE2EntityOtherInfo: Authn=${endpoint['compute_api_authn_method']}
+GLUE2EndpointIssuerCA: ${endpoint['endpoint_issuer']}
+% for trusted_ca in endpoint['endpoint_trusted_cas']:
+GLUE2EndpointTrustedCA: ${trusted_ca}
+% endfor
+# TODO find information for this attributes
+# GLUE2EndpointSupportedProfile:
+# GLUE2EndpointInterfaceExtension:
+# GLUE2EndpointStartTime:
+## XXX Disabled for now
+## GLUE2EndpointDowntimeAnnounce:
+## GLUE2EndpointDowntimeStart:
+## GLUE2EndpointDowntimeEnd:
+
+% endfor
 
 ##
 ## Computing share - GLUE2CloudComputingShare
@@ -420,7 +492,6 @@ GLUE2CloudComputingInstanceTypeNetworkInfo: ${share['network_info']}
 GLUE2CloudComputingInstanceTypeEphemeralStorage: ${template['template_ephemeral']}
 GLUE2CloudComputingInstanceTypeDisk: ${template['template_disk']}
 
-% endfor
 % endfor
 ##
 ## Access Policy - GLUE2AccessPolicy
