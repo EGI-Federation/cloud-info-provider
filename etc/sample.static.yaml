@@ -131,7 +131,7 @@ compute:
             platform: amd64
             network: public
             # Inbound connection true Or false
-            network_in: UNKNOWN
+            network_in: undefined
             # Outbound connection true or true
             network_out: true
 
