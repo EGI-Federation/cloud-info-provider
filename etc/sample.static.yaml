@@ -54,9 +54,9 @@ compute:
     hypervisor: Foo Hypervisor
     # Hypervisor version
     hypervisor_version: 0.42
-    # Supported images' virtual disk format
-    virtual_disk_formats:
-        - 'OVA'
+    # Supported images' virtual disk format: qcow2, raw, vmdk,...
+    # virtual_disk_formats:
+    #     - 'qcow2'
     # Service Production level (testing, candidate, production...)
     service_production_level: production
     # Service capabilities
