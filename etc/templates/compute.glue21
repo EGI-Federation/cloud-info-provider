@@ -174,14 +174,13 @@ GLUE2EndpointIssuerCA: ${endpoint['endpoint_issuer']}
 % for trusted_ca in endpoint['endpoint_trusted_cas']:
 GLUE2EndpointTrustedCA: ${trusted_ca}
 % endfor
-# TODO find information for this attributes
-# GLUE2EndpointSupportedProfile:
-# GLUE2EndpointInterfaceExtension:
-# GLUE2EndpointStartTime:
 ## XXX Disabled for now
 ## GLUE2EndpointDowntimeAnnounce:
 ## GLUE2EndpointDowntimeStart:
 ## GLUE2EndpointDowntimeEnd:
+## GLUE2EndpointSupportedProfile:
+## GLUE2EndpointInterfaceExtension:
+## GLUE2EndpointStartTime:
 
 ## End of endpoints
 % endfor
