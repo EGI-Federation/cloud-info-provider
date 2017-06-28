@@ -203,7 +203,8 @@ class OpenStackProvider(providers.BaseProvider):
                 aux_img['image_os_version'] = distro_version
             if image.metadata.get('image_version', None) is not None:
                 image_version = image.metadata['image_version']
-            elif image.metadata.get('vmcatcher_event_hv_version', None) is not None:
+            elif image.metadata.get('vmcatcher_event_hv_version', None) \
+                    is not None:
                 image_version = image.metadata['vmcatcher_event_hv_version']
             else:
                 if (image.metadata.get('distro', None) is not None) and (
