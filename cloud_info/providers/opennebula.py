@@ -156,7 +156,7 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
         for key in keys:
             if tc is None:
                 return None
-            tc = tc[key]
+            tc = tc.get(key)
         return tc
 
 
