@@ -2,4 +2,5 @@ Mako
 PyYAML
 six
 pbr
-defusedxml
+# For OpenNebula provider
+# defusedxml

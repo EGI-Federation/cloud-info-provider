@@ -25,7 +25,8 @@ probably need:
  - if you are generating information for OpenStack, you will also need
  to install python-novaclient.
 
-On RHEL you will also need to enable the [EPEL repository](http://fedoraproject.org/wiki/EPEL) for python-defusedxml.
+On RHEL you will also need to enable the [EPEL repository](http://fedoraproject.org/wiki/EPEL) for python-defusedxml
+that is required for the OpenNebula provider.
 
 ### Binary packages
 
