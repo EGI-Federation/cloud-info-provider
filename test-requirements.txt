@@ -1,6 +1,7 @@
 hacking<0.11,>=0.10.0
 bandit>=1.1.0
 coverage>=3.6
+defusedxml
 discover
 fixtures>=0.3.14
 python-subunit>=0.0.18

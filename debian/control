@@ -20,10 +20,9 @@ Section: python
 Depends: ${python:Depends}, ${misc:Depends},
  python-yaml,
  python-mako,
- python-six,
- python-defusedxml
+ python-six
 #Recommends: bdii
-Suggests: python-novaclient
+Suggests: python-novaclient, python-defusedxml
 Provides: ${python:Provides}
 Description: Cloud information provider for BDII.
  Information provider for Cloud Compute and Cloud Storage services.
