@@ -1,3 +1,18 @@
+python-cloud-info-provider (0.8.2-1) xenial; urgency=medium
+
+  [ Boris Parak ]
+  * Fix deep hash lookup (ON provider)
+
+  [ Andre Gemuend ]
+  * Optionally use the version entry from vmcatcher as image_version (OS provider)
+
+  [ Baptiste Grenier ]
+  * Fix bandit usage to search for security issues when using tox
+  * Use defusedxml to parse XML and fix bandit warnings (ON provider)
+  * Misc documentation and packages building fixes
+
+ -- Baptiste Grenier <baptiste.grenier@egi.eu>  Tue, 04 Jul 2017 16:34:03 +0100
+
 python-cloud-info-provider (0.8.1-1) xenial; urgency=medium
 
   [ Boris Parak ]
