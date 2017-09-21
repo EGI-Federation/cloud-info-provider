@@ -290,6 +290,9 @@ class OpenNebulaFakes(object):
         with open(os.path.join(sdir, 'one.templatepool.xml'), 'r') as f:
             self.templatepool = f.read()
 
+        with open(os.path.join(sdir, 'one.documentpool.xml'), 'r') as f:
+            self.documentpool = f.read()
+
         with open(os.path.join(
             sdir, 'opennebula_base_provider_images.json'), 'r') as f:
             self.opennebula_base_provider_expected_images = yaml.safe_load(f)

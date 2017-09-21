@@ -107,8 +107,10 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
                 aux_tpl['image_platform'] = tpl['template'].get(
                     'cloudkeeper_appliance_architecture')
 
-            if (self.cloudkeeper_images and not aux_tpl['image_marketplace_id']):
-                continue
+            if self.cloudkeeper_images:
+                if not aux_tpl['image_marketplace_id']:
+                    continue
+
             templates[tpl_id] = aux_tpl
         return templates
 
@@ -209,8 +211,10 @@ class IndigoONProvider(OpenNebulaBaseProvider):
                 aux_tpl['image_version'] = tpl['template'].get(
                     'cloudkeeper_appliance_version')
 
-            if (self.cloudkeeper_images and not aux_tpl['image_marketplace_id']):
-                continue
+            if self.cloudkeeper_images:
+                if not aux_tpl['image_marketplace_id']:
+                    continue
+
             templates[tpl_id] = aux_tpl
         return templates
 
@@ -246,8 +250,10 @@ class IndigoONProvider(OpenNebulaBaseProvider):
                     aux.get('description') or
                     aux.get('cloudkeeper_appliance_title'))
 
-            if (self.cloudkeeper_images and not aux_img['image_marketplace_id']):
-                continue
+            if self.cloudkeeper_images:
+                if not aux_img['image_marketplace_id']:
+                    continue
+
             images[img_id] = aux_img
         return images
 
@@ -276,9 +282,9 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
         template.update(self.static.get_template_defaults(prefix=True))
 
         if self.rocci_remote_templates:
-            templates = remote_templates(template)
+            templates = self.remote_templates(template)
         else:
-            templates = local_templates(template)
+            templates = self.local_templates(template)
 
         return templates
 
@@ -313,7 +319,7 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
         return templates
 
     def remote_templates(self, template):
-        document_type = 999 # TODO(bparak): configurable?
+        document_type = 999  # TODO(bparak): configurable?
 
         templates = {}
         for doc_id, doc in self._get_one_documents(document_type).items():
@@ -325,7 +331,8 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
                 'template_cpu': document['occi.compute.cores'],
                 'template_memory': int(document['occi.compute.memory'] * 1024),
                 'template_description': document['title'],
-                'template_disk': document['occi.compute.ephemeral_storage.size'],
+                'template_disk':
+                    document['occi.compute.ephemeral_storage.size'],
             })
 
             templates[aux['template_id']] = aux
@@ -365,8 +372,8 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
             '--rocci-remote-templates',
             action='store_true',
             default=False,
-            help=('If set, resource template definitions will be retrieved via OCA, '
-                  'not from a local directory.'))
+            help=('If set, resource template definitions will be retrieved '
+                  'via OCA, not from a local directory.'))
 
     @staticmethod
     def _gen_id(image_name, image_id, schema):
