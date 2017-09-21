@@ -24,7 +24,7 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
         self.opts = opts
         self.on_auth = opts.on_auth
         self.on_rpcxml_endpoint = opts.on_rpcxml_endpoint
-        self.vmcatcher_images = opts.vmcatcher_images
+        self.cloudkeeper_images = opts.cloudkeeper_images
 
         if not self.on_auth:
             msg = ('ERROR, You must provide a on_auth '
@@ -61,12 +61,17 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
 
     def _get_one_templates(self):
         response = self.server_proxy.one.templatepool.info(
-            self.on_auth, -2, -1, -1)
+            self.on_auth, -3, -1, -1)
         return self._handle_response(response)
 
     def _get_one_images(self):
         response = self.server_proxy.one.imagepool.info(
-            self.on_auth, -2, -1, -1)
+            self.on_auth, -3, -1, -1)
+        return self._handle_response(response)
+
+    def _get_one_documents(self, document_type):
+        response = self.server_proxy.one.documentpool.info(
+            self.on_auth, -3, -1, -1, document_type)
         return self._handle_response(response)
 
     def get_images(self):
@@ -102,7 +107,7 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
                 aux_tpl['image_platform'] = tpl['template'].get(
                     'cloudkeeper_appliance_architecture')
 
-            if (self.vmcatcher_images and not aux_tpl['image_marketplace_id']):
+            if (self.cloudkeeper_images and not aux_tpl['image_marketplace_id']):
                 continue
             templates[tpl_id] = aux_tpl
         return templates
@@ -127,11 +132,11 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
                   ' or http://localhost:2633/RPC2.'))
 
         parser.add_argument(
-            '--vmcatcher-images',
+            '--cloudkeeper-images', '--vmcatcher-images',
             action='store_true',
             default=False,
             help=('If set, include only information on images that '
-                  'have vmcatcher metadata, ignoring the others.'))
+                  'have cloudkeeper metadata, ignoring the others.'))
 
     @staticmethod
     def _gen_id(image_name, image_id, schema):
@@ -204,7 +209,7 @@ class IndigoONProvider(OpenNebulaBaseProvider):
                 aux_tpl['image_version'] = tpl['template'].get(
                     'cloudkeeper_appliance_version')
 
-            if (self.vmcatcher_images and not aux_tpl['image_marketplace_id']):
+            if (self.cloudkeeper_images and not aux_tpl['image_marketplace_id']):
                 continue
             templates[tpl_id] = aux_tpl
         return templates
@@ -241,7 +246,7 @@ class IndigoONProvider(OpenNebulaBaseProvider):
                     aux.get('description') or
                     aux.get('cloudkeeper_appliance_title'))
 
-            if (self.vmcatcher_images and not aux_img['image_marketplace_id']):
+            if (self.cloudkeeper_images and not aux_img['image_marketplace_id']):
                 continue
             images[img_id] = aux_img
         return images
@@ -250,7 +255,8 @@ class IndigoONProvider(OpenNebulaBaseProvider):
 class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
     def __init__(self, opts):
         self.rocci_template_dir = opts.rocci_template_dir
-        if not self.rocci_template_dir:
+        self.rocci_remote_templates = opts.rocci_remote_templates
+        if not self.rocci_template_dir and not self.rocci_remote_templates:
             msg = ('ERROR, You must provide a rocci_template_dir '
                    'via --rocci-template-dir')
             raise exceptions.OpenNebulaProviderException(msg)
@@ -269,6 +275,14 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
         }
         template.update(self.static.get_template_defaults(prefix=True))
 
+        if self.rocci_remote_templates:
+            templates = remote_templates(template)
+        else:
+            templates = local_templates(template)
+
+        return templates
+
+    def local_templates(self, template):
         templates = {}
         for mxn_file in self._absolute_file_paths(self.rocci_template_dir):
             mxn = self._read_mixin(mxn_file)
@@ -294,7 +308,28 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
                 'template_disk': disk,
             })
 
-            templates[flid] = aux
+            templates[aux['template_id']] = aux
+
+        return templates
+
+    def remote_templates(self, template):
+        document_type = 999 # TODO(bparak): configurable?
+
+        templates = {}
+        for doc_id, doc in self._get_one_documents(document_type).items():
+            document = json.load(doc['body'])
+
+            aux = template.copy()
+            aux.update({
+                'template_id': document['identifier'],
+                'template_cpu': document['occi.compute.cores'],
+                'template_memory': int(document['occi.compute.memory'] * 1024),
+                'template_description': document['title'],
+                'template_disk': document['occi.compute.ephemeral_storage.size'],
+            })
+
+            templates[aux['template_id']] = aux
+
         return templates
 
     @staticmethod
@@ -325,6 +360,13 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
             default='/etc/occi-server/backends/opennebula'
                     '/fixtures/resource_tpl',
             help='Location of the rOCCI-server resource template definitions.')
+
+        parser.add_argument(
+            '--rocci-remote-templates',
+            action='store_true',
+            default=False,
+            help=('If set, resource template definitions will be retrieved via OCA, '
+                  'not from a local directory.'))
 
     @staticmethod
     def _gen_id(image_name, image_id, schema):
