@@ -40,7 +40,7 @@ compute:
     # Middleware used (e.g. OpenNebula, CloudStack, OpenStack, etc)
     middleware: OpenNebula
     # Middleware version
-    middleware_version: 4.6
+    middleware_version: 0.0
     # Middleware developer
     middleware_developer: OpenNebula Team
     # Service Production level (testing, candidate, production...)
@@ -51,19 +51,14 @@ compute:
 
     endpoints:
         defaults:
-            api_authn_method: User/Password
+            api_authn_method: X509-VOMS
             production_level: production
 
-        https://cloud-service01.example.org:2633/RPC2:
-            endpoint_url: https://cloud-service01.example.org:2633/RPC2
-            api_type: ON-XML-RPC
-            api_version: 2
+        https://cloud-service01.example.org:11443:
+            endpoint_url: https://cloud-service01.example.org:11443
+            api_type: OCCI
+            api_version: 1.2
             api_endpoint_technology: REST
-
-        https://cloud-service02.example.org:9869:
-            endpoint_url: https://cloud-service02.example.org:9869
-            api_type: Sunstone GUI
-            api_version: 4.6
 
     # Templates are retreived automatically from rOCCI-server
     templates:
@@ -75,4 +70,4 @@ compute:
     images:
         defaults:
             platform: amd64
-            schema: http://occi.server.hostname.com/occi/infrastructure/os_tpl
+            schema: http://schemas.cloud-service01.example.org/occi/infrastructure/os_tpl
