@@ -179,11 +179,13 @@ class OpenNebulaROCCIProviderTest(OpenNebulaBaseProviderTest):
 
     def test_get_templates(self):
         self.assertDictEqual(
-            self.expected_templates, self.provider.get_templates())
+            self.expected_templates,
+            self.provider.get_templates())
 
     def test_get_templates_remote(self):
         self.assertDictEqual(
-            self.expected_templates_remote, self.provider_remote.get_templates())
+            self.expected_templates_remote,
+            self.provider_remote.get_templates())
 
 
 class IndigoONProviderTest(OpenNebulaBaseProviderTest):
