@@ -306,6 +306,10 @@ class OpenNebulaFakes(object):
             self.opennebula_rocci_provider_expected_templates = json.load(f)
 
         with open(os.path.join(
+            sdir, 'opennebula_rocci_provider_templates_remote.json'), 'r') as f:
+            self.opennebula_rocci_provider_expected_templates_remote = yaml.safe_load(f)
+
+        with open(os.path.join(
             sdir, 'indigo_on_provider_images.json'), 'r') as f:
             self.indigo_on_provider_expected_images = yaml.safe_load(f)
 

@@ -135,6 +135,8 @@ class OpenNebulaROCCIProviderTest(OpenNebulaBaseProviderTest):
         self.expected_images = FAKES.opennebula_rocci_provider_expected_images
         self.expected_templates = \
             FAKES.opennebula_rocci_provider_expected_templates
+        self.expected_templates_remote = \
+            FAKES.opennebula_rocci_provider_expected_templates_remote
 
     def setUp(self):
         class FakeProvider(self.provider_class):
@@ -165,11 +167,23 @@ class OpenNebulaROCCIProviderTest(OpenNebulaBaseProviderTest):
             rocci_remote_templates = False
             cloudkeeper_images = False
 
+        class OptsRemote(object):
+            on_auth = 'foo'
+            on_rpcxml_endpoint = 'bar'
+            rocci_template_dir = ''
+            rocci_remote_templates = True
+            cloudkeeper_images = False
+
         self.provider = FakeProvider(Opts())
+        self.provider_remote = FakeProvider(OptsRemote())
 
     def test_get_templates(self):
         self.assertDictEqual(
             self.expected_templates, self.provider.get_templates())
+
+    def test_get_templates_remote(self):
+        self.assertDictEqual(
+            self.expected_templates_remote, self.provider_remote.get_templates())
 
 
 class IndigoONProviderTest(OpenNebulaBaseProviderTest):

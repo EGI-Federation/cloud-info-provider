@@ -323,7 +323,7 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
 
         templates = {}
         for doc_id, doc in self._get_one_documents(document_type).items():
-            document = json.load(doc['body'])
+            document = json.loads(doc['template']['body'])
 
             aux = template.copy()
             aux.update({
