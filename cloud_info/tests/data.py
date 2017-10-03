@@ -1,5 +1,4 @@
 import collections
-import json
 import os.path
 import socket
 import yaml
@@ -290,6 +289,9 @@ class OpenNebulaFakes(object):
         with open(os.path.join(sdir, 'one.templatepool.xml'), 'r') as f:
             self.templatepool = f.read()
 
+        with open(os.path.join(sdir, 'one.documentpool.xml'), 'r') as f:
+            self.documentpool = f.read()
+
         with open(os.path.join(
             sdir, 'opennebula_base_provider_images.json'), 'r') as f:
             self.opennebula_base_provider_expected_images = yaml.safe_load(f)
@@ -300,7 +302,14 @@ class OpenNebulaFakes(object):
 
         with open(os.path.join(
             sdir, 'opennebula_rocci_provider_templates.json'), 'r') as f:
-            self.opennebula_rocci_provider_expected_templates = json.load(f)
+            self.opennebula_rocci_provider_expected_templates = \
+                yaml.safe_load(f)
+
+        jsonf = os.path.join(
+            sdir, 'opennebula_rocci_provider_templates_remote.json')
+        with open(jsonf, 'r') as f:
+            self.opennebula_rocci_provider_expected_templates_remote = \
+                yaml.safe_load(f)
 
         with open(os.path.join(
             sdir, 'indigo_on_provider_images.json'), 'r') as f:

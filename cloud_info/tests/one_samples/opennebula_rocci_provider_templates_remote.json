@@ -1,0 +1,56 @@
+{
+  "http://schemas.ogf.org/occi/infrastructure/compute/template/1.1#large": {
+    "template_cpu": 4,
+    "template_description": "CRTP/1.1 Resource Template - Large",
+    "template_disk": 40,
+    "template_id": "http://schemas.ogf.org/occi/infrastructure/compute/template/1.1#large",
+    "template_memory": 4096,
+    "template_network": "private",
+    "template_platform": "amd64"
+  },
+  "http://schemas.ogf.org/occi/infrastructure/compute/template/1.1#medium": {
+    "template_cpu": 2,
+    "template_description": "CRTP/1.1 Resource Template - Medium",
+    "template_disk": 20,
+    "template_id": "http://schemas.ogf.org/occi/infrastructure/compute/template/1.1#medium",
+    "template_memory": 2048,
+    "template_network": "private",
+    "template_platform": "amd64"
+  },
+  "http://schemas.ogf.org/occi/infrastructure/compute/template/1.1#mem_large": {
+    "template_cpu": 4,
+    "template_description": "CRTP/1.1 Resource Template - Large w/ 4x mem",
+    "template_disk": 40,
+    "template_id": "http://schemas.ogf.org/occi/infrastructure/compute/template/1.1#mem_large",
+    "template_memory": 16384,
+    "template_network": "private",
+    "template_platform": "amd64"
+  },
+  "http://schemas.ogf.org/occi/infrastructure/compute/template/1.1#mem_medium": {
+    "template_cpu": 2,
+    "template_description": "CRTP/1.1 Resource Template - Medium w/ 4x mem",
+    "template_disk": 20,
+    "template_id": "http://schemas.ogf.org/occi/infrastructure/compute/template/1.1#mem_medium",
+    "template_memory": 8192,
+    "template_network": "private",
+    "template_platform": "amd64"
+  },
+  "http://schemas.ogf.org/occi/infrastructure/compute/template/1.1#mem_small": {
+    "template_cpu": 1,
+    "template_description": "CRTP/1.1 Resource Template - Small w/ 4x mem",
+    "template_disk": 10,
+    "template_id": "http://schemas.ogf.org/occi/infrastructure/compute/template/1.1#mem_small",
+    "template_memory": 4096,
+    "template_network": "private",
+    "template_platform": "amd64"
+  },
+  "http://schemas.ogf.org/occi/infrastructure/compute/template/1.1#small": {
+    "template_cpu": 1,
+    "template_description": "CRTP/1.1 Resource Template - Small",
+    "template_disk": 10,
+    "template_id": "http://schemas.ogf.org/occi/infrastructure/compute/template/1.1#small",
+    "template_memory": 1024,
+    "template_network": "private",
+    "template_platform": "amd64"
+  }
+}
