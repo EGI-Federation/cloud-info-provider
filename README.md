@@ -30,8 +30,13 @@ that is required for the OpenNebula provider.
 
 ### Binary packages
 
-Packages are available at [EGI's AppDB](https://appdb.egi.eu/store/software/cloud.info.provider).
-Use the appropriate repository for your distribution and install using the usual tools.
+Latest packages are made available at [EGI's AppDB](https://appdb.egi.eu/store/software/cloud.info.provider).
+
+Packages having gone through a the [EGI CMD](https://wiki.egi.eu/wiki/EGI_Cloud_Middleware_Distribution)
+[Stagged Rollout and SQA process](https://wiki.egi.eu/wiki/EGI_Cloud_Middleware_Distribution_process)
+are available in the [CMD repositories](http://repository.egi.eu/).
+
+Use the appropriate repository for your distribution and install using the OS-specific tools.
 
 #### Building the packages using docker containers
 
@@ -45,7 +50,7 @@ The version is set according to the repository information (tags, commits,...).
 * The OpenStack repositories are only used to get the `python-pbr` build
   dependency.
 * On CentOS 6 install `centos-release-openstack` instead of
-  `centos-release-openstack-liberty`.
+  `centos-release-openstack-newton`.
 
 
 ```sh
@@ -55,14 +60,14 @@ cd cloud-info-provider
 git checkout X.X.X
 # Create a source tarball
 python setup.py sdist
-# Building in a container using the tarball
-docker run --rm -v $(pwd):/source -v $HOME/rpmbuild:/root/rpmbuild -it centos:7
-yum install centos-release-openstack-liberty rpm-build
-yum install python-pbr python-setuptools
-echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros
-mkdir -p ~/rpmbuild/SOURCES
+mkdir -p ~/rpmbuild/{SOURCES,SPECS}
 cp /source/dist/cloud_info_provider-*.tar.gz ~/rpmbuild/SOURCES/
 cp /source/rpm/cloud-info-provider.spec ~/rpmbuild/SPECS/
+# Building in a container using the tarball
+docker run --rm -v $(pwd):/source -v $HOME/rpmbuild:/root/rpmbuild -it centos:7
+yum install -y centos-release-openstack-newton rpm-build
+yum install -y python-pbr python-setuptools
+echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros
 rpmbuild -ba ~/rpmbuild/SPECS/cloud-info-provider.spec
 ```
 
@@ -75,16 +80,16 @@ The RPM will be available into the `~/rpmbuild` directory.
 git clone https://github.com/EGI-FCTF/cloud-info-provider.git
 cd cloud-info-provider
 git checkout X.X.X
+mkdir -p ~/debs/trusty
 # Building in a container using the source files
 docker run --rm -v $(pwd):/source -v $HOME/debs:/root/debs -it ubuntu:xenial
 apt update
-apt install devscripts debhelper git python-all-dev python-pbr python-setuptools
-cd /source
-debuild --no-tgz-check clean binary
-cp ../*.deb ~/debs
+apt install -y devscripts debhelper git python-all-dev python-pbr python-setuptools
+cd /source && debuild --no-tgz-check clean binary
+cp ../*.deb ~/debs/xenial
 ```
 
-The deb will be available into the `~/debs` directory.
+The deb will be available into the `~/debs/xenial` directory.
 
 ### From source
 
