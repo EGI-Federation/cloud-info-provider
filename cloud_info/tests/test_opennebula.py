@@ -24,13 +24,13 @@ class OpenNebulaBaseProviderOptionsTest(unittest.TestCase):
 
         self.assertEqual(opts.on_auth, 'foo')
         self.assertEqual(opts.on_rpcxml_endpoint, 'bar')
-        self.assertTrue(opts.vmcatcher_images)
+        self.assertTrue(opts.cloudkeeper_images)
 
     def test_options(self):
         class Opts(object):
             on_auth = 'foo'
             on_rpcxml_endpoint = 'bar'
-            vmcatcher_images = False
+            cloudkeeper_images = False
 
         # Check that the required opts are there
         for opt in ('on_auth', 'on_rpcxml_endpoint'):
@@ -61,14 +61,15 @@ class OpenNebulaROCCIProviderOptionsTest(OpenNebulaBaseProviderOptionsTest):
         self.assertEqual(opts.on_auth, 'foo')
         self.assertEqual(opts.on_rpcxml_endpoint, 'bar')
         self.assertEqual(opts.rocci_template_dir, 'test')
-        self.assertTrue(opts.vmcatcher_images)
+        self.assertTrue(opts.cloudkeeper_images)
 
     def test_options(self):
         class Opts(object):
             on_auth = 'foo'
             on_rpcxml_endpoint = 'bar'
             rocci_template_dir = 'test'
-            vmcatcher_images = False
+            rocci_remote_templates = False
+            cloudkeeper_images = False
 
         # Check that the required opts are there
         for opt in ('on_auth', 'on_rpcxml_endpoint', 'rocci_template_dir'):
@@ -96,7 +97,7 @@ class OpenNebulaBaseProviderTest(unittest.TestCase):
                 self.opts = opts
                 self.on_auth = opts.on_auth
                 self.on_rpcxml_endpoint = opts.on_rpcxml_endpoint
-                self.vmcatcher_images = opts.vmcatcher_images
+                self.cloudkeeper_images = opts.cloudkeeper_images
 
                 self.static = mock.Mock()
                 self.static.get_image_defaults.return_value = {}
@@ -109,7 +110,7 @@ class OpenNebulaBaseProviderTest(unittest.TestCase):
         class Opts(object):
             on_auth = 'oneadmin:opennebula'
             on_rpcxml_endpoint = 'http://localhost:2633/RPC2'
-            vmcatcher_images = False
+            cloudkeeper_images = False
 
         self.provider = FakeProvider(Opts())
 
@@ -134,6 +135,8 @@ class OpenNebulaROCCIProviderTest(OpenNebulaBaseProviderTest):
         self.expected_images = FAKES.opennebula_rocci_provider_expected_images
         self.expected_templates = \
             FAKES.opennebula_rocci_provider_expected_templates
+        self.expected_templates_remote = \
+            FAKES.opennebula_rocci_provider_expected_templates_remote
 
     def setUp(self):
         class FakeProvider(self.provider_class):
@@ -142,7 +145,8 @@ class OpenNebulaROCCIProviderTest(OpenNebulaBaseProviderTest):
                 self.on_auth = opts.on_auth
                 self.on_rpcxml_endpoint = opts.on_rpcxml_endpoint
                 self.rocci_template_dir = opts.rocci_template_dir
-                self.vmcatcher_images = opts.vmcatcher_images
+                self.rocci_remote_templates = opts.rocci_remote_templates
+                self.cloudkeeper_images = opts.cloudkeeper_images
 
                 self.xml_parser = xml.etree.ElementTree
                 self.static = mock.Mock()
@@ -153,18 +157,35 @@ class OpenNebulaROCCIProviderTest(OpenNebulaBaseProviderTest):
                     'OK', FAKES.templatepool)
                 self.server_proxy.one.imagepool.info.return_value = (
                     'OK', FAKES.imagepool)
+                self.server_proxy.one.documentpool.info.return_value = (
+                    'OK', FAKES.documentpool)
 
         class Opts(object):
             on_auth = 'foo'
             on_rpcxml_endpoint = 'bar'
             rocci_template_dir = FAKES.rocci_dir
-            vmcatcher_images = False
+            rocci_remote_templates = False
+            cloudkeeper_images = False
+
+        class OptsRemote(object):
+            on_auth = 'foo'
+            on_rpcxml_endpoint = 'bar'
+            rocci_template_dir = ''
+            rocci_remote_templates = True
+            cloudkeeper_images = False
 
         self.provider = FakeProvider(Opts())
+        self.provider_remote = FakeProvider(OptsRemote())
 
     def test_get_templates(self):
         self.assertDictEqual(
-            self.expected_templates, self.provider.get_templates())
+            self.expected_templates,
+            self.provider.get_templates())
+
+    def test_get_templates_remote(self):
+        self.assertDictEqual(
+            self.expected_templates_remote,
+            self.provider_remote.get_templates())
 
 
 class IndigoONProviderTest(OpenNebulaBaseProviderTest):
@@ -180,7 +201,7 @@ class IndigoONProviderTest(OpenNebulaBaseProviderTest):
                 self.opts = opts
                 self.on_auth = opts.on_auth
                 self.on_rpcxml_endpoint = opts.on_rpcxml_endpoint
-                self.vmcatcher_images = opts.vmcatcher_images
+                self.cloudkeeper_images = opts.cloudkeeper_images
 
                 self.xml_parser = xml.etree.ElementTree
                 self.static = mock.Mock()
@@ -195,7 +216,7 @@ class IndigoONProviderTest(OpenNebulaBaseProviderTest):
         class Opts(object):
             on_auth = 'foo'
             on_rpcxml_endpoint = 'bar'
-            vmcatcher_images = False
+            cloudkeeper_images = False
 
         self.provider = FakeProvider(Opts())
 
