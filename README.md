@@ -60,14 +60,15 @@ cd cloud-info-provider
 git checkout X.X.X
 # Create a source tarball
 python setup.py sdist
-mkdir -p ~/rpmbuild/{SOURCES,SPECS}
-cp /source/dist/cloud_info_provider-*.tar.gz ~/rpmbuild/SOURCES/
-cp /source/rpm/cloud-info-provider.spec ~/rpmbuild/SPECS/
+mkdir ~/rpmbuild
 # Building in a container using the tarball
 docker run --rm -v $(pwd):/source -v $HOME/rpmbuild:/root/rpmbuild -it centos:7
 yum install -y centos-release-openstack-newton rpm-build
 yum install -y python-pbr python-setuptools
 echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros
+mkdir -p ~/rpmbuild/{SOURCES,SPECS}
+cp /source/dist/cloud_info_provider-*.tar.gz ~/rpmbuild/SOURCES/
+cp /source/rpm/cloud-info-provider.spec ~/rpmbuild/SPECS/
 rpmbuild -ba ~/rpmbuild/SPECS/cloud-info-provider.spec
 ```
 
