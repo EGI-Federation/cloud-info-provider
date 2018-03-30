@@ -1,17 +1,19 @@
 import argparse
 import mock
-import unittest
 import xml.etree.ElementTree
 
 from cloud_info import exceptions
 from cloud_info.providers import opennebula
+from cloud_info.tests import base
 from cloud_info.tests import data
 
 FAKES = data.ONE_FAKES
 
 
-class OpenNebulaBaseProviderOptionsTest(unittest.TestCase):
+class OpenNebulaBaseProviderOptionsTest(base.TestCase):
     def setUp(self):
+        super(OpenNebulaBaseProviderOptionsTest, self).setUp()
+
         self.provider = opennebula.OpenNebulaBaseProvider
 
     def test_populate_parser(self):
@@ -42,11 +44,14 @@ class OpenNebulaBaseProviderOptionsTest(unittest.TestCase):
 
 class OpenNebulaProviderOptionsTest(OpenNebulaBaseProviderOptionsTest):
     def setUp(self):
+        super(OpenNebulaProviderOptionsTest, self).setUp()
+
         self.provider = opennebula.OpenNebulaProvider
 
 
 class OpenNebulaROCCIProviderOptionsTest(OpenNebulaBaseProviderOptionsTest):
     def setUp(self):
+        super(OpenNebulaROCCIProviderOptionsTest, self).setUp()
         self.provider = opennebula.OpenNebulaROCCIProvider
 
     def test_populate_parser(self):
@@ -81,10 +86,11 @@ class OpenNebulaROCCIProviderOptionsTest(OpenNebulaBaseProviderOptionsTest):
 
 class IndigoONProviderOptionsTest(OpenNebulaBaseProviderOptionsTest):
     def setUp(self):
+        super(IndigoONProviderOptionsTest, self).setUp()
         self.provider = opennebula.IndigoONProvider
 
 
-class OpenNebulaBaseProviderTest(unittest.TestCase):
+class OpenNebulaBaseProviderTest(base.TestCase):
     def __init__(self, *args, **kwargs):
         super(OpenNebulaBaseProviderTest, self).__init__(*args, **kwargs)
         self.provider_class = opennebula.OpenNebulaBaseProvider
@@ -92,6 +98,8 @@ class OpenNebulaBaseProviderTest(unittest.TestCase):
         self.expected_images = FAKES.opennebula_base_provider_expected_images
 
     def setUp(self):
+        super(OpenNebulaBaseProviderTest, self).setUp()
+
         class FakeProvider(self.provider_class):
             def __init__(self, opts):
                 self.opts = opts
@@ -139,6 +147,8 @@ class OpenNebulaROCCIProviderTest(OpenNebulaBaseProviderTest):
             FAKES.opennebula_rocci_provider_expected_templates_remote
 
     def setUp(self):
+        super(OpenNebulaROCCIProviderTest, self).setUp()
+
         class FakeProvider(self.provider_class):
             def __init__(self, opts):
                 self.opts = opts
@@ -196,6 +206,8 @@ class IndigoONProviderTest(OpenNebulaBaseProviderTest):
         self.expected_templates = FAKES.indigo_on_provider_expected_templates
 
     def setUp(self):
+        super(IndigoONProviderTest, self).setUp()
+
         class FakeProvider(self.provider_class):
             def __init__(self, opts):
                 self.opts = opts

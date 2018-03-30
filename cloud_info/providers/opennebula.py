@@ -6,20 +6,20 @@ from cloud_info import exceptions
 from cloud_info import providers
 from cloud_info import utils
 
+try:
+    import defusedxml.ElementTree
+    from defusedxml import xmlrpc
+    from six.moves import xmlrpc_client as xmlrpclib  # nosec
+    # Protect the XMLRPC parser from various XML-based threats
+    xmlrpc.monkey_patch()
+except ImportError:
+    msg = 'Cannot import defusedxml ElementTree and/or xmlrpc.'
+    raise exceptions.OpenNebulaProviderException(msg)
+
 
 class OpenNebulaBaseProvider(providers.BaseProvider):
     def __init__(self, opts):
         super(OpenNebulaBaseProvider, self).__init__(opts)
-
-        try:
-            import defusedxml.ElementTree
-            from defusedxml import xmlrpc
-            import xmlrpclib  # nosec
-            # Protect the XMLRPC parser from various XML-based threats
-            xmlrpc.monkey_patch()
-        except ImportError:
-            msg = 'Cannot import defusedxml ElementTree and/or xmlrpc.'
-            raise exceptions.OpenNebulaProviderException(msg)
 
         self.opts = opts
         self.on_auth = opts.on_auth
