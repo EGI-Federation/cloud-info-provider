@@ -11,6 +11,10 @@ The generated representation is described using a
 [Mako](http://www.makotemplates.org/) template having access to the cloud
 middleware information.
 
+Supported cloud middleware providers:
+* OpenNebula
+* OpenStack using Keystone authentication with API v3 *only*
+
 ## Installation
 
 ### Dependencies
@@ -27,6 +31,19 @@ probably need:
 
 On RHEL you will also need to enable the [EPEL repository](http://fedoraproject.org/wiki/EPEL) for python-defusedxml
 that is required for the OpenNebula provider.
+
+For the time being the pacakge is the same for all the providers, so
+provider-specific dependencies needs to be installed manually.
+
+#### OpenStack provider dependencies
+
+* python-novaclient
+* python-glanceclient
+* python-keystoneauth1
+
+#### OpenNebula provider dependencies
+
+* python-defusedxml
 
 ### Binary packages
 
@@ -160,8 +177,9 @@ listing of options.
 For example for OpenStack, use a command line similar to the following:
 ```sh
 cloud-info-provider-service --yaml-file /etc/cloud-info-provider/static.yaml \
-    --middleware OpenStack --os-username <username> --os-password <password> \
-    --os-tenant-name <tenant> --os-auth-url <auth-url>
+    --middleware openstack --os-username <username> --os-password <password> \
+    --os-user-domain-name default --os-project-name <tenant> \
+    --os-project-domain-name default --os-auth-url <auth-url>
 ```
 
 **Test the generation of the LDIF before running the provider into your BDII!**
@@ -191,9 +209,9 @@ calls the provider with the correct options for your site:
 
 cloud-info-provider-service --yaml /etc/cloud-info-provider/openstack.yaml \
                             --middleware openstack \
-                            --os-username <username> --os-password <passwd> \
-                            --os-tenant-name <tenant> --os-auth-url <url>
-
+                            --os-username <username> --os-password <password> \
+                            --os-user-domain-name default --os-project-name <tenant> \
+                            --os-project-domain-name default --os-auth-url <auth-url>
 ```
 
 Give execution permission:

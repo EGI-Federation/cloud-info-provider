@@ -1,3 +1,17 @@
+python-cloud-info-provider (0.9.0-1) xenial; urgency=medium
+
+  [ Alvaro Lopez ]
+  * Use keystoneauth and v3 API (OS provider)
+  * OpenStack Identity API v2.0 isn't supported anymore
+
+  [ Boris Parak ]
+  * Fix entry updates for ApplicationEnvironment
+
+  [ Baptiste Grenier ]
+  * Updated package building and documentation
+
+ -- Baptiste Grenier <baptiste.grenier@egi.eu>  Fri, 30 Mar 2018 17:51:03 +0200
+
 python-cloud-info-provider (0.8.4-1) xenial; urgency=medium
 
   [ Boris Parak ]

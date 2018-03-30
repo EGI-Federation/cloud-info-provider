@@ -6,7 +6,7 @@
 
 Summary: Information provider for Cloud Compute and Cloud Storage services for BDII
 Name: cloud-info-provider
-Version: 0.8.4
+Version: 0.9.0
 Release: 1%{?dist}
 Group: Applications/Internet
 License: ASL 2.0
@@ -26,6 +26,8 @@ Requires: python-six
 #Requires: python-defusedxml
 # For OpenStack
 #Requires: python-novaclient
+#Requires: python-glanceclient
+#Requires: python-keystoneauth1
 Obsoletes: cloud-info-provider-service
 BuildArch: noarch
 
@@ -55,6 +57,10 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/cloud-info-provider/
 
 %changelog
+* Fri Mar 30 2018 Baptiste Grenier <baptiste.grenier@egi.eu> 0.9.0
+- Use keystoneauth and v3 API, deprecate v2.0 API (Alvaro Lopez)
+- Fix entry updates for ApplicationEnvironment (Boris Parak)
+- Update package building and documentation (Baptiste Grenier)
 * Tue Oct 03 2017 Baptiste Grenier <baptiste.grenier@egi.eu> 0.8.4
 - Add support for rOCCI-server v2 (Boris Parak)
 * Tue Jul 04 2017 Baptiste Grenier <baptiste.grenier@egi.eu> 0.8.3

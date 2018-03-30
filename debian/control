@@ -22,7 +22,7 @@ Depends: ${python:Depends}, ${misc:Depends},
  python-mako,
  python-six
 #Recommends: bdii
-Suggests: python-novaclient, python-defusedxml
+Suggests: python-novaclient, python-defusedxml, python-glanceclient, python-keystoneauth1
 Provides: ${python:Provides}
 Description: Cloud information provider for BDII.
  Information provider for Cloud Compute and Cloud Storage services.
