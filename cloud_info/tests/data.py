@@ -187,92 +187,59 @@ class OpenStackFakes(object):
 
         self.flavors = [Flavor(**f) for f in flavors]
 
-        Image = collections.namedtuple(
-            'Image',
-            ('name', 'id', 'links', 'metadata'))
-
         # XXX add docker information
         # XXX some fake images should include more information from AppDB
-        images = (
+        self.images = (
             {
                 'name': 'fooimage',
                 'id': 'foo.id',
                 'metadata': {},
-                'links': [{
-                    'type': 'application/vnd.openstack.image',
-                    'href': 'http://example.org/',
-                }]
+                'file': 'v2/foo.id/file',
             },
             {
                 'name': 'barimage',
                 'id': 'bar id',
                 'metadata': {},
-                'links': []
+                'file': 'v2/bar id/file',
             },
             {
                 'name': 'bazimage',
                 'id': 'baz id',
-                'metadata': {
-                    'docker_id': 'sha1:xxxxxxxxxxxxxxxxxxxxxxxxxx',
-                    'docker_tag': 'latest',
-                    'docker_name': 'test/image',
-                },
-                'links': []
+                'docker_id': 'sha1:xxxxxxxxxxxxxxxxxxxxxxxxxx',
+                'docker_tag': 'latest',
+                'docker_name': 'test/image',
+                'file': 'v2/baz id/file',
             },
         )
-        self.images = [Image(**i) for i in images]
 
-        catalog = (
-            (
-                'nova', 'compute', '1b7f14c87d8c42ad962f4d3a5fd13a77',
-                'https://cloud.example.org:8774/v1.1/ce2d'
-            ),
-            (
-                'ceilometer', 'metering', '5acd54c66f3641fd948fa363fa5c9d0a',
-                'https://cloud.example.org:8777/'
-            ),
-            (
-                'nova-volume', 'volume', '5afb318eedd44a71ab8362cc917f929b',
-                'http://cloudvolume01.example.org:8776/v1/ce2d'
-            ),
-            (
-                'ec2', 'ec2', '93ccd85773d24f238c6f2fab802cfd06',
-                'https://cloud.example.org:8773/services/Admin'
-            ),
-            (
-                'occi', 'occi', '03e087c8fb3b495c9a360bcba3abf914',
-                'https://cloud.example.org:8787/'
-            ),
-            (
-                'keystone', 'identity', '510c45b865ba4f40997b91a85552f3e2',
-                'https://keystone.example.org:35357/v2.0'
-            ),
-            (
-                'glance', 'image', '0ceb45ad3ee84f9ca5c1809b07715d40',
-                'https://glance.example.org:9292/',
-            ),
-        )
+        class Catalog(object):
+            @staticmethod
+            def _format_catalog_entry(name, type_, id_, url, interface):
+                service = {
+                    type_: [{
+                        'url': url,
+                        'interface': interface,
+                        'region': u'RegionOne',
+                        'region_id': u'RegionOne',
+                        'id': id_
+                    }]
+                }
+                return service
 
-        self.catalog = {
-            'access': {
-                'serviceCatalog': [],
-            }
-        }
+            def get_endpoints(self, service_type=None, interface=None):
+                if service_type == "occi":
+                    return self._format_catalog_entry(
+                        'occi', 'occi', '03e087c8fb3b495c9a360bcba3abf914',
+                        'https://cloud.example.org:8787/', interface
+                    )
+                elif service_type == "compute":
+                    return self._format_catalog_entry(
+                        'nova', 'compute', '1b7f14c87d8c42ad962f4d3a5fd13a77',
+                        'https://cloud.example.org:8774/v1.1/ce2d', interface
+                    )
 
-        for name, type_, id_, url in catalog:
-            service = {
-                'endpoints': [{
-                    'adminURL': url,
-                    'publicURL': url,
-                    'internalURL': url,
-                    'id': id_,
-                    'region': 'RegionOne'
-                }],
-                'endpoints_links': [],
-                'name': name,
-                'type': type_
-            }
-            self.catalog['access']['serviceCatalog'].append(service)
+        self.catalog = Catalog()
+
 
 OS_FAKES = OpenStackFakes()
 

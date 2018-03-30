@@ -1,10 +1,10 @@
-import unittest
-
 import cloud_info.providers
+from cloud_info.tests import base
 
 
-class BaseProviderTest(unittest.TestCase):
+class BaseProviderTest(base.TestCase):
     def setUp(self):
+        super(BaseProviderTest, self).setUp()
         self.provider = cloud_info.providers.BaseProvider(None)
 
     def test_provider_get_site_info(self):

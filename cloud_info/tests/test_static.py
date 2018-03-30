@@ -1,18 +1,20 @@
 import os.path
-import unittest
 
 import mock
 import six
 
 from cloud_info import exceptions
 from cloud_info.providers import static as static_provider
+from cloud_info.tests import base
 from cloud_info.tests import data
 
 DATA = data.DATA
 
 
-class StaticProviderTest(unittest.TestCase):
+class StaticProviderTest(base.TestCase):
     def setUp(self):
+        super(StaticProviderTest, self).setUp()
+
         class Opts(object):
             yaml_file = None
             full_bdii_ldif = False
