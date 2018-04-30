@@ -1,6 +1,6 @@
 # Cloud Information provider
 
-[![BuildStatus](https://travis-ci.org/EGI-FCTF/cloud-info-provider.svg?branch=master)](https://travis-ci.org/EGI-FCTF/cloud-info-provider)
+[![BuildStatus](https://travis-ci.org/EGI-Foundation/cloud-info-provider.svg?branch=master)](https://travis-ci.org/EGI-Foundation/cloud-info-provider)
 
 The Cloud Information provider generates a representation of cloud resources,
 that can be published inside a BDII (using the provided LDIF templates for a
@@ -72,7 +72,7 @@ The version is set according to the repository information (tags, commits,...).
 
 ```sh
 # Checkout tag to be packaged
-git clone https://github.com/EGI-FCTF/cloud-info-provider.git
+git clone https://github.com/EGI-Foundation/cloud-info-provider.git
 cd cloud-info-provider
 git checkout X.X.X
 # Create a source tarball
@@ -95,7 +95,7 @@ The RPM will be available into the `~/rpmbuild` directory.
 
 ```sh
 # Checkout tag to be packaged
-git clone https://github.com/EGI-FCTF/cloud-info-provider.git
+git clone https://github.com/EGI-Foundation/cloud-info-provider.git
 cd cloud-info-provider
 git checkout X.X.X
 mkdir -p ~/debs/trusty
@@ -124,7 +124,7 @@ sudo chmod g+rwx /etc/cloud-info-provider
 ```
 
 ```sh
-git clone https://github.com/EGI-FCTF/cloud-info-provider
+git clone https://github.com/EGI-Foundation/cloud-info-provider
 cd cloud-info-provider
 pip install .
 ```
