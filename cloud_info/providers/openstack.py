@@ -234,6 +234,8 @@ class OpenStackProvider(providers.BaseProvider):
         for e_type, e_data in supported_endpoints.items():
             epts = catalog.get_endpoints(service_type=e_type,
                                          interface="public")
+            if not epts:
+                continue
             for ept in epts[e_type]:
                 e_id = ept['id']
                 e_url = ept['url']
