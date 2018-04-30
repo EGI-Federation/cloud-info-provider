@@ -1,6 +1,6 @@
 python-cloud-info-provider (0.9.1-1) xenial; urgency=medium
 
-  [ Enold Fernandez ]
+  [ Enol Fernandez ]
   * OCCI is optional, do not fail if no OCCI endpoint is present.
 
   [ Baptiste Grenier ]
