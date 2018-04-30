@@ -98,7 +98,7 @@ The RPM will be available into the `~/rpmbuild` directory.
 git clone https://github.com/EGI-Foundation/cloud-info-provider.git
 cd cloud-info-provider
 git checkout X.X.X
-mkdir -p ~/debs/trusty
+mkdir -p ~/debs/xenial
 # Building in a container using the source files
 docker run --rm -v $(pwd):/source -v $HOME/debs:/root/debs -it ubuntu:xenial
 apt update
