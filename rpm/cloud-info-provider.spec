@@ -6,7 +6,7 @@
 
 Summary: Information provider for Cloud Compute and Cloud Storage services for BDII
 Name: cloud-info-provider
-Version: 0.9.0
+Version: 0.9.1
 Release: 1%{?dist}
 Group: Applications/Internet
 License: ASL 2.0
@@ -57,6 +57,9 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/cloud-info-provider/
 
 %changelog
+* Mon Apr 30 2018 Baptiste Grenier <baptiste.grenier@egi.eu> 0.9.1
+- OCCI is optional, do not fail if no OCCI endpoint is present (Enol Fernandez)
+- Update organization name in documentation (Baptiste Grenier)
 * Fri Mar 30 2018 Baptiste Grenier <baptiste.grenier@egi.eu> 0.9.0
 - Use keystoneauth and v3 API, deprecate v2.0 API (Alvaro Lopez)
 - Fix entry updates for ApplicationEnvironment (Boris Parak)
