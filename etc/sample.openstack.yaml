@@ -47,25 +47,3 @@ compute:
             # custom property) are shown
             require_marketplace_id: true
             platform: amd64
-
-# There's no dynamic provider for Swift, so this needs to be filled
-storage:
-    total_storage: 0
-    middleware: OpenStack Swift
-    # Middleware version
-    middleware_version: version
-    # Middleware developer
-    middleware_developer: OpenStack Foundation
-    capabilities:
-        - cloud.data.upload
-
-    endpoints:
-        defaults:
-            api_type: CDMI
-            api_version: 1.0.1
-            api_endpoint_technology: REST
-            api_authn_method: X509-VOMS
-
-        https://storage-service01.example.org:8080:
-
-        https://storage-service02.example.org:8080:
