@@ -3,31 +3,6 @@ site:
     # retreived from /etc/glite-info-static/site/site.cfg )
     #name: SITE_NAME
 
-    # Site url
-    #url: http://site.url.example.org/
-    # Production level
-    #production_level: production
-    # Two digit country code
-    #country: ES
-    # Site Longitude
-    #longitude: 0.0
-    # Site Latitude
-    #latitude: 0.0
-    # Your affiliated NGI
-    #ngi: NGI_FOO
-    # Contact email
-    #general_contact: general-support@example.org
-    # User support email
-    #user_support_contact: user-support@example.org
-    # Sysadmin contact email
-    #sysadmin_contact: support@example.org
-    # Security contacts email email
-    #security_contact: security-support@example.org
-    # User support email
-    #bdii_host: site.bdii.example.org
-    # User support email
-    #bdii_port: 2170
-
 compute:
     # Total number of cores available
     total_cores: 0
@@ -72,25 +47,3 @@ compute:
             # custom property) are shown
             require_marketplace_id: true
             platform: amd64
-
-# There's no dynamic provider for Swift, so this needs to be filled
-storage:
-    total_storage: 0
-    middleware: OpenStack Swift
-    # Middleware version
-    middleware_version: version
-    # Middleware developer
-    middleware_developer: OpenStack Foundation
-    capabilities:
-        - cloud.data.upload
-
-    endpoints:
-        defaults:
-            api_type: CDMI
-            api_version: 1.0.1
-            api_endpoint_technology: REST
-            api_authn_method: X509-VOMS
-
-        https://storage-service01.example.org:8080:
-
-        https://storage-service02.example.org:8080:
