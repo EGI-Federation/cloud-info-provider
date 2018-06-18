@@ -15,7 +15,9 @@ def get_variables_from_template(template, ignored_fields=[]):
     with open(template, "r") as f:
         content = f.read()
 
-    regexp = re.compile('%\((.+?)\)s')
+    # Look for variables names like
+    # ${static_compute_info['compute_service_production_level']}
+    regexp = re.compile('\${[^\[]+\[\'(.+?)\'\]}')
     l = set(regexp.findall(content))
     for k in itertools.chain(IGNORED_FIELDS, ignored_fields):
         if k in l:
