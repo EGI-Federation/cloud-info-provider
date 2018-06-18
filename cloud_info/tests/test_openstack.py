@@ -104,13 +104,27 @@ class OpenStackProviderTest(base.TestCase):
                               templates,
                               template="compute.ldif",
                               ignored_fields=[
+                                  "compute_api_type",
+                                  "compute_api_version",
+                                  "compute_api_endpoint_technology",
+                                  "compute_capabilities",
+                                  "compute_endpoint_url",
+                                  "compute_hypervisor",
+                                  "compute_hypervisor_version",
+                                  "compute_middleware",
+                                  "compute_middleware_developer",
+                                  "compute_middleware_version",
+                                  "compute_production_level",
+                                  "compute_api_authn_method",
                                   "compute_service_name",
+                                  "compute_service_production_level",
+                                  "compute_total_cores",
+                                  "compute_total_ram",
+                                  "image_id",
                                   "image_name",
-                                  "image_os_family",
-                                  "image_os_name",
-                                  "image_os_version",
-                                  "image_platform",
-                                  "image_version"
+                                  "image_version",
+                                  "image_description",
+                                  "image_marketplace_id"
                               ])
 
     def test_get_legacy_templates_with_defaults_from_static(self):
@@ -147,13 +161,27 @@ class OpenStackProviderTest(base.TestCase):
                               templates,
                               template="compute.ldif",
                               ignored_fields=[
+                                  "compute_api_type",
+                                  "compute_api_version",
+                                  "compute_api_endpoint_technology",
+                                  "compute_capabilities",
+                                  "compute_endpoint_url",
+                                  "compute_hypervisor",
+                                  "compute_hypervisor_version",
+                                  "compute_middleware",
+                                  "compute_middleware_developer",
+                                  "compute_middleware_version",
+                                  "compute_production_level",
+                                  "compute_api_authn_method",
                                   "compute_service_name",
+                                  "compute_service_production_level",
+                                  "compute_total_cores",
+                                  "compute_total_ram",
+                                  "image_id",
                                   "image_name",
-                                  "image_os_family",
-                                  "image_os_name",
-                                  "image_os_version",
-                                  "image_platform",
-                                  "image_version"
+                                  "image_version",
+                                  "image_description",
+                                  "image_marketplace_id"
                               ])
 
     def test_get_templates_with_defaults(self):
@@ -186,13 +214,27 @@ class OpenStackProviderTest(base.TestCase):
                               templates,
                               template="compute.ldif",
                               ignored_fields=[
+                                  "compute_api_type",
+                                  "compute_api_version",
+                                  "compute_api_endpoint_technology",
+                                  "compute_capabilities",
+                                  "compute_endpoint_url",
+                                  "compute_hypervisor",
+                                  "compute_hypervisor_version",
+                                  "compute_middleware",
+                                  "compute_middleware_developer",
+                                  "compute_middleware_version",
+                                  "compute_production_level",
+                                  "compute_api_authn_method",
                                   "compute_service_name",
+                                  "compute_service_production_level",
+                                  "compute_total_cores",
+                                  "compute_total_ram",
+                                  "image_id",
                                   "image_name",
-                                  "image_os_family",
-                                  "image_os_name",
-                                  "image_os_version",
-                                  "image_platform",
-                                  "image_version"
+                                  "image_version",
+                                  "image_description",
+                                  "image_marketplace_id"
                               ])
 
     def test_get_templates_with_defaults_from_static(self):
@@ -227,13 +269,27 @@ class OpenStackProviderTest(base.TestCase):
                               templates,
                               template="compute.ldif",
                               ignored_fields=[
+                                  "compute_api_type",
+                                  "compute_api_version",
+                                  "compute_api_endpoint_technology",
+                                  "compute_capabilities",
+                                  "compute_endpoint_url",
+                                  "compute_hypervisor",
+                                  "compute_hypervisor_version",
+                                  "compute_middleware",
+                                  "compute_middleware_developer",
+                                  "compute_middleware_version",
+                                  "compute_production_level",
+                                  "compute_api_authn_method",
                                   "compute_service_name",
+                                  "compute_service_production_level",
+                                  "compute_total_cores",
+                                  "compute_total_ram",
+                                  "image_id",
                                   "image_name",
-                                  "image_os_family",
-                                  "image_os_name",
-                                  "image_os_version",
-                                  "image_platform",
-                                  "image_version"
+                                  "image_version",
+                                  "image_description",
+                                  "image_marketplace_id"
                               ])
 
     @unittest.expectedFailure
