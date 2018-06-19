@@ -76,9 +76,6 @@ class OpenStackProviderTest(base.TestCase):
         expected_templates = {}
         url = 'http://schemas.openstack.org/template/resource'
         for f in FAKES.flavors:
-            if not f.is_public:
-                continue
-
             name = f.name.strip().replace(' ', '_').replace('.', '-').lower()
             expected_templates[f.id] = {
                 'template_memory': f.ram,
@@ -131,9 +128,6 @@ class OpenStackProviderTest(base.TestCase):
         expected_templates = {}
         url = 'http://schemas.openstack.org/template/resource'
         for f in FAKES.flavors:
-            if not f.is_public:
-                continue
-
             name = f.name.strip().replace(' ', '_').replace('.', '-').lower()
             expected_templates[f.id] = {
                 'template_memory': f.ram,
@@ -188,9 +182,6 @@ class OpenStackProviderTest(base.TestCase):
         expected_templates = {}
         url = 'http://schemas.openstack.org/template/resource'
         for f in FAKES.flavors:
-            if not f.is_public:
-                continue
-
             expected_templates[f.id] = {
                 'template_memory': f.ram,
                 'template_cpu': f.vcpus,
@@ -241,9 +232,6 @@ class OpenStackProviderTest(base.TestCase):
         expected_templates = {}
         url = 'http://schemas.openstack.org/template/resource'
         for f in FAKES.flavors:
-            if not f.is_public:
-                continue
-
             expected_templates[f.id] = {
                 'template_memory': f.ram,
                 'template_cpu': f.vcpus,
@@ -297,7 +285,6 @@ class OpenStackProviderTest(base.TestCase):
         expected_templates = {}
         url = 'http://schemas.openstack.org/template/resource'
         for f in FAKES.flavors:
-
             expected_templates[f.id] = {
                 'template_memory': f.ram,
                 'template_cpu': f.vcpus,
