@@ -99,6 +99,8 @@ class OpenStackProvider(providers.BaseProvider):
         self.keystone_cert_issuer = e_cert_info['issuer']
         self.keystone_trusted_cas = e_cert_info['trusted_cas']
         self.os_cacert = opts.os_cacert
+        # Select 'public', 'private' or 'all' (default) templates.
+        self.select_flavors = opts.select_flavors
 
     def _get_endpoint_versions(self, endpoint_url, endpoint_type):
         '''Return the API and middleware versions of a compute endpoint.'''
@@ -259,17 +261,8 @@ class OpenStackProvider(providers.BaseProvider):
                 ret['endpoints'][e_id] = e
         return ret
 
-    def get_templates(self, filter='all'):
-        """Retrieve templates/flavors list
-
-        :param filter: Select 'public', 'private' or 'all' (default) templates.
-        :return: list of matching templates/flavors
-        :raises: OpenStackProviderException
-        """
-        if filter not in ['all', 'private', 'public']:
-            msg = ("Unsupported templates filter: '%s'" % filter)
-            raise exceptions.OpenStackProviderException(msg)
-
+    def get_templates(self):
+        """Return templates/flavors selected accroding to --select-flavors"""
         flavors = {}
 
         defaults = {'template_platform': 'amd64',
@@ -279,9 +272,9 @@ class OpenStackProvider(providers.BaseProvider):
         flavor_id_attr = 'name' if self.legacy_occi_os else 'id'
         URI = 'http://schemas.openstack.org/template/'
         for flavor in self.nova.flavors.list(detailed=True):
-            if filter == 'public' and not flavor.is_public:
+            if self.select_flavors == 'public' and not flavor.is_public:
                 continue
-            if filter == 'private' and flavor.is_public:
+            if self.select_flavors == 'private' and flavor.is_public:
                 continue
 
             aux = defaults.copy()
@@ -441,3 +434,9 @@ class OpenStackProvider(providers.BaseProvider):
             action='store_true',
             help="Generate information and ids compatible with OCCI-OS, "
                  "e.g. using the flavor name instead of the flavor id.")
+
+        parser.add_argument(
+            '--select-flavors',
+            default='all',
+            choices=['all', 'public', 'private'],
+            help='Select all (default), public or private flavors/templates.')
