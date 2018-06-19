@@ -259,7 +259,17 @@ class OpenStackProvider(providers.BaseProvider):
                 ret['endpoints'][e_id] = e
         return ret
 
-    def get_templates(self):
+    def get_templates(self, filter='all'):
+        """Retrieve templates/flavors list
+
+        :param filter: Select 'public', 'private' or 'all' (default) templates.
+        :return: list of matching templates/flavors
+        :raises: OpenStackProviderException
+        """
+        if filter not in ['all', 'private', 'public']:
+            msg = ("Unsupported templates filter: '%s'" % filter)
+            raise exceptions.OpenStackProviderException(msg)
+
         flavors = {}
 
         defaults = {'template_platform': 'amd64',
@@ -269,7 +279,9 @@ class OpenStackProvider(providers.BaseProvider):
         flavor_id_attr = 'name' if self.legacy_occi_os else 'id'
         URI = 'http://schemas.openstack.org/template/'
         for flavor in self.nova.flavors.list(detailed=True):
-            if not flavor.is_public:
+            if filter == 'public' and not flavor.is_public:
+                continue
+            if filter == 'private' and flavor.is_public:
                 continue
 
             aux = defaults.copy()
