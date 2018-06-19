@@ -292,6 +292,184 @@ class OpenStackProviderTest(base.TestCase):
                                   "image_marketplace_id"
                               ])
 
+    def test_get_all_templates(self):
+        """Tests that all templates/flavors are returned"""
+        expected_templates = {}
+        url = 'http://schemas.openstack.org/template/resource'
+        for f in FAKES.flavors:
+
+            expected_templates[f.id] = {
+                'template_memory': f.ram,
+                'template_cpu': f.vcpus,
+                'template_id': '%s#%s' % (url, f.id),
+                'template_platform': 'i686',
+                'template_network': 'private',
+                'template_disk': f.disk,
+            }
+
+        with utils.nested(
+                mock.patch.object(self.provider.static,
+                                  'get_template_defaults'),
+                mock.patch.object(self.provider.nova.flavors, 'list'),
+        ) as (m_get_template_defaults, m_flavors_list):
+            m_get_template_defaults.return_value = {
+                'template_platform': 'i686'
+            }
+            m_flavors_list.return_value = FAKES.flavors
+            filter = 'all'
+            templates = self.provider.get_templates(filter)
+            assert m_get_template_defaults.called
+
+        # Extract required fields from compute.ldif template excluding fields
+        # extracted that are not related to the flavors
+        self.assert_resources(expected_templates,
+                              templates,
+                              template="compute.ldif",
+                              ignored_fields=[
+                                  "compute_service_name",
+                                  "compute_hypervisor",
+                                  "compute_api_authn_method",
+                                  "compute_total_ram",
+                                  "image_marketplace_id",
+                                  "compute_middleware_developer",
+                                  "compute_production_level",
+                                  "compute_production_level",
+                                  "compute_api_type",
+                                  "compute_api_endpoint_technology",
+                                  "compute_api_version",
+                                  "compute_endpoint_url",
+                                  "compute_service_production_level",
+                                  "compute_capabilities",
+                                  "compute_total_cores",
+                                  "compute_middleware",
+                                  "compute_hypervisor_version",
+                                  "compute_middleware_version",
+                                  "image_description",
+                                  "image_id",
+                                  "image_name",
+                                  "image_version"
+                              ])
+
+    def test_get_public_templates(self):
+        """Tests that only public templates/flavors are returned"""
+        expected_templates = {}
+        url = 'http://schemas.openstack.org/template/resource'
+        for f in FAKES.flavors:
+            if not f.is_public:
+                continue
+
+            expected_templates[f.id] = {
+                'template_memory': f.ram,
+                'template_cpu': f.vcpus,
+                'template_id': '%s#%s' % (url, f.id),
+                'template_platform': 'i686',
+                'template_network': 'private',
+                'template_disk': f.disk,
+            }
+
+        with utils.nested(
+                mock.patch.object(self.provider.static,
+                                  'get_template_defaults'),
+                mock.patch.object(self.provider.nova.flavors, 'list'),
+        ) as (m_get_template_defaults, m_flavors_list):
+            m_get_template_defaults.return_value = {
+                'template_platform': 'i686'
+            }
+            m_flavors_list.return_value = FAKES.flavors
+            filter = 'public'
+            templates = self.provider.get_templates(filter)
+            assert m_get_template_defaults.called
+
+        # Extract required fields from compute.ldif template excluding fields
+        # extracted that are not related to the flavors
+        self.assert_resources(expected_templates,
+                              templates,
+                              template="compute.ldif",
+                              ignored_fields=[
+                                  "compute_service_name",
+                                  "compute_hypervisor",
+                                  "compute_api_authn_method",
+                                  "compute_total_ram",
+                                  "image_marketplace_id",
+                                  "compute_middleware_developer",
+                                  "compute_production_level",
+                                  "compute_production_level",
+                                  "compute_api_type",
+                                  "compute_api_endpoint_technology",
+                                  "compute_api_version",
+                                  "compute_endpoint_url",
+                                  "compute_service_production_level",
+                                  "compute_capabilities",
+                                  "compute_total_cores",
+                                  "compute_middleware",
+                                  "compute_hypervisor_version",
+                                  "compute_middleware_version",
+                                  "image_description",
+                                  "image_id",
+                                  "image_name",
+                                  "image_version"
+                              ])
+
+    def test_get_private_templates(self):
+        """Tests that only private templates/flavors are returned"""
+        expected_templates = {}
+        url = 'http://schemas.openstack.org/template/resource'
+        for f in FAKES.flavors:
+            if f.is_public:
+                continue
+
+            expected_templates[f.id] = {
+                'template_memory': f.ram,
+                'template_cpu': f.vcpus,
+                'template_id': '%s#%s' % (url, f.id),
+                'template_platform': 'i686',
+                'template_network': 'private',
+                'template_disk': f.disk,
+            }
+
+        with utils.nested(
+                mock.patch.object(self.provider.static,
+                                  'get_template_defaults'),
+                mock.patch.object(self.provider.nova.flavors, 'list'),
+        ) as (m_get_template_defaults, m_flavors_list):
+            m_get_template_defaults.return_value = {
+                'template_platform': 'i686'
+            }
+            m_flavors_list.return_value = FAKES.flavors
+            filter = 'private'
+            templates = self.provider.get_templates(filter)
+            assert m_get_template_defaults.called
+
+        # Extract required fields from compute.ldif template excluding fields
+        # extracted that are not related to the flavors
+        self.assert_resources(expected_templates,
+                              templates,
+                              template="compute.ldif",
+                              ignored_fields=[
+                                  "compute_service_name",
+                                  "compute_hypervisor",
+                                  "compute_api_authn_method",
+                                  "compute_total_ram",
+                                  "image_marketplace_id",
+                                  "compute_middleware_developer",
+                                  "compute_production_level",
+                                  "compute_production_level",
+                                  "compute_api_type",
+                                  "compute_api_endpoint_technology",
+                                  "compute_api_version",
+                                  "compute_endpoint_url",
+                                  "compute_service_production_level",
+                                  "compute_capabilities",
+                                  "compute_total_cores",
+                                  "compute_middleware",
+                                  "compute_hypervisor_version",
+                                  "compute_middleware_version",
+                                  "image_description",
+                                  "image_id",
+                                  "image_name",
+                                  "image_version"
+                              ])
+
     @unittest.expectedFailure
     def test_get_images(self):
         # XXX move this to a custom class?
