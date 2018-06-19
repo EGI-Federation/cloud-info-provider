@@ -22,7 +22,8 @@ class OpenStackProviderOptionsTest(base.TestCase):
                                   '--os-auth-url', 'http://example.org:5000',
                                   '--os-cacert', 'foobar',
                                   '--insecure',
-                                  '--legacy-occi-os'])
+                                  '--legacy-occi-os',
+                                  '--select-flavors', 'public'])
 
         self.assertEqual(opts.os_username, 'foo')
         self.assertEqual(opts.os_password, 'bar')
@@ -30,6 +31,7 @@ class OpenStackProviderOptionsTest(base.TestCase):
         self.assertEqual(opts.os_cacert, 'foobar')
         self.assertEqual(opts.insecure, True)
         self.assertEqual(opts.legacy_occi_os, True)
+        self.assertEqual(opts.select_flavors, 'public')
 
 
 class OpenStackProviderTest(base.TestCase):
@@ -51,6 +53,7 @@ class OpenStackProviderTest(base.TestCase):
                 self.keystone_cert_issuer = "foo"
                 self.keystone_trusted_cas = []
                 self.insecure = False
+                self.select_flavors = 'all'
 
             def _get_endpoint_versions(*args, **kwargs):
                 return {
@@ -294,6 +297,7 @@ class OpenStackProviderTest(base.TestCase):
                 'template_disk': f.disk,
             }
 
+        self.provider.select_flavors = 'all'
         with utils.nested(
                 mock.patch.object(self.provider.static,
                                   'get_template_defaults'),
@@ -303,8 +307,7 @@ class OpenStackProviderTest(base.TestCase):
                 'template_platform': 'i686'
             }
             m_flavors_list.return_value = FAKES.flavors
-            filter = 'all'
-            templates = self.provider.get_templates(filter)
+            templates = self.provider.get_templates()
             assert m_get_template_defaults.called
 
         # Extract required fields from compute.ldif template excluding fields
@@ -354,6 +357,7 @@ class OpenStackProviderTest(base.TestCase):
                 'template_disk': f.disk,
             }
 
+        self.provider.select_flavors = 'public'
         with utils.nested(
                 mock.patch.object(self.provider.static,
                                   'get_template_defaults'),
@@ -363,8 +367,7 @@ class OpenStackProviderTest(base.TestCase):
                 'template_platform': 'i686'
             }
             m_flavors_list.return_value = FAKES.flavors
-            filter = 'public'
-            templates = self.provider.get_templates(filter)
+            templates = self.provider.get_templates()
             assert m_get_template_defaults.called
 
         # Extract required fields from compute.ldif template excluding fields
@@ -414,6 +417,7 @@ class OpenStackProviderTest(base.TestCase):
                 'template_disk': f.disk,
             }
 
+        self.provider.select_flavors = 'private'
         with utils.nested(
                 mock.patch.object(self.provider.static,
                                   'get_template_defaults'),
@@ -423,8 +427,7 @@ class OpenStackProviderTest(base.TestCase):
                 'template_platform': 'i686'
             }
             m_flavors_list.return_value = FAKES.flavors
-            filter = 'private'
-            templates = self.provider.get_templates(filter)
+            templates = self.provider.get_templates()
             assert m_get_template_defaults.called
 
         # Extract required fields from compute.ldif template excluding fields
