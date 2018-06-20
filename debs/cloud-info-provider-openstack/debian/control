@@ -13,12 +13,12 @@ Package: python-cloud-info-provider-openstack
 Architecture: all
 Section: python
 Depends: ${python:Depends}, ${misc:Depends},
- python-noaclient,
+ cloud-information-provider (>= 0.9.1),
+ python-novaclient,
  python-glanceclient,
  python-keystoneauth1,
 # XXX Really?
  python-defusedxml
-Suggests: python-novaclient, python-defusedxml, python-glanceclient, python-keystoneauth1
 Provides: ${python:Provides}
 Description: Cloud information provider for BDII.
  Information provider for Cloud Compute and Cloud Storage services.
@@ -27,4 +27,3 @@ Description: Cloud information provider for BDII.
  middleware.
  By default the provider uses GLUE 2.0 EGI Cloud Profile to publish the
  information, but custom format can be created.
-
