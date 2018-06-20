@@ -11,8 +11,6 @@ Group: Applications/Internet
 # License: MIT
 License: DWTF
 URL: https://github.com/EGI-Foundation/cloud-info-provider
-# XXX Check if source is really needed for meta-package
-# Source: cloud_info_provider-%{version}.tar.gz
 
 Requires: cloud-info-provider
 # OpenNebula-specific dependencies
@@ -23,15 +21,6 @@ BuildArch: noarch
 OpenNebula-specific meta-package for Information provider for Cloud Compute and
 Cloud Storage services.
 Install the cloud-information-provider and the Cloud Middleware dependencies.
-
-# XXX Check if all sections should be present
-%prep
-
-%build
-
-%install
-
-%clean
 
 %files
 
