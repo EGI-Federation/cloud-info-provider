@@ -1,0 +1,6 @@
+python-cloud-info-provider-openstack (0.9.1-1) xenial; urgency=medium
+
+  [ Baptiste Grenier ]
+  * First release, numbering align to cloud-info-provider package
+
+ -- Baptiste Grenier <baptiste.grenier@egi.eu>  Jun, 20 Apr 2018 10:42:42 +0200
