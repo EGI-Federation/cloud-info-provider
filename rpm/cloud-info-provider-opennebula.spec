@@ -37,4 +37,4 @@ Install the cloud-information-provider and the Cloud Middleware dependencies.
 
 %changelog
 * Wed Jun 20 2018 Baptiste Grenier <baptiste.grenier@egi.eu> 0.9.1
-- First release, numbering align to cloud-info-provider package (Baptiste Grenier)
+- First release, numbering aligned to cloud-info-provider package (Baptiste Grenier)
