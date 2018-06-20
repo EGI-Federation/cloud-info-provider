@@ -192,7 +192,7 @@ cloud-info-provider-service --yaml-file /etc/cloud-info-provider/static.yaml \
 
 By default the OpenStack provider will return 'all' flavors, but it is also
 possible to select only 'public' or 'private' flavors using the
-`--select-flavors` parameter.
+`--select-flavors` parameter set to `all`, `public` or `private`.
 For more details see
 [OpenStack flavors documentation](https://docs.openstack.org/nova/pike/admin/flavors.html).
 
