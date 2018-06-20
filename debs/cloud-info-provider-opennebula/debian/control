@@ -1,0 +1,25 @@
+Source: python-cloud-info-provider-opennebula
+Section: net
+Priority: extra
+Maintainer: EGI Federated Cloud <fedcloud-devel@mailman.egi.eu>
+Homepage: http://github.com/EGI-Foundation/cloud-info-provider
+Build-Depends:
+ debhelper (>= 7.0.50),
+ cloud-information-provider (>= 0.9.1)
+Standards-Version: 3.9.6
+Vcs-Git: https://github.com/EGI-Foundation/cloud-info-provider.git
+
+Package: python-cloud-info-provider-opennebula
+Architecture: all
+Section: python
+Depends: ${python:Depends}, ${misc:Depends},
+ cloud-information-provider (>= 0.9.1),
+ python-defusedxml
+Provides: ${python:Provides}
+Description: Cloud information provider for BDII.
+ Information provider for Cloud Compute and Cloud Storage services.
+ .
+ It supports static information specification, OpenNebula and OpenStack cloud
+ middleware.
+ By default the provider uses GLUE 2.0 EGI Cloud Profile to publish the
+ information, but custom format can be created.

@@ -1,0 +1,14 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# Verbose mode
+#export DH_VERBOSE=1
+
+DEB_PYTHON_SYSTEM=pysupport
+DEB_PYTHON_INSTALL_ARGS_ALL += --single-version-externally-managed
+
+%:
+	dh $@
+
+override_dh_auto_install:
+	dh_auto_install -- --single-version-externally-managed
