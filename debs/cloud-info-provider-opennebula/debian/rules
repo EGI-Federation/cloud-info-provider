@@ -4,9 +4,6 @@
 # Verbose mode
 #export DH_VERBOSE=1
 
-DEB_PYTHON_SYSTEM=pysupport
-DEB_PYTHON_INSTALL_ARGS_ALL += --single-version-externally-managed
-
 %:
 	dh $@
 
