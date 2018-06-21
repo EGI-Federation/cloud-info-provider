@@ -1,6 +1,6 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: cloud-info-provider
-Source: https://github.com/EGI-FCTF/BDIIscripts
+Source: https://github.com/EGI-Federation/cloud-info-provider
 
 Files: *
 Copyright: 2014 Salvatore Pinto, Álvaro Lopez,
