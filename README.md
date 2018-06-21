@@ -129,7 +129,9 @@ cd cloud-info-provider
 pip install .
 ```
 
-## Generation of the LDIF 
+## Usage
+
+### Generation of the LDIF
 
 By default the cloud-info-provider generates a LDIF according to the
 information in a yaml file describing the static information of the cloud
@@ -184,14 +186,24 @@ cloud-info-provider-service --yaml-file /etc/cloud-info-provider/static.yaml \
 
 **Test the generation of the LDIF before running the provider into your BDII!**
 
-### Legacy OpenStack OCCI-OS interface
+### OpenStack provider
+
+#### Filtering public or private flavors
+
+By default the OpenStack provider will return 'all' flavors, but it is also
+possible to select only 'public' or 'private' flavors using the
+`--select-flavors` parameter set to `all`, `public` or `private`.
+For more details see
+[OpenStack flavors documentation](https://docs.openstack.org/nova/pike/admin/flavors.html).
+
+#### Legacy OpenStack OCCI-OS interface
 
 If you are using [OCCI-OS](https://github.com/EGI-FCTF/occi-os) for providing
 OCCI support for OpenStack, use the `legacy-occi-os` command line option. This
 will produce output with ids compatible with your setup instead of the current
 default that supports [ooi](https://launchpad.net/ooi).
 
-## Running the provider in a resource-BDII
+### Running the provider in a resource-BDII
 
 This is the normal deployment mode for the cloud provider. It should be installed
 in a node with access to your cloud infrastructure: for OpenStack, access to
