@@ -22,12 +22,6 @@ Requires: python-yaml
 Requires: python-mako
 Requires: python-six
 #Recommends: bdii
-# For OpenNebula
-#Requires: python-defusedxml
-# For OpenStack
-#Requires: python-novaclient
-#Requires: python-glanceclient
-#Requires: python-keystoneauth1
 Obsoletes: cloud-info-provider-service
 BuildArch: noarch
 
