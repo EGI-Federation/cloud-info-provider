@@ -9,14 +9,7 @@ pipeline {
                         label 'bubuntu16'
                     }
                     steps {
-                        //checkout scm
-						checkout([$class: 'GitSCM', 
-						    branches: [[name: '*/add_jenkinsfile']], 
-						    doGenerateSubmoduleConfigurations: false, 
-						    extensions: [], 
-						    submoduleCfg: [], 
-						    userRemoteConfigs: [[]]
-						])
+                        checkout scm
                         echo 'Within build on Ubuntu16.04'   
                         //sh 'git clone https://github.com/EGI-Foundation/cloud-info-provider'
                         dir("${WORKSPACE}/cloud-info-provider") {
@@ -40,14 +33,7 @@ pipeline {
                         label 'bcentos7'
                     }
                     steps {
-                        //checkout scm
-						checkout([$class: 'GitSCM', 
-						    branches: [[name: '*/add_jenkinsfile']], 
-						    doGenerateSubmoduleConfigurations: false, 
-						    extensions: [], 
-						    submoduleCfg: [], 
-						    userRemoteConfigs: [[]]
-						])
+                        checkout scm
                         echo 'Within build on CentOS7'
                         //sh 'git clone https://github.com/EGI-Foundation/cloud-info-provider'
                         
