@@ -3,6 +3,9 @@ pipeline {
 
     stages {
         stage('Build') {
+            when {
+                buildingTag()
+            }
             parallel {
                 stage('Build on Ubuntu16.04') {
                     agent {
@@ -10,8 +13,6 @@ pipeline {
                     }
                     steps {
                         checkout scm
-                        sh 'pwd'
-                        sh 'ls'
                         echo 'Within build on Ubuntu16.04'   
                         //sh 'git clone https://github.com/EGI-Foundation/cloud-info-provider'
                         //dir("${WORKSPACE}/cloud-info-provider") {
