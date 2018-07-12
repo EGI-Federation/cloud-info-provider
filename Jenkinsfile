@@ -14,14 +14,16 @@ pipeline {
                         sh 'ls'
                         echo 'Within build on Ubuntu16.04'   
                         //sh 'git clone https://github.com/EGI-Foundation/cloud-info-provider'
-                        dir("${WORKSPACE}/cloud-info-provider") {
+                        //dir("${WORKSPACE}/cloud-info-provider") {
                             sh 'sudo apt-get update && sudo apt-get install -y devscripts debhelper python-all-dev python-pbr python-setuptools'
                             sh 'debuild --no-tgz-check clean binary'
-                        }
-                        dir("${WORKSPACE}/cloud-info-provider/debs/cloud-info-provider-openstack") {
+                        //}
+                        //dir("${WORKSPACE}/cloud-info-provider/debs/cloud-info-provider-openstack") {
+                        dir("${WORKSPACE}/debs/cloud-info-provider-openstack") {
                             sh 'debuild --no-tgz-check clean binary'
                         }
-                        dir("${WORKSPACE}/cloud-info-provider/debs/cloud-info-provider-opennebula") {
+                        //dir("${WORKSPACE}/cloud-info-provider/debs/cloud-info-provider-opennebula") {
+                        dir("${WORKSPACE}/debs/cloud-info-provider-opennebula") {
                             sh 'debuild --no-tgz-check clean binary'
                         }
                     }
@@ -39,7 +41,7 @@ pipeline {
                         echo 'Within build on CentOS7'
                         //sh 'git clone https://github.com/EGI-Foundation/cloud-info-provider'
                         
-                        dir("${WORKSPACE}/cloud-info-provider") {
+                        //dir("${WORKSPACE}/cloud-info-provider") {
                             sh 'sudo yum install -y rpm-build centos-release-openstack-newton python-pbr python-setuptools'
                             sh 'python setup.py sdist'
                             sh 'mkdir ~/rpmbuild'
@@ -50,7 +52,8 @@ pipeline {
                             //sh 'rpmbuild -ba ~/rpmbuild/SPECS/cloud-info-provider.spec'
                             sh 'rpmbuild -ba ~/rpmbuild/SPECS/cloud-info-provider-openstack.spec'
                             sh 'rpmbuild -ba ~/rpmbuild/SPECS/cloud-info-provider-opennebula.spec'
-                            sh 'cp ~/rpmbuild/SRPMS/*.rpm ~/rpmbuild/RPMS/noarch/*.rpm ${WORKSPACE}/cloud-info-provider/rpm/'                        }
+                            sh 'cp ~/rpmbuild/SRPMS/*.rpm ~/rpmbuild/RPMS/noarch/*.rpm ${WORKSPACE}/cloud-info-provider/rpm/'
+                        //}
                     }
                     post {
                         success {
