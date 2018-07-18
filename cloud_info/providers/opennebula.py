@@ -48,7 +48,7 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
         if not response[0]:
             raise exceptions.OpenNebulaProviderException(response[1])
 
-        doc = self.xml_parser.fromstring(response[1])
+        doc = self.xml_parser.fromstring(response[1].encode('utf-8'))
         if doc is None:
             msg = 'Invalid XML in response from OpenNebula\'s XML RPC endpoint'
             raise exceptions.OpenNebulaProviderException(msg)
