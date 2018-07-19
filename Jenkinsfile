@@ -27,6 +27,10 @@ pipeline {
                         success {
                             archiveArtifacts artifacts: '**/debs/*.deb'                        }
                     }
+                    //post {
+                    //    success {
+                    //        archiveArtifacts artifacts: '**/debs/*.deb'                        }
+                    //}
                 }
                 stage('Build on CentOS7') {
                     agent {
