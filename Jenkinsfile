@@ -11,25 +11,25 @@ pipeline {
         //    }
         //}
 
-        stage('Style Analysis') {
-            //agent {
-            //    label 'python'
-            //}
-            steps {
-                checkout scm
-                echo 'Running flake8..'
-                timeout(time: 5, unit: 'MINUTES') {
-                    sh 'tox -e pep8'
-                    echo 'Parsing pep8 logs..'
-                    step([$class: 'WarningsPublisher',
-                        parserConfigurations: [[
-                            parserName: 'Pep8', pattern: '.tox/pep8/log/*.log'
-                        ]], unstableTotalAll: '0', usePreviousBuildAsReference: true
+        //stage('Style Analysis') {
+        //    //agent {
+        //    //    label 'python'
+        //    //}
+        //    steps {
+        //        checkout scm
+        //        echo 'Running flake8..'
+        //        timeout(time: 5, unit: 'MINUTES') {
+        //            sh 'tox -e pep8'
+        //            echo 'Parsing pep8 logs..'
+        //            step([$class: 'WarningsPublisher',
+        //                parserConfigurations: [[
+        //                    parserName: 'Pep8', pattern: '.tox/pep8/log/*.log'
+        //                ]], unstableTotalAll: '0', usePreviousBuildAsReference: true
 
-                    ])
-                }
-            }
-        }
+        //            ])
+        //        }
+        //    }
+        //}
 
         stage('Unit tests') {
             //agent {
@@ -37,10 +37,8 @@ pipeline {
             //}
             steps {
                 checkout scm
-                sh 'find $WORKSPACE'
                 echo 'Computing unit testing coverage..'
                 sh 'tox -e cover'
-                sh 'find $WORKSPACE'
 
                 echo 'Generating HTML report..'
                 publishHTML([allowMissing: false,
