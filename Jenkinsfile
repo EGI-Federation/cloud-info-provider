@@ -40,6 +40,7 @@ pipeline {
                 sh 'find $WORKSPACE'
                 echo 'Computing unit testing coverage..'
                 sh 'tox -e cover'
+                sh 'find $WORKSPACE'
 
                 echo 'Generating HTML report..'
                 publishHTML([allowMissing: false,
