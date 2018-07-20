@@ -121,7 +121,7 @@ pipeline {
                         //sh 'rpmbuild -ba ~/rpmbuild/SPECS/cloud-info-provider.spec'
                         sh 'rpmbuild -ba ~/rpmbuild/SPECS/cloud-info-provider-openstack.spec'
                         sh 'rpmbuild -ba ~/rpmbuild/SPECS/cloud-info-provider-opennebula.spec'
-                        sh 'cp ~/rpmbuild/SRPMS/*.rpm ~/rpmbuild/RPMS/noarch/*.rpm ${WORKSPACE}/cloud-info-provider/rpm/'
+                        sh 'cp ~/rpmbuild/SRPMS/*.rpm ~/rpmbuild/RPMS/noarch/*.rpm ${WORKSPACE}/rpm/'
                     }
                     post {
                         success {
