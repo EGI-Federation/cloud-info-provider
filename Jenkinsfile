@@ -37,6 +37,7 @@ pipeline {
             //}
             steps {
                 checkout scm
+                sh 'find $WORKSPACE'
                 echo 'Computing unit testing coverage..'
                 sh 'tox -e cover'
 
