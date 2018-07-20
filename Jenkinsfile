@@ -53,7 +53,7 @@ deps = pytest-cov
        nose
        -r{toxinidir}/requirements.txt
        -r{toxinidir}/test-requirements.txt
-commands = py.test --cov=deepaas --cov-report=xml --cov-report=term-missing deepaas/tests'''
+commands = py.test --cov=cloud_info --cov-report=xml --cov-report=term-missing cloud_info/tests'''
                 sh 'tox -c tox.ini.cobertura'
                 cobertura autoUpdateHealth: false,
                           autoUpdateStability: false,
