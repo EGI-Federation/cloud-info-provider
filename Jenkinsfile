@@ -1,5 +1,8 @@
 pipeline {
-    agent none
+    //agent none
+    agent {
+        label 'python'
+    }
 
     stages {
      	//stage('Fetch code') {
@@ -9,9 +12,9 @@ pipeline {
         //}
 
         stage('Style Analysis') {
-            agent {
-                label 'python'
-            }
+            //agent {
+            //    label 'python'
+            //}
             steps {
                 checkout scm
                 echo 'Running flake8..'
@@ -29,9 +32,9 @@ pipeline {
         }
 
         stage('Unit tests') {
-            agent {
-                label 'python'
-            }
+            //agent {
+            //    label 'python'
+            //}
             steps {
                 checkout scm
                 echo 'Computing unit testing coverage..'
