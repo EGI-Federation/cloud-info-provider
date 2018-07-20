@@ -2,17 +2,18 @@ pipeline {
     agent none
 
     stages {
-     	stage('Fetch code') {
-            steps {
-                checkout scm
-            }
-        }
+     	//stage('Fetch code') {
+        //    steps {
+        //        checkout scm
+        //    }
+        //}
 
         stage('Style Analysis') {
             agent {
                 label 'python'
             }
             steps {
+                checkout scm
                 echo 'Running flake8..'
                 timeout(time: 5, unit: 'MINUTES') {
                     sh 'tox -e pep8'
@@ -32,6 +33,7 @@ pipeline {
                 label 'python'
             }
             steps {
+                checkout scm
                 echo 'Computing unit testing coverage..'
                 sh 'tox -e cover'
 
