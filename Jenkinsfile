@@ -1,8 +1,5 @@
 pipeline {
-    //agent none
-    agent {
-        label 'python'
-    }
+    agent none
 
     stages {
      	stage('Fetch code') {
@@ -12,6 +9,9 @@ pipeline {
         }
 
         stage('Style Analysis') {
+            agent {
+                label 'python'
+            }
             steps {
                 echo 'Running flake8..'
                 timeout(time: 5, unit: 'MINUTES') {
@@ -28,6 +28,9 @@ pipeline {
         }
 
         stage('Unit tests') {
+            agent {
+                label 'python'
+            }
             steps {
                 echo 'Computing unit testing coverage..'
                 sh 'tox -e cover'
