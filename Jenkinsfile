@@ -66,8 +66,10 @@ pipeline {
 
         stage('Build RPM/DEB packages') {
             when {
-                buildingTag()
-                branch 'master'
+                anyOf {
+                    buildingTag()
+                    branch 'master'
+                }
             }
             parallel {
                 stage('Build on Ubuntu16.04') {
