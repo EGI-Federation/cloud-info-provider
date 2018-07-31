@@ -20,7 +20,7 @@ pipeline {
                 }
             }
         }
-
+/*
         stage('Unit tests') {
             steps {
                 checkout scm
@@ -64,7 +64,7 @@ commands = py.test --cov=cloud_info --cov-report=xml --cov-report=term-missing c
                           zoomCoverageChart: false
             }
         }
-
+*/
         stage('Build RPM/DEB packages') {
             when {
                 buildingTag()
