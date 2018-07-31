@@ -5,16 +5,7 @@ pipeline {
     }
 
     stages {
-     	//stage('Fetch code') {
-        //    steps {
-        //        checkout scm
-        //    }
-        //}
-
         stage('Style Analysis') {
-            //agent {
-            //    label 'python'
-            //}
             steps {
                 checkout scm
                 echo 'Running flake8..'
@@ -25,16 +16,12 @@ pipeline {
                         parserConfigurations: [[
                             parserName: 'Pep8', pattern: '.tox/pep8/log/*.log'
                         ]], unstableTotalAll: '0', usePreviousBuildAsReference: true
-
                     ])
                 }
             }
         }
 
         stage('Unit tests') {
-            //agent {
-            //    label 'python'
-            //}
             steps {
                 checkout scm
                 echo 'Computing unit testing coverage..'
