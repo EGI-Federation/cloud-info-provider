@@ -126,7 +126,8 @@ pipeline {
                 buildingTag()
             }
             steps {
-                sh 'printenv'
+                //sh 'printenv'
+                echo "Building Docker container nomoreapps:${TAG_NAME}"
             }
         }
     }
