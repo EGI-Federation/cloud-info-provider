@@ -1,5 +1,4 @@
 pipeline {
-    //agent none
     agent {
         label 'python'
     }
@@ -20,49 +19,50 @@ pipeline {
                 }
             }
         }
-//        stage('Unit tests') {
-//            steps {
-//                checkout scm
-//                echo 'Computing unit testing coverage..'
-//                sh 'tox -e cover'
-//
-//                echo 'Generating HTML report..'
-//                publishHTML([allowMissing: false,
-//                             alwaysLinkToLastBuild: false,
-//                             keepAll: false,
-//                             reportDir: 'cover',
-//                             reportFiles: 'index.html',
-//                             reportName: 'Coverage report',
-//                             reportTitles: ''])
-//
-//                echo 'Generating Cobertura report..'
-//                writeFile file: 'tox.ini.cobertura', text: '''[tox]
-//envlist = cobertura
-//[testenv]
-//usedevelop = True
-//install_command = pip install -U {opts} {packages}
-//setenv =
-//   VIRTUAL_ENV={envdir}
-//deps = pytest-cov
-//       nose
-//       -r{toxinidir}/requirements.txt
-//       -r{toxinidir}/test-requirements.txt
-//commands = py.test --cov=cloud_info --cov-report=xml --cov-report=term-missing cloud_info/tests'''
-//                sh 'tox -c tox.ini.cobertura'
-//                cobertura autoUpdateHealth: false,
-//                          autoUpdateStability: false,
-//                          coberturaReportFile: '**/coverage.xml',
-//                          conditionalCoverageTargets: '70, 0, 0',
-//                          failUnhealthy: false,
-//                          failUnstable: false,
-//                          lineCoverageTargets: '80, 0, 0',
-//                          maxNumberOfBuilds: 0,
-//                          methodCoverageTargets: '80, 0, 0',
-//                          onlyStable: false,
-//                          sourceEncoding: 'ASCII',
-//                          zoomCoverageChart: false
-//            }
-//        }
+
+        stage('Unit tests') {
+            steps {
+                checkout scm
+                echo 'Computing unit testing coverage..'
+                sh 'tox -e cover'
+
+                echo 'Generating HTML report..'
+                publishHTML([allowMissing: false,
+                             alwaysLinkToLastBuild: false,
+                             keepAll: false,
+                             reportDir: 'cover',
+                             reportFiles: 'index.html',
+                             reportName: 'Coverage report',
+                             reportTitles: ''])
+
+                echo 'Generating Cobertura report..'
+                writeFile file: 'tox.ini.cobertura', text: '''[tox]
+envlist = cobertura
+[testenv]
+usedevelop = True
+install_command = pip install -U {opts} {packages}
+setenv =
+   VIRTUAL_ENV={envdir}
+deps = pytest-cov
+       nose
+       -r{toxinidir}/requirements.txt
+       -r{toxinidir}/test-requirements.txt
+commands = py.test --cov=cloud_info --cov-report=xml --cov-report=term-missing cloud_info/tests'''
+                sh 'tox -c tox.ini.cobertura'
+                cobertura autoUpdateHealth: false,
+                          autoUpdateStability: false,
+                          coberturaReportFile: '**/coverage.xml',
+                          conditionalCoverageTargets: '70, 0, 0',
+                          failUnhealthy: false,
+                          failUnstable: false,
+                          lineCoverageTargets: '80, 0, 0',
+                          maxNumberOfBuilds: 0,
+                          methodCoverageTargets: '80, 0, 0',
+                          onlyStable: false,
+                          sourceEncoding: 'ASCII',
+                          zoomCoverageChart: false
+            }
+        }
 
         stage('Build RPM/DEB packages') {
             when {
