@@ -3,6 +3,10 @@ pipeline {
         label 'python'
     }
 
+    environment {
+        docker_repo = "indigodatacloud/app"
+    }
+
     stages {
 //        stage('Style Analysis') {
 //            steps {
@@ -132,10 +136,10 @@ pipeline {
                 //sh 'printenv'
                 script {
                     if (env.BRANCH_NAME == 'master') {
-                        IMAGE_ID = "indigodatacloud/app:latest"
+                        IMAGE_ID = env.docker_repo + ":latest"
                     }
                     else {
-                        IMAGE_ID = "indigodatacloud/app:${TAG_NAME}"
+                        IMAGE_ID = env.docker_repo + env.TAG_NAME
                     }
                 }
                 echo "Building Docker image ${IMAGE_ID}"
