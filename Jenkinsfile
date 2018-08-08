@@ -131,7 +131,7 @@ pipeline {
             steps {
                 //sh 'printenv'
                 script {
-                    if ($BRANCH_NAME == 'master') {
+                    if env.BRANCH_NAME == 'master') {
                         IMAGE_ID = "indigodatacloud/app:latest"
                     }
                     else {
