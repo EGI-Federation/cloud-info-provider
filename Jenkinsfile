@@ -123,11 +123,27 @@ pipeline {
 
 		stage('Docker container building (git tagged version)') {
             when {
-                buildingTag()
+                anyOf {
+                    branch 'master'
+                    buildingTag()
+                }
             }
             steps {
                 //sh 'printenv'
-                echo "Building Docker container nomoreapps:${TAG_NAME}"
+                script {
+                    if ($BRANCH_NAME == 'master') {
+                        IMAGE_ID = "indigodatacloud/app:latest"
+                    }
+                    else {
+                        IMAGE_ID = "indigodatacloud/app:${TAG_NAME}"
+                    }
+                }
+                echo "Building Docker image ${IMAGE_ID}"
+            }
+            post {
+                success {
+                    echo "Pushing Docker image ${IMAGE_ID}"
+                }
             }
         }
     }
