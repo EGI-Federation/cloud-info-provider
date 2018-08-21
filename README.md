@@ -1,6 +1,8 @@
 # Cloud Information provider
 
 [![BuildStatus](https://travis-ci.org/EGI-Foundation/cloud-info-provider.svg?branch=master)](https://travis-ci.org/EGI-Foundation/cloud-info-provider)
+[![Coveralls](https://img.shields.io/coveralls/EGI-Foundation/cloud-info-provider.svg)](https://coveralls.io/github/EGI-Foundation/cloud-info-provider)
+[![GitHub release](https://img.shields.io/github/release/EGI-Foundation/cloud-info-provider.svg)](https://github.com/EGI-Foundation/cloud-info-provider/releases)
 
 The Cloud Information provider generates a representation of cloud resources,
 that can be published inside a BDII (using the provided LDIF templates for a
@@ -19,7 +21,7 @@ Supported cloud middleware providers:
 
 ### Dependencies
 
-The cloud-provider depends on PyYAML, which is already included as a dependency for 
+The cloud-provider depends on PyYAML, which is already included as a dependency for
 binary packages and when installing from source.
 
 For running the cloud-provider in a production environment with a BDII you will
@@ -180,7 +182,7 @@ There are three different maps in the yaml file considered by the provider:
     Alternatively, the site name can be fetched from
     `/etc/glite-info-static/site/site.cfg` (or by the file set with the
     `--glite-site-info-static` option).
-    Any other information is only relevant to generate a LDIF for a complete 
+    Any other information is only relevant to generate a LDIF for a complete
     site-BDII (*this is not the recommended deployment mode*).
 
  * `compute` should be present for those sites providing a IaaS computing
@@ -235,7 +237,7 @@ host as rOCCI-server).
 
 ### Create the provider script
 
-In `/var/lib/bdii/gip/provider/` create a `cloud-info-provider` file that 
+In `/var/lib/bdii/gip/provider/` create a `cloud-info-provider` file that
 calls the provider with the correct options for your site:
 
 ```sh
@@ -274,7 +276,7 @@ ldapsearch -x -h localhost -p 2170 -b o=glue
 
 Sites should have a dedicated host for the site-BDII. Information on how to
 set up this machine is avaiable in the EGI.eu wiki at
-[How to publish site information](https://wiki.egi.eu/wiki/MAN01_How_to_publish_Site_Information). 
+[How to publish site information](https://wiki.egi.eu/wiki/MAN01_How_to_publish_Site_Information).
 
 Add your cloud-info-provider to your site-BDII by adding a new URL that looks like this:
 ```
