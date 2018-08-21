@@ -34,8 +34,19 @@ probably need:
 On RHEL you will also need to enable the [EPEL repository](http://fedoraproject.org/wiki/EPEL) for python-defusedxml
 that is required for the OpenNebula provider.
 
-For the time being the pacakge is the same for all the providers, so
-provider-specific dependencies needs to be installed manually.
+Providers-specific dependencies are managed using provider-specific metapackages.
+Those metapackages are dependent on the main cloud-info-provider that is common
+to all the providers and also includes the provider-specific dependencies.
+
+RPMs:
+* cloud-info-provider-openstack
+* cloud-info-provider-opennebula
+* cloud-info-provider
+
+debs:
+* python-cloud-info-provider-openstack
+* python-cloud-info-provider-opennebula
+* python-cloud-info-provider
 
 #### OpenStack provider dependencies
 
@@ -64,13 +75,12 @@ the python module and is available through the OpenStack repositories.
 
 The version is set according to the repository information (tags, commits,...).
 
-##### Building a RPM
+##### Building RPMs
 
 * The OpenStack repositories are only used to get the `python-pbr` build
-  dependency.
+  dependency that is required to build the `cloud-info-provider` package.
 * On CentOS 6 install `centos-release-openstack` instead of
   `centos-release-openstack-newton`.
-
 
 ```sh
 # Checkout tag to be packaged
@@ -82,13 +92,19 @@ python setup.py sdist
 mkdir ~/rpmbuild
 # Building in a container using the tarball
 docker run --rm -v $(pwd):/source -v $HOME/rpmbuild:/root/rpmbuild -it centos:7
-yum install -y centos-release-openstack-newton rpm-build
+yum install -y rpm-build
+# Required only for cloud-info-provider package to build python package
+# Will configure repository containing python-pbr
+yum install -y centos-release-openstack-newton
+# Required only for cloud-info-provider package to build python package
 yum install -y python-pbr python-setuptools
 echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros
 mkdir -p ~/rpmbuild/{SOURCES,SPECS}
 cp /source/dist/cloud_info_provider-*.tar.gz ~/rpmbuild/SOURCES/
-cp /source/rpm/cloud-info-provider.spec ~/rpmbuild/SPECS/
+cp /source/rpm/cloud-info-provider-*.spec ~/rpmbuild/SPECS/
 rpmbuild -ba ~/rpmbuild/SPECS/cloud-info-provider.spec
+rpmbuild -ba ~/rpmbuild/SPECS/cloud-info-provider-openstack.spec
+rpmbuild -ba ~/rpmbuild/SPECS/cloud-info-provider-opennebula.spec
 ```
 
 The RPM will be available into the `~/rpmbuild` directory.
@@ -104,8 +120,12 @@ mkdir -p ~/debs/xenial
 # Building in a container using the source files
 docker run --rm -v $(pwd):/source -v $HOME/debs:/root/debs -it ubuntu:xenial
 apt update
-apt install -y devscripts debhelper git python-all-dev python-pbr python-setuptools
-cd /source && debuild --no-tgz-check clean binary
+apt install -y devscripts debhelper git
+# Required only for cloud-info-provider package to build python package
+apt install -y python-all-dev python-pbr python-setuptools
+cd /source/cloud-info-provider && debuild --no-tgz-check clean binary
+cd /source/debs/cloud-info-provider-openstack && debuild --no-tgz-check clean binary
+cd /source/debs/cloud-info-provider-opennebula && debuild --no-tgz-check clean binary
 cp ../*.deb ~/debs/xenial
 ```
 
@@ -113,6 +133,8 @@ The deb will be available into the `~/debs/xenial` directory.
 
 ### From source
 
+Source-based installation is not recommended for production usage, but is very
+handy for testing or development purpose.
 Get the source by cloning this repo and do a pip install.
 
 As pip will have to copy files to /etc/cloud-info-provider directory, the
@@ -131,7 +153,9 @@ cd cloud-info-provider
 pip install .
 ```
 
-## Generation of the LDIF 
+## Usage
+
+### Generation of the LDIF
 
 By default the cloud-info-provider generates a LDIF according to the
 information in a yaml file describing the static information of the cloud
@@ -186,14 +210,24 @@ cloud-info-provider-service --yaml-file /etc/cloud-info-provider/static.yaml \
 
 **Test the generation of the LDIF before running the provider into your BDII!**
 
-### Legacy OpenStack OCCI-OS interface
+### OpenStack provider
+
+#### Filtering public or private flavors
+
+By default the OpenStack provider will return 'all' flavors, but it is also
+possible to select only 'public' or 'private' flavors using the
+`--select-flavors` parameter set to `all`, `public` or `private`.
+For more details see
+[OpenStack flavors documentation](https://docs.openstack.org/nova/pike/admin/flavors.html).
+
+#### Legacy OpenStack OCCI-OS interface
 
 If you are using [OCCI-OS](https://github.com/EGI-FCTF/occi-os) for providing
 OCCI support for OpenStack, use the `legacy-occi-os` command line option. This
 will produce output with ids compatible with your setup instead of the current
 default that supports [ooi](https://launchpad.net/ooi).
 
-## Running the provider in a resource-BDII
+### Running the provider in a resource-BDII
 
 This is the normal deployment mode for the cloud provider. It should be installed
 in a node with access to your cloud infrastructure: for OpenStack, access to

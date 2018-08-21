@@ -10,7 +10,7 @@ Version: 0.9.1
 Release: 1%{?dist}
 Group: Applications/Internet
 License: ASL 2.0
-URL: https://github.com/EGI-FCTF/cloud-info-provider
+URL: https://github.com/EGI-Federation/cloud-info-provider
 Source: cloud_info_provider-%{version}.tar.gz
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -22,12 +22,6 @@ Requires: python-yaml
 Requires: python-mako
 Requires: python-six
 #Recommends: bdii
-# For OpenNebula
-#Requires: python-defusedxml
-# For OpenStack
-#Requires: python-novaclient
-#Requires: python-glanceclient
-#Requires: python-keystoneauth1
 Obsoletes: cloud-info-provider-service
 BuildArch: noarch
 
