@@ -271,6 +271,11 @@ class OpenStackProvider(providers.BaseProvider):
         tpl_sch = defaults.get('template_schema', 'resource')
         flavor_id_attr = 'name' if self.legacy_occi_os else 'id'
         URI = 'http://schemas.openstack.org/template/'
+        extra_specs = defaults.get('template_extra_specs', {})
+        extra_specs_ib = extra_specs.get('infiniband', {})
+        flavor_ib_k = ':'.join([
+            'aggregate_instance_extra_specs',
+            extra_specs_ib.get('key', 'type')])
         for flavor in self.nova.flavors.list(detailed=True):
             add_all = self.select_flavors == 'all'
             add_pub = self.select_flavors == 'public' and flavor.is_public
@@ -281,10 +286,14 @@ class OpenStackProvider(providers.BaseProvider):
                 flavor_id = str(getattr(flavor, flavor_id_attr))
                 template_id = '%s%s#%s' % (URI, tpl_sch,
                                            OpenStackProvider.occify(flavor_id))
+                flavor_ib_v = flavor.get_keys().get(flavor_ib_k, False)
+                template_ib = (True if flavor_ib_v == extra_specs_ib['value']
+                                    else False)
                 aux.update({'template_id': template_id,
                             'template_memory': flavor.ram,
                             'template_cpu': flavor.vcpus,
-                            'template_disk': flavor.disk})
+                            'template_disk': flavor.disk,
+                            'template_infiniband': template_ib})
                 flavors[flavor.id] = aux
         return flavors
 

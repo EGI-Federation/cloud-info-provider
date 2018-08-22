@@ -37,9 +37,12 @@ compute:
         defaults:
             platform: amd64
             network: public
+            extra_specs:
+                infiniband:
+                    key: 'type'
+                    value: 'infiniband'
 
     images:
-
         defaults:
             # Set to False or comment the line below if you want to show
             # all the images installed in the site (also snapshots). Otherwise
