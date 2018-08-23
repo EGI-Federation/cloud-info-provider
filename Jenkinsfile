@@ -124,8 +124,8 @@ commands = py.test --cov=cloud_info --cov-report=xml --cov-report=term-missing c
                 }
             }
         }
-
-		stage('Docker container building (git tagged version)') {
+        
+        stage('Docker container building (git tagged version)') {
             when {
                 anyOf {
                     branch 'master'
