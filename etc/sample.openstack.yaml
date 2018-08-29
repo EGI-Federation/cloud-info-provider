@@ -59,7 +59,7 @@ compute:
         # specify a version, set the options below.
         defaults:
             # Needs to be set for OpenStack
-            compute_middleware_version: Liberty
+            middleware_version: Liberty
             # Should be retrieved automatically by the provider
             # compute_api_version: v2
             # occi_middleware_version: 0.3.2

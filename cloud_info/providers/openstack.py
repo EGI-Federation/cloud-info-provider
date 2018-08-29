@@ -123,18 +123,8 @@ class OpenStackProvider(providers.BaseProvider):
 
     def _get_endpoint_versions(self, endpoint_url, endpoint_type):
         '''Return the API and middleware versions of a compute endpoint.'''
-        ret = {
-            'compute_middleware_version': None,
-            'compute_api_version': None,
-        }
-
-        defaults = self.static.get_compute_endpoint_defaults(prefix=True)
-
-        mw_version_key = 'compute_%s_middleware_version' % endpoint_type
-        api_version_key = 'compute_%s_api_version' % endpoint_type
-
-        e_middleware_version = defaults.get(mw_version_key, 'UNKNOWN')
-        e_version = defaults.get(api_version_key, 'UNKNOWN')
+        e_middleware_version = None
+        e_version = None
 
         if endpoint_type == 'occi':
             try:
@@ -174,11 +164,11 @@ class OpenStackProvider(providers.BaseProvider):
         return ret
 
     def _get_endpoint_ca_information(self, endpoint_url, insecure, cacert):
-        '''Return the certificate issuer and trusted CAs list of an HTTPS endpoint.'''
+        '''Return certificate issuer and trusted CAs list of HTTPS endpoint.'''
         ca_info = {
-                'issuer': 'UNKNOWN',
-                'trusted_cas': [ 'UNKNOWN' ],
-                }
+            'issuer': 'UNKNOWN',
+            'trusted_cas': ['UNKNOWN']
+        }
 
         if insecure:
             verify = SSL.VERIFY_NONE
@@ -268,15 +258,25 @@ class OpenStackProvider(providers.BaseProvider):
                 e_cas = self.keystone_trusted_cas
                 e_versions = self._get_endpoint_versions(e_url, e_type)
                 e_mw_version = e_versions['compute_middleware_version']
+                # Fallback on defaults if nothing was found
+                # XXX need to construct key as key in conf contains MW type
+                if e_mw_version is None:
+                    mw_version_key = 'compute_%s_middleware_version' % e_type
+                    e_mw_version = defaults.get(mw_version_key, 'UNKNOWN')
                 e_api_version = e_versions['compute_api_version']
+                if e_api_version is None:
+                    api_version_key = 'compute_%s_api_version' % e_type
+                    e_api_version = defaults.get(api_version_key, 'UNKNOWN')
 
                 e = defaults.copy()
                 e.update(e_data)
                 e.update({
                     'compute_endpoint_url': e_url,
+                    'compute_endpoint_id': e_id,
                     'endpoint_issuer': e_issuer,
                     'endpoint_trusted_cas': e_cas,
                     'compute_middleware_version': e_mw_version,
+                    'compute_api_type': e_data['compute_api_type'],
                     'compute_api_version': e_api_version,
                 })
 
@@ -352,7 +352,7 @@ class OpenStackProvider(providers.BaseProvider):
             aux_img = template.copy()
             aux_img.update(defaults)
 
-            # XXX Create an entry for each metatdata attribute, no filtering
+            # XXX Create an entry for each metadata attribute, no filtering
             for name, value in image.items():
                 aux_img[name] = value
 
