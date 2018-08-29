@@ -45,18 +45,7 @@ class BaseBDII(object):
                                          '%s.%s' % (tpl, template_extension))
             self.templates_files[tpl] = template_file
 
-    def _get_info_from_providers(self, method, provider_opts=None):
-        # XXX Temporarily update dynamic provider parameters
-        # XXX Required to be able to pass a custom project to the provider
-        # XXX to retrieve project-specific templates and images
-        if provider_opts:
-            opts = self.opts
-            d = vars(opts)
-            for k, v in provider_opts.items():
-                d[k] = v
-
-            self.dynamic_provider = SUPPORTED_MIDDLEWARE[opts.middleware](opts)
-
+    def _get_info_from_providers(self, method, **provider_kwargs):
         info = {}
         for i in (self.static_provider, self.dynamic_provider):
             if not i:
@@ -144,14 +133,6 @@ class ComputeBDII(BaseBDII):
 
             quotas = self._get_info_from_providers('get_compute_quotas',
                                                    os_project_name=project)
-
-            instances = self._get_info_from_providers('get_instances',
-                                                      {'os_tenant_name':
-                                                          project})
-
-            quotas = self._get_info_from_providers('get_compute_quotas',
-                                                   {'os_tenant_name':
-                                                       project})
 
             for template_id, template in templates.items():
                 template.update(static_compute_info)

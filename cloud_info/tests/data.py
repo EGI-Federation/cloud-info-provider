@@ -212,6 +212,7 @@ class OpenStackFakes(object):
                 'id': 'foo.id',
                 'metadata': {},
                 'file': 'v2/foo.id/file',
+                'marketplace': 'http://example.org/',
             },
             {
                 'name': 'barimage',

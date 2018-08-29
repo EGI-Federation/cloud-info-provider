@@ -1,13 +1,6 @@
+import functools
 import logging
 import re
-import socket
-
-import functools
-import re
-import socket
-
-import re
-import requests
 import socket
 
 from cloud_info import exceptions
@@ -39,6 +32,7 @@ except ImportError:
 
 try:
     import novaclient.client
+    from novaclient.exceptions import Forbidden
 except ImportError:
     msg = 'Cannot import novaclient module.'
     raise exceptions.OpenStackProviderException(msg)
@@ -99,14 +93,19 @@ class OpenStackProvider(providers.BaseProvider):
             opts, auth=self.auth_plugin
         )
 
-        self.os_tenant_id = None
-
         # Hide urllib3 warnings when allowing unverified connection
         if opts.insecure:
             requests.packages.urllib3.disable_warnings()
 
         self.nova = novaclient.client.Client(2, session=self.session)
         self.glance = glanceclient.Client('2', session=self.session)
+
+        try:
+            self.os_tenant_id = self.session.get_project_id()
+        except keystoneauth1.exceptions.http.Unauthorized:
+            msg = ("Could not authorize user in project '%s'" %
+                   opts.os_project_name)
+            raise exceptions.OpenStackProviderException(msg)
 
         self.static = providers.static.StaticProvider(opts)
         self.legacy_occi_os = opts.legacy_occi_os
@@ -167,137 +166,10 @@ class OpenStackProvider(providers.BaseProvider):
             except Exception:
                 pass
 
-        ret.update({
-            'compute_middleware_version': e_middleware_version,
-            'compute_api_version': e_version,
-        })
-
-        return ret
-
-    def _get_endpoint_ca_information(self, endpoint_url, insecure, cacert):
-        '''Return the cer issuer and trusted CAs list of an HTTPS endpoint.'''
-        ca_info = {'issuer': 'UNKNOWN', 'trusted_cas': ['UNKNOWN']}
-
-        if insecure:
-            verify = SSL.VERIFY_NONE
-        else:
-            verify = SSL.VERIFY_PEER
-
-        try:
-            scheme = urlparse(endpoint_url).scheme
-            host = urlparse(endpoint_url).hostname
-            port = urlparse(endpoint_url).port
-
-            if scheme == 'https':
-                ctx = SSL.Context(SSL.SSLv23_METHOD)
-                ctx.set_options(SSL.OP_NO_SSLv2)
-                ctx.set_options(SSL.OP_NO_SSLv3)
-                ctx.set_verify(verify, lambda conn, cert, errno, depth, ok: ok)
-                if not insecure:
-                    ctx.load_verify_locations(cacert)
-
-                client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                client.connect((host, port))
-
-                client_ssl = SSL.Connection(ctx, client)
-                client_ssl.set_connect_state()
-                client_ssl.set_tlsext_host_name(host)
-                client_ssl.do_handshake()
-
-                cert = client_ssl.get_peer_certificate()
-                issuer = self._get_dn(cert.get_issuer())
-
-                client_ca_list = client_ssl.get_client_ca_list()
-                trusted_cas = [self._get_dn(ca) for ca in client_ca_list]
-
-                client_ssl.shutdown()
-                client_ssl.close()
-
-                ca_info['issuer'] = issuer
-                ca_info['trusted_cas'] = trusted_cas
-        except SSL.Error:
-            pass
-
-        return ca_info
-
-    def _get_dn(self, x509name):
-        '''Return the DN of an X509Name object.'''
-        # XXX shortest/easiest way to get the DN of the X509Name
-        # str(X509Name): <X509Name object 'DN'>
-        # return str(x509name)[18:-2]
-        obj_name = str(x509name)
-        start = obj_name.find("'") + 1
-        end = obj_name.rfind("'")
-
-        return obj_name[start:end]
-
-        # Retrieve a keystone authentication token
-        # XXX to be used as main authentication mean
-        self.keystone = ksclient.Client(auth_url=os_auth_url,
-                                        username=os_username,
-                                        password=os_password,
-                                        tenant_name=os_tenant_name,
-                                        insecure=insecure)
-        self.auth_token = self.keystone.auth_token
-        self.os_tenant_id = self.keystone.get_project_id(os_tenant_name)
-
-        # Retieve information about Keystone endpoint SSL configuration
-        e_cert_info = self._get_endpoint_ca_information(opts.os_auth_url,
-                                                        opts.insecure,
-                                                        opts.os_cacert)
-        self.keystone_cert_issuer = e_cert_info['issuer']
-        self.keystone_trusted_cas = e_cert_info['trusted_cas']
-        self.os_cacert = opts.os_cacert
-
-    def _get_endpoint_versions(self, endpoint_url, endpoint_type):
-        '''Return the API and middleware versions of a compute endpoint.'''
         ret = {
-            'compute_middleware_version': None,
-            'compute_api_version': None,
-        }
-
-        defaults = self.static.get_compute_endpoint_defaults(prefix=True)
-
-        mw_version_key = 'compute_%s_middleware_version' % endpoint_type
-        api_version_key = 'compute_%s_api_version' % endpoint_type
-
-        e_middleware_version = defaults.get(mw_version_key, 'UNKNOWN')
-        e_version = defaults.get(api_version_key, 'UNKNOWN')
-
-        if endpoint_type == 'occi':
-            try:
-                if self.insecure:
-                    verify = False
-                else:
-                    verify = self.os_cacert
-
-                request_url = "%s/-/" % endpoint_url
-
-                r = self.session.get(request_url,
-                                     authenticated=True,
-                                     verify=verify)
-
-                if r.status_code == requests.codes.ok:
-                    header_server = r.headers['Server']
-                    e_middleware_version = re.search(r'ooi/([0-9.]+)',
-                                                     header_server).group(1)
-                    e_version = re.search(r'OCCI/([0-9.]+)',
-                                          header_server).group(1)
-            except requests.exceptions.RequestException:
-                pass
-            except IndexError:
-                pass
-        elif endpoint_type == 'compute':
-            try:
-                # TODO(gwarf) Retrieve using API programatically
-                e_version = urlparse(endpoint_url).path.split('/')[1]
-            except Exception:
-                pass
-
-        ret.update({
             'compute_middleware_version': e_middleware_version,
             'compute_api_version': e_version,
-        })
+        }
 
         return ret
 
@@ -387,9 +259,8 @@ class OpenStackProvider(providers.BaseProvider):
         for e_type, e_data in supported_endpoints.items():
             epts = catalog.get_endpoints(service_type=e_type,
                                          interface="public")
-            if not epts:
-                continue
             for ept in epts[e_type]:
+                # XXX for one ID there is one enpoint URL per project
                 e_id = ept['id']
                 e_url = ept['url']
                 # Use keystone SSL information
@@ -409,7 +280,7 @@ class OpenStackProvider(providers.BaseProvider):
                     'compute_api_version': e_api_version,
                 })
 
-                ret['endpoints'][e_id] = e
+                ret['endpoints'][e_url] = e
         return ret
 
     @_rescope
@@ -434,9 +305,11 @@ class OpenStackProvider(providers.BaseProvider):
                 template_id = '%s%s#%s' % (URI, tpl_sch,
                                            OpenStackProvider.occify(flavor_id))
                 aux.update({'template_id': template_id,
+                            'template_native_id': flavor_id,
                             'template_memory': flavor.ram,
-                            'template_cpu': flavor.vcpus,
-                            'template_disk': flavor.disk})
+                            'template_ephemeral': flavor.ephemeral,
+                            'template_disk': flavor.disk,
+                            'template_cpu': flavor.vcpus})
                 flavors[flavor.id] = aux
         return flavors
 

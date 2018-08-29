@@ -100,23 +100,6 @@ compute:
             # Outbound connection true or true
             network_out: true
 
-    shares:
-        ops:
-            project: ops
-            sla: https://egi.eu/sla/ops
-            membership:
-                - VO:ops
-        fedcloud.egi.eu:
-            project: fedcloud
-            sla: https://egi.eu/sla/fedcloud
-            membership:
-                - VOMS:/fedcloud.egi.eu/Role=VMOperators
-        training.egi.eu:
-            project: training
-            sla: https://egi.eu/sla/training
-            membership:
-                - VO:training.egi.eu
-
     images:
         defaults:
             # Set to False or comment the line below if you want to show
