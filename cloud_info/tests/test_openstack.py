@@ -1,5 +1,4 @@
 import argparse
-import unittest
 
 import mock
 
