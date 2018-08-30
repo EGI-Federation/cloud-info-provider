@@ -223,18 +223,6 @@ class OpenStackProvider(providers.BaseProvider):
 
         return obj_name[start:end]
 
-    def _default_if_none(self, key_value, endpoint_type, defaults, key_suffix):
-        """Get default value if None
-
-        Build key from endpoint_type and return value from default
-        """
-        if key_value is not None:
-            field_value = key_value
-        else:
-            field_name = 'compute_%s_%s' % (endpoint_type, key_suffix)
-            field_value = defaults.get(field_name, 'UNKNOWN')
-        return field_value
-
     @_rescope
     def get_compute_endpoints(self, os_project_name=None, **kwargs):
         # Hard-coded defaults for supported endpoints types
@@ -458,6 +446,19 @@ class OpenStackProvider(providers.BaseProvider):
             pass
 
         return quotas
+
+    @staticmethod
+    def _default_if_none(key_value, endpoint_type, defaults, key_suffix):
+        """Get default value if None
+
+        Build key from endpoint_type and return value from default
+        """
+        if key_value is not None:
+            field_value = key_value
+        else:
+            field_name = 'compute_%s_%s' % (endpoint_type, key_suffix)
+            field_value = defaults.get(field_name, 'UNKNOWN')
+        return field_value
 
     @staticmethod
     def occify(term_name):
