@@ -287,7 +287,6 @@ class OpenStackProvider(providers.BaseProvider):
     def get_templates(self, os_project_name=None, **kwargs):
         """Return templates/flavors selected accroding to --select-flavors"""
         flavors = {}
-
         defaults = {'template_platform': 'amd64',
                     'template_network': 'private'}
         defaults.update(self.static.get_template_defaults(prefix=True))
