@@ -223,6 +223,18 @@ class OpenStackProvider(providers.BaseProvider):
 
         return obj_name[start:end]
 
+    def _default_if_none(self, key_value, endpoint_type, defaults, key_suffix):
+        """Get default value if None
+
+        Build key from endpoint_type and return value from default
+        """
+        if key_value is not None:
+            field_value = key_value
+        else:
+            field_name = 'compute_%s_%s' % (endpoint_type, key_suffix)
+            field_value = defaults.get(field_name, 'UNKNOWN')
+        return field_value
+
     @_rescope
     def get_compute_endpoints(self, os_project_name=None, **kwargs):
         # Hard-coded defaults for supported endpoints types
@@ -258,15 +270,16 @@ class OpenStackProvider(providers.BaseProvider):
                 e_cas = self.keystone_trusted_cas
                 e_versions = self._get_endpoint_versions(e_url, e_type)
                 e_mw_version = e_versions['compute_middleware_version']
-                # Fallback on defaults if nothing was found
-                # XXX need to construct key as key in conf contains MW type
-                if e_mw_version is None:
-                    mw_version_key = 'compute_%s_middleware_version' % e_type
-                    e_mw_version = defaults.get(mw_version_key, 'UNKNOWN')
                 e_api_version = e_versions['compute_api_version']
-                if e_api_version is None:
-                    api_version_key = 'compute_%s_api_version' % e_type
-                    e_api_version = defaults.get(api_version_key, 'UNKNOWN')
+                # Fallback on defaults if nothing was found
+                e_mw_version = self._default_if_none(e_mw_version,
+                                                     e_type,
+                                                     defaults,
+                                                     'middleware_version')
+                e_api_version = self._default_if_none(e_api_version,
+                                                      e_type,
+                                                      defaults,
+                                                      'api_version')
 
                 e = defaults.copy()
                 e.update(e_data)
