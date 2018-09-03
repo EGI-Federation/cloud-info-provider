@@ -4,6 +4,7 @@ import os.path
 from cloud_info import exceptions
 from cloud_info import importutils
 
+import mako.exceptions
 import mako.template
 
 SUPPORTED_MIDDLEWARE = {
@@ -59,7 +60,10 @@ class BaseBDII(object):
         info.update(extra)
         t = self.templates_files[template]
         tpl = mako.template.Template(filename=t)
-        return tpl.render(attributes=info)
+        try:
+            return tpl.render(attributes=info)
+        except Exception:
+            return mako.exceptions.text_error_template().render()
 
 
 class StorageBDII(BaseBDII):
@@ -109,7 +113,7 @@ class ComputeBDII(BaseBDII):
             project = share['project']
 
             endpoints = self._get_info_from_providers('get_compute_endpoints',
-                                                      os_project_name=project)
+                                                      os_project_id=project)
 
             if not endpoints.get('endpoints'):
                 return ''
@@ -123,16 +127,16 @@ class ComputeBDII(BaseBDII):
                 endpoint.update(static_compute_info)
 
             images = self._get_info_from_providers('get_images',
-                                                   os_project_name=project)
+                                                   os_project_id=project)
 
             templates = self._get_info_from_providers('get_templates',
-                                                      os_project_name=project)
+                                                      os_project_id=project)
 
             instances = self._get_info_from_providers('get_instances',
-                                                      os_project_name=project)
+                                                      os_project_id=project)
 
             quotas = self._get_info_from_providers('get_compute_quotas',
-                                                   os_project_name=project)
+                                                   os_project_id=project)
 
             for template_id, template in templates.items():
                 template.update(static_compute_info)
