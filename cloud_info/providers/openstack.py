@@ -364,34 +364,60 @@ class OpenStackProvider(providers.BaseProvider):
 
     @staticmethod
     def populate_parser(parser):
+        plugins = loading_base.get_available_plugin_names()
         default_auth = "v3password"
+
         parser.add_argument('--os-auth-type',
                             '--os-auth-plugin',
                             metavar='<name>',
-                            default=default_auth,
-                            help='Authentication type to use')
+                            default=utils.env('OS_AUTH_TYPE',
+                                              default=default_auth),
+                            choices=plugins,
+                            help='Authentication type to use, available '
+                                 'types are: %s' % ", ".join(plugins))
 
-        plugin = loading_base.get_plugin_loader(default_auth)
+        opts_list = {}
+        for plugin_name in plugins:
 
-        for opt in plugin.get_options():
-            # FIXME(aloga): the code below has been commented. This commit has
-            # been cherry picked from another branch that took into account the
-            # VOs and configured projects. The code below needs to be
-            # uncommented whenever Glue2.1 is in place.
+            plugin = loading_base.get_plugin_loader(plugin_name)
 
-            # NOTE(aloga): we do not want a project to be passed from the CLI,
-            # as we will iterate over it for each configured VO and project.
-            # However, as the plugin is expecting them when parsing the
-            # arguments we need to set them to None before calling the
-            # load_auth_from_argparse_arguments method in the __init__ method
-            # of this class.
-            # if opt.name in ("project-name", "project-id"):
-            #    continue
-            parser.add_argument(*opt.argparse_args,
-                                default=opt.argparse_default,
-                                metavar=opt.metavar,
-                                help=opt.help,
-                                dest='os_%s' % opt.dest)
+            for o in plugin.get_options():
+                # FIXME(aloga): the code below has been commented. This commit
+                # has been cherry picked from another branch that took into
+                # account the VOs and configured projects. The code below needs
+                # to be uncommented whenever Glue2.1 is in place.
+
+                # NOTE(aloga): we do not want a project to be passed from the
+                # CLI, as we will iterate over it for each configured VO and
+                # project.  However, as the plugin is expecting them when
+                # parsing the arguments we need to set them to None before
+                # calling the load_auth_from_argparse_arguments method in the
+                # __init__ method of this class.
+                # if opt.name in ("project-name", "project-id"):
+                #    continue
+
+                os_name = o.name.lower().replace('_', '-')
+                os_env_name = 'OS_' + os_name.upper().replace('-', '_')
+                opts_list.setdefault(
+                    os_name, {'env': os_env_name,
+                              'help': '',
+                              'default': o.argparse_default,
+                              'dest': o.dest.replace("-", "_")},
+                )
+                # TODO(mhu) simplistic approach, would be better to only add
+                # help texts if they vary from one auth plugin to another
+                # also the text rendering is ugly in the CLI ...
+                opts_list[os_name]['help'] += 'With %s: %s\n' % (
+                    plugin_name,
+                    o.help,
+                )
+
+        for name, o in opts_list.items():
+            parser.add_argument("--os-" + name,
+                                default=o["default"],
+                                metavar='<auth-%s>' % name,
+                                help=o["help"],
+                                dest='os_%s' % o["dest"])
 
         parser.add_argument(
             '--insecure',
