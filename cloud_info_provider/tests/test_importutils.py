@@ -17,7 +17,7 @@ import datetime
 import sys
 import unittest
 
-from cloud_info import importutils
+from cloud_info_provider import importutils
 
 
 class ImportUtilsTest(unittest.TestCase):

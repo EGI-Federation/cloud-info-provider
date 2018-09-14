@@ -4,8 +4,8 @@ import socket
 
 import yaml
 
-from cloud_info import exceptions
-from cloud_info import providers
+from cloud_info_provider import exceptions
+from cloud_info_provider import providers
 
 
 class StaticProvider(providers.BaseProvider):

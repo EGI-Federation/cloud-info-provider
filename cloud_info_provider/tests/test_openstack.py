@@ -2,10 +2,10 @@ import argparse
 
 import mock
 
-from cloud_info.providers import openstack as os_provider
-from cloud_info.tests import base
-from cloud_info.tests import data
-from cloud_info.tests import utils as utils
+from cloud_info_provider.providers import openstack as os_provider
+from cloud_info_provider.tests import base
+from cloud_info_provider.tests import data
+from cloud_info_provider.tests import utils as utils
 
 from six.moves.urllib.parse import urljoin
 
@@ -649,6 +649,9 @@ class OpenStackProviderTest(base.TestCase):
                     # As version is extracted from the URL default is not used
                     'compute_api_version': 'v2',
                     'compute_endpoint_id': '1b7f14c87d8c42ad962f4d3a5fd13a77',
+                    'compute_nova_endpoint_url':
+                        'https://cloud.example.org:8774/v1.1/ce2d',
+                    'compute_nova_api_version': 'v1.1',
                     'compute_endpoint_url':
                         'http://foo.example.org:5000/v2'}
             },
@@ -689,6 +692,9 @@ class OpenStackProviderTest(base.TestCase):
                 'http://foo.example.org:5000/v2': {
                     'compute_api_type': 'OpenStack',
                     'compute_api_version': 'v2',
+                    'compute_nova_endpoint_url':
+                        'https://cloud.example.org:8774/v1.1/ce2d',
+                    'compute_nova_api_version': 'v1.1',
                     'compute_middleware': 'OpenStack Nova',
                     'compute_middleware_version': 'UNKNOWN',
                     'compute_middleware_developer': 'OpenStack Foundation',

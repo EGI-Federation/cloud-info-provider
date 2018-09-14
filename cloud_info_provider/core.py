@@ -1,19 +1,20 @@
 import argparse
 import os.path
 
-from cloud_info import exceptions
-from cloud_info import importutils
+from cloud_info_provider import exceptions
+from cloud_info_provider import importutils
 
 import mako.exceptions
 import mako.template
 
 SUPPORTED_MIDDLEWARE = {
-    'openstack': 'cloud_info.providers.openstack.OpenStackProvider',
-    'opennebula': 'cloud_info.providers.opennebula.OpenNebulaProvider',
-    'indigoon': 'cloud_info.providers.opennebula.IndigoONProvider',
-    'opennebularocci': 'cloud_info.providers.opennebula.'
+    'openstack': 'cloud_info_provider.providers.openstack.OpenStackProvider',
+    'opennebula': 'cloud_info_provider.providers.opennebula.'
+                  'OpenNebulaProvider',
+    'indigoon': 'cloud_info_provider.providers.opennebula.IndigoONProvider',
+    'opennebularocci': 'cloud_info_provider.providers.opennebula.'
                        'OpenNebulaROCCIProvider',
-    'static': 'cloud_info.providers.static.StaticProvider',
+    'static': 'cloud_info_provider.providers.static.StaticProvider',
 }
 
 

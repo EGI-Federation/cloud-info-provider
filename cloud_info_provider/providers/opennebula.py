@@ -2,9 +2,9 @@ import json
 import os
 import string
 
-from cloud_info import exceptions
-from cloud_info import providers
-from cloud_info import utils
+from cloud_info_provider import exceptions
+from cloud_info_provider import providers
+from cloud_info_provider import utils
 
 try:
     import defusedxml.ElementTree
