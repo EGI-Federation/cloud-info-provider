@@ -1,10 +1,8 @@
+#!/usr/bin/groovy
+
 pipeline {
     agent {
         label 'python'
-    }
-
-    environment {
-        docker_repo = "indigodatacloud/app"
     }
 
     stages {
@@ -121,31 +119,6 @@ commands = py.test --cov=cloud_info --cov-report=xml --cov-report=term-missing c
                             archiveArtifacts artifacts: '**/rpm/*.rpm'
                         }
                     }
-                }
-            }
-        }
-        
-        stage('Docker container building (git tagged version)') {
-            when {
-                anyOf {
-                    branch 'master'
-                    buildingTag()
-                }
-            }
-            steps {
-                script {
-                    if (env.BRANCH_NAME == 'master') {
-                        IMAGE_ID = env.docker_repo + ":latest"
-                    }
-                    else {
-                        IMAGE_ID = env.docker_repo + env.TAG_NAME
-                    }
-                }
-                echo "Building Docker image ${IMAGE_ID}"
-            }
-            post {
-                success {
-                    echo "Pushing Docker image ${IMAGE_ID}"
                 }
             }
         }
