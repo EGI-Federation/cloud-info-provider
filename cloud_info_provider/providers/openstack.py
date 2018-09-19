@@ -7,7 +7,6 @@ from cloud_info_provider import exceptions
 from cloud_info_provider import providers
 from cloud_info_provider import utils
 
-import keystoneauth1.exceptions.http
 from six.moves.urllib.parse import urljoin
 from six.moves.urllib.parse import urlparse
 
@@ -24,6 +23,7 @@ except ImportError:
     raise exceptions.OpenStackProviderException(msg)
 
 try:
+    from keystoneauth1.exceptions import http as http_exc
     from keystoneauth1 import loading
     from keystoneauth1.loading import base as loading_base
     from keystoneauth1.loading import session as loading_session
@@ -97,7 +97,7 @@ class OpenStackProvider(providers.BaseProvider):
 
         try:
             self.os_project_id = self.session.get_project_id()
-        except keystoneauth1.exceptions.http.Unauthorized:
+        except http_exc.Unauthorized:
             msg = ("Could not authorize user in project '%s'" %
                    opts.os_project_id)
             raise exceptions.OpenStackProviderException(msg)
@@ -135,7 +135,7 @@ class OpenStackProvider(providers.BaseProvider):
             self.auth_plugin.invalidate()
             try:
                 self.os_project_id = self.session.get_project_id()
-            except keystoneauth1.exceptions.http.Unauthorized:
+            except http_exc.Unauthorized:
                 msg = ("Could not authorize user in project '%s'" %
                        os_project_id)
                 raise exceptions.OpenStackProviderException(msg)
