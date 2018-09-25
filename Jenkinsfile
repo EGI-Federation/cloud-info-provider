@@ -28,15 +28,6 @@ pipeline {
                 echo 'Computing unit testing coverage..'
                 sh 'tox -e cover'
 
-                echo 'Generating HTML report..'
-                publishHTML([allowMissing: false,
-                             alwaysLinkToLastBuild: false,
-                             keepAll: false,
-                             reportDir: 'cover',
-                             reportFiles: 'index.html',
-                             reportName: 'Coverage report',
-                             reportTitles: ''])
-
                 echo 'Generating Cobertura report..'
                 sh 'tox -e cobertura'
                 cobertura autoUpdateHealth: false,
