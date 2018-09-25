@@ -38,19 +38,7 @@ pipeline {
                              reportTitles: ''])
 
                 echo 'Generating Cobertura report..'
-                writeFile file: 'tox.ini.cobertura', text: '''[tox]
-envlist = cobertura
-[testenv]
-usedevelop = True
-install_command = pip install -U {opts} {packages}
-setenv =
-   VIRTUAL_ENV={envdir}
-deps = pytest-cov
-       nose
-       -r{toxinidir}/requirements.txt
-       -r{toxinidir}/test-requirements.txt
-commands = py.test --cov=cloud_info --cov-report=xml --cov-report=term-missing cloud_info/tests'''
-                sh 'tox -c tox.ini.cobertura'
+                sh 'tox -e cobertura'
                 cobertura autoUpdateHealth: false,
                           autoUpdateStability: false,
                           coberturaReportFile: '**/coverage.xml',
