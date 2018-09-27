@@ -56,7 +56,7 @@ script:
   # lint the RPMs
   - if [[ $OS_NAME == 'centos' ]]; then docker exec -i -w /root/rpmbuild build_container sh -c "rpmlint RPMS/"; fi
   # and install them
-  - if [[ $OS_NAME == 'centos' ]]; then docker exec -i -w /root/rpmbuild/RPMS/noarch build_container sh -c "yum localinstall -y cloud-info-provider-openstack-*.rpm"; fi
-  - if [[ $OS_NAME == 'centos' ]]; then docker exec -i -w /root/rpmbuild/RPMS/noarch build_container sh -c "yum localinstall -y cloud-info-provider-opennebula-*.rpm"; fi
+  - if [[ $OS_NAME == 'centos' ]]; then docker exec -i -w /root/rpmbuild/RPMS/noarch build_container sh -c "yum localinstall -y cloud-info-provider-${VERSION}-*.rpm cloud-info-provider-openstack-*.rpm"; fi
+  - if [[ $OS_NAME == 'centos' ]]; then docker exec -i -w /root/rpmbuild/RPMS/noarch build_container sh -c "yum localinstall -y cloud-info-provider-${VERSION}-*.rpm cloud-info-provider-opennebula-*.rpm"; fi
   # if it works, get the RPMs we just built to the shared volume
   - if [[ $OS_NAME == 'centos' ]]; then docker exec -i build_container sh -c 'cp -v /root/rpmbuild/RPMS/noarch/*.rpm /tmp'; fi
