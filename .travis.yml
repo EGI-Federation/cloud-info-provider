@@ -1,15 +1,12 @@
-language: python
-
-install:
-    - pip install tox
-
-script:
-    - tox
-
-env:
-    - TOXENV=py27
-    - TOXENV=py34
-    - TOXENV=pep8
-    - TOXENV=coveralls
-
+---
 sudo: false
+language: python
+python:
+  - "2.7"
+  - "3.4"
+install:
+  - pip install tox
+script:
+  - tox -e pep8,cover,cobertura,bandit
+  - if [[  $TRAVIS_PYTHON_VERSION == 2.7 ]]; then tox -e py27; fi
+  - if [[  $TRAVIS_PYTHON_VERSION == 3.4 ]]; then tox -e py34; fi
