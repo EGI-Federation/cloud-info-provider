@@ -48,7 +48,7 @@ script:
   - if [[ $OS_NAME == 'centos' ]]; then docker exec -i -w /tmp build_container sh -c 'cp -v dist/cloud_info_provider*tar.gz ~/rpmbuild/SOURCES'; fi
   - if [[ $OS_NAME == 'centos' ]]; then docker exec -i -w /tmp build_container sh -c 'cp -v rpm/*.spec ~/rpmbuild/SPECS'; fi
   # Fix the RPM version when doing an inter-release build, to fix source taball name
-  - if [[ $OS_NAME == 'centos' ]]; then docker exec -i -w /root/rpmbuild/SPECS build_container sed -i "s/^(Version.).*/\\1 ${VERSION}/" cloud-info-provider.spec; fi
+  - if [[ $OS_NAME == 'centos' ]]; then docker exec -i -w /root/rpmbuild/SPECS build_container sed -i "s/^\(Version.\).*/\\1 ${VERSION}/" cloud-info-provider.spec; fi
   # Eventually build the RPMs
   - if [[ $OS_NAME == 'centos' ]]; then docker exec -i -w /root/rpmbuild/SPECS build_container rpmbuild -ba cloud-info-provider.spec; fi
   - if [[ $OS_NAME == 'centos' ]]; then docker exec -i -w /root/rpmbuild/SPECS build_container rpmbuild -ba cloud-info-provider-openstack.spec; fi
