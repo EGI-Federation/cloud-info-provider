@@ -69,22 +69,26 @@ compute:
             production_level: production
 
     shares:
+        # Name of the VO
         ops:
-            project: ops
+            # the project id in OpenStack
+            project: ops_xxxxx
+            # link to the SLA document
             sla: UNKNOWN
             # Type of network: infiniband, gigabiteethernet...
             network_info: UNKNOWN
-            membership:
-                - VO:ops
+            # default membership is VO:<share name>, no need to specify
+            # membership:
+            #     - VO:ops
         fedcloud.egi.eu:
-            project: fedcloud
+            project: fedcloud_xxxx
             sla: https://egi.eu/sla/fedcloud
             # Type of network: infiniband, gigabiteethernet...
             network_info: UNKNOWN
             membership:
                 - VOMS:/fedcloud.egi.eu/Role=VMOperators
         training.egi.eu:
-            project: training
+            project: xxxxx_training
             sla: https://egi.eu/sla/training
             # Type of network: infiniband, gigabiteethernet...
             network_info: UNKNOWN

@@ -97,9 +97,11 @@ GLUE2CloudComputingManagerInstanceMaxAccelerators: ${static_compute_info['comput
 % if static_compute_info['compute_min_accelerators']:
 GLUE2CloudComputingManagerInstanceMinAccelerators: ${static_compute_info['compute_min_accelerators']}
 % endif
+% if static_compute_info.get('compute_virtual_disk_formats'):
 % for virtual_disk_format in static_compute_info['compute_virtual_disk_formats']:
 GLUE2CloudComputingManagerVirtualdiskFormat: ${virtual_disk_format}
 % endfor
+% endif
 GLUE2CloudComputingManagerFailover: ${static_compute_info['compute_failover']}
 GLUE2CloudComputingManagerLiveMigration: ${static_compute_info['compute_live_migration']}
 GLUE2CloudComputingManagerVMBackupRestore: ${static_compute_info['compute_vm_backup_restore']}
@@ -271,7 +273,7 @@ GLUE2CloudComputingShareMaxVM: ${share_max_vm}
     fields =  {'image_version', 'image_os_family', 'image_os_name',
                'image_os_version', 'image_marketplace_id', 'image_size'}
     for field in fields:
-      if image[field] is None:
+      if field not in image or image[field] is None:
           image[field] = 'UNKNOWN'
 
     if image['image_description'] is None:
@@ -296,40 +298,40 @@ GLUE2CloudComputingImageOSName: ${image['image_os_name']}
 GLUE2CloudComputingImageOSVersion: ${image['image_os_version']}
 GLUE2CloudComputingImageOSFamily: ${image['image_os_family']}
 GLUE2CloudComputingImageOSPlatform: ${image['image_platform']}
-% if image['image_minimal_cpu'] and image['image_minimal_cpu'] != None:
+% if image.get('image_minimal_cpu'):
 GLUE2CloudComputingImageMinCPU: ${image['image_minimal_cpu']}
 % endif
-% if image['image_recommended_cpu'] and image['image_recommended_cpu'] != None:
+% if image.get('image_recommended_cpu'):
 GLUE2CloudComputingImageRecommendedCPU: ${image['image_recommended_cpu']}
 % endif
-% if image['image_minimal_ram'] and image['image_minimal_ram'] != None:
+% if image.get('image_minimal_ram'):
 GLUE2CloudComputingImageMinRAM: ${image['image_minimal_ram']}
 % endif
-% if image['image_recommended_ram'] and image['image_recommended_ram'] != None:
+% if image.get('image_recommended_ram'):
 GLUE2CloudComputingImageRecommendedRAM: ${image['image_recommended_ram']}
 % endif
-% if image['image_minimal_accel'] and image['image_minimal_accel'] != None:
+% if image.get('image_minimal_accel'):
 GLUE2CloudComputingImageMinAccelerators: ${image['image_minimal_accel']}
 % endif
-% if image['image_recommended_accel'] and image['image_recommended_accel'] != None:
+% if image.get('image_recommended_accel'):
 GLUE2CloudComputingImageRecommendedAccelerators: ${image['image_recommended_accel']}
 % endif
-% if image['image_accel_type'] and image['image_accel_type'] != None:
+% if image.get('image_accel_type'):
 GLUE2CloudComputingImageRecommendedAcceleratorType: ${image['image_accel_type']}
 % endif
 GLUE2EntityOtherInfo: description:${image['image_description']}
 GLUE2CloudComputingImageDiskSize: ${image['image_size']}
-% for traffic_in in image['image_traffic_in']:
+% for traffic_in in image.get('image_traffic_in', []):
 GLUE2EntityOtherInfo: traffic_in:${traffic_in}
 % endfor
-% for traffic_out in image['image_traffic_out']:
+% for traffic_out in image.get('image_traffic_out', []):
 GLUE2EntityOtherInfo: traffic_out:${traffic_out}
 % endfor
-GLUE2CloudComputingImageAccessInfo: ${image['image_access_info']}
-% if image['image_context_format'] and image['image_context_format'] != None:
+GLUE2CloudComputingImageAccessInfo: ${image.get('image_access_info', 'none')}
+% if image.get('image_context_format'):
 GLUE2EntityOtherInfo: context_format:${image['image_context_format']}
 % endif
-% for software in image['image_software']:
+% for software in image.get('image_software', []):
 GLUE2CloudComputingImageInstalledsoftware: ${software}
 % endfor
 
@@ -358,10 +360,12 @@ GLUE2CloudComputingInstanceTypeCloudComputingEndpointForeignKey: ${endpoint_id}
 GLUE2CloudComputingInstanceTypePlatform: ${template['template_platform']}
 GLUE2CloudComputingInstanceTypevCPU: ${template['template_cpu']}
 GLUE2CloudComputingInstanceTypeRAM: ${template['template_memory']}
-GLUE2CloudComputingInstanceTypeNetworkIn: ${template['template_network_in']}
-GLUE2CloudComputingInstanceTypeNetworkOut: ${template['template_network_out']}
+GLUE2CloudComputingInstanceTypeNetworkIn: ${template.get('template_network_in', 'undefined')}
+GLUE2CloudComputingInstanceTypeNetworkOut: ${template.get('template_network_out', 'undefined')}
 GLUE2CloudComputingInstanceTypeNetworkInfo: ${share['network_info']}
+% if template.get('template_ephemeral'):
 GLUE2CloudComputingInstanceTypeEphemeralStorage: ${template['template_ephemeral']}
+% endif
 GLUE2CloudComputingInstanceTypeDisk: ${template['template_disk']}
 
 % endfor

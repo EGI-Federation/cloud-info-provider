@@ -85,27 +85,27 @@ compute:
             api_endpoint_technology: REST
 
     shares:
+        # the vo name
         ops:
-            project: ops
-            sla: UNKNOWN
+            # Group name in OpenNebula, default is equal to share name
+            #project: ops
+            # Link to the VO SLA
+            #sla: UNKNOWN
             # Type of network: infiniband, gigabiteethernet...
             network_info: UNKNOWN
-            membership:
-                - VO:ops
+            # Default membership is VO:<share name>, specify if finer grained AuthZ is used
+            #membership:
+            #    - VO:ops
         fedcloud.egi.eu:
-            project: fedcloud
             sla: https://egi.eu/sla/fedcloud
             # Type of network: infiniband, gigabiteethernet...
             network_info: UNKNOWN
             membership:
                 - VOMS:/fedcloud.egi.eu/Role=VMOperators
         training.egi.eu:
-            project: training
             sla: https://egi.eu/sla/training
             # Type of network: infiniband, gigabiteethernet...
             network_info: UNKNOWN
-            membership:
-                - VO:training.egi.eu
 
     templates:
         defaults:

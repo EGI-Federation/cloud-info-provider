@@ -4,6 +4,7 @@ import string
 
 from cloud_info_provider import exceptions
 from cloud_info_provider import providers
+from cloud_info_provider.providers import ssl_utils
 from cloud_info_provider import utils
 
 try:
@@ -88,9 +89,13 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
         }
         defaults = self.static.get_image_defaults(prefix=True)
         img_schema = defaults.get('image_schema', 'template')
+        group_name = kwargs.get('project', None)
 
         templates = {}
+        # TODO(enolfc): cache the templates instead of always calling this?
         for tpl_id, tpl in self._get_one_templates().items():
+            if group_name and group_name != tpl.get('gname'):
+                continue
             aux_tpl = template.copy()
             aux_tpl.update(defaults)
 
@@ -266,7 +271,27 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
             msg = ('ERROR, You must provide a rocci_template_dir '
                    'via --rocci-template-dir')
             raise exceptions.OpenNebulaProviderException(msg)
+        self.ca_info = {}
         super(OpenNebulaROCCIProvider, self).__init__(opts)
+
+    def _get_endpoint_ca_information(self, url, **kwargs):
+        if url not in self.ca_info:
+            ca_info = ssl_utils.get_endpoint_ca_information(url, **kwargs)
+            self.ca_info[url] = ca_info
+        return self.ca_info[url]
+
+    def get_compute_endpoints(self, **kwargs):
+        epts = dict()
+        static_epts = self.static.get_compute_endpoints(**kwargs)
+        for url, static_ept in static_epts['endpoints'].items():
+            ept = static_ept.copy()
+            ca_info = self._get_endpoint_ca_information(url)
+            ept.update({
+                'endpoint_trusted_cas': ca_info['trusted_cas'],
+                'endpoint_issuer': ca_info['issuer'],
+            })
+            epts[url] = ept
+        return {'endpoints': epts}
 
     def get_templates(self, **kwargs):
         """Get flavors from rOCCI-server configuration."""
@@ -282,7 +307,8 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
         template.update(self.static.get_template_defaults(prefix=True))
 
         if self.rocci_remote_templates:
-            templates = self.remote_templates(template)
+            group_name = kwargs.get('project', None)
+            templates = self.remote_templates(template, group_name)
         else:
             templates = self.local_templates(template)
 
@@ -318,12 +344,15 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
 
         return templates
 
-    def remote_templates(self, template):
+    def remote_templates(self, template, group_name):
         document_type = 999  # TODO(bparak): configurable?
 
         templates = {}
+        # TODO(enolfc): cache info from ONE?
         for doc_id, doc in self._get_one_documents(document_type).items():
             document = json.loads(doc['template']['body'])
+            if group_name and group_name != doc.get('gname'):
+                continue
 
             aux = template.copy()
             aux.update({

@@ -11,7 +11,13 @@ class BaseProvider(object):
     def get_templates(self, **kwargs):
         return {}
 
+    def get_instances(self, **kwargs):
+        return {}
+
     def get_compute_shares(self, **kwargs):
+        return {}
+
+    def get_compute_quotas(self, **kwargs):
         return {}
 
     def get_compute_endpoints(self, **kwargs):

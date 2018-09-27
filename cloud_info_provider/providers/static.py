@@ -155,6 +155,14 @@ class StaticProvider(providers.BaseProvider):
                                 None,
                                 fields,
                                 prefix='')
+        # if there is no explicit membership defined, assume VO:<nameofshare>
+        # also if there is no "project" defined, assume VO following
+        # rOCCI convention: group name == VO name
+        for vo, share in shares['shares'].items():
+            if not share['membership']:
+                share['membership'] = ["VO:%s" % vo]
+            if not share['project']:
+                share['project'] = vo
         return shares['shares']
 
     def get_compute_quotas(self, **kwargs):

@@ -1,10 +1,10 @@
 import functools
 import logging
 import re
-import socket
 
 from cloud_info_provider import exceptions
 from cloud_info_provider import providers
+from cloud_info_provider.providers import ssl_utils
 from cloud_info_provider import utils
 
 from six.moves.urllib.parse import urljoin
@@ -38,12 +38,6 @@ except ImportError:
     msg = 'Cannot import novaclient module.'
     raise exceptions.OpenStackProviderException(msg)
 
-try:
-    from OpenSSL import SSL
-except ImportError:
-    msg = 'Cannot import pyOpenSSL module.'
-    raise exceptions.OpenStackProviderException(msg)
-
 # Remove info log messages from output
 logging.getLogger('stevedore.extension').setLevel(logging.WARNING)
 logging.getLogger('requests').setLevel(logging.WARNING)
@@ -56,8 +50,8 @@ logging.getLogger('keystoneclient').setLevel(logging.WARNING)
 # TODO(enolfc): should this be completely inside the provider class?
 def _rescope(f):
     @functools.wraps(f)
-    def inner(self, os_project_id=None, **kwargs):
-        self._rescope_project(os_project_id)
+    def inner(self, project=None, **kwargs):
+        self._rescope_project(project)
         return f(self, **kwargs)
     return inner
 
@@ -96,10 +90,9 @@ class OpenStackProvider(providers.BaseProvider):
         self.glance = glanceclient.Client('2', session=self.session)
 
         try:
-            self.os_project_id = self.session.get_project_id()
+            self.project = self.session.get_project_id()
         except http_exc.Unauthorized:
-            msg = ("Could not authorize user in project '%s'" %
-                   opts.os_project_id)
+            msg = "Could not authorize user"
             raise exceptions.OpenStackProviderException(msg)
 
         self.static = providers.static.StaticProvider(opts)
@@ -107,25 +100,24 @@ class OpenStackProvider(providers.BaseProvider):
         self.insecure = opts.insecure
 
         # Retieve information about Keystone endpoint SSL configuration
-        e_cert_info = self._get_endpoint_ca_information(opts.os_auth_url,
-                                                        opts.insecure,
-                                                        opts.os_cacert)
+        e_cert_info = ssl_utils.get_endpoint_ca_information(opts.os_auth_url,
+                                                            opts.insecure,
+                                                            opts.os_cacert)
         self.keystone_cert_issuer = e_cert_info['issuer']
         self.keystone_trusted_cas = e_cert_info['trusted_cas']
         self.os_cacert = opts.os_cacert
         # Select 'public', 'private' or 'all' (default) templates.
         self.select_flavors = opts.select_flavors
 
-    def _rescope_project(self, os_project_id):
+    def _rescope_project(self, project):
         '''Switch to new OS project whenever there is a change.
 
            It updates every OpenStack client used in case of new project.
         '''
-        if (not self.os_project_id or
-                os_project_id != self.os_project_id):
-            self.opts.os_project_id = os_project_id
+        if (not self.project or project != self.project):
+            self.opts.os_project_id = project
             # make sure that it also works for v2voms
-            self.opts.os_tenant_id = os_project_id
+            self.opts.os_tenant_id = project
             self.auth_plugin = loading.load_auth_from_argparse_arguments(
                 self.opts
             )
@@ -134,10 +126,9 @@ class OpenStackProvider(providers.BaseProvider):
             )
             self.auth_plugin.invalidate()
             try:
-                self.os_project_id = self.session.get_project_id()
+                self.project = self.session.get_project_id()
             except http_exc.Unauthorized:
-                msg = ("Could not authorize user in project '%s'" %
-                       os_project_id)
+                msg = "Could not authorize user in project '%s'" % project
                 raise exceptions.OpenStackProviderException(msg)
             # make sure the clients know about the change
             self.nova = novaclient.client.Client(2, session=self.session)
@@ -189,66 +180,6 @@ class OpenStackProvider(providers.BaseProvider):
 
         return ret
 
-    def _get_endpoint_ca_information(self, endpoint_url, insecure, cacert):
-        '''Return certificate issuer and trusted CAs list of HTTPS endpoint.'''
-        ca_info = {
-            'issuer': 'UNKNOWN',
-            'trusted_cas': ['UNKNOWN']
-        }
-
-        if insecure:
-            verify = SSL.VERIFY_NONE
-        else:
-            verify = SSL.VERIFY_PEER
-
-        try:
-            scheme = urlparse(endpoint_url).scheme
-            host = urlparse(endpoint_url).hostname
-            port = urlparse(endpoint_url).port
-
-            if scheme == 'https':
-                ctx = SSL.Context(SSL.SSLv23_METHOD)
-                ctx.set_options(SSL.OP_NO_SSLv2)
-                ctx.set_options(SSL.OP_NO_SSLv3)
-                ctx.set_verify(verify, lambda conn, cert, errno, depth, ok: ok)
-                if not insecure:
-                    ctx.load_verify_locations(cacert)
-
-                client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                client.connect((host, port))
-
-                client_ssl = SSL.Connection(ctx, client)
-                client_ssl.set_connect_state()
-                client_ssl.set_tlsext_host_name(host)
-                client_ssl.do_handshake()
-
-                cert = client_ssl.get_peer_certificate()
-                issuer = self._get_dn(cert.get_issuer())
-
-                client_ca_list = client_ssl.get_client_ca_list()
-                trusted_cas = [self._get_dn(ca) for ca in client_ca_list]
-
-                client_ssl.shutdown()
-                client_ssl.close()
-
-                ca_info['issuer'] = issuer
-                ca_info['trusted_cas'] = trusted_cas
-        except SSL.Error:
-            pass
-
-        return ca_info
-
-    def _get_dn(self, x509name):
-        '''Return the DN of an X509Name object.'''
-        # XXX shortest/easiest way to get the DN of the X509Name
-        # str(X509Name): <X509Name object 'DN'>
-        # return str(x509name)[18:-2]
-        obj_name = str(x509name)
-        start = obj_name.find("'") + 1
-        end = obj_name.rfind("'")
-
-        return obj_name[start:end]
-
     @_rescope
     def get_compute_endpoints(self, **kwargs):
         # Hard-coded defaults for supported endpoints types
@@ -275,6 +206,8 @@ class OpenStackProvider(providers.BaseProvider):
         for e_type, e_data in supported_endpoints.items():
             epts = catalog.get_endpoints(service_type=e_type,
                                          interface="public")
+            if not epts:
+                continue
             for ept in epts[e_type]:
                 e_id = ept['id']
                 # URL is in different places depending of Keystone version
@@ -470,7 +403,7 @@ class OpenStackProvider(providers.BaseProvider):
         quotas = defaults.copy()
 
         try:
-            project_quotas = self.nova.quotas.get(self.os_project_id)
+            project_quotas = self.nova.quotas.get(self.project)
             for resource in quota_resources:
                 try:
                     quotas[resource] = getattr(project_quotas, resource)
