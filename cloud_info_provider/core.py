@@ -110,7 +110,7 @@ class ComputeBDII(BaseBDII):
         # Get shares / projects and related images and templates
         shares = self._get_info_from_providers('get_compute_shares')
 
-        for share_id, share in shares.items():
+        for share in shares.values():
             project = share['project']
 
             endpoints = self._get_info_from_providers('get_compute_endpoints',
@@ -124,7 +124,7 @@ class ComputeBDII(BaseBDII):
             static_compute_info.pop('endpoints')
 
             # Add same static information to all endpoints
-            for url, endpoint in endpoints['endpoints'].items():
+            for endpoint in endpoints['endpoints'].values():
                 endpoint.update(static_compute_info)
 
             images = self._get_info_from_providers('get_images',
@@ -139,10 +139,10 @@ class ComputeBDII(BaseBDII):
             quotas = self._get_info_from_providers('get_compute_quotas',
                                                    os_project_id=project)
 
-            for template_id, template in templates.items():
+            for template in templates.values():
                 template.update(static_compute_info)
 
-            for image_id, image in images.items():
+            for image in images.values():
                 image.update(static_compute_info)
 
             share['images'] = images
