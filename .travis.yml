@@ -40,8 +40,8 @@ script:
   - if [[ $OS_NAME == 'centos' ]]; then docker exec -i -w /root build_container yum install -y rpm-build; fi
   # and ensure the build paths are present
   - if [[ $OS_NAME == 'centos' ]]; then docker exec -i -w /root build_container sh -c 'mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}'; fi
-  # Install OpensStack repositories to get python-pbr
-  - if [[ $OS_NAME == 'centos' ]] && [[ $OS_VERSION == '6' ]]; then docker exec -i -w /root build_container yum install -y centos-release-openstack; fi
+  # Install EPEL or OpensStack repositories to get python-pbr
+  - if [[ $OS_NAME == 'centos' ]] && [[ $OS_VERSION == '6' ]]; then docker exec -i -w /root build_container yum install -y epel-release; fi
   - if [[ $OS_NAME == 'centos' ]] && [[ $OS_VERSION == '7' ]]; then docker exec -i -w /root build_container yum install -y centos-release-openstack-newton; fi
   - if [[ $OS_NAME == 'centos' ]]; then docker exec -i -w /root build_container yum install -y python-pbr python-setuptools; fi
   # Copy source tarball to the place rpmbuild expects it
