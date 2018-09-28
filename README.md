@@ -129,7 +129,7 @@ apt update
 apt install -y devscripts debhelper git
 # Required only for cloud-info-provider package to build python package
 apt install -y python-all-dev python-pbr python-setuptools
-cd /source/cloud-info-provider && debuild --no-tgz-check clean binary
+cd /source && debuild --no-tgz-check clean binary
 cd /source/debs/cloud-info-provider-openstack && debuild --no-tgz-check clean binary
 cd /source/debs/cloud-info-provider-opennebula && debuild --no-tgz-check clean binary
 cp ../*.deb ~/debs/xenial
