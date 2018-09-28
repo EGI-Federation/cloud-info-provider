@@ -27,8 +27,6 @@ script:
   - rpmlint rpm/
   - tox -e pep8,bandit
   # Then unit tests
-  - if [  $TRAVIS_PYTHON_VERSION = '2.7' ]; then tox -e py27; fi
-  - if [  $TRAVIS_PYTHON_VERSION = '3.4' ]; then tox -e py34; fi
   - |
     if [  $TRAVIS_PYTHON_VERSION = '2.7' ]; then
       tox -e py27
