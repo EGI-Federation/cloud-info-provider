@@ -97,5 +97,6 @@ deploy:
   file_glob: true
   file:
     - cloud-info-provider-*.rpm
+    - $OS_NAME/$OS_VERSION/*.deb
   on:
     tags: true
