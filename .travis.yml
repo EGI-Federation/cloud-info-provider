@@ -79,7 +79,7 @@ script:
       docker exec -i -w /src build_container mkdir $OS_NAME-$OS_VERSION
       docker exec -i -w /src build_container sh -c "cp -v debs/*.deb ../*.deb /src/$OS_NAME-$OS_VERSION/"
       # Finally lint built packages
-      lintian $OS_NAME-$OS_VERSION/.deb
+      lintian $OS_NAME-$OS_VERSION/*.deb
     fi
   # Now, start the test containers
   - docker run --name openstack_container -d -ti -v $PWD:/src -w /src $OS_NAME:$OS_VERSION /bin/sh -c 'while true ; do sleep 1000 ; done'
