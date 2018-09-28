@@ -99,6 +99,7 @@ script:
         # apt-get/apt is too old on trusty, so fallbaack to gdebi
         docker exec -i -w /src/$OS_NAME-$OS_VERSION openstack_container sh -c "apt-get install -y gdebi"
         docker exec -i -w /src/$OS_NAME-$OS_VERSION openstack_container sh -c "gdebi -n ./python-cloud-info-provider_*.deb ./python-cloud-info-provider-openstack_*.deb"
+        docker exec -i -w /src/$OS_NAME-$OS_VERSION opennebula_container sh -c "apt-get install -y gdebi"
         docker exec -i -w /src/$OS_NAME-$OS_VERSION opennebula_container sh -c "gdebi -n ./python-cloud-info-provider_*.deb ./python-cloud-info-provider-opennebula_*.deb"
       else
         docker exec -i -w /src/$OS_NAME-$OS_VERSION openstack_container sh -c "apt-get install -y ./python-cloud-info-provider-openstack_*.deb ./python-cloud-info-provider_*.deb"
