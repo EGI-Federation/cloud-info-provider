@@ -72,11 +72,11 @@ script:
       docker exec -i -w /root build_container apt install -y devscripts debhelper git
       # Required only for cloud-info-provider package to build python package
       docker exec -i -w /root build_container apt install -y python-all-dev python-pbr python-setuptools
-      docker exec -i -w /tmp/cloud-info-provider build_container debuild --no-tgz-check clean binary
+      docker exec -i -w /tmp build_container debuild --no-tgz-check clean binary
       docker exec -i -w /tmp/debs/cloud-info-provider-openstack build_container debuild --no-tgz-check clean binary
       docker exec -i -w /tmp/debs/cloud-info-provider-opennebula build_container debuild --no-tgz-check clean binary
       docker exec -i -w /tmp/ mkdir $OS_NAME-$OS_VERSION
-      docker exec -i -w /tmp sh -c "cp *.deb /tmp/$OS_NAME-$OS_VERSION/"
+      docker exec -i -w /tmp sh -c "cp -v debs/*.deb ../*.deb /tmp/$OS_NAME-$OS_VERSION/"
     fi
   # Now, start the test containers
   - docker run --name openstack_container -d -ti -v $PWD:/tmp -w /tmp $OS_NAME:$OS_VERSION /bin/sh -c 'while true ; do sleep 1000 ; done'
