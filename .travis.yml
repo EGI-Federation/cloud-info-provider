@@ -18,8 +18,7 @@ before_install:
   - docker --version
 install:
   - wget http://archive.ubuntu.com/ubuntu/pool/universe/r/rpmlint/rpmlint_1.7-1_all.deb
-  - sudo dpkg -i rpmlint_1.7-1_all.deb || sudo apt-get install -f -y
-  - sudo apt-get install -y lintian
+  - sudo apt-get install -y ./rpmlint_1.7-1_all.deb lintian
   - gem install mdl
   - pip install tox
 script:
@@ -94,8 +93,10 @@ script:
   - |
     if [ $OS_NAME = 'ubuntu' ]; then
       # and install packages in dedicated clean containers
-      docker exec -i -w /src/$OS_NAME-$OS_VERSION openstack_container sh -c "dpkg -i python-cloud-info-provider-openstack_*.deb python-cloud-info-provider_*.deb | apt-get install -f -y"
-      docker exec -i -w /src/$OS_NAME-$OS_VERSION opennebula_container sh -c "dpkg -i python-cloud-info-provider-opennebula_*.deb python-cloud-info-provider_*.deb | apt-get install -f -y"
+      docker exec -i -w /src/$OS_NAME-$OS_VERSION openstack_container apt-get update
+      docker exec -i -w /src/$OS_NAME-$OS_VERSION openstack_container sh -c "apt-get install -f ./python-cloud-info-provider-openstack_*.deb ./python-cloud-info-provider_*.deb"
+      docker exec -i -w /src/$OS_NAME-$OS_VERSION opennebula_container apt-get update
+      docker exec -i -w /src/$OS_NAME-$OS_VERSION opennebula_container sh -c "apt-get install -f ./python-cloud-info-provider-opennebula_*.deb ./python-cloud-info-provider_*.deb"
     fi
 deploy:
   provider: releases
