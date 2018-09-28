@@ -3,13 +3,11 @@ Upstream-Name: cloud-info-provider
 Source: https://github.com/EGI-FCTF/BDIIscripts
 
 Files: *
-Copyright: 2014 Salvatore Pinto, Álvaro Lopez,
-                Boris Parak, Björn Hagemeier,
-                Enol Fernández
+Copyright: 2018 The authors
 License: Apache-2.0
 
 Files: debian/*
-Copyright: 2014 Enol Fernandez <enol.fernandez@egi.eu>
+Copyright: 2018 The authors
 License: Apache-2.0
 
 License: Apache-2.0
@@ -27,8 +25,3 @@ License: Apache-2.0
  .
  On Debian systems, the complete text of the Apache version 2.0 license
  can be found in "/usr/share/common-licenses/Apache-2.0".
-
-# Please also look if there are files or directories which have a
-# different copyright/license attached and list them here.
-# Please avoid to pick license terms that are more restrictive than the
-# packaged work, as it may make Debian's contributions unacceptable upstream.
