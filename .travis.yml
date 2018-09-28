@@ -18,7 +18,8 @@ before_install:
   - docker --version
 install:
   - wget http://archive.ubuntu.com/ubuntu/pool/universe/r/rpmlint/rpmlint_1.7-1_all.deb
-  - sudo dpkg -i rpmlint_1.7-1_all.deb || sudo apt install -f -y
+  - sudo dpkg -i rpmlint_1.7-1_all.deb || sudo apt-get install -f -y
+  - sudo apt-get install -y lintian
   - gem install mdl
   - pip install tox
 script:
@@ -67,18 +68,18 @@ script:
   - |
     if [ $OS_NAME = 'ubuntu' ]; then
       docker exec -i -w /root build_container apt-get update
-      docker exec -i -w /root build_container apt-get install -y devscripts debhelper lintian git
+      docker exec -i -w /root build_container apt-get install -y devscripts debhelper git
       # Required only for cloud-info-provider package to build python package
       docker exec -i -w /root build_container apt-get install -y python-all-dev python-pbr python-setuptools
       # Build the various packages
       docker exec -i -w /src build_container debuild --no-tgz-check clean binary
       docker exec -i -w /src/debs/cloud-info-provider-openstack build_container debuild --no-tgz-check clean binary
       docker exec -i -w /src/debs/cloud-info-provider-opennebula build_container debuild --no-tgz-check clean binary
-      # Lint built packages
-      docker exec -i -w /src build_container sh -c "lintian ../*.deb debs/*.deb"
       # if it works, put all the debs in a dedicated directory
       docker exec -i -w /src build_container mkdir $OS_NAME-$OS_VERSION
       docker exec -i -w /src build_container sh -c "cp -v debs/*.deb ../*.deb /src/$OS_NAME-$OS_VERSION/"
+      # Finally lint built packages
+      lintian $OS_NAME-$OS_VERSION/.deb
     fi
   # Now, start the test containers
   - docker run --name openstack_container -d -ti -v $PWD:/src -w /src $OS_NAME:$OS_VERSION /bin/sh -c 'while true ; do sleep 1000 ; done'
@@ -93,8 +94,8 @@ script:
   - |
     if [ $OS_NAME = 'ubuntu' ]; then
       # and install packages in dedicated clean containers
-      docker exec -i -w /src openstack_container sh -c "dpkg -i python-cloud-info-provider-openstack-*.deb python-cloud-info-provider-$VERSION-*.deb | apt install -f -y"
-      docker exec -i -w /src opennebula_container sh -c "dpkg -i python-cloud-info-provider-opennebula-*.deb python-cloud-info-provider-$VERSION-*.deb | apt install -f -y"
+      docker exec -i -w /src openstack_container sh -c "dpkg -i python-cloud-info-provider-openstack_*.deb python-cloud-info-provider_*.deb | apt-get install -f -y"
+      docker exec -i -w /src opennebula_container sh -c "dpkg -i python-cloud-info-provider-opennebula_*.deb python-cloud-info-provider_*.deb | apt-get install -f -y"
     fi
 deploy:
   provider: releases
@@ -103,6 +104,6 @@ deploy:
   file_glob: true
   file:
     - cloud-info-provider-*.rpm
-    - $OS_NAME/$OS_VERSION/*.deb
+    - $OS_NAME-$OS_VERSION/*.deb
   on:
     tags: true
