@@ -38,6 +38,10 @@ script:
   # Now, start the build container
   - docker run --name build_container -d -ti -v $PWD:/tmp -w /tmp $OS_NAME:$OS_VERSION /bin/bash -c 'while true ; do sleep 1000 ; done'
   # Install prerequisites for the build
+  - |
+    if [ $OS_NAME = 'centos' ]; then
+      docker exec -i -w /root build_container yum install -y rpm-build rpmlint
+    fi
   - if [ $OS_NAME = 'centos' ]; then docker exec -i -w /root build_container yum install -y rpm-build rpmlint; fi
   # and ensure the build paths are present
   - if [ $OS_NAME = 'centos' ]; then docker exec -i -w /root build_container sh -c 'mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}'; fi
