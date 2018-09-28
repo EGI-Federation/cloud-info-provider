@@ -90,6 +90,12 @@ script:
       docker exec -i -w /src openstack_container sh -c "yum localinstall -y cloud-info-provider-openstack-*.rpm cloud-info-provider-$VERSION-*.rpm"
       docker exec -i -w /src opennebula_container sh -c "yum localinstall -y cloud-info-provider-opensnebula-*.rpm cloud-info-provider-$VERSION-*.rpm"
     fi
+  - |
+    if [ $OS_NAME = 'ubuntu' ]; then
+      # and install packages in dedicated clean containers
+      docker exec -i -w /src openstack_container sh -c "dpkg -i python-cloud-info-provider-openstack-*.deb python-cloud-info-provider-$VERSION-*.deb | apt install -f -y"
+      docker exec -i -w /src opennebula_container sh -c "dpkg -i python-cloud-info-provider-opennebula-*.deb python-cloud-info-provider-$VERSION-*.deb | apt install -f -y"
+    fi
 deploy:
   provider: releases
   api_key:
