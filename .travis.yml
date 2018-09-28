@@ -27,8 +27,8 @@ script:
   - rpmlint rpm/
   - tox -e pep8,bandit
   # Then unit tests
-  - if [[  $TRAVIS_PYTHON_VERSION == 2.7 ]]; then tox -e py27; fi
-  - if [[  $TRAVIS_PYTHON_VERSION == 3.4 ]]; then tox -e py34; fi
+  - if [  $TRAVIS_PYTHON_VERSION = '2.7' ]; then tox -e py27; fi
+  - if [  $TRAVIS_PYTHON_VERSION = '3.4' ]; then tox -e py34; fi
   # with test coverage
   - tox -e cover,cobertura
   # Extract build version
@@ -38,32 +38,32 @@ script:
   # Now, start the build container
   - docker run --name build_container -d -ti -v $PWD:/tmp -w /tmp $OS_NAME:$OS_VERSION /bin/bash -c 'while true ; do sleep 1000 ; done'
   # Install prerequisites for the build
-  - if [[ $OS_NAME == 'centos' ]]; then docker exec -i -w /root build_container yum install -y rpm-build rpmlint; fi
+  - if [ $OS_NAME = 'centos' ]; then docker exec -i -w /root build_container yum install -y rpm-build rpmlint; fi
   # and ensure the build paths are present
-  - if [[ $OS_NAME == 'centos' ]]; then docker exec -i -w /root build_container sh -c 'mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}'; fi
+  - if [ $OS_NAME = 'centos' ]; then docker exec -i -w /root build_container sh -c 'mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}'; fi
   # Install EPEL or OpensStack repositories to get python-pbr
-  - if [[ $OS_NAME == 'centos' ]] && [[ $OS_VERSION == '7' ]]; then docker exec -i -w /root build_container yum install -y centos-release-openstack-queens; fi
-  - if [[ $OS_NAME == 'centos' ]]; then docker exec -i -w /root build_container yum install -y python-pbr python-setuptools; fi
+  - if [ $OS_NAME = 'centos' ] && [ $OS_VERSION = '7' ]; then docker exec -i -w /root build_container yum install -y centos-release-openstack-queens; fi
+  - if [ $OS_NAME = 'centos' ]; then docker exec -i -w /root build_container yum install -y python-pbr python-setuptools; fi
   # Copy source tarball to the place rpmbuild expects it
-  - if [[ $OS_NAME == 'centos' ]]; then docker exec -i -w /tmp build_container sh -c 'cp -v dist/cloud_info_provider*tar.gz ~/rpmbuild/SOURCES'; fi
-  - if [[ $OS_NAME == 'centos' ]]; then docker exec -i -w /tmp build_container sh -c 'cp -v rpm/*.spec ~/rpmbuild/SPECS'; fi
+  - if [ $OS_NAME = 'centos' ]; then docker exec -i -w /tmp build_container sh -c 'cp -v dist/cloud_info_provider*tar.gz ~/rpmbuild/SOURCES'; fi
+  - if [ $OS_NAME = 'centos' ]; then docker exec -i -w /tmp build_container sh -c 'cp -v rpm/*.spec ~/rpmbuild/SPECS'; fi
   # Fix the RPM version when doing an inter-release build, to fix source taball name
-  - if [[ $OS_NAME == 'centos' ]]; then docker exec -i -w /root/rpmbuild/SPECS build_container sed -i "s/^\(Version.\).*/\\1 ${VERSION}/" cloud-info-provider.spec; fi
+  - if [ $OS_NAME = 'centos' ]; then docker exec -i -w /root/rpmbuild/SPECS build_container sed -i "s/^\(Version.\).*/\\1 ${VERSION}/" cloud-info-provider.spec; fi
   # Eventually build the RPMs
-  - if [[ $OS_NAME == 'centos' ]]; then docker exec -i -w /root/rpmbuild/SPECS build_container rpmbuild -ba cloud-info-provider.spec; fi
-  - if [[ $OS_NAME == 'centos' ]]; then docker exec -i -w /root/rpmbuild/SPECS build_container rpmbuild -ba cloud-info-provider-openstack.spec; fi
-  - if [[ $OS_NAME == 'centos' ]]; then docker exec -i -w /root/rpmbuild/SPECS build_container rpmbuild -ba cloud-info-provider-opennebula.spec; fi
-  # lint the RPMs
-  - if [[ $OS_NAME == 'centos' ]]; then docker exec -i -w /root/rpmbuild build_container sh -c "rpmlint RPMS/"; fi
+  - if [ $OS_NAME = 'centos' ]; then docker exec -i -w /root/rpmbuild/SPECS build_container rpmbuild -ba cloud-info-provider.spec; fi
+  - if [ $OS_NAME = 'centos' ]; then docker exec -i -w /root/rpmbuild/SPECS build_container rpmbuild -ba cloud-info-provider-openstack.spec; fi
+  - if [ $OS_NAME = 'centos' ]; then docker exec -i -w /root/rpmbuild/SPECS build_container rpmbuild -ba cloud-info-provider-opennebula.spec; fi
+  # lint the RPM
+  - if [ $OS_NAME = 'centos' ]; then docker exec -i -w /root/rpmbuild build_container sh -c "rpmlint RPMS/"; fi
   # if it works, get the RPMs we just built to the shared volume
-  - if [[ $OS_NAME == 'centos' ]]; then docker exec -i build_container sh -c 'cp -v /root/rpmbuild/RPMS/noarch/*.rpm /tmp'; fi
+  - if [ $OS_NAME = 'centos' ]; then docker exec -i build_container sh -c 'cp -v /root/rpmbuild/RPMS/noarch/*.rpm /tmp'; fi
   # Now, start the test containers
   - docker run --name openstack_container -d -ti -v $PWD:/tmp -w /tmp $OS_NAME:$OS_VERSION /bin/bash -c 'while true ; do sleep 1000 ; done'
   - docker run --name opennebula_container -d -ti -v $PWD:/tmp -w /tmp $OS_NAME:$OS_VERSION /bin/bash -c 'while true ; do sleep 1000 ; done'
   # and install packages in dedicated clean containers
-  - if [[ $OS_NAME == 'centos' ]]; then docker exec -i -w /root openstack_container sh -c "yum install -y centos-release-openstack-queens"; fi
-  - if [[ $OS_NAME == 'centos' ]]; then docker exec -i -w /tmp openstack_container sh -c "yum localinstall -y cloud-info-provider-openstack-*.rpm cloud-info-provider-$VERSION-*.rpm"; fi
-  - if [[ $OS_NAME == 'centos' ]]; then docker exec -i -w /tmp opennebula_container sh -c "yum localinstall -y cloud-info-provider-opensnebula-*.rpm cloud-info-provider-$VERSION-*.rpm"; fi
+  - if [ $OS_NAME = 'centos' ]; then docker exec -i -w /root openstack_container sh -c "yum install -y centos-release-openstack-queens"; fi
+  - if [ $OS_NAME = 'centos' ]; then docker exec -i -w /tmp openstack_container sh -c "yum localinstall -y cloud-info-provider-openstack-*.rpm cloud-info-provider-$VERSION-*.rpm"; fi
+  - if [ $OS_NAME = 'centos' ]; then docker exec -i -w /tmp opennebula_container sh -c "yum localinstall -y cloud-info-provider-opensnebula-*.rpm cloud-info-provider-$VERSION-*.rpm"; fi
 deploy:
   provider: releases
   api_key:
