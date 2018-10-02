@@ -53,7 +53,7 @@ compute:
     # Hypervisor name (e.g. KVM, Xen, etc.)
     hypervisor: Foo Hypervisor
     # Hypervisor version
-    hypervisor_version: 0.42
+    hypervisor_version: '0.42'
     # Supported images' virtual disk format: qcow2, raw, vmdk,...
     # virtual_disk_formats:
     #     - 'qcow2'
@@ -84,10 +84,12 @@ compute:
             api_endpoint_technology: webservice
             api_authn_method: X509-VOMS
             # Defaults for native endpoint
-            compute_middleware_version: Liberty
-            compute_api_version: v2
+            middleware_version: Liberty
+            middleware: OpenStack
+            middleware_developer: OpenStack
+            api_version: v2
             # Defaults for OCCI endpoint
-            occi_api_version: 1.1
+            occi_api_version: "1.1"
             occi_middleware_version: 0.3.2
             production_level: unknown
 

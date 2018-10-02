@@ -1,5 +1,4 @@
 import os.path
-import unittest
 
 import mock
 
@@ -205,18 +204,25 @@ class StorageBDIITEst(BaseTest):
 
 
 class ComputeBDIITest(BaseTest):
-    @unittest.expectedFailure
+
     @mock.patch.object(cloud_info_provider.core.BaseBDII, '_format_template')
     @mock.patch.object(cloud_info_provider.core.ComputeBDII,
                        '_get_info_from_providers')
     def test_render(self, m_get_info, m_format):
-        m_get_info.side_effect = (
-            DATA.compute_endpoints,
-            DATA.site_info,
-            DATA.compute_templates,
-            DATA.compute_images,
-            DATA.compute_shares,
-        )
+
+        def get_info_side_effect(what, **kwargs):
+            data_mapping = {
+                'get_site_info': DATA.site_info,
+                'get_compute_shares': DATA.compute_shares,
+                'get_compute_endpoints': DATA.compute_endpoints,
+                'get_images': DATA.compute_images,
+                'get_templates': DATA.compute_templates,
+                'get_instances': {},
+                'get_compute_quotas': {},
+            }
+            return data_mapping[what]
+
+        m_get_info.side_effect = get_info_side_effect
         m_format.return_value = 'foo'
         endpoints = DATA.compute_endpoints
         static_compute_info = dict(endpoints, **DATA.site_info)
@@ -225,20 +231,24 @@ class ComputeBDIITest(BaseTest):
         images = DATA.compute_images
         shares = DATA.compute_shares
 
-        for url, endpoint in endpoints['endpoints'].items():
+        for endpoint in endpoints['endpoints'].values():
             endpoint.update(static_compute_info)
 
-        for template_id, template in templates.items():
+        for template in templates.values():
             template.update(static_compute_info)
 
-        for image_id, image in images.items():
+        for image in images.values():
             image.update(static_compute_info)
 
+        for share in shares.values():
+            share.update({"endpoints": endpoints,
+                          "images": images,
+                          "templates": templates,
+                          "instances": {},
+                          "quotas": {}})
+
         info = {}
-        info.update({'endpoints': endpoints})
         info.update({'static_compute_info': static_compute_info})
-        info.update({'templates': templates})
-        info.update({'images': images})
         info.update({'shares': shares})
 
         bdii = cloud_info_provider.core.ComputeBDII(self.opts)
@@ -246,15 +256,16 @@ class ComputeBDIITest(BaseTest):
 
         m_format.assert_has_calls([mock.call("compute", info)])
 
-    @unittest.expectedFailure
     @mock.patch.object(cloud_info_provider.core.ComputeBDII,
                        '_get_info_from_providers')
     def test_render_empty(self, m_get_info):
         m_get_info.side_effect = (
+            DATA.site_info,
+            DATA.compute_shares,
             {},
             DATA.site_info,
-            DATA.compute_templates,
-            DATA.compute_images,
+            DATA.compute_shares,
+            {},
         )
         bdii = cloud_info_provider.core.ComputeBDII(self.opts)
         self.assertFalse(bdii.render())

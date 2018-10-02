@@ -1,5 +1,4 @@
 import os.path
-import unittest
 
 import mock
 import six
@@ -224,9 +223,15 @@ class StaticProviderTest(base.TestCase):
         expected = DATA.storage_endpoints
         self.assertEqual(expected, self.provider.get_storage_endpoints())
 
-    @unittest.expectedFailure
     def test_get_compute_endpoints(self):
         expected = DATA.compute_endpoints
+        # fill in missing values
+        expected.update({
+            'compute_accelerators_virt_type': None,
+            'compute_network_virt_type': None,
+            'compute_cpu_virt_type': None,
+            'compute_virtual_disk_formats': None,
+        })
         self.assertEqual(expected, self.provider.get_compute_endpoints())
 
     def test_no_site_name(self):
@@ -269,12 +274,29 @@ class StaticProviderTest(base.TestCase):
             self.provider.opts.full_bdii_ldif = True
             self.assertEqual(expected, self.provider.get_site_info())
 
-    @unittest.expectedFailure
     def test_get_images(self):
         expected = DATA.compute_images
+        # add undefined values
+        for img in expected.values():
+            for field in ['image_accel_type',
+                          'image_access_info',
+                          'image_context_format',
+                          'image_description',
+                          'image_id',
+                          'image_minimal_accel',
+                          'image_minimal_cpu',
+                          'image_minimal_ram',
+                          'image_native_id',
+                          'image_recommended_accel',
+                          'image_recommended_cpu',
+                          'image_recommended_ram',
+                          'image_software',
+                          'image_traffic_in',
+                          'image_traffic_out']:
+                if field not in img:
+                    img[field] = None
         self.assertEqual(expected, self.provider.get_images())
 
-    @unittest.expectedFailure
     def test_get_images_with_yaml(self):
         yaml = {
             'compute': {
@@ -322,11 +344,35 @@ class StaticProviderTest(base.TestCase):
                 'image_version': 1.0
             }
         }
-
+        for img in expected.values():
+            for field in ['image_accel_type',
+                          'image_access_info',
+                          'image_context_format',
+                          'image_description',
+                          'image_id',
+                          'image_minimal_accel',
+                          'image_minimal_cpu',
+                          'image_minimal_ram',
+                          'image_native_id',
+                          'image_recommended_accel',
+                          'image_recommended_cpu',
+                          'image_recommended_ram',
+                          'image_software',
+                          'image_traffic_in',
+                          'image_traffic_out']:
+                if field not in img:
+                    img[field] = None
         self.provider.yaml = yaml
         self.assertEqual(expected, self.provider.get_images())
 
-    @unittest.expectedFailure
     def test_get_templates(self):
         expected = DATA.compute_templates
+        for tpl in expected.values():
+            # default values from file
+            tpl.update({
+                'template_disk': None,
+                'template_ephemeral': None,
+                'template_network_in': 'undefined',
+                'template_network_out': True,
+            })
         self.assertEqual(expected, self.provider.get_templates())
