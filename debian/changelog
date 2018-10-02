@@ -1,3 +1,26 @@
+python-cloud-info-provider (0.10.0-1) xenial; urgency=medium
+
+  [ Alvaro Lopez ]
+  * Integrate badges from shields.io.
+  * Integrate coveralls.io.
+
+  [ Enol Fernandez ]
+  * Improve and cleanup configuration files.
+
+  [ Pablo Orviz ]
+  * Import a Jenkinsfile to handle SQA on Jenkins at IFCA.
+
+  [ Ruben Diez ]
+  * Fix utf-8 output for OpenNebula.
+
+  [ Baptiste Grenier ]
+  * Introduce CMF-specific metapackages to deploy required dependencies.
+  * Allow filtering private flavors.
+  * Improve community health following discussions with Bruce Becker and al.
+  * Use travis to lint, test, build and upload pacakges.
+
+ -- Baptiste Grenier <baptiste.grenier@egi.eu>  Mon, 01 Oct 2018 19:21:03 +0200
+
 python-cloud-info-provider (0.9.1-1) xenial; urgency=medium
 
   [ Enol Fernandez ]

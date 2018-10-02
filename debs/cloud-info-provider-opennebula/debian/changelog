@@ -1,3 +1,10 @@
+python-cloud-info-provider-opennebula (0.10.0-1) xenial; urgency=medium
+
+  [ Baptiste Grenier ]
+  * Bump version.
+
+ -- Baptiste Grenier <baptiste.grenier@egi.eu>  Mon, 01 Oct 2018 19:21:03 +0200
+
 python-cloud-info-provider-opennebula (0.9.1-1) xenial; urgency=medium
 
   [ Baptiste Grenier ]
