@@ -1,0 +1,80 @@
+{
+    "license": "Apache-2.0", 
+    "description": "<p>Expected to be the last version before the merge of the GLUE2.1 effort.</p>\n\n<p>Two new packages have been introduced to automatically install the required dependencies (including <code>cloud-info-provider</code> package):</p>\n\n<ul>\n\t<li>RPM: <code>cloud-info-provider-openstack</code>, deb: <code>python-cloud-info-provider-openstack</code></li>\n\t<li>RPM: <code>cloud-info-provider-opennebula</code>, deb: <code>python-cloud-info-provider-opennebula</code></li>\n</ul>\n\n<p>Full changelog:</p>\n\n<ul>\n\t<li>Integrate badges from shields.io and coveralls.io. (Alvaro Lopez)</li>\n\t<li>Improve and cleanup configuration files. (Enol Fernandez)</li>\n\t<li>Import a Jenkinsfile to handle SQA on Jenkins at IFCA. (Pablo Orviz)</li>\n\t<li>Fix UTF-8 output for OpenNebula. (Ruben Diez)</li>\n\t<li>Introduce CMF-specific meta-packages to deploy required dependencies. (Baptiste Grenier)</li>\n\t<li>Allow filtering private flavours. (Baptiste Grenier)</li>\n\t<li>Improve community health following discussions with Bruce Becker and al. (Baptiste Grenier)</li>\n\t<li>Use travis to lint, test, build and upload packages. (Baptiste Grenier)</li>\n</ul>", 
+    "language": "eng", 
+    "title": "EGI-Foundation/cloud-info-provider: 0.10.0", 
+    "keywords": [
+        "bdii", 
+        "grid", 
+        "information"
+    ], 
+    "grants": [
+        {
+            "id": "10.13039/501100000780::777536"
+        }
+    ], 
+    "upload_type": "software", 
+    "version": "0.10.0", 
+    "communities": [
+        {
+            "identifier": "egi-foundation"
+        }
+    ], 
+    "publication_date": "2018-10-02", 
+    "creators": [
+        {
+            "orcid": "0000-0002-5686-3193", 
+            "affiliation": "EGI-Foundation", 
+            "name": "Baptiste Grenier"
+        }, 
+        {
+            "affiliation": "CSIC - Spanish National Research Council", 
+            "name": "Alvaro Lopez Garcia"
+        }, 
+        {
+	    "orcid": "0000-0002-5152-5902",
+            "affiliation": "@EGI-Foundation", 
+            "name": "Enol Fern\u00e1ndez"
+        }, 
+        {
+            "affiliation": "@CESNET", 
+            "name": "Boris Parak"
+        }, 
+        {
+            "orcid": "0000-0002-6607-7145", 
+            "affiliation": "EGI Foundation", 
+            "name": "Bruce Becker"
+        }, 
+        {
+            "name": "Pablo Orviz"
+        }, 
+        {
+            "affiliation": "Forschungszentrum J\u00fclich GmbH", 
+            "name": "Bj\u00f6rn Hagemeier"
+        }, 
+        {
+            "name": "Rueben Diaz"
+        }, 
+        {
+            "affiliation": "EUMETSAT", 
+            "name": "Salvatore Pinto"
+        }, 
+        {
+            "affiliation": "@adimobile", 
+            "name": "Carlos Gimeno Y\u00e1\u00f1ez"
+        }
+    ], 
+    "access_right": "open", 
+    "related_identifiers": [
+        {
+            "scheme": "url", 
+            "identifier": "https://github.com/EGI-Foundation/cloud-info-provider/tree/0.10.0", 
+            "relation": "isSupplementTo"
+        }, 
+        {
+            "scheme": "doi", 
+            "identifier": "10.5281/zenodo.1442683", 
+            "relation": "isVersionOf"
+        }
+    ]
+}
