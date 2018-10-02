@@ -6,7 +6,7 @@
 
 Summary: Information provider for Cloud Compute and Cloud Storage services for BDII
 Name: cloud-info-provider
-Version: 0.9.1
+Version: 0.10.0
 Release: 1%{?dist}
 Group: Applications/Internet
 License: ASL 2.0
@@ -51,6 +51,15 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/cloud-info-provider/
 
 %changelog
+* Mon Oct 01 2018 Baptiste Grenier <baptiste.grenier@egi.eu> 0.10.0
+- Integrate badges from shields.io and coveralls.io. (Alvaro Lopez)
+- Improve and cleanup configuration files. (Enol Fernandez)
+- Import a Jenkinsfile to handle SQA on Jenkins at IFCA. (Pablo Orviz)
+- Fix utf-8 output for OpenNebula. (Ruben Diez)
+- Introduce CMF-specific metapackages to deploy required dependencies. (Baptiste Grenier)
+- Allow filtering private flavors. (Baptiste Grenier)
+- Improve community health following discussions with Bruce Becker and al. (Baptiste Grenier)
+- Use travis to lint, test, build and upload pacakges. (Baptiste Grenier)
 * Mon Apr 30 2018 Baptiste Grenier <baptiste.grenier@egi.eu> 0.9.1
 - OCCI is optional, do not fail if no OCCI endpoint is present (Enol Fernandez)
 - Update organization name in documentation (Baptiste Grenier)
