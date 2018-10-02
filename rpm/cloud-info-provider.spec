@@ -60,6 +60,7 @@ rm -rf $RPM_BUILD_ROOT
 - Allow filtering private flavors. (Baptiste Grenier)
 - Improve community health following discussions with Bruce Becker and al. (Baptiste Grenier)
 - Use travis to lint, test, build and upload pacakges. (Baptiste Grenier)
+- Integrate with zenodo. (Bruce Becker)
 * Mon Apr 30 2018 Baptiste Grenier <baptiste.grenier@egi.eu> 0.9.1
 - OCCI is optional, do not fail if no OCCI endpoint is present (Enol Fernandez)
 - Update organization name in documentation (Baptiste Grenier)
