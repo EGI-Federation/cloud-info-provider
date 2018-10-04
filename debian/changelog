@@ -13,6 +13,9 @@ python-cloud-info-provider (0.10.0-1) xenial; urgency=medium
   [ Ruben Diez ]
   * Fix utf-8 output for OpenNebula.
 
+  [ Bruce Becker ]
+  * Integrate with Zenodo.
+
   [ Baptiste Grenier ]
   * Introduce CMF-specific metapackages to deploy required dependencies.
   * Allow filtering private flavors.
