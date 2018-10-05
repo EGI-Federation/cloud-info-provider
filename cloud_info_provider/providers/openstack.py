@@ -98,6 +98,7 @@ class OpenStackProvider(providers.BaseProvider):
         self.static = providers.static.StaticProvider(opts)
         self.legacy_occi_os = opts.legacy_occi_os
         self.insecure = opts.insecure
+        self.all_images = opts.all_images
 
         # Retieve information about Keystone endpoint SSL configuration
         e_cert_info = ssl_utils.get_endpoint_ca_information(opts.os_auth_url,
@@ -340,7 +341,7 @@ class OpenStackProvider(providers.BaseProvider):
                               image.get('marketplace'))
 
             if marketplace_id is None:
-                if not defaults.get('image_require_marketplace_id'):
+                if self.all_images:
                     link = urljoin(self.glance.http_client.get_endpoint(),
                                    image.get("file"))
                     marketplace_id = link
@@ -516,3 +517,11 @@ class OpenStackProvider(providers.BaseProvider):
             default='all',
             choices=['all', 'public', 'private'],
             help='Select all (default), public or private flavors/templates.')
+
+        parser.add_argument(
+            '--all-images',
+            action='store_true',
+            default=False,
+            help=('If set, include information about all images (including '
+                  'snapshots), otherwise only publish images with cloudkeeper '
+                  'metadata, ignoring the others.'))
