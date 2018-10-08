@@ -56,7 +56,6 @@ class StaticProvider(providers.BaseProvider):
                                                 prefix,
                                                 e_data,
                                                 defaults=defaults)
-#                r['endpoint_url'] = e
                 ret[which][e] = r
 
         return ret
@@ -68,36 +67,28 @@ class StaticProvider(providers.BaseProvider):
         else:
             return 'o=glue'
 
-    def get_site_info(self, **kwargs):
-        if 'site' in self.yaml:
-            data = self.yaml['site']
-        else:
-            data = {'name': None}
-
-        fields = ('name', )
-        site_info = self._get_fields_and_prefix(fields, 'site_', data)
-
-        # Resolve site name from BDII configuration
-        if site_info['site_name'] is None:
-            # FIXME(aloga): add exception here
-            try:
-                with open(self.opts.glite_site_info_static, 'r') as f:
-                    for line in f.readlines():
-                        m = re.search('^SITE_NAME *= *(.*)$', line)
-                        if m:
-                            site_info['site_name'] = m.group(1)
-                            break
-            except Exception:
-                raise exceptions.StaticProviderException(
-                    'Cannot read %s for getting the site name' %
-                    self.opts.glite_site_info_static)
-
-        if site_info['site_name'] is None:
+    def _get_site_info_from_bdii_conf(self):
+        try:
+            with open(self.opts.glite_site_info_static, 'r') as f:
+                for line in f.readlines():
+                    m = re.search('^SITE_NAME *= *(.*)$', line)
+                    if m:
+                        site_info['site_name'] = m.group(1)
+                        break
+        except Exception:
             raise exceptions.StaticProviderException(
                 'Cannot find site name. '
                 'Specify one in the YAML site configuration or be '
                 'sure the file %s is'
                 'accessible and readable' % self.opts.glite_site_info_static)
+
+    def get_site_info(self, **kwargs):
+        data = self.yaml.get('site', {'name': None})
+        site_info = self._get_fields_and_prefix(('name', ), 'site_', data)
+
+        # Resolve site name from BDII configuration
+        if site_info['site_name'] is None:
+            site_info['site_name'] = self._get_site_info_from_bdii_conf()
 
         site_info['suffix'] = self._get_suffix(site_info)
 

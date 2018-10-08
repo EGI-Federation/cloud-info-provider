@@ -75,7 +75,7 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
         return self._handle_response(response)
 
     def get_images(self, **kwargs):
-        template = {
+        img_fields = {
             'image_name': None,
             'image_description': None,
             'image_version': None,
@@ -91,29 +91,29 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
         group_name = kwargs.get('project', None)
 
         templates = {}
-        # TODO(enolfc): cache the templates instead of always calling this?
         for tpl_id, tpl in self._get_one_templates().items():
             if group_name and group_name != tpl.get('gname'):
                 continue
-            aux_tpl = template.copy()
+            aux_tpl = img_fields.copy()
             aux_tpl.update(defaults)
 
             aux_tpl['image_name'] = tpl['name']
             aux_tpl['image_id'] = '%s#%s' % (img_schema, tpl_id)
 
-            if 'template' in tpl:
-                aux_tpl['image_marketplace_id'] = tpl['template'].get(
-                    'cloudkeeper_appliance_mpuri')
-                aux_tpl['image_description'] = tpl['template'].get(
-                    'cloudkeeper_appliance_description')
-                aux_tpl['image_version'] = tpl['template'].get(
-                    'cloudkeeper_appliance_version')
-                aux_tpl['image_platform'] = tpl['template'].get(
-                    'cloudkeeper_appliance_architecture')
+            template = tpl.get('template', {})
+            aux_tpl.update({
+                'image_marketplace_id': template.get(
+                    'cloudkeeper_appliance_mpuri'),
+                'image_description': template.get(
+                    'cloudkeeper_appliance_description'),
+                'image_version': template.get(
+                    'cloudkeeper_appliance_version'),
+                'image_platform': template.get(
+                    'cloudkeeper_appliance_architecture'),
+            })
 
-            if not self.all_images:
-                if not aux_tpl['image_marketplace_id']:
-                    continue
+            if not (self.all_images or aux_tpl['image_marketplace_id']):
+                continue
 
             templates[tpl_id] = aux_tpl
         return templates
@@ -197,27 +197,27 @@ class IndigoONProvider(OpenNebulaBaseProvider):
             aux_tpl['template_id'] = '%s#%s' % (img_schema, tpl_id)
             aux_tpl['template_name'] = tpl['name']
 
-            if 'template' in tpl:
-                aux_tpl['template_description'] = tpl['template'].get(
-                    'description')
-                aux_tpl['template_cpu'] = tpl['template'].get('cpu')
-                aux_tpl['template_memory'] = tpl['template'].get('memory')
-                aux_tpl['image_marketplace_id'] = tpl['template'].get(
-                    'cloudkeeper_appliance_mpuri')
-                aux_tpl['image_description'] = tpl['template'].get(
-                    'cloudkeeper_appliance_description')
-                aux_tpl['image_version'] = tpl['template'].get(
-                    'cloudkeeper_appliance_version')
+            tpl_template = tpl.get('template', {})
+            aux_tpl.update({
+                'template_description': tpl_template.get('description'),
+                'template_cpu': tpl_template.get('cpu'),
+                'template_memory': tpl_template.get('memory'),
+                'image_marketplace_id': tpl_template.get(
+                    'cloudkeeper_appliance_mpuri'),
+                'image_description': tpl_template.get(
+                    'cloudkeeper_appliance_description'),
+                'image_version': tpl_template.get(
+                    'cloudkeeper_appliance_version'),
+            })
 
-            if not self.all_images:
-                if not aux_tpl['image_marketplace_id']:
-                    continue
+            if not (self.all_images or aux_tpl['image_marketplace_id']):
+                continue
 
             templates[tpl_id] = aux_tpl
         return templates
 
     def get_images(self, **kwargs):
-        image = {
+        img_fields = {
             'image_name': None,
             'image_id': None,
             'image_marketplace_id': None,
@@ -228,29 +228,27 @@ class IndigoONProvider(OpenNebulaBaseProvider):
 
         images = {}
         for img_id, img in self._get_one_images().items():
-            aux_img = image.copy()
+            aux_img = img_fields.copy()
             aux_img.update(defaults)
 
             aux_img['image_name'] = img['name']
             aux_img['image_id'] = img_id
 
-            if 'template' in img:
-                aux = img['template']
-                for name, value in aux.items():
-                    aux_img[name] = value
+            template = img.get('template', {})
+            aux_img.update(template)
+            aux_img.update({
+                'image_marketplace_id': template.get(
+                    'cloudkeeper_appliance_mpuri'),
+                'image_version': template.get(
+                    'cloudkeeper_appliance_version'),
+                'image_description': (
+                    template.get('cloudkeeper_appliance_description') or
+                    template.get('description') or
+                    template.get('cloudkeeper_appliance_title')),
+            })
 
-                aux_img['image_marketplace_id'] = aux.get(
-                    'cloudkeeper_appliance_mpuri')
-                aux_img['image_version'] = aux.get(
-                    'cloudkeeper_appliance_version')
-                aux_img['image_description'] = (
-                    aux.get('cloudkeeper_appliance_description') or
-                    aux.get('description') or
-                    aux.get('cloudkeeper_appliance_title'))
-
-            if not self.all_images:
-                if not aux_img['image_marketplace_id']:
-                    continue
+            if not (self.all_images or aux_img['image_marketplace_id']):
+                continue
 
             images[img_id] = aux_img
         return images
@@ -342,7 +340,7 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
 
         templates = {}
         # TODO(enolfc): cache info from ONE?
-        for doc_id, doc in self._get_one_documents(document_type).items():
+        for doc in self._get_one_documents(document_type).values():
             document = json.loads(doc['template']['body'])
             if group_name and group_name != doc.get('gname'):
                 continue

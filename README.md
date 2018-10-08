@@ -232,8 +232,8 @@ For more details see
 ### ooi provider
 
 The ooi provider publishes information for those sites using ooi on top of OpenStack
-nova to provide OCCI support. It has the same options as the openstack provider and yaml 
-configuration file can be used without any changes.
+nova to provide OCCI support. It has the same options as the openstack provider and
+yaml configuration file can be used without any changes.
 
 ### Running the provider in a resource-BDII
 
@@ -276,8 +276,8 @@ It should output the full ldif describing your site.
 
 #### Publishing both native OpenStack and ooi information
 
-In your `/var/lib/bdii/gip/provider/cloud-info-provider` include calls to both OpenStack and ooi
-providers:
+In your `/var/lib/bdii/gip/provider/cloud-info-provider` include calls to both
+OpenStack and ooi providers:
 
 ```sh
 #!/bin/sh
@@ -285,12 +285,14 @@ providers:
 cloud-info-provider-service --yaml /etc/cloud-info-provider/openstack.yaml \
                             --middleware openstack \
                             --os-username <username> --os-password <password> \
-                            --os-user-domain-name default --os-project-name <tenant> \
+                            --os-user-domain-name default \
+                            --os-project-name <tenant> \
                             --os-project-domain-name default --os-auth-url <auth-url>
 cloud-info-provider-service --yaml /etc/cloud-info-provider/openstack.yaml \
                             --middleware ooi \
                             --os-username <username> --os-password <password> \
-                            --os-user-domain-name default --os-project-name <tenant> \
+                            --os-user-domain-name default \
+                            --os-project-name <tenant> \
                             --os-project-domain-name default --os-auth-url <auth-url>
 ```
 

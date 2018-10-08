@@ -1,6 +1,7 @@
 import argparse
 import mock
-import xml.etree.ElementTree
+
+import defusedxml.ElementTree
 
 from cloud_info_provider import exceptions
 from cloud_info_provider.providers import opennebula
@@ -110,7 +111,7 @@ class OpenNebulaBaseProviderTest(base.TestCase):
                 self.static = mock.Mock()
                 self.static.get_image_defaults.return_value = {}
 
-                self.xml_parser = xml.etree.ElementTree
+                self.xml_parser = defusedxml.ElementTree
                 self.server_proxy = mock.Mock()
                 self.server_proxy.one.templatepool.info.return_value = (
                     'OK', FAKES.templatepool)
@@ -165,7 +166,7 @@ class OpenNebulaROCCIProviderTest(OpenNebulaBaseProviderTest):
                 self.rocci_remote_templates = opts.rocci_remote_templates
                 self.all_images = opts.all_images
 
-                self.xml_parser = xml.etree.ElementTree
+                self.xml_parser = defusedxml.ElementTree
                 self.static = mock.Mock()
                 self.static.get_image_defaults.return_value = {}
                 self.static.get_template_defaults.return_value = {}
@@ -222,7 +223,7 @@ class IndigoONProviderTest(OpenNebulaBaseProviderTest):
                 self.on_rpcxml_endpoint = opts.on_rpcxml_endpoint
                 self.all_images = opts.all_images
 
-                self.xml_parser = xml.etree.ElementTree
+                self.xml_parser = defusedxml.ElementTree
                 self.static = mock.Mock()
                 self.static.get_image_defaults.return_value = {}
                 self.static.get_template_defaults.return_value = {}

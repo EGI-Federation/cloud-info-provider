@@ -1,6 +1,5 @@
 import functools
 import logging
-import re
 
 from cloud_info_provider import exceptions
 from cloud_info_provider import providers
@@ -141,7 +140,8 @@ class OpenStackProvider(providers.BaseProvider):
             self.nova = novaclient.client.Client(2, session=self.session)
             self.glance = glanceclient.Client('2', session=self.session)
 
-    def _get_endpoint_versions(self, endpoint_url):
+    @staticmethod
+    def _get_endpoint_versions(endpoint_url):
         '''Return the API and middleware versions of a compute endpoint.'''
         e_middleware_version = None
         e_version = None
@@ -224,23 +224,23 @@ class OpenStackProvider(providers.BaseProvider):
         defaults.update(self.static.get_template_defaults(prefix=True))
         tpl_sch = defaults.get('template_schema', 'resource')
         URI = 'http://schemas.openstack.org/template/'
+        add_all = self.select_flavors == 'all'
         for flavor in self.nova.flavors.list(detailed=True):
-            add_all = self.select_flavors == 'all'
             add_pub = self.select_flavors == 'public' and flavor.is_public
             add_priv = (self.select_flavors == 'private' and not
                         flavor.is_public)
-            if add_all or add_pub or add_priv:
-                aux = defaults.copy()
-                flavor_id = str(getattr(flavor, 'id'))
-                template_id = '%s%s#%s' % (URI, tpl_sch,
-                                           self.adapt_id(flavor_id))
-                aux.update({'template_id': template_id,
-                            'template_native_id': flavor_id,
-                            'template_memory': flavor.ram,
-                            'template_ephemeral': flavor.ephemeral,
-                            'template_disk': flavor.disk,
-                            'template_cpu': flavor.vcpus})
-                flavors[flavor.id] = aux
+            if not (add_all or add_pub or add_priv):
+                continue
+            aux = defaults.copy()
+            flavor_id = str(getattr(flavor, 'id'))
+            template_id = '%s%s#%s' % (URI, tpl_sch, self.adapt_id(flavor_id))
+            aux.update({'template_id': template_id,
+                        'template_native_id': flavor_id,
+                        'template_memory': flavor.ram,
+                        'template_ephemeral': flavor.ephemeral,
+                        'template_disk': flavor.disk,
+                        'template_cpu': flavor.vcpus})
+            flavors[flavor.id] = aux
         return flavors
 
     @_rescope
@@ -281,26 +281,15 @@ class OpenStackProvider(providers.BaseProvider):
         for image in self.glance.images.list(detailed=True):
             aux_img = template.copy()
             aux_img.update(defaults)
+            aux_img.update(image)
 
-            # XXX Create an entry for each metadata attribute, no filtering
-            for name, value in image.items():
-                aux_img[name] = value
-
-            img_name = image.get("name")
             img_id = image.get("id")
-            aux_img.update({
-                'image_name': img_name,
-                'image_native_id': img_id,
-                'image_id': '%s%s#%s' % (URI, img_sch, self.adapt_id(img_id))
-            })
+            image_descr = image.get('vmcatcher_event_dc_description',
+                                    image.get('vmcatcher_event_dc_title'))
+            marketplace_id = image.get('vmcatcher_event_ad_mpuri',
+                                       image.get('marketplace'))
 
-            image_descr = (image.get('vmcatcher_event_dc_description') or
-                           image.get('vmcatcher_event_dc_title'))
-
-            marketplace_id = (image.get('vmcatcher_event_ad_mpuri') or
-                              image.get('marketplace'))
-
-            if marketplace_id is None:
+            if not marketplace_id:
                 if self.all_images:
                     link = urljoin(self.glance.http_client.get_endpoint(),
                                    image.get("file"))
@@ -308,21 +297,16 @@ class OpenStackProvider(providers.BaseProvider):
                 else:
                     continue
 
-            distro = image.get('os_distro')
-            distro_version = image.get('os_version')
-            image_version = image.get('image_version')
-
-            if marketplace_id:
-                aux_img['image_marketplace_id'] = marketplace_id
-            if image_descr:
-                aux_img['image_description'] = image_descr
-            if distro:
-                aux_img['image_os_name'] = distro
-            if distro_version:
-                aux_img['image_os_version'] = distro_version
-            if image_version:
-                aux_img['image_version'] = image_version
-
+            aux_img.update({
+                'image_native_id': img_id,
+                'image_id': '%s%s#%s' % (URI, img_sch, self.adapt_id(img_id)),
+                'image_name': image.get('name'),
+                'image_os_name': image.get('os_distro'),
+                'image_os_version': image.get('os_version'),
+                'image_version': image.get('image_version'),
+                'image_description': image_descr,
+                'image_marketplace_id': marketplace_id,
+            })
             images[img_id] = aux_img
         return images
 
@@ -412,16 +396,15 @@ class OpenStackProvider(providers.BaseProvider):
         loading_session.register_argparse_arguments(parser)
         for plugin_name in plugins:
             plugin = loading_base.get_plugin_loader(plugin_name)
-            for opt in plugin.get_options():
-                # NOTE(aloga): we do not want a project to be passed from the
-                # CLI, as we will iterate over it for each configured VO and
-                # project. However, as the plugin is expecting them when
-                # parsing the arguments we need to set them to None before
-                # calling the load_auth_from_argparse_arguments method in the
-                # __init__ method of this class.
-                if opt.name in ("project-name", "project-id"):
-                    continue
-
+            # NOTE(aloga): we do not want a project to be passed from the
+            # CLI, as we will iterate over it for each configured VO and
+            # project. However, as the plugin is expecting them when
+            # parsing the arguments we need to set them to None before
+            # calling the load_auth_from_argparse_arguments method in the
+            # __init__ method of this class.
+            for opt in filter(lambda x: x.name not in ("project-name",
+                                                       "project-id"),
+                              plugin.get_options()):
                 parser.add_argument(*opt.argparse_args,
                                     default=opt.argparse_default,
                                     metavar='<auth-%s>' % opt.name,
@@ -476,59 +459,3 @@ class OpenStackProvider(providers.BaseProvider):
             help=('If set, include information about all images (including '
                   'snapshots), otherwise only publish images with cloudkeeper '
                   'metadata, ignoring the others.'))
-
-
-class OoiProvider(OpenStackProvider):
-    service_type = 'occi'
-    service_data = {
-        'compute_api_type': 'OCCI',
-        'compute_middleware': 'ooi',
-        'compute_middleware_developer': 'CSIC',
-    }
-
-    def __init__(self, opts):
-        super(OoiProvider, self).__init__(opts)
-
-    def _get_endpoint_versions(self, endpoint_url):
-        '''Return the API and middleware versions of a compute endpoint.'''
-        e_middleware_version = None
-        e_version = None
-
-        if self.insecure:
-            verify = False
-        else:
-            verify = self.os_cacert
-
-        request_url = "%s/-/" % endpoint_url
-        try:
-            r = self.session.get(request_url,
-                                 authenticated=True,
-                                 verify=verify)
-
-            if r.status_code == requests.codes.ok:
-                header_server = r.headers['Server']
-                e_middleware_version = re.search(r'ooi/([0-9.]+)',
-                                                 header_server).group(1)
-                e_version = re.search(r'OCCI/([0-9.]+)',
-                                      header_server).group(1)
-        except IndexError:
-            pass
-        except requests.exceptions.RequestException:
-            pass
-
-        return {
-            'compute_middleware_version': e_middleware_version,
-            'compute_api_version': e_version,
-        }
-
-    def _get_endpoint_id_url(self, e_url):
-        return e_url
-
-    def _get_extra_endpoint_info(self, e_url):
-        return {}
-
-    @staticmethod
-    def adapt_id(term_name):
-        '''Occifies a term_name so that it is compliant with GFD 185.'''
-        term = term_name.strip().replace(' ', '_').replace('.', '-').lower()
-        return term

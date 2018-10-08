@@ -26,7 +26,7 @@ class ModuleTest(base.TestCase):
             self.assertIsNone(cloud_info_provider.core.main())
 
             for i in (m0, m1, m2, m3):
-                assert i.called
+                self.assertTrue(i.called)
 
 
 class FakeBDIIOpts(object):
@@ -180,7 +180,7 @@ class StorageBDIITEst(BaseTest):
         static_storage_info = dict(endpoints, **DATA.site_info)
         static_storage_info.pop('endpoints')
 
-        for url, endpoint in endpoints['endpoints'].items():
+        for endpoint in endpoints['endpoints'].values():
             endpoint.update(static_storage_info)
 
         info = {}
