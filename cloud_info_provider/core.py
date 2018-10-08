@@ -15,6 +15,7 @@ SUPPORTED_MIDDLEWARE = {
     'opennebularocci': 'cloud_info_provider.providers.opennebula.'
                        'OpenNebulaROCCIProvider',
     'static': 'cloud_info_provider.providers.static.StaticProvider',
+    'ooi': 'cloud_info_provider.providers.openstack.OoiProvider',
 }
 
 

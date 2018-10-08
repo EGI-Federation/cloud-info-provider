@@ -1,6 +1,5 @@
 import collections
 import os.path
-import socket
 import yaml
 
 
@@ -56,7 +55,7 @@ class Data(object):
             'storage_middleware_version': 'v1.0',
             'storage_total_storage': 0,
             'storage_service_production_level': 'production',
-            'storage_service_name': socket.getfqdn(),
+            'storage_service_name': 'example.org',
         }
 
     @property
@@ -77,7 +76,7 @@ class Data(object):
             'compute_total_cores': 0,
             'compute_total_ram': 0,
             'compute_service_production_level': 'production',
-            'compute_service_name': socket.getfqdn(),
+            'compute_service_name': 'example.org',
             'endpoints': {
                 'https://cloud-service01.example.org:8787': {
                     'compute_endpoint_url':
