@@ -334,10 +334,3 @@ If your site does not have a separated site-BDII and you want to use the cloud
 provider in the site-BDII host (NOTE: any problems in the cloud provider
 will affect your site-BDII!), you can add the `--site-in-suffix` to the provider
 in `/var/lib/bdii/gip/provider/cloud-info-provider`.
-
-### Generate complete BDII information
-
-Warning: **This does not generate GLUE1.3 information and will fail SAM tests**
-
-The cloud provider can also generate the GlueSchema 2.0 info for a site by
-using the `--full-bdii-ldif` option.

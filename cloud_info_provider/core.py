@@ -163,11 +163,7 @@ class ComputeBDII(BaseBDII):
 class CloudBDII(BaseBDII):
     def __init__(self, opts):
         super(CloudBDII, self).__init__(opts)
-
-        if not self.opts.full_bdii_ldif:
-            self.templates = ('headers', 'clouddomain')
-        else:
-            self.templates = ('headers', 'domain', 'bdii', 'clouddomain')
+        self.templates = ('headers', 'clouddomain')
 
     def render(self):
         output = []
@@ -205,14 +201,6 @@ def parse_opts():
         '--template-extension',
         default='ldif',
         help=('Extension to use for the templates'))
-
-    parser.add_argument(
-        '--full-bdii-ldif',
-        action='store_true',
-        default=False,
-        help=('Whether to generate a LDIF containing all the '
-              'BDII information, or just this node\'s information\n'
-              'NOTE: it does not generate GlueSchema 1.3 information'))
 
     parser.add_argument(
         '--site-in-suffix',

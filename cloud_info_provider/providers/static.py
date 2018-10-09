@@ -61,7 +61,7 @@ class StaticProvider(providers.BaseProvider):
         return ret
 
     def _get_suffix(self, site_info):
-        if self.opts.full_bdii_ldif or self.opts.site_in_suffix:
+        if self.opts.site_in_suffix:
             return ('GLUE2DomainID=%(site_name)s,o=glue' %
                     {'site_name': site_info['site_name']})
         else:
@@ -73,8 +73,7 @@ class StaticProvider(providers.BaseProvider):
                 for line in f.readlines():
                     m = re.search('^SITE_NAME *= *(.*)$', line)
                     if m:
-                        site_info['site_name'] = m.group(1)
-                        break
+                        return m.group(1)
         except Exception:
             raise exceptions.StaticProviderException(
                 'Cannot find site name. '
@@ -91,14 +90,6 @@ class StaticProvider(providers.BaseProvider):
             site_info['site_name'] = self._get_site_info_from_bdii_conf()
 
         site_info['suffix'] = self._get_suffix(site_info)
-
-        if self.opts.full_bdii_ldif:
-            fields = ('production_level', 'url', 'ngi', 'country', 'latitude',
-                      'longitude', 'general_contact', 'sysadmin_contact',
-                      'security_contact', 'user_support_contact',
-                      'bdii_host', 'bdii_port')
-            r = self._get_fields_and_prefix(fields, 'site_', data)
-            site_info.update(r)
 
         return site_info
 
