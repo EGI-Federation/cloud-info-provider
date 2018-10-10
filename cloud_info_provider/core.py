@@ -12,7 +12,6 @@ SUPPORTED_MIDDLEWARE = {
     'openstack': 'cloud_info_provider.providers.openstack.OpenStackProvider',
     'opennebula': 'cloud_info_provider.providers.opennebula.'
                   'OpenNebulaProvider',
-    'indigoon': 'cloud_info_provider.providers.opennebula.IndigoONProvider',
     'opennebularocci': 'cloud_info_provider.providers.opennebula.'
                        'OpenNebulaROCCIProvider',
     'static': 'cloud_info_provider.providers.static.StaticProvider',
