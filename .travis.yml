@@ -112,7 +112,7 @@ deploy:
     secure: eoZ239iUlxzG05pdHJlnfebI2dKCEikjT95MM+2iYmLBKz4upEP98nlqwjtJA1Y0wckpSRdp/iKS3z2uhubmVyKc1Z7hj3iqCq2TuMqQFDuiuXyDGImhQ7XNF8BB+6YAH25BQmwbFN5F6EkTY3mx6nXF6hQOKo9UdEs0XylcG1Y=
   file_glob: true
   file:
-    - cloud-info-provider*.rpm
+    - ./*.rpm
     - ./*/*.deb
   on:
     tags: true

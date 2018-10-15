@@ -4,7 +4,7 @@
 
 Summary: Cloud Information provider meta-package for OpenStack
 Name: cloud-info-provider-openstack
-Version: 0.10.0
+Version: 0.10.2
 Release: 1%{?dist}
 Group: Applications/Internet
 # License: ASL 2.0
@@ -27,6 +27,8 @@ Install the cloud-information-provider and the Cloud Middleware dependencies.
 %files
 
 %changelog
+* Mon Oct 15 2018 Baptiste Grenier <baptiste.grenier@egi.eu> 0.10.2
+- Version bump (Baptiste Grenier)
 * Mon Oct 01 2018 Baptiste Grenier <baptiste.grenier@egi.eu> 0.10.0
 - Version bump (Baptiste Grenier)
 * Wed Jun 20 2018 Baptiste Grenier <baptiste.grenier@egi.eu> 0.9.1
