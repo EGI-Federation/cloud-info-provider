@@ -1,3 +1,9 @@
+python-cloud-info-provider (0.10.2-1) xenial; urgency=medium
+
+  * Version bump.
+
+ -- Baptiste Grenier <baptiste.grenier@egi.eu>  Mon, 15 Oct 2018 21:55:03 +0200
+
 python-cloud-info-provider (0.10.0-1) xenial; urgency=medium
 
   [ Alvaro Lopez ]
