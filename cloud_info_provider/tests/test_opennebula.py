@@ -22,17 +22,17 @@ class OpenNebulaBaseProviderOptionsTest(base.TestCase):
 
         opts = parser.parse_args(['--on-auth', 'foo',
                                   '--on-rpcxml-endpoint', 'bar',
-                                  '--vmcatcher-images'])
+                                  '--all-images'])
 
         self.assertEqual(opts.on_auth, 'foo')
         self.assertEqual(opts.on_rpcxml_endpoint, 'bar')
-        self.assertTrue(opts.cloudkeeper_images)
+        self.assertTrue(opts.all_images)
 
     def test_options(self):
         class Opts(object):
             on_auth = 'foo'
             on_rpcxml_endpoint = 'bar'
-            cloudkeeper_images = False
+            all_images = True
 
         # Check that the required opts are there
         for opt in ('on_auth', 'on_rpcxml_endpoint'):
@@ -61,12 +61,12 @@ class OpenNebulaROCCIProviderOptionsTest(OpenNebulaBaseProviderOptionsTest):
         opts = parser.parse_args(['--on-auth', 'foo',
                                   '--on-rpcxml-endpoint', 'bar',
                                   '--rocci-template-dir', 'test',
-                                  '--vmcatcher-images'])
+                                  '--all-images'])
 
         self.assertEqual(opts.on_auth, 'foo')
         self.assertEqual(opts.on_rpcxml_endpoint, 'bar')
         self.assertEqual(opts.rocci_template_dir, 'test')
-        self.assertTrue(opts.cloudkeeper_images)
+        self.assertTrue(opts.all_images)
 
     def test_options(self):
         class Opts(object):
@@ -74,7 +74,7 @@ class OpenNebulaROCCIProviderOptionsTest(OpenNebulaBaseProviderOptionsTest):
             on_rpcxml_endpoint = 'bar'
             rocci_template_dir = 'test'
             rocci_remote_templates = False
-            cloudkeeper_images = False
+            all_images = False
 
         # Check that the required opts are there
         for opt in ('on_auth', 'on_rpcxml_endpoint', 'rocci_template_dir'):
@@ -105,7 +105,7 @@ class OpenNebulaBaseProviderTest(base.TestCase):
                 self.opts = opts
                 self.on_auth = opts.on_auth
                 self.on_rpcxml_endpoint = opts.on_rpcxml_endpoint
-                self.cloudkeeper_images = opts.cloudkeeper_images
+                self.all_images = opts.all_images
 
                 self.static = mock.Mock()
                 self.static.get_image_defaults.return_value = {}
@@ -118,13 +118,20 @@ class OpenNebulaBaseProviderTest(base.TestCase):
         class Opts(object):
             on_auth = 'oneadmin:opennebula'
             on_rpcxml_endpoint = 'http://localhost:2633/RPC2'
-            cloudkeeper_images = False
+            all_images = True
 
         self.provider = FakeProvider(Opts())
 
     def test_get_images(self):
         self.assertDictEqual(
             self.expected_images, self.provider.get_images())
+
+    def test_get_marketplace_images(self):
+        self.provider.all_images = False
+        marketplace_images = {k: v for k, v in self.expected_images.items()
+                              if v.get('image_marketplace_id')}
+        self.assertItemsEqual(marketplace_images.keys(),
+                              self.provider.get_images().keys())
 
     def test_get_templates(self):
         self.assertDictEqual({}, self.provider.get_templates())
@@ -156,7 +163,7 @@ class OpenNebulaROCCIProviderTest(OpenNebulaBaseProviderTest):
                 self.on_rpcxml_endpoint = opts.on_rpcxml_endpoint
                 self.rocci_template_dir = opts.rocci_template_dir
                 self.rocci_remote_templates = opts.rocci_remote_templates
-                self.cloudkeeper_images = opts.cloudkeeper_images
+                self.all_images = opts.all_images
 
                 self.xml_parser = xml.etree.ElementTree
                 self.static = mock.Mock()
@@ -175,14 +182,14 @@ class OpenNebulaROCCIProviderTest(OpenNebulaBaseProviderTest):
             on_rpcxml_endpoint = 'bar'
             rocci_template_dir = FAKES.rocci_dir
             rocci_remote_templates = False
-            cloudkeeper_images = False
+            all_images = True
 
         class OptsRemote(object):
             on_auth = 'foo'
             on_rpcxml_endpoint = 'bar'
             rocci_template_dir = ''
             rocci_remote_templates = True
-            cloudkeeper_images = False
+            all_images = True
 
         self.provider = FakeProvider(Opts())
         self.provider_remote = FakeProvider(OptsRemote())
@@ -213,7 +220,7 @@ class IndigoONProviderTest(OpenNebulaBaseProviderTest):
                 self.opts = opts
                 self.on_auth = opts.on_auth
                 self.on_rpcxml_endpoint = opts.on_rpcxml_endpoint
-                self.cloudkeeper_images = opts.cloudkeeper_images
+                self.all_images = opts.all_images
 
                 self.xml_parser = xml.etree.ElementTree
                 self.static = mock.Mock()
@@ -228,7 +235,7 @@ class IndigoONProviderTest(OpenNebulaBaseProviderTest):
         class Opts(object):
             on_auth = 'foo'
             on_rpcxml_endpoint = 'bar'
-            cloudkeeper_images = False
+            all_images = True
 
         self.provider = FakeProvider(Opts())
 

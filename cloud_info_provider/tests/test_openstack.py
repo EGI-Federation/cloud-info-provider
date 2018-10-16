@@ -24,6 +24,7 @@ class OpenStackProviderOptionsTest(base.TestCase):
                                   '--os-cacert', 'foobar',
                                   '--insecure',
                                   '--legacy-occi-os',
+                                  '--all-images',
                                   '--select-flavors', 'public'])
 
         self.assertEqual(opts.os_username, 'foo')
@@ -32,6 +33,7 @@ class OpenStackProviderOptionsTest(base.TestCase):
         self.assertEqual(opts.os_cacert, 'foobar')
         self.assertEqual(opts.insecure, True)
         self.assertEqual(opts.legacy_occi_os, True)
+        self.assertEqual(opts.all_images, True)
         self.assertEqual(opts.select_flavors, 'public')
 
 
@@ -63,6 +65,7 @@ class OpenStackProviderTest(base.TestCase):
                 self.os_project_id = None
                 self.select_flavors = 'all'
                 self._rescope_project = mock.Mock()
+                self.all_images = False
 
         self.provider = FakeProvider(None)
 
@@ -635,6 +638,22 @@ class OpenStackProviderTest(base.TestCase):
                                               "template_disk",
                                               "template_ephemeral",
                                               "template_id"])
+
+    def test_get_markeplace_images(self):
+        expected_images = ['foo.id']
+
+        self.provider.all_images = False
+        with utils.nested(
+                mock.patch.object(self.provider.static, 'get_image_defaults'),
+                mock.patch.object(self.provider.glance.images, 'list'),
+        ) as (m_get_image_defaults, m_images_list):
+            m_get_image_defaults.return_value = {}
+            m_images_list.return_value = FAKES.images
+
+            images = self.provider.get_images()
+            assert m_get_image_defaults.called
+
+        self.assertItemsEqual(images.keys(), expected_images)
 
     def test_get_endpoints_with_defaults_from_static(self):
         expected_endpoints = {

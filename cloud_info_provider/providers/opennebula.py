@@ -25,7 +25,7 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
         self.opts = opts
         self.on_auth = opts.on_auth
         self.on_rpcxml_endpoint = opts.on_rpcxml_endpoint
-        self.cloudkeeper_images = opts.cloudkeeper_images
+        self.all_images = opts.all_images
 
         if not self.on_auth:
             msg = ('ERROR, You must provide a on_auth '
@@ -112,7 +112,7 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
                 aux_tpl['image_platform'] = tpl['template'].get(
                     'cloudkeeper_appliance_architecture')
 
-            if self.cloudkeeper_images:
+            if not self.all_images:
                 if not aux_tpl['image_marketplace_id']:
                     continue
 
@@ -139,11 +139,12 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
                   ' or http://localhost:2633/RPC2.'))
 
         parser.add_argument(
-            '--cloudkeeper-images', '--vmcatcher-images',
+            '--all-images',
             action='store_true',
             default=False,
-            help=('If set, include only information on images that '
-                  'have cloudkeeper metadata, ignoring the others.'))
+            help=('If set, include information about all images (including '
+                  'snapshots), otherwise only publish images with cloudkeeper '
+                  'metadata, ignoring the others.'))
 
     @staticmethod
     def _gen_id(image_name, image_id, schema):
@@ -216,7 +217,7 @@ class IndigoONProvider(OpenNebulaBaseProvider):
                 aux_tpl['image_version'] = tpl['template'].get(
                     'cloudkeeper_appliance_version')
 
-            if self.cloudkeeper_images:
+            if not self.all_images:
                 if not aux_tpl['image_marketplace_id']:
                     continue
 
@@ -255,7 +256,7 @@ class IndigoONProvider(OpenNebulaBaseProvider):
                     aux.get('description') or
                     aux.get('cloudkeeper_appliance_title'))
 
-            if self.cloudkeeper_images:
+            if not self.all_images:
                 if not aux_img['image_marketplace_id']:
                     continue
 

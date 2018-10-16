@@ -106,9 +106,4 @@ compute:
 
     images:
         defaults:
-            # Set to False or comment the line below if you want to show
-            # all the images installed in the site (also snapshots). Otherwise
-            # only images with a valid marketplace ID (set by the marketplace
-            # custom property) are shown
-            require_marketplace_id: true
             platform: amd64
