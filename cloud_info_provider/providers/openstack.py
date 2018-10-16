@@ -57,6 +57,13 @@ def _rescope(f):
 
 
 class OpenStackProvider(providers.BaseProvider):
+    service_type = "compute"
+    service_data = {
+        'compute_api_type': 'OpenStack',
+        'compute_middleware': 'OpenStack Nova',
+        'compute_middleware_developer': 'OpenStack Foundation',
+    }
+
     def __init__(self, opts):
         super(OpenStackProvider, self).__init__(opts)
 
@@ -96,7 +103,6 @@ class OpenStackProvider(providers.BaseProvider):
             raise exceptions.OpenStackProviderException(msg)
 
         self.static = providers.static.StaticProvider(opts)
-        self.legacy_occi_os = opts.legacy_occi_os
         self.insecure = opts.insecure
         self.all_images = opts.all_images
 
@@ -135,68 +141,34 @@ class OpenStackProvider(providers.BaseProvider):
             self.nova = novaclient.client.Client(2, session=self.session)
             self.glance = glanceclient.Client('2', session=self.session)
 
-    def _get_endpoint_versions(self, endpoint_url, endpoint_type):
-        '''Return the API and middleware versions of a compute endpoint.
-
-           Beware for 'compute' type endpoint, we are using Keystone URL and
-           not nova's!
-        '''
+    def _get_endpoint_versions(self, endpoint_url):
+        '''Return the API and middleware versions of a compute endpoint.'''
         e_middleware_version = None
         e_version = None
+        try:
+            # TODO(gwarf) Retrieve using API programatically
+            e_version = urlparse(endpoint_url).path.split('/')[1]
+        except IndexError:
+            pass
 
-        if endpoint_type == 'occi':
-            try:
-                if self.insecure:
-                    verify = False
-                else:
-                    verify = self.os_cacert
-
-                request_url = "%s/-/" % endpoint_url
-
-                r = self.session.get(request_url,
-                                     authenticated=True,
-                                     verify=verify)
-
-                if r.status_code == requests.codes.ok:
-                    header_server = r.headers['Server']
-                    e_middleware_version = re.search(r'ooi/([0-9.]+)',
-                                                     header_server).group(1)
-                    e_version = re.search(r'OCCI/([0-9.]+)',
-                                          header_server).group(1)
-            except requests.exceptions.RequestException:
-                pass
-            except IndexError:
-                pass
-        elif endpoint_type == 'compute':
-            try:
-                # TODO(gwarf) Retrieve using API programatically
-                e_version = urlparse(endpoint_url).path.split('/')[1]
-            except Exception:
-                pass
-
-        ret = {
+        return {
             'compute_middleware_version': e_middleware_version,
             'compute_api_version': e_version,
         }
 
-        return ret
+    def _get_endpoint_id_url(self, e_url):
+        return self.auth_plugin.auth_url
+
+    def _get_extra_endpoint_info(self, e_url):
+        nova_versions = self._get_endpoint_versions(e_url)
+        nova_api_version = nova_versions['compute_api_version']
+        return {
+            'compute_nova_endpoint_url': e_url,
+            'compute_nova_api_version': nova_api_version,
+        }
 
     @_rescope
     def get_compute_endpoints(self, **kwargs):
-        # Hard-coded defaults for supported endpoints types
-        supported_endpoints = {
-            'occi': {
-                'compute_api_type': 'OCCI',
-                'compute_middleware': 'ooi',
-                'compute_middleware_developer': 'CSIC',
-            },
-            'compute': {
-                'compute_api_type': 'OpenStack',
-                'compute_middleware': 'OpenStack Nova',
-                'compute_middleware_developer': 'OpenStack Foundation',
-            }
-        }
-
         ret = {
             'endpoints': {},
             'compute_service_name': self.auth_plugin.auth_url
@@ -204,53 +176,43 @@ class OpenStackProvider(providers.BaseProvider):
 
         defaults = self.static.get_compute_endpoint_defaults(prefix=True)
         catalog = self.auth_plugin.get_access(self.session).service_catalog
-        for e_type, e_data in supported_endpoints.items():
-            epts = catalog.get_endpoints(service_type=e_type,
-                                         interface="public")
-            if not epts:
-                continue
-            for ept in epts[e_type]:
-                e_id = ept['id']
-                # URL is in different places depending of Keystone version
-                e_url = ept.get('url', ept.get('publicURL'))
-                # the URL used as id is different if OCCI or nova
-                e_id_url = (e_url if e_type == 'occi'
-                            else self.auth_plugin.auth_url)
-                # Use keystone SSL information
-                e_issuer = self.keystone_cert_issuer
-                e_cas = self.keystone_trusted_cas
-                e_versions = self._get_endpoint_versions(e_id_url, e_type)
-                e_mw_version = e_versions['compute_middleware_version']
-                e_api_version = e_versions['compute_api_version']
-                # Fallback on defaults if nothing was found
-                e_mw_version = self._default_if_none(e_mw_version,
-                                                     e_type,
-                                                     defaults,
-                                                     'middleware_version')
-                e_api_version = self._default_if_none(e_api_version,
-                                                      e_type,
-                                                      defaults,
-                                                      'api_version')
+        epts = catalog.get_endpoints(service_type=self.service_type,
+                                     interface="public")
+        for ept in epts.get(self.service_type, []):
+            e_id = ept['id']
+            # URL is in different places depending of Keystone version
+            e_url = ept.get('url', ept.get('publicURL'))
+            # the URL used as id is different if OCCI or nova
+            e_id_url = self._get_endpoint_id_url(e_url)
+            # Use keystone SSL information
+            e_issuer = self.keystone_cert_issuer
+            e_cas = self.keystone_trusted_cas
+            e_versions = self._get_endpoint_versions(e_id_url)
+            e_mw_version = e_versions['compute_middleware_version']
+            e_api_version = e_versions['compute_api_version']
+            # Fallback on defaults if nothing was found
+            e_mw_version = self._default_if_none(e_mw_version,
+                                                 self.service_type,
+                                                 defaults,
+                                                 'middleware_version')
+            e_api_version = self._default_if_none(e_api_version,
+                                                  self.service_type,
+                                                  defaults,
+                                                  'api_version')
 
-                e = defaults.copy()
-                e.update(e_data)
-                e.update({
-                    'compute_endpoint_url': e_id_url,
-                    'compute_endpoint_id': e_id,
-                    'endpoint_issuer': e_issuer,
-                    'endpoint_trusted_cas': e_cas,
-                    'compute_middleware_version': e_mw_version,
-                    'compute_api_type': e_data['compute_api_type'],
-                    'compute_api_version': e_api_version,
-                })
-                if e_type == 'compute':
-                    nova_versions = self._get_endpoint_versions(e_url, e_type)
-                    nova_api_version = nova_versions['compute_api_version']
-                    e.update({
-                        'compute_nova_endpoint_url': e_url,
-                        'compute_nova_api_version': nova_api_version,
-                    })
-                ret['endpoints'][e_id_url] = e
+            e = defaults.copy()
+            e.update(self.service_data)
+            e.update({
+                'compute_endpoint_url': e_id_url,
+                'compute_endpoint_id': e_id,
+                'endpoint_issuer': e_issuer,
+                'endpoint_trusted_cas': e_cas,
+                'compute_middleware_version': e_mw_version,
+                'compute_api_type': self.service_data['compute_api_type'],
+                'compute_api_version': e_api_version,
+            })
+            e.update(self._get_extra_endpoint_info(e_url))
+            ret['endpoints'][e_id_url] = e
         return ret
 
     @_rescope
@@ -261,7 +223,6 @@ class OpenStackProvider(providers.BaseProvider):
                     'template_network': 'private'}
         defaults.update(self.static.get_template_defaults(prefix=True))
         tpl_sch = defaults.get('template_schema', 'resource')
-        flavor_id_attr = 'name' if self.legacy_occi_os else 'id'
         URI = 'http://schemas.openstack.org/template/'
         for flavor in self.nova.flavors.list(detailed=True):
             add_all = self.select_flavors == 'all'
@@ -270,9 +231,9 @@ class OpenStackProvider(providers.BaseProvider):
                         flavor.is_public)
             if add_all or add_pub or add_priv:
                 aux = defaults.copy()
-                flavor_id = str(getattr(flavor, flavor_id_attr))
+                flavor_id = str(getattr(flavor, 'id'))
                 template_id = '%s%s#%s' % (URI, tpl_sch,
-                                           OpenStackProvider.occify(flavor_id))
+                                           self.adapt_id(flavor_id))
                 aux.update({'template_id': template_id,
                             'template_native_id': flavor_id,
                             'template_memory': flavor.ram,
@@ -330,8 +291,7 @@ class OpenStackProvider(providers.BaseProvider):
             aux_img.update({
                 'image_name': img_name,
                 'image_native_id': img_id,
-                'image_id': '%s%s#%s' % (URI, img_sch,
-                                         OpenStackProvider.occify(img_id))
+                'image_id': '%s%s#%s' % (URI, img_sch, self.adapt_id(img_id))
             })
 
             image_descr = (image.get('vmcatcher_event_dc_description') or
@@ -430,11 +390,9 @@ class OpenStackProvider(providers.BaseProvider):
         return field_value
 
     @staticmethod
-    def occify(term_name):
-        '''Occifies a term_name so that it is compliant with GFD 185.'''
-
-        term = term_name.strip().replace(' ', '_').replace('.', '-').lower()
-        return term
+    def adapt_id(term_name):
+        '''No changes for the ids in default OpenStack.'''
+        return term_name
 
     @staticmethod
     def populate_parser(parser):
@@ -506,13 +464,6 @@ class OpenStackProvider(providers.BaseProvider):
             help='Set request timeout (in seconds).')
 
         parser.add_argument(
-            '--legacy-occi-os',
-            default=False,
-            action='store_true',
-            help="Generate information and ids compatible with OCCI-OS, "
-                 "e.g. using the flavor name instead of the flavor id.")
-
-        parser.add_argument(
             '--select-flavors',
             default='all',
             choices=['all', 'public', 'private'],
@@ -525,3 +476,59 @@ class OpenStackProvider(providers.BaseProvider):
             help=('If set, include information about all images (including '
                   'snapshots), otherwise only publish images with cloudkeeper '
                   'metadata, ignoring the others.'))
+
+
+class OoiProvider(OpenStackProvider):
+    service_type = 'occi'
+    service_data = {
+        'compute_api_type': 'OCCI',
+        'compute_middleware': 'ooi',
+        'compute_middleware_developer': 'CSIC',
+    }
+
+    def __init__(self, opts):
+        super(OoiProvider, self).__init__(opts)
+
+    def _get_endpoint_versions(self, endpoint_url):
+        '''Return the API and middleware versions of a compute endpoint.'''
+        e_middleware_version = None
+        e_version = None
+
+        if self.insecure:
+            verify = False
+        else:
+            verify = self.os_cacert
+
+        request_url = "%s/-/" % endpoint_url
+        try:
+            r = self.session.get(request_url,
+                                 authenticated=True,
+                                 verify=verify)
+
+            if r.status_code == requests.codes.ok:
+                header_server = r.headers['Server']
+                e_middleware_version = re.search(r'ooi/([0-9.]+)',
+                                                 header_server).group(1)
+                e_version = re.search(r'OCCI/([0-9.]+)',
+                                      header_server).group(1)
+        except IndexError:
+            pass
+        except requests.exceptions.RequestException:
+            pass
+
+        return {
+            'compute_middleware_version': e_middleware_version,
+            'compute_api_version': e_version,
+        }
+
+    def _get_endpoint_id_url(self, e_url):
+        return e_url
+
+    def _get_extra_endpoint_info(self, e_url):
+        return {}
+
+    @staticmethod
+    def adapt_id(term_name):
+        '''Occifies a term_name so that it is compliant with GFD 185.'''
+        term = term_name.strip().replace(' ', '_').replace('.', '-').lower()
+        return term

@@ -16,7 +16,7 @@ middleware information.
 Supported cloud middleware providers:
 
 * OpenNebula
-* OpenStack using Keystone authentication with API v3 *only*
+* OpenStack/ooi using Keystone authentication with API v3 *only*
 
 ## Installation
 
@@ -53,7 +53,7 @@ debs:
 * python-cloud-info-provider-opennebula
 * python-cloud-info-provider
 
-#### OpenStack provider dependencies
+#### OpenStack/ooi provider dependencies
 
 * python-novaclient
 * python-glanceclient
@@ -174,7 +174,7 @@ overriden with the `--yaml-file` option. A complete example with comments is
 available in the `sample.static.yaml` file.
 
 Dynamic information can be further obtained with the middleware providers
-(OpenStack and OpenNebula via rOCCI supported currently). Use the
+(OpenStack, ooi, and OpenNebula via rOCCI supported currently). Use the
 `--middleware` option for specifying the provider to use (see the command
 help for exact names). cloud-info-provider will fallback to static information
 defined in the yaml file if a dynamic provider is not able to return any
@@ -218,6 +218,9 @@ cloud-info-provider-service --yaml-file /etc/cloud-info-provider/static.yaml \
 
 ### OpenStack provider
 
+The OpenStack provider only publishes information about native OpenStack API access,
+for ooi information check below
+
 #### Filtering public or private flavors
 
 By default the OpenStack provider will return 'all' flavors, but it is also
@@ -226,17 +229,16 @@ possible to select only 'public' or 'private' flavors using the
 For more details see
 [OpenStack flavors documentation](https://docs.openstack.org/nova/pike/admin/flavors.html).
 
-#### Legacy OpenStack OCCI-OS interface
+### ooi provider
 
-If you are using [OCCI-OS](https://github.com/EGI-FCTF/occi-os) for providing
-OCCI support for OpenStack, use the `legacy-occi-os` command line option. This
-will produce output with ids compatible with your setup instead of the current
-default that supports [ooi](https://launchpad.net/ooi).
+The ooi provider publishes information for those sites using ooi on top of OpenStack
+nova to provide OCCI support. It has the same options as the openstack provider and yaml 
+configuration file can be used without any changes.
 
 ### Running the provider in a resource-BDII
 
 This is the normal deployment mode for the cloud provider. It should be installed
-in a node with access to your cloud infrastructure: for OpenStack, access to
+in a node with access to your cloud infrastructure: for OpenStack/ooi, access to
 nova service is needed; for OpenNebula-rOCCI provider, access to the files
 describing the rOCCI templates is needed (e.g. installing the provider in the same
 host as rOCCI-server).
@@ -271,6 +273,26 @@ and test it:
 ```
 
 It should output the full ldif describing your site.
+
+#### Publishing both native OpenStack and ooi information
+
+In your `/var/lib/bdii/gip/provider/cloud-info-provider` include calls to both OpenStack and ooi
+providers:
+
+```sh
+#!/bin/sh
+
+cloud-info-provider-service --yaml /etc/cloud-info-provider/openstack.yaml \
+                            --middleware openstack \
+                            --os-username <username> --os-password <password> \
+                            --os-user-domain-name default --os-project-name <tenant> \
+                            --os-project-domain-name default --os-auth-url <auth-url>
+cloud-info-provider-service --yaml /etc/cloud-info-provider/openstack.yaml \
+                            --middleware ooi \
+                            --os-username <username> --os-password <password> \
+                            --os-user-domain-name default --os-project-name <tenant> \
+                            --os-project-domain-name default --os-auth-url <auth-url>
+```
 
 ### Start the bdii service
 

@@ -221,7 +221,9 @@ class StaticProviderTest(base.TestCase):
 
     def test_get_storage_endpoints(self):
         expected = DATA.storage_endpoints
-        self.assertEqual(expected, self.provider.get_storage_endpoints())
+        with mock.patch('socket.getfqdn') as m_fqdn:
+            m_fqdn.return_value = 'example.org'
+            self.assertEqual(expected, self.provider.get_storage_endpoints())
 
     def test_get_compute_endpoints(self):
         expected = DATA.compute_endpoints
@@ -232,7 +234,9 @@ class StaticProviderTest(base.TestCase):
             'compute_cpu_virt_type': None,
             'compute_virtual_disk_formats': None,
         })
-        self.assertEqual(expected, self.provider.get_compute_endpoints())
+        with mock.patch('socket.getfqdn') as m_fqdn:
+            m_fqdn.return_value = 'example.org'
+            self.assertEqual(expected, self.provider.get_compute_endpoints())
 
     def test_no_site_name(self):
         self.opts.glite_site_info_static = "This does not exist"
