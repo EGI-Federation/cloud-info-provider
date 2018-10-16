@@ -114,5 +114,6 @@ deploy:
   file:
     - ./*.rpm
     - ./*/*.deb
+  skip_cleanup: true
   on:
     tags: true
