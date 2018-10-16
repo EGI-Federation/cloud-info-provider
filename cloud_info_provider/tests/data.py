@@ -62,13 +62,18 @@ class Data(object):
     @property
     def compute_endpoints(self):
         return {
-            'compute_capabilities': ['cloud.managementSystem',
-                                     'cloud.vm.uploadImage'],
+            'compute_capabilities': ['executionmanagement.dynamicvmdeploy',
+                                     'security.accounting'],
             'compute_hypervisor': 'Foo Hypervisor',
-            'compute_hypervisor_version': '0.0.0',
-            'compute_middleware': 'A Middleware',
-            'compute_middleware_developer': 'Middleware Developer',
-            'compute_middleware_version': 'v1.0',
+            'compute_hypervisor_version': '0.42',
+            'compute_failover': False,
+            'compute_vm_backup_restore': False,
+            'compute_live_migration': False,
+            'compute_min_accelerators': 0,
+            'compute_max_accelerators': 0,
+            'compute_total_accelerators': 0,
+            'compute_min_dedicated_ram': 0,
+            'compute_max_dedicated_ram': 0,
             'compute_total_cores': 0,
             'compute_total_ram': 0,
             'compute_service_production_level': 'production',
@@ -78,28 +83,43 @@ class Data(object):
                     'compute_endpoint_url':
                         'https://cloud-service01.example.org:8787',
                     'compute_api_authn_method': 'X509-VOMS',
-                    'compute_api_endpoint_technology': 'REST',
+                    'compute_api_endpoint_technology': 'webservice',
                     'compute_api_type': 'OCCI',
-                    'compute_api_version': 1.1,
                     'compute_production_level': 'unknown',
+                    'compute_api_version': 'v2',
+                    'compute_occi_api_version': "1.1",
+                    'compute_occi_middleware_version': '0.3.2',
+                    'compute_middleware': "OpenStack",
+                    'compute_middleware_developer': "OpenStack",
+                    'compute_middleware_version': "Liberty",
                 },
                 'https://cloud-service02.example.org:8787': {
                     'compute_endpoint_url':
                         'https://cloud-service02.example.org:8787',
                     'compute_api_authn_method': 'X509',
-                    'compute_api_endpoint_technology': 'REST',
+                    'compute_api_endpoint_technology': 'webservice',
                     'compute_api_type': 'OCCI',
-                    'compute_api_version': 1.1,
                     'compute_production_level': 'testing',
+                    'compute_api_version': 'v2',
+                    'compute_occi_api_version': "1.1",
+                    'compute_occi_middleware_version': '0.3.2',
+                    'compute_middleware': "OpenStack",
+                    'compute_middleware_developer': "OpenStack",
+                    'compute_middleware_version': "Liberty",
                 },
                 'https://cloud-service03.example.org:8787': {
                     'compute_endpoint_url':
                         'https://cloud-service03.example.org:8787',
                     'compute_api_authn_method': 'User/Password',
-                    'compute_api_endpoint_technology': 'REST',
+                    'compute_api_endpoint_technology': 'webservice',
                     'compute_api_type': 'OCCI',
-                    'compute_api_version': 1.1,
                     'compute_production_level': 'unknown',
+                    'compute_api_version': 'v2',
+                    'compute_occi_api_version': "1.1",
+                    'compute_occi_middleware_version': '0.3.2',
+                    'compute_middleware': "OpenStack",
+                    'compute_middleware_developer': "OpenStack",
+                    'compute_middleware_version': "Liberty",
                 }
             }
         }
@@ -149,6 +169,20 @@ class Data(object):
             }
         }
 
+    @property
+    def compute_shares(self):
+        return {
+            'fedcloud.egi.eu': {
+                'sla': 'https://egi.eu/sla/fedcloud',
+                'project': 'fedcloud',
+            },
+            'training.egi.eu': {
+                'sla': 'https://egi.eu/sla/training',
+                'project': 'training',
+            },
+        }
+
+
 DATA = Data()
 
 
@@ -156,7 +190,7 @@ class OpenStackFakes(object):
     def __init__(self):
         Flavor = collections.namedtuple(
             'Flavor',
-            ('id', 'name', 'ram', 'vcpus', 'is_public', 'disk'))
+            ('id', 'name', 'ram', 'vcpus', 'is_public', 'disk', 'ephemeral'))
 
         flavors = (
             {
@@ -166,6 +200,7 @@ class OpenStackFakes(object):
                 'vcpus': 20,
                 'is_public': True,
                 'disk': 0,
+                'ephemeral': 10,
             },
             {
                 'id': 2,
@@ -174,6 +209,7 @@ class OpenStackFakes(object):
                 'vcpus': 30,
                 'is_public': False,
                 'disk': 10,
+                'ephemeral': 10,
             },
             {
                 'id': 3,
@@ -182,6 +218,7 @@ class OpenStackFakes(object):
                 'vcpus': 3,
                 'is_public': True,
                 'disk': 5,
+                'ephemeral': 10,
             },
         )
 
@@ -195,6 +232,7 @@ class OpenStackFakes(object):
                 'id': 'foo.id',
                 'metadata': {},
                 'file': 'v2/foo.id/file',
+                'marketplace': 'http://example.org/',
             },
             {
                 'name': 'barimage',

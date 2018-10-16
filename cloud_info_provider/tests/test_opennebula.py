@@ -2,10 +2,10 @@ import argparse
 import mock
 import xml.etree.ElementTree
 
-from cloud_info import exceptions
-from cloud_info.providers import opennebula
-from cloud_info.tests import base
-from cloud_info.tests import data
+from cloud_info_provider import exceptions
+from cloud_info_provider.providers import opennebula
+from cloud_info_provider.tests import base
+from cloud_info_provider.tests import data
 
 FAKES = data.ONE_FAKES
 

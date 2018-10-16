@@ -1,18 +1,20 @@
 import argparse
 import os.path
 
-from cloud_info import exceptions
-from cloud_info import importutils
+from cloud_info_provider import exceptions
+from cloud_info_provider import importutils
 
+import mako.exceptions
 import mako.template
 
 SUPPORTED_MIDDLEWARE = {
-    'openstack': 'cloud_info.providers.openstack.OpenStackProvider',
-    'opennebula': 'cloud_info.providers.opennebula.OpenNebulaProvider',
-    'indigoon': 'cloud_info.providers.opennebula.IndigoONProvider',
-    'opennebularocci': 'cloud_info.providers.opennebula.'
+    'openstack': 'cloud_info_provider.providers.openstack.OpenStackProvider',
+    'opennebula': 'cloud_info_provider.providers.opennebula.'
+                  'OpenNebulaProvider',
+    'indigoon': 'cloud_info_provider.providers.opennebula.IndigoONProvider',
+    'opennebularocci': 'cloud_info_provider.providers.opennebula.'
                        'OpenNebulaROCCIProvider',
-    'static': 'cloud_info.providers.static.StaticProvider',
+    'static': 'cloud_info_provider.providers.static.StaticProvider',
 }
 
 
@@ -45,26 +47,12 @@ class BaseBDII(object):
                                          '%s.%s' % (tpl, template_extension))
             self.templates_files[tpl] = template_file
 
-    def _get_info_from_providers(self, method, provider_opts=None):
-        # XXX Temporarily update dynamic provider parameters
-        # XXX Required to be able to pass a custom project to the provider
-        # XXX to retrieve project-specific templates and images
-        if provider_opts:
-            opts = self.opts
-            d = vars(opts)
-            for k, v in provider_opts.items():
-                d[k] = v
-
-            provider_cls = importutils.import_class(
-                SUPPORTED_MIDDLEWARE[opts.middleware]
-            )
-            self.dynamic_provider = provider_cls(opts)
-
+    def _get_info_from_providers(self, method, **provider_kwargs):
         info = {}
         for i in (self.static_provider, self.dynamic_provider):
             if not i:
                 continue
-            result = getattr(i, method)()
+            result = getattr(i, method)(**provider_kwargs)
             info.update(result)
         return info
 
@@ -73,7 +61,10 @@ class BaseBDII(object):
         info.update(extra)
         t = self.templates_files[template]
         tpl = mako.template.Template(filename=t)
-        return tpl.render(attributes=info)
+        try:
+            return tpl.render(attributes=info)
+        except Exception:
+            return mako.exceptions.text_error_template().render()
 
 
 class StorageBDII(BaseBDII):
@@ -109,32 +100,68 @@ class ComputeBDII(BaseBDII):
         self.templates = ['compute']
 
     def render(self):
-        endpoints = self._get_info_from_providers('get_compute_endpoints')
+        info = {}
 
-        if not endpoints.get('endpoints'):
-            return ''
-
+        # Retrieve global site information
+        # XXX Validate if really project agnostic
+        # XXX Here it uses the "default" project from the CLI parameters
         site_info = self._get_info_from_providers('get_site_info')
+
+        # Get shares / projects and related images and templates
+        shares = self._get_info_from_providers('get_compute_shares')
+
+        for share in shares.values():
+            kwargs = share.copy()
+
+            endpoints = self._get_info_from_providers('get_compute_endpoints',
+                                                      **kwargs)
+
+            if not endpoints.get('endpoints'):
+                return ''
+
+            # Collect static information for endpoints
+            static_compute_info = dict(endpoints, **site_info)
+            static_compute_info.pop('endpoints')
+
+            # Add same static information to all endpoints
+            for endpoint in endpoints['endpoints'].values():
+                endpoint.update(static_compute_info)
+
+            images = self._get_info_from_providers('get_images',
+                                                   **kwargs)
+
+            templates = self._get_info_from_providers('get_templates',
+                                                      **kwargs)
+
+            instances = self._get_info_from_providers('get_instances',
+                                                      **kwargs)
+
+            quotas = self._get_info_from_providers('get_compute_quotas',
+                                                   **kwargs)
+
+            for template in templates.values():
+                template.update(static_compute_info)
+
+            for image in images.values():
+                image.update(static_compute_info)
+
+            share['images'] = images
+            share['templates'] = templates
+            share['instances'] = instances
+            share['endpoints'] = endpoints
+            share['quotas'] = quotas
+
+        # XXX Avoid creating a new list
+        endpoints = {endpoint_id: endpoint for share_id, share in
+                     shares.items() for endpoint_id,
+                     endpoint in share['endpoints'].items()}
+
+        # XXX Avoid redoing what was done in the previous shares loop
         static_compute_info = dict(endpoints, **site_info)
         static_compute_info.pop('endpoints')
 
-        templates = self._get_info_from_providers('get_templates')
-        images = self._get_info_from_providers('get_images')
-
-        for url, endpoint in endpoints['endpoints'].items():
-            endpoint.update(static_compute_info)
-
-        for template_id, template in templates.items():
-            template.update(static_compute_info)
-
-        for image_id, image in images.items():
-            image.update(static_compute_info)
-
-        info = {}
-        info.update({'endpoints': endpoints})
         info.update({'static_compute_info': static_compute_info})
-        info.update({'templates': templates})
-        info.update({'images': images})
+        info.update({'shares': shares})
 
         return self._format_template('compute', info)
 

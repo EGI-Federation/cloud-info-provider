@@ -1,19 +1,20 @@
 import argparse
-import unittest
 
 import mock
 
-from cloud_info.providers import openstack as os_provider
-from cloud_info.tests import base
-from cloud_info.tests import data
-from cloud_info.tests import utils as utils
+from cloud_info_provider.providers import openstack as os_provider
+from cloud_info_provider.tests import base
+from cloud_info_provider.tests import data
+from cloud_info_provider.tests import utils as utils
+
+from six.moves.urllib.parse import urljoin
 
 FAKES = data.OS_FAKES
 
 
 class OpenStackProviderOptionsTest(base.TestCase):
     def test_populate_parser(self):
-        parser = argparse.ArgumentParser()
+        parser = argparse.ArgumentParser(conflict_handler='resolve')
         provider = os_provider.OpenStackProvider
         provider.populate_parser(parser)
 
@@ -35,6 +36,10 @@ class OpenStackProviderOptionsTest(base.TestCase):
 
 
 class OpenStackProviderTest(base.TestCase):
+
+    # Do not limit diff output on failures
+    maxDiff = None
+
     def setUp(self):
         super(OpenStackProviderTest, self).setUp()
 
@@ -45,21 +50,19 @@ class OpenStackProviderTest(base.TestCase):
                 self.glance.http_client.get_endpoint.return_value = (
                     "http://glance.example.org:9292/v2"
                 )
-                self.session = None
+                self.session = mock.Mock()
+                self.session.get_project_id.return_value = 'TEST_PROJECT_ID'
                 self.auth_plugin = mock.MagicMock()
-                self.auth_plugin.auth_url = 'http://foo.example.org:1234/v2'
+                self.auth_plugin.auth_url = 'http://foo.example.org:5000/v2'
                 self.static = mock.Mock()
                 self.legacy_occi_os = False
                 self.keystone_cert_issuer = "foo"
                 self.keystone_trusted_cas = []
                 self.insecure = False
+                self.os_cacert = '/etc/ssl/cas'
+                self.os_project_id = None
                 self.select_flavors = 'all'
-
-            def _get_endpoint_versions(*args, **kwargs):
-                return {
-                    'compute_middleware_version': None,
-                    'compute_api_version': None,
-                }
+                self._rescope_project = mock.Mock()
 
         self.provider = FakeProvider(None)
 
@@ -84,9 +87,11 @@ class OpenStackProviderTest(base.TestCase):
                 'template_memory': f.ram,
                 'template_cpu': f.vcpus,
                 'template_id': '%s#%s' % (url, name),
+                'template_native_id': "%s" % f.name,
                 'template_platform': 'amd64',
                 'template_network': 'private',
                 'template_disk': f.disk,
+                'template_ephemeral': f.ephemeral,
             }
 
         self.provider.legacy_occi_os = True
@@ -122,6 +127,10 @@ class OpenStackProviderTest(base.TestCase):
                                   "compute_total_ram",
                                   "image_id",
                                   "image_name",
+                                  "image_os_family",
+                                  "image_os_name",
+                                  "image_os_version",
+                                  "image_platform",
                                   "image_version",
                                   "image_description",
                                   "image_marketplace_id"
@@ -136,9 +145,11 @@ class OpenStackProviderTest(base.TestCase):
                 'template_memory': f.ram,
                 'template_cpu': f.vcpus,
                 'template_id': '%s#%s' % (url, name),
+                'template_native_id': "%s" % f.name,
                 'template_platform': 'i686',
                 'template_network': 'private',
                 'template_disk': f.disk,
+                'template_ephemeral': f.ephemeral,
             }
 
         self.provider.legacy_occi_os = True
@@ -176,6 +187,10 @@ class OpenStackProviderTest(base.TestCase):
                                   "compute_total_ram",
                                   "image_id",
                                   "image_name",
+                                  "image_os_family",
+                                  "image_os_name",
+                                  "image_os_version",
+                                  "image_platform",
                                   "image_version",
                                   "image_description",
                                   "image_marketplace_id"
@@ -189,9 +204,11 @@ class OpenStackProviderTest(base.TestCase):
                 'template_memory': f.ram,
                 'template_cpu': f.vcpus,
                 'template_id': '%s#%s' % (url, f.id),
+                'template_native_id': "%s" % f.id,
                 'template_platform': 'amd64',
                 'template_network': 'private',
                 'template_disk': f.disk,
+                'template_ephemeral': f.ephemeral,
             }
 
         with utils.nested(
@@ -226,6 +243,10 @@ class OpenStackProviderTest(base.TestCase):
                                   "compute_total_ram",
                                   "image_id",
                                   "image_name",
+                                  "image_os_family",
+                                  "image_os_name",
+                                  "image_os_version",
+                                  "image_platform",
                                   "image_version",
                                   "image_description",
                                   "image_marketplace_id"
@@ -239,9 +260,11 @@ class OpenStackProviderTest(base.TestCase):
                 'template_memory': f.ram,
                 'template_cpu': f.vcpus,
                 'template_id': '%s#%s' % (url, f.id),
+                'template_native_id': "%s" % f.id,
                 'template_platform': 'i686',
                 'template_network': 'private',
                 'template_disk': f.disk,
+                'template_ephemeral': f.ephemeral,
             }
 
         with utils.nested(
@@ -292,9 +315,11 @@ class OpenStackProviderTest(base.TestCase):
                 'template_memory': f.ram,
                 'template_cpu': f.vcpus,
                 'template_id': '%s#%s' % (url, f.id),
+                'template_native_id': "%s" % f.id,
                 'template_platform': 'i686',
                 'template_network': 'private',
                 'template_disk': f.disk,
+                'template_ephemeral': f.ephemeral
             }
 
         self.provider.select_flavors = 'all'
@@ -337,7 +362,7 @@ class OpenStackProviderTest(base.TestCase):
                                   "image_description",
                                   "image_id",
                                   "image_name",
-                                  "image_version"
+                                  "image_version",
                               ])
 
     def test_get_public_templates(self):
@@ -352,9 +377,11 @@ class OpenStackProviderTest(base.TestCase):
                 'template_memory': f.ram,
                 'template_cpu': f.vcpus,
                 'template_id': '%s#%s' % (url, f.id),
+                'template_native_id': "%s" % f.id,
                 'template_platform': 'i686',
                 'template_network': 'private',
                 'template_disk': f.disk,
+                'template_ephemeral': f.ephemeral,
             }
 
         self.provider.select_flavors = 'public'
@@ -412,9 +439,11 @@ class OpenStackProviderTest(base.TestCase):
                 'template_memory': f.ram,
                 'template_cpu': f.vcpus,
                 'template_id': '%s#%s' % (url, f.id),
+                'template_native_id': "%s" % f.id,
                 'template_platform': 'i686',
                 'template_network': 'private',
                 'template_disk': f.disk,
+                'template_ephemeral': f.ephemeral
             }
 
         self.provider.select_flavors = 'private'
@@ -457,15 +486,22 @@ class OpenStackProviderTest(base.TestCase):
                                   "image_description",
                                   "image_id",
                                   "image_name",
+                                  "image_os_family",
+                                  "image_os_name",
+                                  "image_os_version",
+                                  "image_platform",
                                   "image_version"
                               ])
 
-    @unittest.expectedFailure
     def test_get_images(self):
         # XXX move this to a custom class?
         # XXX add docker information
         expected_images = {
             'bar id': {
+                'name': 'barimage',
+                'id': 'bar id',
+                'metadata': {},
+                'file': 'v2/bar id/file',
                 'image_description': None,
                 'image_name': 'barimage',
                 'image_os_family': None,
@@ -473,10 +509,32 @@ class OpenStackProviderTest(base.TestCase):
                 'image_os_version': None,
                 'image_platform': 'amd64',
                 'image_version': None,
-                'image_marketplace_id': None,
-                'image_id': 'http://schemas.openstack.org/template/os#bar_id'
+                'image_marketplace_id': "%s" % urljoin(self.provider.glance
+                                                       .http_client
+                                                       .get_endpoint(),
+                                                       'v2/bar id/file'),
+                'image_id': 'http://schemas.openstack.org/template/os#bar_id',
+                'image_native_id': 'bar id',
+                'image_accel_type': None,
+                'image_access_info': 'none',
+                'image_minimal_cpu': None,
+                'image_minimal_ram': None,
+                'image_minimal_accel': None,
+                'image_recommended_cpu': None,
+                'image_recommended_ram': None,
+                'image_recommended_accel': None,
+                'image_size': None,
+                'image_software': [],
+                'image_traffic_in': [],
+                'image_traffic_out': [],
+                'image_context_format': None,
             },
             'foo.id': {
+                'name': 'fooimage',
+                'id': 'foo.id',
+                'metadata': {},
+                'marketplace': 'http://example.org/',
+                'file': 'v2/foo.id/file',
                 'image_description': None,
                 'image_name': 'fooimage',
                 'image_os_family': None,
@@ -485,9 +543,26 @@ class OpenStackProviderTest(base.TestCase):
                 'image_platform': 'amd64',
                 'image_version': None,
                 'image_marketplace_id': 'http://example.org/',
-                'image_id': 'http://schemas.openstack.org/template/os#foo-id'
+                'image_id': 'http://schemas.openstack.org/template/os#foo-id',
+                'image_native_id': 'foo.id',
+                'image_accel_type': None,
+                'image_access_info': 'none',
+                'image_minimal_cpu': None,
+                'image_minimal_ram': None,
+                'image_minimal_accel': None,
+                'image_recommended_cpu': None,
+                'image_recommended_ram': None,
+                'image_recommended_accel': None,
+                'image_size': None,
+                'image_software': [],
+                'image_traffic_in': [],
+                'image_traffic_out': [],
+                'image_context_format': None,
             },
             'baz id': {
+                'name': 'bazimage',
+                'id': 'baz id',
+                'file': 'v2/baz id/file',
                 'image_description': None,
                 'image_name': 'bazimage',
                 'image_os_family': None,
@@ -495,11 +570,28 @@ class OpenStackProviderTest(base.TestCase):
                 'image_os_version': None,
                 'image_platform': 'amd64',
                 'image_version': None,
-                'image_marketplace_id': None,
+                'image_marketplace_id': "%s" % urljoin(self.provider.glance
+                                                       .http_client
+                                                       .get_endpoint(),
+                                                       'v2/baz id/file'),
                 'image_id': 'http://schemas.openstack.org/template/os#baz_id',
+                'image_native_id': 'baz id',
                 'docker_id': 'sha1:xxxxxxxxxxxxxxxxxxxxxxxxxx',
                 'docker_tag': 'latest',
-                'docker_name': 'test/image'
+                'docker_name': 'test/image',
+                'image_accel_type': None,
+                'image_access_info': 'none',
+                'image_minimal_cpu': None,
+                'image_minimal_ram': None,
+                'image_minimal_accel': None,
+                'image_recommended_cpu': None,
+                'image_recommended_ram': None,
+                'image_recommended_accel': None,
+                'image_size': None,
+                'image_software': [],
+                'image_traffic_in': [],
+                'image_traffic_out': [],
+                'image_context_format': None,
             }
         }
 
@@ -513,36 +605,67 @@ class OpenStackProviderTest(base.TestCase):
             images = self.provider.get_images()
             assert m_get_image_defaults.called
 
+        # Filter fields from the template that are not related to images
         self.assert_resources(expected_images,
                               images,
                               template="compute.ldif",
-                              ignored_fields=["compute_service_name"])
+                              ignored_fields=["compute_service_name",
+                                              "compute_api_type",
+                                              "compute_api_version",
+                                              ("compute_api_endpoint"
+                                               "_technology"),
+                                              "compute_capabilities",
+                                              "compute_api_authn_method",
+                                              "compute_total_ram",
+                                              "compute_middleware",
+                                              "compute_middleware_developer",
+                                              "compute_middleware_version",
+                                              "compute_endpoint_url",
+                                              "compute_hypervisor",
+                                              "compute_hypervisor_version",
+                                              "compute_production_level",
+                                              ("compute_service"
+                                               "_production_level"),
+                                              "compute_total_cores",
+                                              "compute_total_ram",
+                                              "template_platform",
+                                              "template_cpu",
+                                              "template_memory",
+                                              "template_network",
+                                              "template_disk",
+                                              "template_ephemeral",
+                                              "template_id"])
 
-    @unittest.expectedFailure
     def test_get_endpoints_with_defaults_from_static(self):
         expected_endpoints = {
             'endpoints': {
-                '03e087c8fb3b495c9a360bcba3abf914': {
+                'https://cloud.example.org:8787/': {
                     'compute_api_type': 'OCCI',
                     'compute_api_version': '11.11',
+                    'compute_endpoint_id': '03e087c8fb3b495c9a360bcba3abf914',
                     'compute_endpoint_url': 'https://cloud.example.org:8787/'},
-                '1b7f14c87d8c42ad962f4d3a5fd13a77': {
+                'http://foo.example.org:5000/v2': {
                     'compute_api_type': 'OpenStack',
-                    'compute_api_version': '99.99',
+                    # As version is extracted from the URL default is not used
+                    'compute_api_version': 'v2',
+                    'compute_endpoint_id': '1b7f14c87d8c42ad962f4d3a5fd13a77',
+                    'compute_nova_endpoint_url':
+                        'https://cloud.example.org:8774/v1.1/ce2d',
+                    'compute_nova_api_version': 'v1.1',
                     'compute_endpoint_url':
-                        'https://cloud.example.org:8774/v1.1/ce2d'}
+                        'http://foo.example.org:5000/v2'}
             },
             'compute_middleware_developer': 'OpenStack',
             'compute_middleware': 'OpenStack Nova',
-            'compute_service_name': 'http://foo.example.org:1234/v2',
+            'compute_service_name': 'http://foo.example.org:5000/v2',
         }
 
         with mock.patch.object(
                 self.provider.static, 'get_compute_endpoint_defaults'
         ) as m_get_endpoint_defaults:
             m_get_endpoint_defaults.return_value = {
-                'endpoint_occi_api_version': '11.11',
-                'endpoint_openstack_api_version': '99.99',
+                'compute_occi_api_version': '11.11',
+                'compute_compute_api_version': '99.99',
             }
             r = mock.Mock()
             r.service_catalog = FAKES.catalog
@@ -553,23 +676,35 @@ class OpenStackProviderTest(base.TestCase):
         for k, v in expected_endpoints['endpoints'].items():
             self.assertDictContainsSubset(v, endpoints['endpoints'].get(k, {}))
 
-    @unittest.expectedFailure
     def test_get_endpoints_with_defaults(self):
         expected_endpoints = {
             'endpoints': {
-                '03e087c8fb3b495c9a360bcba3abf914': {
+                'https://cloud.example.org:8787/': {
                     'compute_api_type': 'OCCI',
-                    'compute_api_version': '1.1',
+                    'compute_api_version': 'UNKNOWN',
+                    'compute_middleware': 'ooi',
+                    'compute_middleware_version': 'UNKNOWN',
+                    'compute_middleware_developer': 'CSIC',
+                    'endpoint_issuer': self.provider.keystone_cert_issuer,
+                    'endpoint_trusted_cas': [],
+                    'compute_endpoint_id': '03e087c8fb3b495c9a360bcba3abf914',
                     'compute_endpoint_url': 'https://cloud.example.org:8787/'},
-                '1b7f14c87d8c42ad962f4d3a5fd13a77': {
+                'http://foo.example.org:5000/v2': {
                     'compute_api_type': 'OpenStack',
-                    'compute_api_version': '2',
+                    'compute_api_version': 'v2',
+                    'compute_nova_endpoint_url':
+                        'https://cloud.example.org:8774/v1.1/ce2d',
+                    'compute_nova_api_version': 'v1.1',
+                    'compute_middleware': 'OpenStack Nova',
+                    'compute_middleware_version': 'UNKNOWN',
+                    'compute_middleware_developer': 'OpenStack Foundation',
+                    'endpoint_issuer': self.provider.keystone_cert_issuer,
+                    'endpoint_trusted_cas': [],
+                    'compute_endpoint_id': '1b7f14c87d8c42ad962f4d3a5fd13a77',
                     'compute_endpoint_url':
-                        'https://cloud.example.org:8774/v1.1/ce2d'}
+                        'http://foo.example.org:5000/v2'}
             },
-            'compute_middleware_developer': 'OpenStack',
-            'compute_middleware': 'OpenStack Nova',
-            'compute_service_name': 'http://foo.example.org:1234/v2',
+            'compute_service_name': 'http://foo.example.org:5000/v2',
         }
 
         with mock.patch.object(
