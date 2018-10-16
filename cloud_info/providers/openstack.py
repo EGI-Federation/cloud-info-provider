@@ -271,11 +271,11 @@ class OpenStackProvider(providers.BaseProvider):
         tpl_sch = defaults.get('template_schema', 'resource')
         flavor_id_attr = 'name' if self.legacy_occi_os else 'id'
         URI = 'http://schemas.openstack.org/template/'
-        extra_specs = defaults.get('template_extra_specs', {})
-        extra_specs_ib = extra_specs.get('infiniband', {})
-        flavor_ib_k = ':'.join([
+        opts_infiniband_k = self.opts.extra_specs_infiniband_key
+        opts_infiniband_v = self.opts.extra_specs_infiniband_value
+        flavor_infiniband_k = ':'.join([
             'aggregate_instance_extra_specs',
-            extra_specs_ib.get('key', 'type')])
+            opts_infiniband_k])
         for flavor in self.nova.flavors.list(detailed=True):
             add_all = self.select_flavors == 'all'
             add_pub = self.select_flavors == 'public' and flavor.is_public
@@ -286,14 +286,14 @@ class OpenStackProvider(providers.BaseProvider):
                 flavor_id = str(getattr(flavor, flavor_id_attr))
                 template_id = '%s%s#%s' % (URI, tpl_sch,
                                            OpenStackProvider.occify(flavor_id))
-                flavor_ib_v = flavor.get_keys().get(flavor_ib_k, False)
-                template_ib = (True if flavor_ib_v == extra_specs_ib['value']
-                                    else False)
+                flavor_infiniband_v = flavor.get_keys().get(
+                    flavor_infiniband_k, False)
+                has_infiniband = flavor_infiniband_v == opts_infiniband_v
                 aux.update({'template_id': template_id,
                             'template_memory': flavor.ram,
                             'template_cpu': flavor.vcpus,
                             'template_disk': flavor.disk,
-                            'template_infiniband': template_ib})
+                            'template_infiniband': has_infiniband})
                 flavors[flavor.id] = aux
         return flavors
 
@@ -449,3 +449,17 @@ class OpenStackProvider(providers.BaseProvider):
             default='all',
             choices=['all', 'public', 'private'],
             help='Select all (default), public or private flavors/templates.')
+
+        parser.add_argument(
+            '--extra-specs-infiniband-key',
+            metavar='EXTRA_SPECS_KEY',
+            default='infiniband',
+            help=('When Infiniband is supported, this option specifies the key '
+                  'id in the flavor\'s extra-specs field'))
+
+        parser.add_argument(
+            '--extra-specs-infiniband-value',
+            metavar='EXTRA_SPECS_VALUE',
+            default='true',
+            help=('When Infiniband is supported, this option specifies the value '
+                  'to search for/match in the flavor\'s extra-specs field'))

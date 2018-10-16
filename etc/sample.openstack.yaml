@@ -37,10 +37,6 @@ compute:
         defaults:
             platform: amd64
             network: public
-            extra_specs:
-                infiniband:
-                    key: 'type'
-                    value: 'infiniband'
 
     images:
         defaults:
