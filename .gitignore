@@ -12,6 +12,9 @@ etc/test.conf
 .tox/
 .testrepository/
 *.deb
+*.rpm
+.coverage
+coverage.xml
 debhelper-build-stamp
 **/debian/files
 *.substvars
