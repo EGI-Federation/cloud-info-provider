@@ -23,7 +23,9 @@ class OpenStackProviderOptionsTest(base.TestCase):
                                   '--os-cacert', 'foobar',
                                   '--insecure',
                                   '--legacy-occi-os',
-                                  '--select-flavors', 'public'])
+                                  '--select-flavors', 'public',
+                                  '--extra-specs-infiniband-key', 'infiniband',
+                                  '--extra-specs-infiniband-value', 'true'])
 
         self.assertEqual(opts.os_username, 'foo')
         self.assertEqual(opts.os_password, 'bar')
@@ -32,6 +34,8 @@ class OpenStackProviderOptionsTest(base.TestCase):
         self.assertEqual(opts.insecure, True)
         self.assertEqual(opts.legacy_occi_os, True)
         self.assertEqual(opts.select_flavors, 'public')
+        self.assertEqual(opts.extra_specs_infiniband_key, 'infiniband')
+        self.assertEqual(opts.extra_specs_infiniband_value, 'true')
 
 
 class OpenStackProviderTest(base.TestCase):
@@ -54,6 +58,9 @@ class OpenStackProviderTest(base.TestCase):
                 self.keystone_trusted_cas = []
                 self.insecure = False
                 self.select_flavors = 'all'
+                self.opts = mock.Mock()
+                self.opts.extra_specs_infiniband_key = 'infiniband'
+                self.opts.extra_specs_infiniband_value = 'true'
 
             def _get_endpoint_versions(*args, **kwargs):
                 return {
@@ -87,6 +94,7 @@ class OpenStackProviderTest(base.TestCase):
                 'template_platform': 'amd64',
                 'template_network': 'private',
                 'template_disk': f.disk,
+                'template_infiniband': False,
             }
 
         self.provider.legacy_occi_os = True
@@ -139,6 +147,7 @@ class OpenStackProviderTest(base.TestCase):
                 'template_platform': 'i686',
                 'template_network': 'private',
                 'template_disk': f.disk,
+                'template_infiniband': False,
             }
 
         self.provider.legacy_occi_os = True
@@ -192,6 +201,7 @@ class OpenStackProviderTest(base.TestCase):
                 'template_platform': 'amd64',
                 'template_network': 'private',
                 'template_disk': f.disk,
+                'template_infiniband': False,
             }
 
         with utils.nested(
@@ -242,6 +252,7 @@ class OpenStackProviderTest(base.TestCase):
                 'template_platform': 'i686',
                 'template_network': 'private',
                 'template_disk': f.disk,
+                'template_infiniband': False,
             }
 
         with utils.nested(
@@ -295,6 +306,7 @@ class OpenStackProviderTest(base.TestCase):
                 'template_platform': 'i686',
                 'template_network': 'private',
                 'template_disk': f.disk,
+                'template_infiniband': False,
             }
 
         self.provider.select_flavors = 'all'
@@ -355,6 +367,7 @@ class OpenStackProviderTest(base.TestCase):
                 'template_platform': 'i686',
                 'template_network': 'private',
                 'template_disk': f.disk,
+                'template_infiniband': False,
             }
 
         self.provider.select_flavors = 'public'
@@ -415,6 +428,7 @@ class OpenStackProviderTest(base.TestCase):
                 'template_platform': 'i686',
                 'template_network': 'private',
                 'template_disk': f.disk,
+                'template_infiniband': False,
             }
 
         self.provider.select_flavors = 'private'

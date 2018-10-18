@@ -454,12 +454,13 @@ class OpenStackProvider(providers.BaseProvider):
             '--extra-specs-infiniband-key',
             metavar='EXTRA_SPECS_KEY',
             default='infiniband',
-            help=('When Infiniband is supported, this option specifies the key '
-                  'id in the flavor\'s extra-specs field'))
+            help=('When Infiniband is supported, this option specifies the '
+                  'key id in the flavor\'s extra-specs field'))
 
         parser.add_argument(
             '--extra-specs-infiniband-value',
             metavar='EXTRA_SPECS_VALUE',
             default='true',
-            help=('When Infiniband is supported, this option specifies the value '
-                  'to search for/match in the flavor\'s extra-specs field'))
+            help=('When Infiniband is supported, this option specifies the '
+                  'value to search for/match in the flavor\'s extra-specs '
+                  'field'))
