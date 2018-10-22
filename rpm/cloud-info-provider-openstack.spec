@@ -4,7 +4,7 @@
 
 Summary: Cloud Information provider meta-package for OpenStack
 Name: cloud-info-provider-openstack
-Version: 0.10.2
+Version: %{_pbr_version}
 Release: 1%{?dist}
 Group: Applications/Internet
 # License: ASL 2.0
