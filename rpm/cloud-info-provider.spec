@@ -6,7 +6,7 @@
 
 Summary: Information provider for Cloud Compute and Cloud Storage services for BDII
 Name: cloud-info-provider
-Version: 0.10.2
+Version: %{_pbr_version}
 Release: 1%{?dist}
 Group: Applications/Internet
 License: ASL 2.0
