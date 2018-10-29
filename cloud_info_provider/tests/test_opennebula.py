@@ -1,6 +1,7 @@
 import argparse
 import mock
-import xml.etree.ElementTree
+
+import defusedxml.ElementTree
 
 from cloud_info_provider import exceptions
 from cloud_info_provider.providers import opennebula
@@ -84,12 +85,6 @@ class OpenNebulaROCCIProviderOptionsTest(OpenNebulaBaseProviderOptionsTest):
                               self.provider, o)
 
 
-class IndigoONProviderOptionsTest(OpenNebulaBaseProviderOptionsTest):
-    def setUp(self):
-        super(IndigoONProviderOptionsTest, self).setUp()
-        self.provider = opennebula.IndigoONProvider
-
-
 class OpenNebulaBaseProviderTest(base.TestCase):
     def __init__(self, *args, **kwargs):
         super(OpenNebulaBaseProviderTest, self).__init__(*args, **kwargs)
@@ -110,7 +105,7 @@ class OpenNebulaBaseProviderTest(base.TestCase):
                 self.static = mock.Mock()
                 self.static.get_image_defaults.return_value = {}
 
-                self.xml_parser = xml.etree.ElementTree
+                self.xml_parser = defusedxml.ElementTree
                 self.server_proxy = mock.Mock()
                 self.server_proxy.one.templatepool.info.return_value = (
                     'OK', FAKES.templatepool)
@@ -165,7 +160,7 @@ class OpenNebulaROCCIProviderTest(OpenNebulaBaseProviderTest):
                 self.rocci_remote_templates = opts.rocci_remote_templates
                 self.all_images = opts.all_images
 
-                self.xml_parser = xml.etree.ElementTree
+                self.xml_parser = defusedxml.ElementTree
                 self.static = mock.Mock()
                 self.static.get_image_defaults.return_value = {}
                 self.static.get_template_defaults.return_value = {}
@@ -203,42 +198,3 @@ class OpenNebulaROCCIProviderTest(OpenNebulaBaseProviderTest):
         self.assertDictEqual(
             self.expected_templates_remote,
             self.provider_remote.get_templates())
-
-
-class IndigoONProviderTest(OpenNebulaBaseProviderTest):
-    def __init__(self, *args, **kwargs):
-        super(IndigoONProviderTest, self).__init__(*args, **kwargs)
-        self.provider_class = opennebula.IndigoONProvider
-        self.expected_images = FAKES.indigo_on_provider_expected_images
-        self.expected_templates = FAKES.indigo_on_provider_expected_templates
-
-    def setUp(self):
-        super(IndigoONProviderTest, self).setUp()
-
-        class FakeProvider(self.provider_class):
-            def __init__(self, opts):
-                self.opts = opts
-                self.on_auth = opts.on_auth
-                self.on_rpcxml_endpoint = opts.on_rpcxml_endpoint
-                self.all_images = opts.all_images
-
-                self.xml_parser = xml.etree.ElementTree
-                self.static = mock.Mock()
-                self.static.get_image_defaults.return_value = {}
-                self.static.get_template_defaults.return_value = {}
-                self.server_proxy = mock.Mock()
-                self.server_proxy.one.templatepool.info.return_value = (
-                    'OK', FAKES.templatepool)
-                self.server_proxy.one.imagepool.info.return_value = (
-                    'OK', FAKES.imagepool)
-
-        class Opts(object):
-            on_auth = 'foo'
-            on_rpcxml_endpoint = 'bar'
-            all_images = True
-
-        self.provider = FakeProvider(Opts())
-
-    def test_get_templates(self):
-        self.assertDictEqual(
-            self.expected_templates, self.provider.get_templates())

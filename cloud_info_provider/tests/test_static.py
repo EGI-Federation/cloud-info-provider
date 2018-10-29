@@ -17,7 +17,6 @@ class StaticProviderTest(base.TestCase):
 
         class Opts(object):
             yaml_file = None
-            full_bdii_ldif = False
             site_in_suffix = False
             glite_site_info_static = "foo"
 
@@ -247,35 +246,19 @@ class StaticProviderTest(base.TestCase):
         site_info = {'site_name': 'SITE_NAME'}
         self.assertEqual("o=glue", self.provider._get_suffix(site_info))
 
-    def test_get_suffix_full_bdii(self):
-        site_info = {'site_name': 'SITE_NAME'}
-        self.provider.opts.full_bdii_ldif = True
-        self.assertEqual("GLUE2DomainID=SITE_NAME,o=glue",
-                         self.provider._get_suffix(site_info))
-
     def test_get_suffix_site_in_suffix(self):
         site_info = {'site_name': 'SITE_NAME'}
         self.provider.opts.site_in_suffix = True
         self.assertEqual("GLUE2DomainID=SITE_NAME,o=glue",
                          self.provider._get_suffix(site_info))
 
-    def test_get_site_info_no_full_bdii(self):
+    def test_get_site_info_no(self):
         data = six.StringIO("SITE_NAME = SITE_NAME")
         expected = DATA.site_info
         with mock.patch('cloud_info_provider.providers.static.open',
                         create=True) as m_open:
             m_open.return_value.__enter__ = lambda x: data
             m_open.return_value.__exit__ = mock.Mock()
-            self.assertEqual(expected, self.provider.get_site_info())
-
-    def test_get_site_info_full_bdii(self):
-        expected = DATA.site_info_full
-        data = six.StringIO("SITE_NAME = SITE_NAME")
-        with mock.patch('cloud_info_provider.providers.static.open',
-                        create=True) as m_open:
-            m_open.return_value.__enter__ = lambda x: data
-            m_open.return_value.__exit__ = mock.Mock()
-            self.provider.opts.full_bdii_ldif = True
             self.assertEqual(expected, self.provider.get_site_info())
 
     def test_get_images(self):

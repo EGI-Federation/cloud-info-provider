@@ -1,4 +1,5 @@
 import argparse
+import itertools
 import os.path
 
 from cloud_info_provider import exceptions
@@ -11,11 +12,10 @@ SUPPORTED_MIDDLEWARE = {
     'openstack': 'cloud_info_provider.providers.openstack.OpenStackProvider',
     'opennebula': 'cloud_info_provider.providers.opennebula.'
                   'OpenNebulaProvider',
-    'indigoon': 'cloud_info_provider.providers.opennebula.IndigoONProvider',
     'opennebularocci': 'cloud_info_provider.providers.opennebula.'
                        'OpenNebulaROCCIProvider',
     'static': 'cloud_info_provider.providers.static.StaticProvider',
-    'ooi': 'cloud_info_provider.providers.openstack.OoiProvider',
+    'ooi': 'cloud_info_provider.providers.ooi.OoiProvider',
 }
 
 
@@ -84,7 +84,7 @@ class StorageBDII(BaseBDII):
         static_storage_info = dict(endpoints, **site_info)
         static_storage_info.pop('endpoints')
 
-        for url, endpoint in endpoints['endpoints'].items():
+        for endpoint in endpoints['endpoints'].values():
             endpoint.update(static_storage_info)
 
         info = {}
@@ -97,7 +97,6 @@ class StorageBDII(BaseBDII):
 class ComputeBDII(BaseBDII):
     def __init__(self, opts):
         super(ComputeBDII, self).__init__(opts)
-
         self.templates = ['compute']
 
     def render(self):
@@ -116,7 +115,6 @@ class ComputeBDII(BaseBDII):
 
             endpoints = self._get_info_from_providers('get_compute_endpoints',
                                                       **kwargs)
-
             if not endpoints.get('endpoints'):
                 return ''
 
@@ -124,27 +122,21 @@ class ComputeBDII(BaseBDII):
             static_compute_info = dict(endpoints, **site_info)
             static_compute_info.pop('endpoints')
 
-            # Add same static information to all endpoints
-            for endpoint in endpoints['endpoints'].values():
-                endpoint.update(static_compute_info)
-
+            # Collect dynamic information
             images = self._get_info_from_providers('get_images',
                                                    **kwargs)
-
             templates = self._get_info_from_providers('get_templates',
                                                       **kwargs)
-
             instances = self._get_info_from_providers('get_instances',
                                                       **kwargs)
-
             quotas = self._get_info_from_providers('get_compute_quotas',
                                                    **kwargs)
 
-            for template in templates.values():
-                template.update(static_compute_info)
-
-            for image in images.values():
-                image.update(static_compute_info)
+            # Add same static information to endpoints, images and templates
+            for d in itertools.chain(endpoints['endpoints'].values(),
+                                     templates.values(),
+                                     images.values()):
+                d.update(static_compute_info)
 
             share['images'] = images
             share['templates'] = templates
@@ -170,11 +162,7 @@ class ComputeBDII(BaseBDII):
 class CloudBDII(BaseBDII):
     def __init__(self, opts):
         super(CloudBDII, self).__init__(opts)
-
-        if not self.opts.full_bdii_ldif:
-            self.templates = ('headers', 'clouddomain')
-        else:
-            self.templates = ('headers', 'domain', 'bdii', 'clouddomain')
+        self.templates = ('headers', 'clouddomain')
 
     def render(self):
         output = []
@@ -212,14 +200,6 @@ def parse_opts():
         '--template-extension',
         default='ldif',
         help=('Extension to use for the templates'))
-
-    parser.add_argument(
-        '--full-bdii-ldif',
-        action='store_true',
-        default=False,
-        help=('Whether to generate a LDIF containing all the '
-              'BDII information, or just this node\'s information\n'
-              'NOTE: it does not generate GlueSchema 1.3 information'))
 
     parser.add_argument(
         '--site-in-suffix',
@@ -262,6 +242,7 @@ def main():
         bdii = cls_(opts)
         bdii.load_templates()
         print(bdii.render().encode('utf-8'))
+
 
 if __name__ == '__main__':
     main()

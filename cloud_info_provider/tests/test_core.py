@@ -26,11 +26,10 @@ class ModuleTest(base.TestCase):
             self.assertIsNone(cloud_info_provider.core.main())
 
             for i in (m0, m1, m2, m3):
-                assert i.called
+                self.assertTrue(i.called)
 
 
 class FakeBDIIOpts(object):
-    full_bdii_ldif = False
     middleware = 'foo middleware'
     yaml_file = None
     template_dir = ''
@@ -150,21 +149,6 @@ class CloudBDIITest(BaseTest):
                                   DATA.site_info),
                                   mock.call("clouddomain", DATA.site_info)])
 
-    @mock.patch.object(cloud_info_provider.core.BaseBDII, '_format_template')
-    @mock.patch.object(cloud_info_provider.core.CloudBDII,
-                       '_get_info_from_providers')
-    def test_render_full(self, m_get_info, m_format):
-        self.opts.full_bdii_ldif = True
-        m_get_info.return_value = DATA.site_info_full
-        m_format.return_value = 'foo'
-        bdii = cloud_info_provider.core.CloudBDII(self.opts)
-        self.assertIsNotNone(bdii.render())
-        m_format.assert_has_calls([mock.call("headers", DATA.site_info_full),
-                                  mock.call("domain", DATA.site_info_full),
-                                  mock.call("bdii", DATA.site_info_full),
-                                  mock.call("clouddomain",
-                                            DATA.site_info_full)])
-
 
 class StorageBDIITEst(BaseTest):
     @mock.patch.object(cloud_info_provider.core.BaseBDII, '_format_template')
@@ -180,7 +164,7 @@ class StorageBDIITEst(BaseTest):
         static_storage_info = dict(endpoints, **DATA.site_info)
         static_storage_info.pop('endpoints')
 
-        for url, endpoint in endpoints['endpoints'].items():
+        for endpoint in endpoints['endpoints'].values():
             endpoint.update(static_storage_info)
 
         info = {}
