@@ -1,6 +1,5 @@
 import json
 import os
-import string
 
 from cloud_info_provider import exceptions
 from cloud_info_provider import providers
@@ -100,7 +99,7 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
             aux_tpl.update(defaults)
 
             aux_tpl['image_name'] = tpl['name']
-            aux_tpl['image_id'] = self._gen_id(tpl['name'], tpl_id, img_schema)
+            aux_tpl['image_id'] = '%s#%s' % (img_schema, tpl_id)
 
             if 'template' in tpl:
                 aux_tpl['image_marketplace_id'] = tpl['template'].get(
@@ -145,12 +144,6 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
             help=('If set, include information about all images (including '
                   'snapshots), otherwise only publish images with cloudkeeper '
                   'metadata, ignoring the others.'))
-
-    @staticmethod
-    def _gen_id(image_name, image_id, schema):
-        # FIXME(aloga): make this an abstrac method
-        """Generate image id."""
-        return '%s#%s' % (schema, image_id)
 
     @staticmethod
     def _recurse_dict(element):
@@ -201,8 +194,7 @@ class IndigoONProvider(OpenNebulaBaseProvider):
             aux_tpl = template.copy()
             aux_tpl.update(defaults)
 
-            aux_tpl['template_id'] = self._gen_id(
-                tpl['name'], tpl_id, img_schema)
+            aux_tpl['template_id'] = '%s#%s' % (img_schema, tpl_id)
             aux_tpl['template_name'] = tpl['name']
 
             if 'template' in tpl:
@@ -404,14 +396,3 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
             default=False,
             help=('If set, resource template definitions will be retrieved '
                   'via OCA, not from a local directory.'))
-
-    @staticmethod
-    def _gen_id(image_name, image_id, schema):
-        """Generate image uiid as rOCCI does."""
-        replace_punctuation = utils.maketrans(
-            string.punctuation + string.whitespace,
-            '_' * len(string.punctuation + string.whitespace)
-        )
-        image_name = utils.translate(image_name.lower(),
-                                     replace_punctuation).strip('_')
-        return '%s#uuid_%s_%s' % (schema, image_name, image_id)
