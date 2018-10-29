@@ -73,6 +73,8 @@ compute:
         ops:
             # the project id in OpenStack
             project: ops_xxxxx
+            # the domain where the project belongs to
+            project_domain_name: default
             # link to the SLA document
             sla: UNKNOWN
             # Type of network: infiniband, gigabiteethernet...
@@ -82,6 +84,7 @@ compute:
             #     - VO:ops
         fedcloud.egi.eu:
             project: fedcloud_xxxx
+            project_domain_name: default
             sla: https://egi.eu/sla/fedcloud
             # Type of network: infiniband, gigabiteethernet...
             network_info: UNKNOWN
@@ -89,6 +92,8 @@ compute:
                 - VOMS:/fedcloud.egi.eu/Role=VMOperators
         training.egi.eu:
             project: xxxxx_training
+            project_domain_name: default
+            sla: https://egi.eu/sla/fedcloud
             sla: https://egi.eu/sla/training
             # Type of network: infiniband, gigabiteethernet...
             network_info: UNKNOWN
