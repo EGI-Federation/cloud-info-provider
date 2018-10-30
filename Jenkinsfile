@@ -101,5 +101,23 @@ pipeline {
                 }
             }
         }
+
+       	stage('Notifications') {
+            when {
+                buildingTag()
+            }
+            steps {
+                JiraIssueNotification(
+                    'DEEP',
+                    'DPM',
+                    '10204',
+                    "[preview-testbed] New cloud-info-provider version ${env.BRANCH_NAME} available",
+                    "Check new artifacts at:\n\t- RPMs/DEBs: ${env.BUILD_URL}\n",
+                    ['wp3', 'preview-testbed', "DEEPaaS-${env.BRANCH_NAME}"],
+                    'Task',
+                    'mariojmdavid'
+                )
+            }
+        }
     }
 }
