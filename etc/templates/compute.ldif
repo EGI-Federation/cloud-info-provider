@@ -62,6 +62,8 @@ GLUE2EndpointTechnology: ${endpoint['compute_api_endpoint_technology']}
 <%
     if template['template_disk'] is None:
         template['template_disk'] = 0
+    if template['template_infiniband']:
+        template['template_infiniband'] = 'infiniband'
 %>\
 dn: GLUE2ResourceID=${template['template_id']}_${template['compute_service_name']},GLUE2ServiceID=${template['compute_service_name']}_cloud.compute,GLUE2GroupID=cloud,${template['suffix']}
 objectClass: GLUE2Entity
@@ -81,6 +83,9 @@ GLUE2ExecutionEnvironmentCPUMultiplicity: multicpu-multicore
 GLUE2ExecutionEnvironmentCPUVendor: virtual vendor
 GLUE2ExecutionEnvironmentLogicalCPUs: ${template['template_cpu']}
 GLUE2ExecutionEnvironmentPhysicalCPUs: ${template['template_cpu']}
+% if template['template_infiniband']:
+GLUE2ExecutionEnvironmentNetworkInfo: ${template['template_infiniband']}
+% endif
 GLUE2EntityOtherInfo: disk=${template['template_disk']}
 
 % endfor

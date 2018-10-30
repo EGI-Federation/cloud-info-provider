@@ -64,6 +64,9 @@ class OpenStackProviderTest(base.TestCase):
                 self.select_flavors = 'all'
                 self._rescope_project = mock.Mock()
                 self.all_images = False
+                self.opts = mock.Mock()
+                self.opts.extra_specs_infiniband_key = 'infiniband'
+                self.opts.extra_specs_infiniband_value = 'true'
 
         self.provider = FakeProvider(None)
 
@@ -92,6 +95,7 @@ class OpenStackProviderTest(base.TestCase):
                 'template_network': 'private',
                 'template_disk': f.disk,
                 'template_ephemeral': f.ephemeral,
+                'template_infiniband': False,
             }
 
         with utils.nested(
@@ -148,6 +152,7 @@ class OpenStackProviderTest(base.TestCase):
                 'template_network': 'private',
                 'template_disk': f.disk,
                 'template_ephemeral': f.ephemeral,
+                'template_infiniband': False,
             }
 
         with utils.nested(
@@ -202,7 +207,8 @@ class OpenStackProviderTest(base.TestCase):
                 'template_platform': 'i686',
                 'template_network': 'private',
                 'template_disk': f.disk,
-                'template_ephemeral': f.ephemeral
+                'template_ephemeral': f.ephemeral,
+                'template_infiniband': False,
             }
 
         self.provider.select_flavors = 'all'
@@ -265,6 +271,7 @@ class OpenStackProviderTest(base.TestCase):
                 'template_network': 'private',
                 'template_disk': f.disk,
                 'template_ephemeral': f.ephemeral,
+                'template_infiniband': False,
             }
 
         self.provider.select_flavors = 'public'
@@ -326,7 +333,8 @@ class OpenStackProviderTest(base.TestCase):
                 'template_platform': 'i686',
                 'template_network': 'private',
                 'template_disk': f.disk,
-                'template_ephemeral': f.ephemeral
+                'template_ephemeral': f.ephemeral,
+                'template_infiniband': False,
             }
 
         self.provider.select_flavors = 'private'
@@ -636,6 +644,9 @@ class OoiProviderTest(OpenStackProviderTest):
                 self.select_flavors = 'all'
                 self._rescope_project = mock.Mock()
                 self.all_images = False
+                self.opts = mock.Mock()
+                self.opts.extra_specs_infiniband_key = 'infiniband'
+                self.opts.extra_specs_infiniband_value = 'true'
 
         self.provider = FakeProvider(None)
 

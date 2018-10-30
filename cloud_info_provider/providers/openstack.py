@@ -228,7 +228,13 @@ class OpenStackProvider(providers.BaseProvider):
         tpl_sch = defaults.get('template_schema', 'resource')
         URI = 'http://schemas.openstack.org/template/'
         add_all = self.select_flavors == 'all'
+        opts_infiniband_k = self.opts.extra_specs_infiniband_key
+        opts_infiniband_v = self.opts.extra_specs_infiniband_value
+        flavor_infiniband_k = ':'.join([
+            'aggregate_instance_extra_specs',
+            opts_infiniband_k])
         for flavor in self.nova.flavors.list(detailed=True):
+            print(">>> FLAVOR: ", flavor)
             add_pub = self.select_flavors == 'public' and flavor.is_public
             add_priv = (self.select_flavors == 'private' and not
                         flavor.is_public)
@@ -237,12 +243,16 @@ class OpenStackProvider(providers.BaseProvider):
             aux = defaults.copy()
             flavor_id = str(getattr(flavor, 'id'))
             template_id = '%s%s#%s' % (URI, tpl_sch, self.adapt_id(flavor_id))
+            flavor_infiniband_v = flavor.get_keys().get(
+                flavor_infiniband_k, False)
+            has_infiniband = flavor_infiniband_v == opts_infiniband_v
             aux.update({'template_id': template_id,
                         'template_native_id': flavor_id,
                         'template_memory': flavor.ram,
                         'template_ephemeral': flavor.ephemeral,
                         'template_disk': flavor.disk,
-                        'template_cpu': flavor.vcpus})
+                        'template_cpu': flavor.vcpus,
+                        'template_infiniband': has_infiniband})
             flavors[flavor.id] = aux
         return flavors
 
@@ -462,3 +472,16 @@ class OpenStackProvider(providers.BaseProvider):
             help=('If set, include information about all images (including '
                   'snapshots), otherwise only publish images with cloudkeeper '
                   'metadata, ignoring the others.'))
+        parser.add_argument(
+            '--extra-specs-infiniband-key',
+            metavar='EXTRA_SPECS_KEY',
+            default='infiniband',
+            help=('When Infiniband is supported, this option specifies the '
+                  'key id in the flavor\'s extra-specs field'))
+        parser.add_argument(
+            '--extra-specs-infiniband-value',
+            metavar='EXTRA_SPECS_VALUE',
+            default='true',
+            help=('When Infiniband is supported, this option specifies the '
+                  'value to search for/match in the flavor\'s extra-specs '
+                  'field'))

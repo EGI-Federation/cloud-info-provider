@@ -1,4 +1,3 @@
-import collections
 import os.path
 import yaml
 
@@ -187,9 +186,25 @@ DATA = Data()
 
 class OpenStackFakes(object):
     def __init__(self):
-        Flavor = collections.namedtuple(
-            'Flavor',
-            ('id', 'name', 'ram', 'vcpus', 'is_public', 'disk', 'ephemeral'))
+        class Flavor(object):
+            def __init__(self,
+                         id,
+                         name,
+                         ram,
+                         vcpus,
+                         is_public,
+                         disk,
+                         ephemeral):
+                self.id = id
+                self.name = name
+                self.ram = ram
+                self.vcpus = vcpus
+                self.is_public = is_public
+                self.disk = disk
+                self.ephemeral = ephemeral
+
+            def get_keys(self):
+                return {}
 
         flavors = (
             {
