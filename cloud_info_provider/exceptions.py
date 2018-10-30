@@ -4,7 +4,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
-class BaseException(Exception):
+class CloudInfoException(Exception):
     msg_fmt = 'An unknown exception occurred.'
 
     def __init__(self, message=None, **kwargs):
@@ -21,16 +21,16 @@ class BaseException(Exception):
                     logger.error('%s: %s' % (name, value))
                 raise
 
-        super(BaseException, self).__init__(message)
+        super(CloudInfoException, self).__init__(message)
 
 
-class OpenStackProviderException(BaseException):
+class OpenStackProviderException(CloudInfoException):
     pass
 
 
-class StaticProviderException(BaseException):
+class StaticProviderException(CloudInfoException):
     pass
 
 
-class OpenNebulaProviderException(BaseException):
+class OpenNebulaProviderException(CloudInfoException):
     pass

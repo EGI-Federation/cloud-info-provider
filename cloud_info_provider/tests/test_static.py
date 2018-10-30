@@ -3,10 +3,10 @@ import os.path
 import mock
 import six
 
-from cloud_info import exceptions
-from cloud_info.providers import static as static_provider
-from cloud_info.tests import base
-from cloud_info.tests import data
+from cloud_info_provider import exceptions
+from cloud_info_provider.providers import static as static_provider
+from cloud_info_provider.tests import base
+from cloud_info_provider.tests import data
 
 DATA = data.DATA
 
@@ -17,7 +17,6 @@ class StaticProviderTest(base.TestCase):
 
         class Opts(object):
             yaml_file = None
-            full_bdii_ldif = False
             site_in_suffix = False
             glite_site_info_static = "foo"
 
@@ -221,11 +220,22 @@ class StaticProviderTest(base.TestCase):
 
     def test_get_storage_endpoints(self):
         expected = DATA.storage_endpoints
-        self.assertEqual(expected, self.provider.get_storage_endpoints())
+        with mock.patch('socket.getfqdn') as m_fqdn:
+            m_fqdn.return_value = 'example.org'
+            self.assertEqual(expected, self.provider.get_storage_endpoints())
 
     def test_get_compute_endpoints(self):
         expected = DATA.compute_endpoints
-        self.assertEqual(expected, self.provider.get_compute_endpoints())
+        # fill in missing values
+        expected.update({
+            'compute_accelerators_virt_type': None,
+            'compute_network_virt_type': None,
+            'compute_cpu_virt_type': None,
+            'compute_virtual_disk_formats': None,
+        })
+        with mock.patch('socket.getfqdn') as m_fqdn:
+            m_fqdn.return_value = 'example.org'
+            self.assertEqual(expected, self.provider.get_compute_endpoints())
 
     def test_no_site_name(self):
         self.opts.glite_site_info_static = "This does not exist"
@@ -236,39 +246,42 @@ class StaticProviderTest(base.TestCase):
         site_info = {'site_name': 'SITE_NAME'}
         self.assertEqual("o=glue", self.provider._get_suffix(site_info))
 
-    def test_get_suffix_full_bdii(self):
-        site_info = {'site_name': 'SITE_NAME'}
-        self.provider.opts.full_bdii_ldif = True
-        self.assertEqual("GLUE2DomainID=SITE_NAME,o=glue",
-                         self.provider._get_suffix(site_info))
-
     def test_get_suffix_site_in_suffix(self):
         site_info = {'site_name': 'SITE_NAME'}
         self.provider.opts.site_in_suffix = True
         self.assertEqual("GLUE2DomainID=SITE_NAME,o=glue",
                          self.provider._get_suffix(site_info))
 
-    def test_get_site_info_no_full_bdii(self):
+    def test_get_site_info_no(self):
         data = six.StringIO("SITE_NAME = SITE_NAME")
         expected = DATA.site_info
-        with mock.patch('cloud_info.providers.static.open',
+        with mock.patch('cloud_info_provider.providers.static.open',
                         create=True) as m_open:
             m_open.return_value.__enter__ = lambda x: data
             m_open.return_value.__exit__ = mock.Mock()
-            self.assertEqual(expected, self.provider.get_site_info())
-
-    def test_get_site_info_full_bdii(self):
-        expected = DATA.site_info_full
-        data = six.StringIO("SITE_NAME = SITE_NAME")
-        with mock.patch('cloud_info.providers.static.open',
-                        create=True) as m_open:
-            m_open.return_value.__enter__ = lambda x: data
-            m_open.return_value.__exit__ = mock.Mock()
-            self.provider.opts.full_bdii_ldif = True
             self.assertEqual(expected, self.provider.get_site_info())
 
     def test_get_images(self):
         expected = DATA.compute_images
+        # add undefined values
+        for img in expected.values():
+            for field in ['image_accel_type',
+                          'image_access_info',
+                          'image_context_format',
+                          'image_description',
+                          'image_id',
+                          'image_minimal_accel',
+                          'image_minimal_cpu',
+                          'image_minimal_ram',
+                          'image_native_id',
+                          'image_recommended_accel',
+                          'image_recommended_cpu',
+                          'image_recommended_ram',
+                          'image_software',
+                          'image_traffic_in',
+                          'image_traffic_out']:
+                if field not in img:
+                    img[field] = None
         self.assertEqual(expected, self.provider.get_images())
 
     def test_get_images_with_yaml(self):
@@ -318,10 +331,35 @@ class StaticProviderTest(base.TestCase):
                 'image_version': 1.0
             }
         }
-
+        for img in expected.values():
+            for field in ['image_accel_type',
+                          'image_access_info',
+                          'image_context_format',
+                          'image_description',
+                          'image_id',
+                          'image_minimal_accel',
+                          'image_minimal_cpu',
+                          'image_minimal_ram',
+                          'image_native_id',
+                          'image_recommended_accel',
+                          'image_recommended_cpu',
+                          'image_recommended_ram',
+                          'image_software',
+                          'image_traffic_in',
+                          'image_traffic_out']:
+                if field not in img:
+                    img[field] = None
         self.provider.yaml = yaml
         self.assertEqual(expected, self.provider.get_images())
 
     def test_get_templates(self):
         expected = DATA.compute_templates
+        for tpl in expected.values():
+            # default values from file
+            tpl.update({
+                'template_disk': None,
+                'template_ephemeral': None,
+                'template_network_in': 'undefined',
+                'template_network_out': True,
+            })
         self.assertEqual(expected, self.provider.get_templates())

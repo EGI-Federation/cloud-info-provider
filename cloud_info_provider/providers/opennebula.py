@@ -1,10 +1,10 @@
 import json
 import os
-import string
 
-from cloud_info import exceptions
-from cloud_info import providers
-from cloud_info import utils
+from cloud_info_provider import exceptions
+from cloud_info_provider import providers
+from cloud_info_provider.providers import ssl_utils
+from cloud_info_provider import utils
 
 try:
     import defusedxml.ElementTree
@@ -24,7 +24,7 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
         self.opts = opts
         self.on_auth = opts.on_auth
         self.on_rpcxml_endpoint = opts.on_rpcxml_endpoint
-        self.cloudkeeper_images = opts.cloudkeeper_images
+        self.all_images = opts.all_images
 
         if not self.on_auth:
             msg = ('ERROR, You must provide a on_auth '
@@ -74,8 +74,8 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
             self.on_auth, -3, -1, -1, document_type)
         return self._handle_response(response)
 
-    def get_images(self):
-        template = {
+    def get_images(self, **kwargs):
+        img_fields = {
             'image_name': None,
             'image_description': None,
             'image_version': None,
@@ -88,28 +88,32 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
         }
         defaults = self.static.get_image_defaults(prefix=True)
         img_schema = defaults.get('image_schema', 'template')
+        group_name = kwargs.get('project', None)
 
         templates = {}
         for tpl_id, tpl in self._get_one_templates().items():
-            aux_tpl = template.copy()
+            if group_name and group_name != tpl.get('gname'):
+                continue
+            aux_tpl = img_fields.copy()
             aux_tpl.update(defaults)
 
             aux_tpl['image_name'] = tpl['name']
-            aux_tpl['image_id'] = self._gen_id(tpl['name'], tpl_id, img_schema)
+            aux_tpl['image_id'] = '%s#%s' % (img_schema, tpl_id)
 
-            if 'template' in tpl:
-                aux_tpl['image_marketplace_id'] = tpl['template'].get(
-                    'cloudkeeper_appliance_mpuri')
-                aux_tpl['image_description'] = tpl['template'].get(
-                    'cloudkeeper_appliance_description')
-                aux_tpl['image_version'] = tpl['template'].get(
-                    'cloudkeeper_appliance_version')
-                aux_tpl['image_platform'] = tpl['template'].get(
-                    'cloudkeeper_appliance_architecture')
+            template = tpl.get('template', {})
+            aux_tpl.update({
+                'image_marketplace_id': template.get(
+                    'cloudkeeper_appliance_mpuri'),
+                'image_description': template.get(
+                    'cloudkeeper_appliance_description'),
+                'image_version': template.get(
+                    'cloudkeeper_appliance_version'),
+                'image_platform': template.get(
+                    'cloudkeeper_appliance_architecture'),
+            })
 
-            if self.cloudkeeper_images:
-                if not aux_tpl['image_marketplace_id']:
-                    continue
+            if not (self.all_images or aux_tpl['image_marketplace_id']):
+                continue
 
             templates[tpl_id] = aux_tpl
         return templates
@@ -134,17 +138,12 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
                   ' or http://localhost:2633/RPC2.'))
 
         parser.add_argument(
-            '--cloudkeeper-images', '--vmcatcher-images',
+            '--all-images',
             action='store_true',
             default=False,
-            help=('If set, include only information on images that '
-                  'have cloudkeeper metadata, ignoring the others.'))
-
-    @staticmethod
-    def _gen_id(image_name, image_id, schema):
-        # FIXME(aloga): make this an abstrac method
-        """Generate image id."""
-        return '%s#%s' % (schema, image_id)
+            help=('If set, include information about all images (including '
+                  'snapshots), otherwise only publish images with cloudkeeper '
+                  'metadata, ignoring the others.'))
 
     @staticmethod
     def _recurse_dict(element):
@@ -172,92 +171,6 @@ class OpenNebulaProvider(OpenNebulaBaseProvider):
         super(OpenNebulaProvider, self).__init__(opts)
 
 
-class IndigoONProvider(OpenNebulaBaseProvider):
-    def __init__(self, opts):
-        super(IndigoONProvider, self).__init__(opts)
-
-    def get_templates(self):
-        template = {
-            'template_id': None,
-            'template_name': None,
-            'template_description': None,
-            'template_memory': None,
-            'template_cpu': None,
-            'template_disk': None,
-            'template_platform': 'amd64',
-            'template_network': 'private',
-        }
-        defaults = self.static.get_image_defaults(prefix=True)
-        img_schema = defaults.get('template_schema', 'template')
-
-        templates = {}
-        for tpl_id, tpl in self._get_one_templates().items():
-            aux_tpl = template.copy()
-            aux_tpl.update(defaults)
-
-            aux_tpl['template_id'] = self._gen_id(
-                tpl['name'], tpl_id, img_schema)
-            aux_tpl['template_name'] = tpl['name']
-
-            if 'template' in tpl:
-                aux_tpl['template_description'] = tpl['template'].get(
-                    'description')
-                aux_tpl['template_cpu'] = tpl['template'].get('cpu')
-                aux_tpl['template_memory'] = tpl['template'].get('memory')
-                aux_tpl['image_marketplace_id'] = tpl['template'].get(
-                    'cloudkeeper_appliance_mpuri')
-                aux_tpl['image_description'] = tpl['template'].get(
-                    'cloudkeeper_appliance_description')
-                aux_tpl['image_version'] = tpl['template'].get(
-                    'cloudkeeper_appliance_version')
-
-            if self.cloudkeeper_images:
-                if not aux_tpl['image_marketplace_id']:
-                    continue
-
-            templates[tpl_id] = aux_tpl
-        return templates
-
-    def get_images(self):
-        image = {
-            'image_name': None,
-            'image_id': None,
-            'image_marketplace_id': None,
-            'image_version': None,
-            'image_description': None,
-        }
-        defaults = self.static.get_image_defaults(prefix=True)
-
-        images = {}
-        for img_id, img in self._get_one_images().items():
-            aux_img = image.copy()
-            aux_img.update(defaults)
-
-            aux_img['image_name'] = img['name']
-            aux_img['image_id'] = img_id
-
-            if 'template' in img:
-                aux = img['template']
-                for name, value in aux.items():
-                    aux_img[name] = value
-
-                aux_img['image_marketplace_id'] = aux.get(
-                    'cloudkeeper_appliance_mpuri')
-                aux_img['image_version'] = aux.get(
-                    'cloudkeeper_appliance_version')
-                aux_img['image_description'] = (
-                    aux.get('cloudkeeper_appliance_description') or
-                    aux.get('description') or
-                    aux.get('cloudkeeper_appliance_title'))
-
-            if self.cloudkeeper_images:
-                if not aux_img['image_marketplace_id']:
-                    continue
-
-            images[img_id] = aux_img
-        return images
-
-
 class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
     def __init__(self, opts):
         self.rocci_template_dir = opts.rocci_template_dir
@@ -266,9 +179,29 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
             msg = ('ERROR, You must provide a rocci_template_dir '
                    'via --rocci-template-dir')
             raise exceptions.OpenNebulaProviderException(msg)
+        self.ca_info = {}
         super(OpenNebulaROCCIProvider, self).__init__(opts)
 
-    def get_templates(self):
+    def _get_endpoint_ca_information(self, url, **kwargs):
+        if url not in self.ca_info:
+            ca_info = ssl_utils.get_endpoint_ca_information(url, **kwargs)
+            self.ca_info[url] = ca_info
+        return self.ca_info[url]
+
+    def get_compute_endpoints(self, **kwargs):
+        epts = dict()
+        static_epts = self.static.get_compute_endpoints(**kwargs)
+        for url, static_ept in static_epts['endpoints'].items():
+            ept = static_ept.copy()
+            ca_info = self._get_endpoint_ca_information(url)
+            ept.update({
+                'endpoint_trusted_cas': ca_info['trusted_cas'],
+                'endpoint_issuer': ca_info['issuer'],
+            })
+            epts[url] = ept
+        return {'endpoints': epts}
+
+    def get_templates(self, **kwargs):
         """Get flavors from rOCCI-server configuration."""
         template = {
             'template_id': None,
@@ -282,7 +215,8 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
         template.update(self.static.get_template_defaults(prefix=True))
 
         if self.rocci_remote_templates:
-            templates = self.remote_templates(template)
+            group_name = kwargs.get('project', None)
+            templates = self.remote_templates(template, group_name)
         else:
             templates = self.local_templates(template)
 
@@ -318,12 +252,15 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
 
         return templates
 
-    def remote_templates(self, template):
+    def remote_templates(self, template, group_name):
         document_type = 999  # TODO(bparak): configurable?
 
         templates = {}
-        for doc_id, doc in self._get_one_documents(document_type).items():
+        # TODO(enolfc): cache info from ONE?
+        for doc in self._get_one_documents(document_type).values():
             document = json.loads(doc['template']['body'])
+            if group_name and group_name != doc.get('gname'):
+                continue
 
             aux = template.copy()
             aux.update({
@@ -374,14 +311,3 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
             default=False,
             help=('If set, resource template definitions will be retrieved '
                   'via OCA, not from a local directory.'))
-
-    @staticmethod
-    def _gen_id(image_name, image_id, schema):
-        """Generate image uiid as rOCCI does."""
-        replace_punctuation = utils.maketrans(
-            string.punctuation + string.whitespace,
-            '_' * len(string.punctuation + string.whitespace)
-        )
-        image_name = utils.translate(image_name.lower(),
-                                     replace_punctuation).strip('_')
-        return '%s#uuid_%s_%s' % (schema, image_name, image_id)

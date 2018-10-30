@@ -46,7 +46,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%{python_sitelib}/cloud_info*
+%{python_sitelib}/cloud_info_provider*
 /usr/bin/cloud-info-provider-service
 %config /etc/cloud-info-provider/
 

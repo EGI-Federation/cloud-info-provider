@@ -4,8 +4,8 @@ import socket
 
 import yaml
 
-from cloud_info import exceptions
-from cloud_info import providers
+from cloud_info_provider import exceptions
+from cloud_info_provider import providers
 
 
 class StaticProvider(providers.BaseProvider):
@@ -56,64 +56,52 @@ class StaticProvider(providers.BaseProvider):
                                                 prefix,
                                                 e_data,
                                                 defaults=defaults)
-#                r['endpoint_url'] = e
                 ret[which][e] = r
 
         return ret
 
     def _get_suffix(self, site_info):
-        if self.opts.full_bdii_ldif or self.opts.site_in_suffix:
+        if self.opts.site_in_suffix:
             return ('GLUE2DomainID=%(site_name)s,o=glue' %
                     {'site_name': site_info['site_name']})
         else:
             return 'o=glue'
 
-    def get_site_info(self):
-        if 'site' in self.yaml:
-            data = self.yaml['site']
-        else:
-            data = {'name': None}
-
-        fields = ('name', )
-        site_info = self._get_fields_and_prefix(fields, 'site_', data)
-
-        # Resolve site name from BDII configuration
-        if site_info['site_name'] is None:
-            # FIXME(aloga): add exception here
-            try:
-                with open(self.opts.glite_site_info_static, 'r') as f:
-                    for line in f.readlines():
-                        m = re.search('^SITE_NAME *= *(.*)$', line)
-                        if m:
-                            site_info['site_name'] = m.group(1)
-                            break
-            except Exception:
-                raise exceptions.StaticProviderException(
-                    'Cannot read %s for getting the site name' %
-                    self.opts.glite_site_info_static)
-
-        if site_info['site_name'] is None:
+    def _get_site_info_from_bdii_conf(self):
+        try:
+            with open(self.opts.glite_site_info_static, 'r') as f:
+                for line in f.readlines():
+                    m = re.search('^SITE_NAME *= *(.*)$', line)
+                    if m:
+                        return m.group(1)
+        except Exception:
             raise exceptions.StaticProviderException(
                 'Cannot find site name. '
                 'Specify one in the YAML site configuration or be '
                 'sure the file %s is'
                 'accessible and readable' % self.opts.glite_site_info_static)
 
-        site_info['suffix'] = self._get_suffix(site_info)
+    def get_site_info(self, **kwargs):
+        data = self.yaml.get('site', {'name': None})
+        site_info = self._get_fields_and_prefix(('name', ), 'site_', data)
 
-        if self.opts.full_bdii_ldif:
-            fields = ('production_level', 'url', 'ngi', 'country', 'latitude',
-                      'longitude', 'general_contact', 'sysadmin_contact',
-                      'security_contact', 'user_support_contact',
-                      'bdii_host', 'bdii_port')
-            r = self._get_fields_and_prefix(fields, 'site_', data)
-            site_info.update(r)
+        # Resolve site name from BDII configuration
+        if site_info['site_name'] is None:
+            site_info['site_name'] = self._get_site_info_from_bdii_conf()
+
+        site_info['suffix'] = self._get_suffix(site_info)
 
         return site_info
 
-    def get_images(self):
-        fields = ('name', 'version', 'marketplace_id', 'os_family', 'os_name',
-                  'os_version', 'platform')
+    def get_images(self, **kwargs):
+        fields = ('name', 'id', 'native_id', 'description', 'version',
+                  'marketplace_id', 'platform',
+                  'os_family', 'os_name', 'os_version',
+                  'minimal_cpu', 'recommended_cpu',
+                  'minimal_ram', 'recommended_ram',
+                  'minimal_accel', 'recommended_accel', 'accel_type',
+                  'traffic_in', 'traffic_out', 'access_info',
+                  'context_format', 'software')
         images = self._get_what('compute',
                                 'images',
                                 None,
@@ -121,8 +109,9 @@ class StaticProvider(providers.BaseProvider):
                                 prefix='image_')
         return images['images']
 
-    def get_templates(self):
-        fields = ('platform', 'network', 'memory', 'cpu')
+    def get_templates(self, **kwargs):
+        fields = ('platform', 'network', 'network_in', 'network_out',
+                  'memory', 'ephemeral', 'disk', 'cpu')
         templates = self._get_what('compute',
                                    'templates',
                                    None,
@@ -130,16 +119,67 @@ class StaticProvider(providers.BaseProvider):
                                    prefix='template_')
         return templates['templates']
 
-    def get_compute_endpoints(self):
+    def get_instances(self, **kwargs):
+        fields = ('name', 'image_id', 'template_id', 'status')
+        instances = self._get_what('compute',
+                                   'instances',
+                                   None,
+                                   fields,
+                                   prefix='instance_')
+        return instances['instances']
+
+    def get_compute_shares(self, **kwargs):
+        fields = ('instance_max_cpu', 'instance_max_ram',
+                  'instance_max_accelerators',
+                  'project', 'project_domain_name',
+                  'sla', 'network_info', 'membership')
+        shares = self._get_what('compute',
+                                'shares',
+                                None,
+                                fields,
+                                prefix='')
+        # if there is no explicit membership defined, assume VO:<nameofshare>
+        # also if there is no "project" defined, assume VO following
+        # rOCCI convention: group name == VO name
+        for vo, share in shares['shares'].items():
+            if not share['membership']:
+                share['membership'] = ["VO:%s" % vo]
+            if not share['project']:
+                share['project'] = vo
+        return shares['shares']
+
+    def get_compute_quotas(self, **kwargs):
+        fields = ('instances', 'cores', 'ram',
+                  'floating_ips', 'fixed_ips', 'metadata_items',
+                  'injected_files', 'injected_file_content_bytes',
+                  'injected_file_path_bytes', 'key_pairs',
+                  'security_groups', 'security_group_rules',
+                  'server_groups', 'server_group_members')
+        quotas = self._get_what('compute',
+                                'quotas',
+                                None,
+                                fields,
+                                prefix='compute_')
+        return quotas['quotas']
+
+    def get_compute_endpoints(self, **kwargs):
         global_fields = ('service_production_level', 'total_ram',
                          'total_cores', 'capabilities',
                          'hypervisor', 'hypervisor_version',
-                         'middleware', 'middleware_version',
-                         'middleware_developer',
+                         'virtual_disk_formats',
+                         'max_dedicated_ram', 'min_dedicated_ram',
+                         'max_accelerators', 'min_accelerators',
+                         'total_accelerators', 'accelerators_virt_type',
+                         'network_virt_type', 'cpu_virt_type',
+                         'failover', 'live_migration', 'vm_backup_restore',
                          'service_name')
         endpoint_fields = ('production_level', 'api_type', 'api_version',
                            'api_endpoint_technology', 'api_authn_method',
-                           'endpoint_url')
+                           'endpoint_url',
+                           'middleware', 'middleware_developer',
+                           'middleware_version',
+                           'occi_api_version',
+                           'occi_middleware_version')
         endpoints = self._get_what('compute',
                                    'endpoints',
                                    global_fields,
@@ -148,7 +188,7 @@ class StaticProvider(providers.BaseProvider):
             endpoints['compute_service_name'] = socket.getfqdn()
         return endpoints
 
-    def get_storage_endpoints(self):
+    def get_storage_endpoints(self, **kwargs):
         global_fields = ('service_production_level', 'total_storage',
                          'capabilities', 'middleware',
                          'middleware_version', 'middleware_developer',
@@ -194,6 +234,10 @@ class StaticProvider(providers.BaseProvider):
     def get_compute_endpoint_defaults(self, prefix=False):
         prefix = 'compute_' if prefix else ''
         return self._get_defaults('compute', 'endpoints', prefix=prefix)
+
+    def get_compute_quotas_defaults(self, prefix=False):
+        prefix = 'compute_' if prefix else ''
+        return self._get_defaults('compute', 'quotas', prefix=prefix)
 
     def get_storage_endpoint_defaults(self, prefix=False):
         prefix = 'storage_' if prefix else ''

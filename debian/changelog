@@ -175,7 +175,7 @@ python-cloud-info-provider (0.7.0-1) trusty; urgency=medium
   * [166d626] core: only use indigo template for IndigoComputeBDII. Move all display logic to the template.
   * [3cd0c89] indigo tpl: remove useless fields.
   * [ac437af] core: fix code style.
-  * [3d70a8e] Rename cloud_bdii package to cloud_info to avoid clashes.
+  * [3d70a8e] Rename cloud_bdii package to cloud_info_provider to avoid clashes.
   * [1b015dc] indigo tpl: fix atttribute names
   * [bcc8132] core test: re-enable testing of BaseBDII
   * [ee7aedd] core: use only a list, no need for the tuple.
