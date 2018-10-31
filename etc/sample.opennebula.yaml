@@ -87,8 +87,9 @@ compute:
     shares:
         # the vo name
         ops:
-            # Group name in OpenNebula, default is equal to share name
-            #project: ops
+            #auth:
+            #   # Group name in OpenNebula, default is equal to share name
+            #   group: xxxxx
             # Link to the VO SLA
             #sla: UNKNOWN
             # Type of network: infiniband, gigabiteethernet...
