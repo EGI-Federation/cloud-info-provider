@@ -88,9 +88,9 @@ pipeline {
                         sh 'mkdir -p ~/rpmbuild/{SOURCES,SPECS}'
                         sh 'cp dist/cloud_info_provider*.tar.gz ~/rpmbuild/SOURCES/'
                         sh 'cp rpm/cloud-info-provider*.spec ~/rpmbuild/SPECS/'
-                        sh 'rpmbuild -ba ~/rpmbuild/SPECS/cloud-info-provider.spec'
-                        sh 'rpmbuild -ba ~/rpmbuild/SPECS/cloud-info-provider-openstack.spec'
-                        sh 'rpmbuild -ba ~/rpmbuild/SPECS/cloud-info-provider-opennebula.spec'
+                        sh 'rpmbuild --define "_pbr_version $(python setup.py --version)" -ba ~/rpmbuild/SPECS/cloud-info-provider.spec'
+                        sh 'rpmbuild "_pbr_version $(python setup.py --version)" -ba ~/rpmbuild/SPECS/cloud-info-provider-openstack.spec'
+                        sh 'rpmbuild "_pbr_version $(python setup.py --version)" -ba ~/rpmbuild/SPECS/cloud-info-provider-opennebula.spec'
                         sh 'cp ~/rpmbuild/SRPMS/*.rpm ~/rpmbuild/RPMS/noarch/*.rpm ${WORKSPACE}/rpm/'
                     }
                     post {
