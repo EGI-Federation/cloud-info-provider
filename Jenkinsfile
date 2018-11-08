@@ -59,15 +59,15 @@ pipeline {
                     }
                     steps {
                         checkout scm
-                        echo 'Within build on Ubuntu16.04'   
-                            sh 'sudo apt-get update && sudo apt-get install -y devscripts debhelper python-all-dev python-pbr python-setuptools'
-                            sh 'debuild --no-tgz-check clean binary'
+                        echo 'Within build on Ubuntu16.04'
+                        sh 'sudo apt-get update && sudo apt-get install -y devscripts debhelper python-all-dev python-pbr python-setuptools'
+                        sh 'debuild --no-tgz-check clean binary'
                         dir("${WORKSPACE}/debs/cloud-info-provider-openstack") {
                             sh 'debuild --no-tgz-check clean binary'
                         }
-                        dir("${WORKSPACE}/debs/cloud-info-provider-opennebula") {
-                            sh 'debuild --no-tgz-check clean binary'
-                        }
+                        //dir("${WORKSPACE}/debs/cloud-info-provider-opennebula") {
+                        //    sh 'debuild --no-tgz-check clean binary'
+                        //}
                     }
                     post {
                         success {
