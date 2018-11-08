@@ -25,7 +25,8 @@ Depends:
  python-mako,
  python-six
 #Recommends: bdii
-Suggests: python-cloud-info-provider-deep-openstack, python-cloud-info-provider-deep-opennebula
+#Suggests: python-cloud-info-provider-deep-openstack, python-cloud-info-provider-deep-opennebula
+#Suggests: python-cloud-info-provider-deep-openstack
 Provides: ${python:Provides}
 Description: Cloud information provider for BDII.
  Information provider for Cloud Compute and Cloud Storage services.

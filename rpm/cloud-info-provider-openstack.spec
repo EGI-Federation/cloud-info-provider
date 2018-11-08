@@ -27,7 +27,7 @@ Install the cloud-information-provider and the Cloud Middleware dependencies.
 %files
 
 %changelog
-* Thu Oct 8 2018 Pablo Orviz <orviz@ifca.unican.es> 0.10.4
+* Thu Nov 8 2018 Pablo Orviz <orviz@ifca.unican.es> 0.10.4
 - Add support for Infiniband in OpenStack (Pablo Orviz)
 * Mon Oct 15 2018 Baptiste Grenier <baptiste.grenier@egi.eu> 0.10.2
 - Version bump (Baptiste Grenier)
