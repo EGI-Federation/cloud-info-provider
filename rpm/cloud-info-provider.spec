@@ -5,7 +5,7 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Summary: Information provider for Cloud Compute and Cloud Storage services for BDII
-Name: cloud-info-provider
+Name: cloud-info-provider-deep
 Version: %{_pbr_version}
 Release: 1%{?dist}
 Group: Applications/Internet
@@ -51,6 +51,8 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/cloud-info-provider/
 
 %changelog
+* Thu Oct 8 2018 Pablo Orviz <orviz@ifca.unican.es> 0.10.4
+- Add support for Infiniband in OpenStack (Pablo Orviz)
 * Mon Oct 15 2018 Baptiste Grenier <baptiste.grenier@egi.eu> 0.10.2
 - Version bump (Baptiste Grenier)
 * Mon Oct 01 2018 Baptiste Grenier <baptiste.grenier@egi.eu> 0.10.0

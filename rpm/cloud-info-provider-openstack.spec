@@ -3,7 +3,7 @@
 #
 
 Summary: Cloud Information provider meta-package for OpenStack
-Name: cloud-info-provider-openstack
+Name: cloud-info-provider-deep-openstack
 Version: %{_pbr_version}
 Release: 1%{?dist}
 Group: Applications/Internet
@@ -27,6 +27,8 @@ Install the cloud-information-provider and the Cloud Middleware dependencies.
 %files
 
 %changelog
+* Thu Oct 8 2018 Pablo Orviz <orviz@ifca.unican.es> 0.10.4
+- Add support for Infiniband in OpenStack (Pablo Orviz)
 * Mon Oct 15 2018 Baptiste Grenier <baptiste.grenier@egi.eu> 0.10.2
 - Version bump (Baptiste Grenier)
 * Mon Oct 01 2018 Baptiste Grenier <baptiste.grenier@egi.eu> 0.10.0

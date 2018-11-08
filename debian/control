@@ -1,4 +1,4 @@
-Source: python-cloud-info-provider
+Source: python-cloud-info-provider-deep
 Section: net
 Priority: extra
 Maintainer: EGI Federated Cloud <fedcloud-devel@mailman.egi.eu>
@@ -14,7 +14,7 @@ Build-Depends-Indep:
 Standards-Version: 3.9.6
 Vcs-Git: https://github.com/EGI-Federation/cloud-info-provider.git
 
-Package: python-cloud-info-provider
+Package: python-cloud-info-provider-deep
 Architecture: all
 Section: python
 Depends:
@@ -25,7 +25,7 @@ Depends:
  python-mako,
  python-six
 #Recommends: bdii
-Suggests: python-cloud-info-provider-openstack, python-cloud-info-provider-opennebula
+Suggests: python-cloud-info-provider-deep-openstack, python-cloud-info-provider-deep-opennebula
 Provides: ${python:Provides}
 Description: Cloud information provider for BDII.
  Information provider for Cloud Compute and Cloud Storage services.
