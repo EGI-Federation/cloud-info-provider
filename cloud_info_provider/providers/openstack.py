@@ -49,8 +49,8 @@ logging.getLogger('keystoneclient').setLevel(logging.WARNING)
 # TODO(enolfc): should this be completely inside the provider class?
 def _rescope(f):
     @functools.wraps(f)
-    def inner(self, project=None, project_domain_name=None, **kwargs):
-        self._rescope_project(project, project_domain_name)
+    def inner(self, project=None, **kwargs):
+        self._rescope_project(project)
         return f(self, **kwargs)
     return inner
 
@@ -116,16 +116,15 @@ class OpenStackProvider(providers.BaseProvider):
         # Select 'public', 'private' or 'all' (default) templates.
         self.select_flavors = opts.select_flavors
 
-    def _rescope_project(self, project, project_domain_name):
+    def _rescope_project(self, project):
         '''Switch to new OS project whenever there is a change.
 
            It updates every OpenStack client used in case of new project.
         '''
         if (not self.project or project != self.project):
-            self.opts.os_project_name = project
-            self.opts.os_project_domain_name = project_domain_name
+            self.opts.os_project_id = project
             # make sure that it also works for v2voms
-            self.opts.os_tenant_name = project
+            self.opts.os_tenant_id = project
             self.auth_plugin = loading.load_auth_from_argparse_arguments(
                 self.opts
             )
@@ -234,7 +233,6 @@ class OpenStackProvider(providers.BaseProvider):
             'aggregate_instance_extra_specs',
             opts_infiniband_k])
         for flavor in self.nova.flavors.list(detailed=True):
-            print(">>> FLAVOR: ", flavor)
             add_pub = self.select_flavors == 'public' and flavor.is_public
             add_priv = (self.select_flavors == 'private' and not
                         flavor.is_public)
