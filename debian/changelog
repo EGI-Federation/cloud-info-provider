@@ -1,4 +1,4 @@
-python-cloud-info-provider (0.10.4-1) xenial; urgency=medium
+python-cloud-info-provider-deep (0.10.4-1) xenial; urgency=medium
 
   [ Pablo Orviz ]
   * Add support for Infiniband in OpenStack.

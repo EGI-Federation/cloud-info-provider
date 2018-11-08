@@ -1,26 +1,26 @@
-Source: python-cloud-info-provider-openstack
+Source: python-cloud-info-provider-deep-openstack
 Section: net
 Priority: extra
-Maintainer: EGI Federated Cloud <fedcloud-devel@mailman.egi.eu>
-Homepage: http://github.com/EGI-Foundation/cloud-info-provider
+Maintainer: Pablo Orviz <orviz@ifca.unican.es>
+Homepage: http://github.com/indigo-dc/cloud-info-provider-deep
 Build-Depends:
  debhelper (>= 7.0.50)
 Standards-Version: 3.9.6
-Vcs-Git: https://github.com/EGI-Foundation/cloud-info-provider.git
+Vcs-Git: https://github.com/indigo-dc/cloud-info-provider-deep.git
 
-Package: python-cloud-info-provider-openstack
+Package: python-cloud-info-provider-deep-openstack
 Architecture: all
 Section: python
 Depends:
  ${python:Depends},
  ${misc:Depends},
- python-cloud-info-provider (>= 0.9.1),
+ python-cloud-info-provider-deep (>= 0.9.1),
  python-novaclient,
  python-glanceclient,
  python-keystoneauth1
 Provides: ${python:Provides}
-Description: Cloud information provider meta-pacakge for OpenNebula.
+Description: Cloud information provider meta-package for OpenStack.
  .
- OpenNebula-specific meta-package for Information provider for Cloud Compute and
+ OpenStack-specific meta-package for Information provider for Cloud Compute and
  Cloud Storage services.
- Install the cloud-information-provider and the Cloud Middleware dependencies.
+ Install the cloud-information-provider-deep and the Cloud Middleware dependencies.
