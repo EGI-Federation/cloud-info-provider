@@ -306,6 +306,7 @@ GLUE2CloudComputingImageID: ${img_id}
 GLUE2EntityCreationTime: ${timestamp}
 GLUE2EntityValidity: ${validity}
 GLUE2CloudComputingImageTemplateID: ${img_id}
+GLUE2CloudComputingImageCloudComputingShareForeignKey: ${share_id}
 GLUE2CloudComputingImageCloudComputingManagerForeignKey: ${compute_service_manager}
 GLUE2CloudComputingImageCloudComputingEndpointForeignKey: ${endpoint_id}
 GLUE2CloudComputingImageMarketPlaceURL: ${image['image_marketplace_id']}
@@ -377,6 +378,7 @@ GLUE2EntityValidity: ${validity}
 GLUE2EntityName: ${tpl_id}
 GLUE2CloudComputingInstanceTypeTemplateID: ${tpl_id}
 GLUE2ResourceManagerForeignKey: ${compute_service_manager}
+GLUE2CloudComputingInstanceTypeCloudComputingShareForeignKey: ${share_id}
 GLUE2CloudComputingInstanceTypeCloudComputingManagerForeignKey: ${compute_service_manager}
 GLUE2CloudComputingInstanceTypeCloudComputingEndpointForeignKey: ${endpoint_id}
 GLUE2CloudComputingInstanceTypePlatform: ${template['template_platform']}
