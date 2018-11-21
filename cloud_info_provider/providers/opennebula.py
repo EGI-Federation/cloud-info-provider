@@ -88,7 +88,7 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
         }
         defaults = self.static.get_image_defaults(prefix=True)
         img_schema = defaults.get('image_schema', 'template')
-        group_name = kwargs.get('auth', {}).get('project_id', None)
+        group_name = kwargs.get('auth', {}).get('group', None)
 
         templates = {}
         for tpl_id, tpl in self._get_one_templates().items():
@@ -215,7 +215,7 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
         template.update(self.static.get_template_defaults(prefix=True))
 
         if self.rocci_remote_templates:
-            group_name = kwargs.get('auth', {}).get('project_id', None)
+            group_name = kwargs.get('auth', {}).get('group', None)
             templates = self.remote_templates(template, group_name)
         else:
             templates = self.local_templates(template)
