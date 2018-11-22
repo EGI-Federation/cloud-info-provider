@@ -49,8 +49,8 @@ logging.getLogger('keystoneclient').setLevel(logging.WARNING)
 # TODO(enolfc): should this be completely inside the provider class?
 def _rescope(f):
     @functools.wraps(f)
-    def inner(self, project=None, **kwargs):
-        self._rescope_project(project)
+    def inner(self, auth=None, **kwargs):
+        self._rescope_project(auth['project_id'])
         return f(self, **kwargs)
     return inner
 
@@ -96,7 +96,7 @@ class OpenStackProvider(providers.BaseProvider):
         self.glance = glanceclient.Client('2', session=self.session)
 
         try:
-            self.project = self.session.get_project_id()
+            self.project_id = self.session.get_project_id()
         except http_exc.Unauthorized:
             msg = "Could not authorize user"
             raise exceptions.OpenStackProviderException(msg)
@@ -115,15 +115,15 @@ class OpenStackProvider(providers.BaseProvider):
         # Select 'public', 'private' or 'all' (default) templates.
         self.select_flavors = opts.select_flavors
 
-    def _rescope_project(self, project):
+    def _rescope_project(self, project_id):
         '''Switch to new OS project whenever there is a change.
 
            It updates every OpenStack client used in case of new project.
         '''
-        if (not self.project or project != self.project):
-            self.opts.os_project_id = project
+        if (not self.project_id or project_id != self.project_id):
+            self.opts.os_project_id = project_id
             # make sure that it also works for v2voms
-            self.opts.os_tenant_id = project
+            self.opts.os_tenant_id = project_id
             self.auth_plugin = loading.load_auth_from_argparse_arguments(
                 self.opts
             )
@@ -132,9 +132,9 @@ class OpenStackProvider(providers.BaseProvider):
             )
             self.auth_plugin.invalidate()
             try:
-                self.project = self.session.get_project_id()
+                self.project_id = self.session.get_project_id()
             except http_exc.Unauthorized:
-                msg = "Could not authorize user in project '%s'" % project
+                msg = "Could not authorize user in project '%s'" % project_id
                 raise exceptions.OpenStackProviderException(msg)
             # make sure the clients know about the change
             self.nova = novaclient.client.Client(2, session=self.session)
@@ -348,7 +348,7 @@ class OpenStackProvider(providers.BaseProvider):
         quotas = defaults.copy()
 
         try:
-            project_quotas = self.nova.quotas.get(self.project)
+            project_quotas = self.nova.quotas.get(self.project_id)
             for resource in quota_resources:
                 try:
                     quotas[resource] = getattr(project_quotas, resource)

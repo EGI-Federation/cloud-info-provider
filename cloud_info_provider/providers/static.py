@@ -131,20 +131,12 @@ class StaticProvider(providers.BaseProvider):
     def get_compute_shares(self, **kwargs):
         fields = ('instance_max_cpu', 'instance_max_ram',
                   'instance_max_accelerators',
-                  'project', 'sla', 'network_info', 'membership')
+                  'auth', 'sla', 'network_info', 'membership')
         shares = self._get_what('compute',
                                 'shares',
                                 None,
                                 fields,
                                 prefix='')
-        # if there is no explicit membership defined, assume VO:<nameofshare>
-        # also if there is no "project" defined, assume VO following
-        # rOCCI convention: group name == VO name
-        for vo, share in shares['shares'].items():
-            if not share['membership']:
-                share['membership'] = ["VO:%s" % vo]
-            if not share['project']:
-                share['project'] = vo
         return shares['shares']
 
     def get_compute_quotas(self, **kwargs):
