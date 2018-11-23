@@ -87,10 +87,11 @@ compute:
     shares:
         # the vo name
         ops:
-            # Group name in OpenNebula, default is equal to share name
-            #project: ops
+            auth:
+               # Group name in OpenNebula, default is equal to share name
+               group: ops
             # Link to the VO SLA
-            #sla: UNKNOWN
+            sla: UNKNOWN
             # Type of network: infiniband, gigabiteethernet...
             network_info: UNKNOWN
             # Default membership is VO:<share name>, specify if finer grained AuthZ is used

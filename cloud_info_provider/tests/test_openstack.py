@@ -97,7 +97,6 @@ class OpenStackProviderTest(base.TestCase):
                 'template_ephemeral': f.ephemeral,
                 'template_infiniband': False,
             }
-
         with utils.nested(
                 mock.patch.object(self.provider.static,
                                   'get_template_defaults'),
@@ -105,9 +104,9 @@ class OpenStackProviderTest(base.TestCase):
         ) as (m_get_template_defaults, m_flavors_list):
             m_get_template_defaults.return_value = {}
             m_flavors_list.return_value = FAKES.flavors
-            templates = self.provider.get_templates()
+            templates = self.provider.get_templates(**{
+                'auth': {'project_id': None}})
             self.assertTrue(m_get_template_defaults.called)
-
         self.assert_resources(expected_templates,
                               templates,
                               template="compute.ldif",
@@ -164,7 +163,8 @@ class OpenStackProviderTest(base.TestCase):
                 'template_platform': 'i686'
             }
             m_flavors_list.return_value = FAKES.flavors
-            templates = self.provider.get_templates()
+            templates = self.provider.get_templates(**{
+                'auth': {'project_id': None}})
             self.assertTrue(m_get_template_defaults.called)
 
         self.assert_resources(expected_templates,
@@ -221,7 +221,8 @@ class OpenStackProviderTest(base.TestCase):
                 'template_platform': 'i686'
             }
             m_flavors_list.return_value = FAKES.flavors
-            templates = self.provider.get_templates()
+            templates = self.provider.get_templates(**{
+                'auth': {'project_id': None}})
             self.assertTrue(m_get_template_defaults.called)
 
         # Extract required fields from compute.ldif template excluding fields
@@ -284,7 +285,8 @@ class OpenStackProviderTest(base.TestCase):
                 'template_platform': 'i686'
             }
             m_flavors_list.return_value = FAKES.flavors
-            templates = self.provider.get_templates()
+            templates = self.provider.get_templates(**{
+                'auth': {'project_id': None}})
             self.assertTrue(m_get_template_defaults.called)
 
         # Extract required fields from compute.ldif template excluding fields
@@ -347,7 +349,8 @@ class OpenStackProviderTest(base.TestCase):
                 'template_platform': 'i686'
             }
             m_flavors_list.return_value = FAKES.flavors
-            templates = self.provider.get_templates()
+            templates = self.provider.get_templates(**{
+                'auth': {'project_id': None}})
             self.assertTrue(m_get_template_defaults.called)
 
         # Extract required fields from compute.ldif template excluding fields
@@ -493,7 +496,7 @@ class OpenStackProviderTest(base.TestCase):
             m_get_image_defaults.return_value = {}
             m_images_list.return_value = FAKES.images
 
-            images = self.provider.get_images()
+            images = self.provider.get_images(**{'auth': {'project_id': None}})
             self.assertTrue(m_get_image_defaults.called)
 
         # Filter fields from the template that are not related to images
@@ -539,7 +542,7 @@ class OpenStackProviderTest(base.TestCase):
             m_get_image_defaults.return_value = {}
             m_images_list.return_value = FAKES.images
 
-            images = self.provider.get_images()
+            images = self.provider.get_images(**{'auth': {'project_id': None}})
             self.assertTrue(m_get_image_defaults.called)
 
         self.assertItemsEqual(images.keys(), expected_images)
@@ -573,7 +576,8 @@ class OpenStackProviderTest(base.TestCase):
             r = mock.Mock()
             r.service_catalog = FAKES.catalog
             self.provider.auth_plugin.get_access.return_value = r
-            endpoints = self.provider.get_compute_endpoints()
+            endpoints = self.provider.get_compute_endpoints(**{
+                'auth': {'project_id': None}})
             self.assertTrue(m_get_endpoint_defaults.called)
 
         for k, v in expected_endpoints['endpoints'].items():
@@ -607,7 +611,8 @@ class OpenStackProviderTest(base.TestCase):
             r = mock.Mock()
             r.service_catalog = FAKES.catalog
             self.provider.auth_plugin.get_access.return_value = r
-            endpoints = self.provider.get_compute_endpoints()
+            endpoints = self.provider.get_compute_endpoints(**{
+                'auth': {'project_id': None}})
             self.assertTrue(m_get_endpoint_defaults.called)
 
         self.assertDictEqual(expected_endpoints, endpoints)
@@ -768,7 +773,7 @@ class OoiProviderTest(OpenStackProviderTest):
             m_get_image_defaults.return_value = {}
             m_images_list.return_value = FAKES.images
 
-            images = self.provider.get_images()
+            images = self.provider.get_images(**{'auth': {'project_id': None}})
             self.assertTrue(m_get_image_defaults.called)
 
         # Filter fields from the template that are not related to images
@@ -827,7 +832,8 @@ class OoiProviderTest(OpenStackProviderTest):
             r = mock.Mock()
             r.service_catalog = FAKES.catalog
             self.provider.auth_plugin.get_access.return_value = r
-            endpoints = self.provider.get_compute_endpoints()
+            endpoints = self.provider.get_compute_endpoints(**{
+                'auth': {'project_id': None}})
             self.assertTrue(m_get_endpoint_defaults.called)
 
         for k, v in expected_endpoints['endpoints'].items():
@@ -857,7 +863,8 @@ class OoiProviderTest(OpenStackProviderTest):
             r = mock.Mock()
             r.service_catalog = FAKES.catalog
             self.provider.auth_plugin.get_access.return_value = r
-            endpoints = self.provider.get_compute_endpoints()
+            endpoints = self.provider.get_compute_endpoints(**{
+                'auth': {'project_id': None}})
             self.assertTrue(m_get_endpoint_defaults.called)
 
         self.assertDictEqual(expected_endpoints, endpoints)

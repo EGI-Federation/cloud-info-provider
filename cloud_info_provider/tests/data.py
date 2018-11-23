@@ -172,11 +172,15 @@ class Data(object):
         return {
             'fedcloud.egi.eu': {
                 'sla': 'https://egi.eu/sla/fedcloud',
-                'project': 'fedcloud',
+                'auth': {
+                    'project_id': 'fedcloud',
+                }
             },
             'training.egi.eu': {
                 'sla': 'https://egi.eu/sla/training',
-                'project': 'training',
+                'auth': {
+                    'project_id': 'training',
+                }
             },
         }
 
