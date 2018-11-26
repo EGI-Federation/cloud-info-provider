@@ -1,9 +1,11 @@
 # DEEP releases in Cloud Information provider
 
 The current document describe the main features implemented for the Cloud
-Information Provider, released under DEEP-Hybrid-Datacloud project.
+Information Provider under the DEEP-Hybrid-Datacloud project.
 
-Note that these features may not be available or merged upstream.
+Main documentation for the product is maintained [upstream](https://github.com/EGI-Foundation/cloud-info-provider), including usage and contribution (for developers) guidelines. The documentation for the features pending to be merged upstream and/or specific to DEEP-Hybrid-Datacloud will be added below, associated with the release version.
+
+__Note that these features may not be available or merged upstream.__
 
 ## cloud-info-provider-deep-0.10.4
 
