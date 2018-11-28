@@ -351,6 +351,9 @@ GLUE2CloudComputingImageContextualizationFormat: context_format:${image['image_c
 % for software in image.get('image_software', []):
 GLUE2CloudComputingImageInstalledsoftware: ${software}
 % endfor
+% for other in image.get('other_info', []):
+GLUE2EntityOtherInfo: ${other}
+% endfor
 ## XXX Missing
 ## GLUE2CloudComputingImageContextualizationVersion:
 ## GLUE2CloudComputingImageDefaultUsername:
