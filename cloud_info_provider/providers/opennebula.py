@@ -1,3 +1,5 @@
+import base64
+import copy
 import json
 import os
 
@@ -85,6 +87,7 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
             'image_os_name': None,
             'image_os_version': None,
             'image_platform': 'amd64',
+            'other_info': [],
         }
         defaults = self.static.get_image_defaults(prefix=True)
         img_schema = defaults.get('image_schema', 'template')
@@ -94,7 +97,7 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
         for tpl_id, tpl in self._get_one_templates().items():
             if group_name and group_name != tpl.get('gname'):
                 continue
-            aux_tpl = img_fields.copy()
+            aux_tpl = copy.deepcopy(img_fields)
             aux_tpl.update(defaults)
 
             aux_tpl['image_name'] = tpl['name']
@@ -111,6 +114,20 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
                 'image_platform': template.get(
                     'cloudkeeper_appliance_architecture'),
             })
+
+            base_mpuri = None
+            if template.get('cloudkeeper_appliance_base_mpuri'):
+                # cloudkeeper 2.x
+                base_mpuri = template['cloudkeeper_appliance_base_mpuri']
+            elif template.get('cloudkeeper_appliance_attributes'):
+                # cloudkeeper 1.x
+                encoded_attrs = template['cloudkeeper_appliance_attributes']
+                ck_attrs = json.loads(
+                    base64.b64decode(encoded_attrs).decode('utf-8'))
+                base_mpuri = ck_attrs.get('ad:base_mpuri')
+
+            if base_mpuri:
+                aux_tpl['other_info'].append('base_mpuri=%s' % base_mpuri)
 
             if not (self.all_images or aux_tpl['image_marketplace_id']):
                 continue
