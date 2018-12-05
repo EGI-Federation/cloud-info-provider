@@ -1,5 +1,7 @@
 # DEEP releases in Cloud Information provider
 
+[![Build Status](https://jenkins.indigo-datacloud.eu:8080/buildStatus/icon?job=Pipeline-as-code/cloud-info-provider-deep/DEEP)](https://jenkins.indigo-datacloud.eu:8080/job/Pipeline-as-code/job/cloud-info-provider-deep/job/DEEP/)
+
 The current document describe the main features implemented for the Cloud
 Information Provider, released under DEEP-Hybrid-Datacloud project.
 
