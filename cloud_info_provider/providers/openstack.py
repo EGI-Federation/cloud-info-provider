@@ -1,5 +1,7 @@
 import functools
+import json
 import logging
+import re
 
 from cloud_info_provider import exceptions
 from cloud_info_provider import providers
@@ -225,11 +227,11 @@ class OpenStackProvider(providers.BaseProvider):
         tpl_sch = defaults.get('template_schema', 'resource')
         URI = 'http://schemas.openstack.org/template/'
         add_all = self.select_flavors == 'all'
-        opts_infiniband_k = self.opts.extra_specs_infiniband_key
-        opts_infiniband_v = self.opts.extra_specs_infiniband_value
-        flavor_infiniband_k = ':'.join([
-            'aggregate_instance_extra_specs',
-            opts_infiniband_k])
+        # extra-specs arguments must match the pattern 'extra_specs_\w+_key'
+        extra_specs_keys = [_opt
+            for _opt in vars(self.opts)
+                if re.search('extra_specs_\w+_key', _opt)]
+
         for flavor in self.nova.flavors.list(detailed=True):
             add_pub = self.select_flavors == 'public' and flavor.is_public
             add_priv = (self.select_flavors == 'private' and not
@@ -239,16 +241,30 @@ class OpenStackProvider(providers.BaseProvider):
             aux = defaults.copy()
             flavor_id = str(getattr(flavor, 'id'))
             template_id = '%s%s#%s' % (URI, tpl_sch, self.adapt_id(flavor_id))
-            flavor_infiniband_v = flavor.get_keys().get(
-                flavor_infiniband_k, False)
-            has_infiniband = flavor_infiniband_v == opts_infiniband_v
             aux.update({'template_id': template_id,
                         'template_native_id': flavor_id,
                         'template_memory': flavor.ram,
                         'template_ephemeral': flavor.ephemeral,
                         'template_disk': flavor.disk,
-                        'template_cpu': flavor.vcpus,
-                        'template_infiniband': has_infiniband})
+                        'template_cpu': flavor.vcpus})
+            # extra-specs
+            d_extra_specs = {}
+            for k in extra_specs_keys:
+                opts_k = vars(self.opts)[k]
+                v = flavor.get_keys().get(
+                    ':'.join(['aggregate_instance_extra_specs', opts_k]), False)
+                try:
+                    opts_v = vars(self.opts)[k.replace('key', 'value')]
+                except KeyError:
+                    opts_v = False
+
+                extra_specs_id = re.search('extra_specs_(\w+)_key', k).group(1)
+                if opts_v:
+                    d_extra_specs['template_%s' % extra_specs_id] = v == opts_v
+                else:
+                    d_extra_specs['template_%s' % extra_specs_id] = v
+            aux.update(d_extra_specs)
+
             flavors[flavor.id] = aux
         return flavors
 
@@ -282,6 +298,7 @@ class OpenStackProvider(providers.BaseProvider):
             'image_access_info': 'none',
             'image_context_format': None,
             'image_software': [],
+            'other_info': [],
         }
         defaults = self.static.get_image_defaults(prefix=True)
         img_sch = defaults.get('image_schema', 'os')
@@ -297,6 +314,11 @@ class OpenStackProvider(providers.BaseProvider):
                                     image.get('vmcatcher_event_dc_title'))
             marketplace_id = image.get('vmcatcher_event_ad_mpuri',
                                        image.get('marketplace'))
+
+            extra_attrs = json.loads(image.get('APPLIANCE_ATTRIBUTES', '{}'))
+            if 'ad:base_mpuri' in extra_attrs:
+                aux_img['other_info'].append('base_mpuri=%s'
+                                             % extra_attrs['ad:base_mpuri'])
 
             if not marketplace_id:
                 if self.all_images:
@@ -468,6 +490,8 @@ class OpenStackProvider(providers.BaseProvider):
             help=('If set, include information about all images (including '
                   'snapshots), otherwise only publish images with cloudkeeper '
                   'metadata, ignoring the others.'))
+        # EXTRA SPECS must match wildcard 'extra-specs-*-key' for easier
+        # management (see get_templates() method)
         parser.add_argument(
             '--extra-specs-infiniband-key',
             metavar='EXTRA_SPECS_KEY',
@@ -481,3 +505,27 @@ class OpenStackProvider(providers.BaseProvider):
             help=('When Infiniband is supported, this option specifies the '
                   'value to search for/match in the flavor\'s extra-specs '
                   'field'))
+        parser.add_argument(
+            '--extra-specs-gpu-number-key',
+            metavar='EXTRA_SPECS_KEY',
+            default='gpu_number',
+            help=('Specifies the key id in the flavor\'s extra-specs field '
+                  'that refers to the number of GPUs'))
+        parser.add_argument(
+            '--extra-specs-gpu-vendor-key',
+            metavar='EXTRA_SPECS_KEY',
+            default='gpu_vendor',
+            help=('Specifies the key id in the flavor\'s extra-specs field '
+                  'that refers to the GPU vendor'))
+        parser.add_argument(
+            '--extra-specs-gpu-model-key',
+            metavar='EXTRA_SPECS_KEY',
+            default='gpu_model',
+            help=('Specifies the key id in the flavor\'s extra-specs field '
+                  'that refers to the GPU model'))
+        parser.add_argument(
+            '--extra-specs-gpu-driver-key',
+            metavar='EXTRA_SPECS_KEY',
+            default='gpu_driver',
+            help=('Specifies the key id in the flavor\'s extra-specs field '
+                  'that refers to the GPU driver version'))
