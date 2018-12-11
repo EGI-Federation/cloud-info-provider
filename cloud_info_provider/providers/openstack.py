@@ -1,4 +1,5 @@
 import functools
+import json
 import logging
 
 from cloud_info_provider import exceptions
@@ -273,6 +274,7 @@ class OpenStackProvider(providers.BaseProvider):
             'image_access_info': 'none',
             'image_context_format': None,
             'image_software': [],
+            'other_info': [],
         }
         defaults = self.static.get_image_defaults(prefix=True)
         img_sch = defaults.get('image_schema', 'os')
@@ -288,6 +290,11 @@ class OpenStackProvider(providers.BaseProvider):
                                     image.get('vmcatcher_event_dc_title'))
             marketplace_id = image.get('vmcatcher_event_ad_mpuri',
                                        image.get('marketplace'))
+
+            extra_attrs = json.loads(image.get('APPLIANCE_ATTRIBUTES', '{}'))
+            if 'ad:base_mpuri' in extra_attrs:
+                aux_img['other_info'].append('base_mpuri=%s'
+                                             % extra_attrs['ad:base_mpuri'])
 
             if not marketplace_id:
                 if self.all_images:

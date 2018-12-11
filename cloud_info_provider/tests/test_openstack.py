@@ -414,6 +414,7 @@ class OpenStackProviderTest(base.TestCase):
                 'image_traffic_in': [],
                 'image_traffic_out': [],
                 'image_context_format': None,
+                'other_info': [],
             },
             'foo.id': {
                 'name': 'fooimage',
@@ -444,6 +445,8 @@ class OpenStackProviderTest(base.TestCase):
                 'image_traffic_in': [],
                 'image_traffic_out': [],
                 'image_context_format': None,
+                'other_info': ['base_mpuri=foobar'],
+                'APPLIANCE_ATTRIBUTES': '{"ad:base_mpuri": "foobar"}',
             },
             'baz id': {
                 'name': 'bazimage',
@@ -478,6 +481,7 @@ class OpenStackProviderTest(base.TestCase):
                 'image_traffic_in': [],
                 'image_traffic_out': [],
                 'image_context_format': None,
+                'other_info': [],
             }
         }
 
@@ -687,6 +691,7 @@ class OoiProviderTest(OpenStackProviderTest):
                 'image_traffic_in': [],
                 'image_traffic_out': [],
                 'image_context_format': None,
+                'other_info': [],
             },
             'foo.id': {
                 'name': 'fooimage',
@@ -717,6 +722,8 @@ class OoiProviderTest(OpenStackProviderTest):
                 'image_traffic_in': [],
                 'image_traffic_out': [],
                 'image_context_format': None,
+                'other_info': ['base_mpuri=foobar'],
+                'APPLIANCE_ATTRIBUTES': '{"ad:base_mpuri": "foobar"}',
             },
             'baz id': {
                 'name': 'bazimage',
@@ -751,6 +758,7 @@ class OoiProviderTest(OpenStackProviderTest):
                 'image_traffic_in': [],
                 'image_traffic_out': [],
                 'image_context_format': None,
+                'other_info': [],
             }
         }
 
