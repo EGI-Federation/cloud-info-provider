@@ -79,6 +79,18 @@ class OpenStackProviderTest(base.TestCase):
             for f in fields:
                 self.assertIn(f, v)
 
+    def test_get_shares(self):
+        with utils.nested(
+                mock.patch.object(self.provider.static, 'get_compute_shares'),
+        ) as (m_get_compute_shares, ):
+            m_get_compute_shares.return_value = {
+                'vo1': {'auth': {'project_id': 'foobar'}}
+            }
+            shares = self.provider.get_compute_shares(**{
+                'auth': {'project_id': None}})
+            self.assertEqual('foobar', shares['vo1']['project'])
+            self.assertTrue(m_get_compute_shares.called)
+
     def test_get_templates_with_defaults(self):
         expected_templates = {}
         url = 'http://schemas.openstack.org/template/resource'

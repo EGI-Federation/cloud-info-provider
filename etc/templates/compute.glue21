@@ -258,10 +258,10 @@ GLUE2CloudComputingShareNetworkInfo: ${share['network_info']}
 % if share_max_vm:
 GLUE2CloudComputingShareMaxVM: ${share_max_vm}
 % endif
+GLUE2CloudComputingShareProjectID: ${share['project']}
 ## XXX Missing
 ## GLUE2CloudComputingShareDefaultNetworkType:
 ## GLUE2CloudComputingSharePublicNetworkName:
-## GLUE2CloudComputingShareProjectID:
 
 ## Iterate over all the endpoints of the share to display corresponding:
 ## images, templates and AccessPolicies

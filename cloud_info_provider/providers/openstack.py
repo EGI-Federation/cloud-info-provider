@@ -116,6 +116,12 @@ class OpenStackProvider(providers.BaseProvider):
         # Select 'public', 'private' or 'all' (default) templates.
         self.select_flavors = opts.select_flavors
 
+    def get_compute_shares(self, **kwargs):
+        shares = self.static.get_compute_shares(prefix=True)
+        for share in shares.values():
+            share['project'] = share.get('auth', {}).get('project_id')
+        return shares
+
     def _rescope_project(self, project_id):
         '''Switch to new OS project whenever there is a change.
 
