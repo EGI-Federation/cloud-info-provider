@@ -251,6 +251,7 @@ class OpenStackFakes(object):
                 'metadata': {},
                 'file': 'v2/foo.id/file',
                 'marketplace': 'http://example.org/',
+                'APPLIANCE_ATTRIBUTES': '{"ad:base_mpuri": "foobar"}',
             },
             {
                 'name': 'barimage',
