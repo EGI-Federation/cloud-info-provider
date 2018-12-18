@@ -8,7 +8,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": null,
-    "image_version": null
+    "image_version": null,
+    "other_info": []
   },
   "64": {
     "image_description": null,
@@ -19,7 +20,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": null,
-    "image_version": null
+    "image_version": null,
+    "other_info": []
   },
   "120": {
     "image_description": null,
@@ -30,7 +32,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": null,
-    "image_version": null
+    "image_version": null,
+    "other_info": []
   },
   "161": {
     "image_description": null,
@@ -41,7 +44,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": null,
-    "image_version": null
+    "image_version": null,
+    "other_info": []
   },
   "168": {
     "image_description": null,
@@ -52,7 +56,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": null,
-    "image_version": null
+    "image_version": null,
+    "other_info": []
   },
   "176": {
     "image_description": null,
@@ -63,7 +68,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": null,
-    "image_version": null
+    "image_version": null,
+    "other_info": []
   },
   "181": {
     "image_description": null,
@@ -74,7 +80,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": null,
-    "image_version": null
+    "image_version": null,
+    "other_info": []
   },
   "182": {
     "image_description": null,
@@ -85,7 +92,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": null,
-    "image_version": null
+    "image_version": null,
+    "other_info": []
   },
   "185": {
     "image_description": null,
@@ -96,7 +104,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": null,
-    "image_version": null
+    "image_version": null,
+    "other_info": []
   },
   "187": {
     "image_description": null,
@@ -107,7 +116,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": null,
-    "image_version": null
+    "image_version": null,
+    "other_info": []
   },
   "188": {
     "image_description": null,
@@ -118,7 +128,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": null,
-    "image_version": null
+    "image_version": null,
+    "other_info": []
   },
   "192": {
     "image_description": null,
@@ -129,7 +140,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "20141029"
+    "image_version": "20141029",
+    "other_info": []
   },
   "193": {
     "image_description": null,
@@ -140,7 +152,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "20141029"
+    "image_version": "20141029",
+    "other_info": []
   },
   "194": {
     "image_description": "This version of CERNVM has been modified by EGI with the followign changes - default OS extended to 40GB of disk - updated OpenNebula Cloud-Init driver to latest version 0.7.5 - enabled all Cloud-Init data sources",
@@ -151,7 +164,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "3.3.0-1"
+    "image_version": "3.3.0-1",
+    "other_info": []
   },
   "195": {
     "image_description": "Chipster is a user-friendly analysis software for high-throughput data. It contains over 300 analysis tools for next generation sequencing NGS microarray proteomics and sequence data. Chipsters client software uses Java Web Start to install itself automatically and it connects to computing servers for the actual analysis. Chipster is open source and the server environment is available as a virtual machine image.",
@@ -162,7 +176,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "3.11.2_cloud"
+    "image_version": "3.11.2_cloud",
+    "other_info": []
   },
   "196": {
     "image_description": "This version of CERNVM has been modified by EGI with the followign changes - default OS extended to 40GB of disk - updated OpenNebula Cloud-Init driver to latest version 0.7.5 - enabled all Cloud-Init data sources",
@@ -173,7 +188,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "3.3.0-1"
+    "image_version": "3.3.0-1",
+    "other_info": []
   },
   "197": {
     "image_description": null,
@@ -184,7 +200,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "20141119a"
+    "image_version": "20141119a",
+    "other_info": []
   },
   "198": {
     "image_description": "West-life VirtualFolder VM based on CernVM4 and Scientific Linux 7.2. It mounts remote installation of software at cernvm.ch and west-life.egi.eu thus VM should have access to Internet otherwise itll not boot/download the depended software into the cache.Default user is vagrantvagrant if no public ssh key is set non-secure vagrant key is used for testing purposes only please change the ssh-keys in cloud-init. After boot and bootstrap the web ui is accessible on standard HTTP port 80. See the web page e.g. http//localhost or http//[vm.ip.address] Login using vagrantvagrant. Limited scratch disc space available. Optional GUI to desktop allows to mount work with preinstalled SCIPION and CCP4 software.",
@@ -195,7 +212,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "17.05"
+    "image_version": "17.05",
+    "other_info": []
   },
   "199": {
     "image_description": "EGI FedCloud clients rOCCI-cli installed on the Long Term Support version of Ubuntu support guaranteed until April 2019.Includes voms clients with the fedcloud.egi.eu preconfigured and rOCCI-cli tool to interact with the FedCloud services. User must upload his/her certificate into the VM in order to create the proxy.This Virtual Machine has been created by the EGI Federated Cloud using a minimal Ubuntu 14.04 installation with cloud-init contextualization. In order to log into the image a ssh key must be used default user name is ubuntu.See https//wiki.egi.eu/wiki/FAQ10_EGI_Federated_Cloud_UserHow_can_I_connect_to_a_VM.3F for more informationImage was built using packer with the configuration available at https//github.com/EGI-FCTF/VMI-endorsement/.",
@@ -206,7 +224,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "2017.02.09"
+    "image_version": "2017.02.09",
+    "other_info": []
   },
   "200": {
     "image_description": "The Long Term Support version of Ubuntu support guaranteed until 2017.This Virtual Machine has been created by the EGI Federated Cloud using a minimal Ubuntu 12.04 installation with cloud-init contextualization. In order to log into the image a ssh key must be used see https//wiki.egi.eu/wiki/FAQ10_EGI_Federated_Cloud_UserHow_can_I_connect_to_a_VM.3F for more information. Image was built using packer with the configuration available at https//github.com/EGI-FCTF/VMI-endorsement/.",
@@ -217,7 +236,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "2017.02.06"
+    "image_version": "2017.02.06",
+    "other_info": []
   },
   "201": {
     "image_description": "The CentOS Linux distribution is a stable predictable manageable and reproducible platform derived from the sources of Red Hat Enterprise Linux RHEL.This Virtual Machine has been created by the EGI Federated Cloud using a minimal CentOS 7 installation with cloud-init contextualization. In order to log into the image a ssh key must be used default user is named centosSee https//wiki.egi.eu/wiki/FAQ10_EGI_Federated_Cloud_UserHow_can_I_connect_to_a_VM.3F for more informationImage was built using packer with the configuration available at https//github.com/EGI-FCTF/VMI-endorsement/",
@@ -228,7 +248,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "2017.02.06"
+    "image_version": "2017.02.06",
+    "other_info": []
   },
   "202": {
     "image_description": "The CentOS Linux distribution is a stable predictable manageable and reproducible platform derived from the sources of Red Hat Enterprise Linux RHEL.This Virtual Machine has been created by the EGI Federated Cloud using a minimal CentOS 6 installation with cloud-init contextualization. In order to log into the image a ssh key must be used see https//wiki.egi.eu/wiki/FAQ10_EGI_Federated_Cloud_UserHow_can_I_connect_to_a_VM.3F for more information. Image was built using packer with the configuration available at https//github.com/EGI-FCTF/VMI-endorsement/.",
@@ -239,7 +260,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "2017.02.06"
+    "image_version": "2017.02.06",
+    "other_info": []
   },
   "203": {
     "image_description": "Ubuntu 14.04 LTS with docker installed and ready to be used.",
@@ -250,7 +272,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "2017.01.31"
+    "image_version": "2017.01.31",
+    "other_info": []
   },
   "204": {
     "image_description": "The Long Term Support version of Ubuntu support guaranteed until April 2021 with Docker installed and ready to be used.This Virtual Machine has been created by the EGI Federated Cloud using a minimal Ubuntu 16.04 installation with cloud-init contextualization. In order to log into the image a ssh key must be used default user name is ubuntuSee https//wiki.egi.eu/wiki/FAQ10_EGI_Federated_Cloud_UserHow_can_I_connect_to_a_VM.3F for more informationImage was built using packer with the configuration available at https//github.com/EGI-FCTF/VMI-endorsement/.",
@@ -261,7 +284,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "2017.01.31"
+    "image_version": "2017.01.31",
+    "other_info": []
   },
   "205": {
     "image_description": "The Long Term Support version of Ubuntu support guaranteed until April 2019.This Virtual Machine has been created by the EGI Federated Cloud using a minimal Ubuntu 14.04 installation with cloud-init contextualization. In order to log into the image a ssh key must be used see https//wiki.egi.eu/wiki/FAQ10_EGI_Federated_Cloud_UserHow_can_I_connect_to_a_VM.3F for more information. Image was built using packer with the configuration available at https//github.com/EGI-FCTF/VMI-endorsement/.",
@@ -272,7 +296,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "2017.01.13"
+    "image_version": "2017.01.13",
+    "other_info": []
   },
   "206": {
     "image_description": "Scipion is an image processing framework for obtaining 3D models of macromolecular complexes using Electron Microscopy 3DEM.This image provides Scipion v1.0 to be run on a single node plus remote desktop guacamole installed and configured to access the Virtual Machine through a Web Browser.",
@@ -283,7 +308,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "1.0.1"
+    "image_version": "1.0.1",
+    "other_info": []
   },
   "207": {
     "image_description": null,
@@ -294,7 +320,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "20150921"
+    "image_version": "20150921",
+    "other_info": []
   },
   "208": {
     "image_description": null,
@@ -305,7 +332,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "20141029"
+    "image_version": "20141029",
+    "other_info": []
   },
   "209": {
     "image_description": "The Long Term Support version of Ubuntu support guaranteed until April 2019.This Virtual Machine has been created by the EGI Federated Cloud using a minimal Ubuntu 14.04 installation with cloud-init contextualization. In order to log into the image a ssh key must be used see https//wiki.egi.eu/wiki/FAQ10_EGI_Federated_Cloud_UserHow_can_I_connect_to_a_VM.3F for more information. Image was built using packer with the configuration available at https//github.com/EGI-FCTF/VMI-endorsement/.",
@@ -316,7 +344,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "2017.01.13"
+    "image_version": "2017.01.13",
+    "other_info": []
   },
   "210": {
     "image_description": "Ubuntu 14.04 LTS with docker installed and ready to be used.",
@@ -327,7 +356,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "2017.01.31"
+    "image_version": "2017.01.31",
+    "other_info": []
   },
   "211": {
     "image_description": "Chipster is a user-friendly analysis software for high-throughput data. It contains over 300 analysis tools for next generation sequencing NGS microarray proteomics and sequence data. Chipsters client software uses Java Web Start to install itself automatically and it connects to computing servers for the actual analysis. Chipster is open source and the server environment is available as a virtual machine image.",
@@ -338,7 +368,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "3.6.2"
+    "image_version": "3.6.2",
+    "other_info": []
   },
   "212": {
     "image_description": "The gCube Smart Executor acts as a working node for a gCube Statistical Manager Service. Please refer to https//wiki.gcube-system.org/gcube/Statistical_Manager for more information.",
@@ -349,7 +380,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "1.9"
+    "image_version": "1.9",
+    "other_info": []
   },
   "213": {
     "image_description": "DataMiner is an e-Infrastructure service providing state-of-the art Data Mining algorithms and ecological modelling approaches under the Web Processing Service WPS standard. This service aids in the application of statistical computing and data mining to a variety of biological and statistical related problems. Models hosted on Dataminer are distributed as-a-Service. Dataminer is able to exploit the heterogeneous resources offered by the D4Science e-Infrastructure to both retrieve and store data. The service allows users to import community developed algorithms written in several programming languages e.g. Fortran R Java etc. and is flexible in terms of algorithms plugability.",
@@ -360,7 +392,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "1.7"
+    "image_version": "1.7",
+    "other_info": []
   },
   "214": {
     "image_description": "BioExcel Model Protein Mutants Workflow Design of an automated protocol to generate comparative modelling structures and genomic data. Using MDWeb and Gromacs engines to setup and run a MD simulation of each protein candidate and the corresponding mutated variants.",
@@ -371,7 +404,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "1.0"
+    "image_version": "1.0",
+    "other_info": []
   },
   "215": {
     "image_description": "Fedora Server is a powerful flexible operating system that includes the best and latest datacenter technologies. It puts you in control of all your infrastructure and services.This Virtual Machine has been created by the EGI Federated Cloud using a minimal Fedora 25 server installation with cloud-init contextualization. In order to log into the image a ssh key must be used default user is named centosSee https//wiki.egi.eu/wiki/FAQ10_EGI_Federated_Cloud_UserHow_can_I_connect_to_a_VM.3F for more informationImage was built using packer with the configuration available at https//github.com/EGI-FCTF/VMI-endorsement/",
@@ -382,7 +416,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "2017.03.29"
+    "image_version": "2017.03.29",
+    "other_info": []
   },
   "216": {
     "image_description": "EGI FedCloud clients rOCCI-cli installed on the Long Term Support version of Ubuntu support guaranteed until April 2019.Includes voms clients with the fedcloud.egi.eu preconfigured and rOCCI-cli tool to interact with the FedCloud services. User must upload his/her certificate into the VM in order to create the proxy.This Virtual Machine has been created by the EGI Federated Cloud using a minimal Ubuntu 14.04 installation with cloud-init contextualization. In order to log into the image a ssh key must be used default user name is ubuntu.See https//wiki.egi.eu/wiki/FAQ10_EGI_Federated_Cloud_UserHow_can_I_connect_to_a_VM.3F for more informationImage was built using packer with the configuration available at https//github.com/EGI-FCTF/VMI-endorsement/.",
@@ -393,7 +428,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "2017.02.09"
+    "image_version": "2017.02.09",
+    "other_info": []
   },
   "217": {
     "image_description": "Ubuntu 14.04 LTS with docker installed and ready to be used.",
@@ -404,7 +440,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "2017.01.31"
+    "image_version": "2017.01.31",
+    "other_info": []
   },
   "218": {
     "image_description": "The Long Term Support version of Ubuntu support guaranteed until April 2019.This Virtual Machine has been created by the EGI Federated Cloud using a minimal Ubuntu 14.04 installation with cloud-init contextualization. In order to log into the image a ssh key must be used see https//wiki.egi.eu/wiki/FAQ10_EGI_Federated_Cloud_UserHow_can_I_connect_to_a_VM.3F for more information. Image was built using packer with the configuration available at https//github.com/EGI-FCTF/VMI-endorsement/.",
@@ -415,7 +452,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "2017.01.13"
+    "image_version": "2017.01.13",
+    "other_info": []
   },
   "219": {
     "image_description": "The Long Term Support version of Ubuntu support guaranteed until April 2021.This Virtual Machine has been created by the EGI Federated Cloud using a minimal Ubuntu 16.04 installation with cloud-init contextualization. In order to log into the image a ssh key must be used default user name is ubuntuSee https//wiki.egi.eu/wiki/FAQ10_EGI_Federated_Cloud_UserHow_can_I_connect_to_a_VM.3F for more informationImage was built using packer with the configuration available at https//github.com/EGI-FCTF/VMI-endorsement/.",
@@ -426,7 +464,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "2017.05.23"
+    "image_version": "2017.05.23",
+    "other_info": []
   },
   "220": {
     "image_description": "This appliance provides an installation of the COMPSs framework. More details on the usage of COMPSs can be found here https//compss.bsc.es",
@@ -437,7 +476,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "2.0.1"
+    "image_version": "2.0.1",
+    "other_info": []
   },
   "221": {
     "image_description": "This VA is used as base image to deploy the LOFAR use case implemented through the COMPSs programming framework",
@@ -448,7 +488,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86",
-    "image_version": "1.4.1"
+    "image_version": "1.4.1",
+    "other_info": []
   },
   "222": {
     "image_description": "The Apache Hive data warehouse software facilitates reading writing and managing large datasets residing in distributed storage using SQL. Built on top of Apache Hadoop it provides     Tools to enable easy access to data via SQL thus enabling data warehousing tasks such as extract/transform/load ETL reporting and data analysis.     A mechanism to impose structure on a variety of data formats     Access to files stored either directly in Apache HDFSTM or in other data storage systems such as Apache HBaseTM      Query execution via Apache TezTM Apache SparkTM or MapReduce.This image provides a Apache Hive 1.2.1 and Apache Hadoop 2.7.2",
@@ -459,7 +500,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "1.0"
+    "image_version": "1.0",
+    "other_info": []
   },
   "223": {
     "image_description": "This virtual appliance allow any scientific gateway application developer to make practice with the FutureGateway APIs without taking care of the whole system installation which will be in charge of the proper contextualization script user-data",
@@ -470,7 +512,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "v1.4"
+    "image_version": "v1.4",
+    "other_info": []
   },
   "224": {
     "image_description": "Cloud support for WS-Pgrade/gUSE/DCI-Bridge.",
@@ -481,7 +524,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "3.7.1.7"
+    "image_version": "3.7.1.7",
+    "other_info": []
   },
   "225": {
     "image_description": "The Apache Hadoop software library is a framework that allows for the distributed processing of large data sets across clusters of computers using simple programming models. It is designed to scale up from single servers to thousands of machines each offering local computation and storage.",
@@ -492,7 +536,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "1.0"
+    "image_version": "1.0",
+    "other_info": []
   },
   "226": {
     "image_description": null,
@@ -503,7 +548,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "20141029"
+    "image_version": "20141029",
+    "other_info": []
   },
   "227": {
     "image_description": "This version of CERNVM has been modified by EGI with the followign changes - default OS extended to 40GB of disk - updated OpenNebula Cloud-Init driver to latest version 0.7.5 - enabled all Cloud-Init data sources",
@@ -514,7 +560,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "3.3.0-1"
+    "image_version": "3.3.0-1",
+    "other_info": []
   },
   "228": {
     "image_description": "The Long Term Support version of Ubuntu support guaranteed until April 2021 with Docker installed and ready to be used.This Virtual Machine has been created by the EGI Federated Cloud using a minimal Ubuntu 16.04 installation with cloud-init contextualization. In order to log into the image a ssh key must be used default user name is ubuntuSee https//wiki.egi.eu/wiki/FAQ10_EGI_Federated_Cloud_UserHow_can_I_connect_to_a_VM.3F for more informationImage was built using packer with the configuration available at https//github.com/EGI-FCTF/VMI-endorsement/.",
@@ -525,7 +572,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "2017.01.31"
+    "image_version": "2017.01.31",
+    "other_info": []
   },
   "229": {
     "image_description": "The CentOS Linux distribution is a stable predictable manageable and reproducible platform derived from the sources of Red Hat Enterprise Linux RHEL.This Virtual Machine has been created by the EGI Federated Cloud using a minimal CentOS 6 installation with cloud-init contextualization. In order to log into the image a ssh key must be used see https//wiki.egi.eu/wiki/FAQ10_EGI_Federated_Cloud_UserHow_can_I_connect_to_a_VM.3F for more information. Image was built using packer with the configuration available at https//github.com/EGI-FCTF/VMI-endorsement/.",
@@ -536,7 +584,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "2017.02.06"
+    "image_version": "2017.02.06",
+    "other_info": []
   },
   "230": {
     "image_description": "The CentOS Linux distribution is a stable predictable manageable and reproducible platform derived from the sources of Red Hat Enterprise Linux RHEL.This Virtual Machine has been created by the EGI Federated Cloud using a minimal CentOS 7 installation with cloud-init contextualization. In order to log into the image a ssh key must be used default user is named centosSee https//wiki.egi.eu/wiki/FAQ10_EGI_Federated_Cloud_UserHow_can_I_connect_to_a_VM.3F for more informationImage was built using packer with the configuration available at https//github.com/EGI-FCTF/VMI-endorsement/",
@@ -547,7 +596,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "2017.02.06"
+    "image_version": "2017.02.06",
+    "other_info": []
   },
   "231": {
     "image_description": "The Jupyter Notebook is a web application that allows you to create and share documents that contain live code equations visualizations and explanatory text. Uses include data cleaning and transformation numerical simulation statistical modeling machine learning and much more.This Virtual Machine has been created by the EGI Federated Cloud using a minimal desktop CentOS 6.8 installation with cloud-init contextualization. In order to log into the image a ssh key must be used default user is named cloudadm.See https//wiki.egi.eu/wiki/FAQ10_EGI_Federated_Cloud_UserHow_can_I_connect_to_a_VM.3F for more information",
@@ -558,7 +608,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "4.1.1-1"
+    "image_version": "4.1.1-1",
+    "other_info": []
   },
   "232": {
     "image_description": "The CentOS Linux distribution is a stable predictable manageable and reproducible platform derived from the sources of Red Hat Enterprise Linux RHEL.This Virtual Machine has been created by the EGI Federated Cloud using a minimal CentOS 6 installation with cloud-init contextualization. In order to log into the image a ssh key must be used see https//wiki.egi.eu/wiki/FAQ10_EGI_Federated_Cloud_UserHow_can_I_connect_to_a_VM.3F for more information. Image was built using packer with the configuration available at https//github.com/EGI-FCTF/VMI-endorsement/.",
@@ -569,7 +620,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "2017.02.06"
+    "image_version": "2017.02.06",
+    "other_info": []
   },
   "233": {
     "image_description": "The CentOS Linux distribution is a stable predictable manageable and reproducible platform derived from the sources of Red Hat Enterprise Linux RHEL.This Virtual Machine has been created by the EGI Federated Cloud using a minimal CentOS 7 installation with cloud-init contextualization. In order to log into the image a ssh key must be used default user is named centosSee https//wiki.egi.eu/wiki/FAQ10_EGI_Federated_Cloud_UserHow_can_I_connect_to_a_VM.3F for more informationImage was built using packer with the configuration available at https//github.com/EGI-FCTF/VMI-endorsement/",
@@ -580,7 +632,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "2017.02.06"
+    "image_version": "2017.02.06",
+    "other_info": []
   },
   "234": {
     "image_description": "Ubuntu 14.04 LTS with docker installed and ready to be used.",
@@ -591,7 +644,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "2017.01.31"
+    "image_version": "2017.01.31",
+    "other_info": []
   },
   "235": {
     "image_description": "The Long Term Support version of Ubuntu support guaranteed until April 2019.This Virtual Machine has been created by the EGI Federated Cloud using a minimal Ubuntu 14.04 installation with cloud-init contextualization. In order to log into the image a ssh key must be used see https//wiki.egi.eu/wiki/FAQ10_EGI_Federated_Cloud_UserHow_can_I_connect_to_a_VM.3F for more information. Image was built using packer with the configuration available at https//github.com/EGI-FCTF/VMI-endorsement/.",
@@ -602,7 +656,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "2017.01.13"
+    "image_version": "2017.01.13",
+    "other_info": []
   },
   "236": {
     "image_description": "This appliance provides an installation of the COMPSs framework. More details on the usage of COMPSs can be found here https//compss.bsc.es",
@@ -613,7 +668,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "2.0.1"
+    "image_version": "2.0.1",
+    "other_info": []
   },
   "237": {
     "image_description": null,
@@ -624,7 +680,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "20150921"
+    "image_version": "20150921",
+    "other_info": []
   },
   "238": {
     "image_description": "Cloud init bug fixing",
@@ -635,7 +692,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "1.1.4"
+    "image_version": "1.1.4",
+    "other_info": []
   },
   "239": {
     "image_description": "This is a Ubuntu 14.04 LTS image with python-moinmoin installed and served with apache2. Wiki will start by default with user WikiAdmin as administrator just point your browser to its IP address.Image was built with Packer using configuration available at https//github.com/EGI-FCTF/VMI-endorsement/trainingDO NOT USE FOR PRODUCTION",
@@ -646,7 +704,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "20160120"
+    "image_version": "20160120",
+    "other_info": []
   },
   "240": {
     "image_description": "Fractal application for tutorials with docker",
@@ -657,7 +716,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "20160330"
+    "image_version": "20160330",
+    "other_info": []
   },
   "241": {
     "image_description": "The Apache Cassandra database is the right choice when you need scalability and high availability without compromising performance. Linear scalability and proven fault-tolerance on commodity hardware or cloud infrastructure make it the perfect platform for mission-critical data. Cassandras support for replicating across multiple datacenters is best-in-class providing lower latency for your users and the peace of mind of knowing that you can survive regional outages.Cassandras data model offers the convenience of column indexes with the performance of log-structured updates strong support for denormalization and powerful built-in caching.This Virtual Machine has been created by the EGI Federated Cloud using a minimal CentOS 6.7 installation with cloud-init contextualization. In order to log into the image a ssh key must be used default user is named centos.See https//wiki.egi.eu/wiki/FAQ10_EGI_Federated_Cloud_UserHow_can_I_connect_to_a_VM.3F for more information",
@@ -668,7 +728,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "20-2.0.17-1"
+    "image_version": "20-2.0.17-1",
+    "other_info": []
   },
   "242": {
     "image_description": "EGI FedCloud clients rOCCI-cli installed on the Long Term Support version of Ubuntu support guaranteed until April 2019.Includes voms clients with the fedcloud.egi.eu preconfigured and rOCCI-cli tool to interact with the FedCloud services. User must upload his/her certificate into the VM in order to create the proxy.This Virtual Machine has been created by the EGI Federated Cloud using a minimal Ubuntu 14.04 installation with cloud-init contextualization. In order to log into the image a ssh key must be used default user name is ubuntu.See https//wiki.egi.eu/wiki/FAQ10_EGI_Federated_Cloud_UserHow_can_I_connect_to_a_VM.3F for more informationImage was built using packer with the configuration available at https//github.com/EGI-FCTF/VMI-endorsement/.",
@@ -679,7 +740,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "2017.02.09"
+    "image_version": "2017.02.09",
+    "other_info": []
   },
   "243": {
     "image_description": "Chipster is a user-friendly analysis software for high-throughput data. It contains over 300 analysis tools for next generation sequencing NGS microarray proteomics and sequence data. Chipsters client software uses Java Web Start to install itself automatically and it connects to computing servers for the actual analysis. Chipster is open source and the server environment is available as a virtual machine image.",
@@ -690,7 +752,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "3.11.2_cloud"
+    "image_version": "3.11.2_cloud",
+    "other_info": []
   },
   "244": {
     "image_description": "The Long Term Support version of Ubuntu support guaranteed until April 2021 with Docker installed and ready to be used.This Virtual Machine has been created by the EGI Federated Cloud using a minimal Ubuntu 16.04 installation with cloud-init contextualization. In order to log into the image a ssh key must be used default user name is ubuntuSee https//wiki.egi.eu/wiki/FAQ10_EGI_Federated_Cloud_UserHow_can_I_connect_to_a_VM.3F for more informationImage was built using packer with the configuration available at https//github.com/EGI-FCTF/VMI-endorsement/.",
@@ -701,7 +764,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "2017.01.31"
+    "image_version": "2017.01.31",
+    "other_info": []
   },
   "245": {
     "image_description": "Ubuntu 16.04 LTS with minimal installation and small root fs for monitoring purposes",
@@ -712,7 +776,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "2017.05.17"
+    "image_version": "2017.05.17",
+    "other_info": []
   },
   "248": {
     "image_description": "This is for CF14",
@@ -723,7 +788,8 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "2.0.2"
+    "image_version": "2.0.2",
+    "other_info": []
   },
   "249": {
     "image_description": null,
@@ -734,6 +800,31 @@
     "image_os_name": null,
     "image_os_version": null,
     "image_platform": "x86_64",
-    "image_version": "20141029"
+    "image_version": "20141029",
+    "other_info": []
+  },
+  "999": {
+    "image_description": "This VA contains the Cloud support for WS-PGRADE/gUSE/DCI-Bridge needed by the VisIVO Science Demonstrator and the applications needed to run it.",
+    "image_id": "template#999",
+    "image_marketplace_id": "https://appdb.egi.eu/store/vo/image/e5707bce-2a6f-5788-a97d-21d863f1ea83:6649/",
+    "image_name": "64398e72-f49b-11e8-b4b5-3a450ac73953@warg-default-shared",
+    "image_os_family": null,
+    "image_os_name": null,
+    "image_os_version": null,
+    "image_platform": "x86_64",
+    "image_version": "0.0.1",
+    "other_info": ["base_mpuri=https://appdb.egi.eu/store/vm/image/bfb017c9-7d6b-4760-ac7d-e312015e63cb:7701/"]
+  },
+  "666": {
+    "image_description": "This VA contains the Cloud support for WS-PGRADE/gUSE/DCI-Bridge needed by the VisIVO Science Demonstrator and the applications needed to run it.",
+    "image_id": "template#666",
+    "image_marketplace_id": "https://appdb.egi.eu/store/vo/image/e5707bce-2a6f-5788-a97d-21d863f1ea83:6649/",
+    "image_name": "54398e72-f49b-11e8-b4b5-3a450ac73953@warg-default-shared",
+    "image_os_family": null,
+    "image_os_name": null,
+    "image_os_version": null,
+    "image_platform": "x86_64",
+    "image_version": "0.0.1",
+    "other_info": ["base_mpuri=https://appdb.egi.eu/store/vo/image/1FDD3B64-9F6E-48C9-9DBE-1AFE304055A8:4321/"]
   }
 }
