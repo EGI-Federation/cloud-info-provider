@@ -137,6 +137,9 @@ class StaticProvider(providers.BaseProvider):
                                 None,
                                 fields,
                                 prefix='')
+        for vo, share in shares['shares'].items():
+            if not share['membership']:
+                share['membership'] = ['VO:%s' % vo]
         return shares['shares']
 
     def get_compute_quotas(self, **kwargs):

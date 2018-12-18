@@ -221,6 +221,11 @@ GLUE2EndpointTrustedCA: ${trusted_ca}
         share_max_vm = quotas['instances']
     else:
         share_max_vm = False
+
+    fields =  {'sla', 'network_info'}
+    for field in fields:
+      if field not in share or share[field] is None:
+          share[field] = 'UNKNOWN'
 %>\
 # Share ${share_id}
 dn: GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${suffix}
