@@ -178,10 +178,12 @@ class OpenStackProvider(providers.BaseProvider):
     def get_compute_endpoints(self, **kwargs):
         ret = {
             'endpoints': {},
-            'compute_service_name': self.auth_plugin.auth_url
         }
 
         defaults = self.static.get_compute_endpoint_defaults(prefix=True)
+        ret.update(defaults)
+        # override default service name
+        ret['compute_service_name'] = self.auth_plugin.auth_url
         catalog = self.auth_plugin.get_access(self.session).service_catalog
         epts = catalog.get_endpoints(service_type=self.service_type,
                                      interface="public")

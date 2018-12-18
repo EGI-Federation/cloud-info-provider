@@ -48,7 +48,7 @@ class StaticProvider(providers.BaseProvider):
             ret.update(r)
 
         if which in data:
-            defaults = self._get_defaults(what, which)
+            defaults = self._get_defaults_from_yaml(what, which)
             for e, e_data in data[which].items():
                 if e == 'defaults':
                     continue
@@ -196,7 +196,7 @@ class StaticProvider(providers.BaseProvider):
             endpoints['storage_service_name'] = socket.getfqdn()
         return endpoints
 
-    def _get_defaults(self, what, which, prefix=''):
+    def _get_defaults_from_yaml(self, what, which, prefix=''):
         try:
             defaults = self.yaml[what][which]['defaults']
         except KeyError:
@@ -214,25 +214,63 @@ class StaticProvider(providers.BaseProvider):
 
         return copy.deepcopy(defaults)
 
+    @staticmethod
+    def _populate_default_values(current, defaults, prefix):
+        '''for those fields with defaults, populate them if not defined'''
+        for k, v in defaults.items():
+            prefixed_key = ''.join((prefix, k))
+            if not current.get(prefixed_key):
+                current[prefixed_key] = v
+        return current
+
     def get_image_defaults(self, prefix=False):
         prefix = 'image_' if prefix else ''
-        return self._get_defaults('compute', 'images', prefix=prefix)
+        return self._get_defaults_from_yaml('compute', 'images', prefix=prefix)
 
     def get_template_defaults(self, prefix=False):
         prefix = 'template_' if prefix else ''
-        return self._get_defaults('compute', 'templates', prefix=prefix)
+        defaults = {
+            'network_out': True,
+        }
+        return self._populate_default_values(
+            self._get_defaults_from_yaml('compute',
+                                         'templates',
+                                         prefix=prefix),
+            defaults, prefix)
 
     def get_compute_endpoint_defaults(self, prefix=False):
         prefix = 'compute_' if prefix else ''
-        return self._get_defaults('compute', 'endpoints', prefix=prefix)
+        defaults = {
+            'service_production_level': 'production',
+            'service_capabilities': ['executionmanagement.dynamicvmdeploy',
+                                     'security.accounting'],
+            'capabilities': ['executionmanagement.dynamicvmdeploy',
+                             'security.accounting'],
+            'production_level': 'production',
+            'api_endpoint_technology': 'webservice',
+            'api_authn_method': 'oidc',
+            'total_ram': 0,
+            'total_cores': 0,
+            'max_dedicated_ram': 0,
+            'min_dedicated_ram': 0,
+            'failover': False,
+            'live_migration': False,
+            'vm_backup_restore': False,
+        }
+        return self._populate_default_values(
+            self._get_defaults_from_yaml('compute',
+                                         'endpoints',
+                                         prefix=prefix),
+            defaults, prefix)
 
     def get_compute_quotas_defaults(self, prefix=False):
         prefix = 'compute_' if prefix else ''
-        return self._get_defaults('compute', 'quotas', prefix=prefix)
+        return self._get_defaults_from_yaml('compute', 'quotas', prefix=prefix)
 
     def get_storage_endpoint_defaults(self, prefix=False):
         prefix = 'storage_' if prefix else ''
-        return self._get_defaults('storage', 'endpoints', prefix=prefix)
+        return self._get_defaults_from_yaml('storage', 'endpoints',
+                                            prefix=prefix)
 
     @staticmethod
     def populate_parser(parser):
