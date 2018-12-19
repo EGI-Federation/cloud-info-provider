@@ -1,3 +1,4 @@
+import copy
 import functools
 import json
 import logging
@@ -289,7 +290,7 @@ class OpenStackProvider(providers.BaseProvider):
         URI = 'http://schemas.openstack.org/template/'
 
         for image in self.glance.images.list(detailed=True):
-            aux_img = template.copy()
+            aux_img = copy.deepcopy(template)
             aux_img.update(defaults)
             aux_img.update(image)
 
