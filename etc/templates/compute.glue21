@@ -53,7 +53,7 @@ GLUE2ServiceCapability: ${capability}
 % endfor
 GLUE2CloudComputingServiceTotalVM: ${len(instances)}
 GLUE2CloudComputingServiceRunningVM: ${len(running_instances)}
-## XXX Missing
+## XXX Missing
 ## GLUE2CloudComputingServicePendingVM:
 GLUE2CloudComputingServiceSuspendedVM: ${len(suspended_instances)}
 GLUE2CloudComputingServiceHaltedVM: ${len(halted_instances)}
@@ -172,7 +172,7 @@ GLUE2EndpointIssuerCA: ${endpoint['endpoint_issuer']}
 % for trusted_ca in endpoint['endpoint_trusted_cas']:
 GLUE2EndpointTrustedCA: ${trusted_ca}
 % endfor
-## XXX Missing
+## XXX Missing
 ## GLUE2EndpointDowntimeAnnounce:
 ## GLUE2EndpointDowntimeStart:
 ## GLUE2EndpointDowntimeEnd:
@@ -248,7 +248,7 @@ GLUE2CloudComputingShareInstanceMaxRAM: ${share_template_max_memory}
 GLUE2CloudComputingShareSLA: ${share['sla']}
 GLUE2CloudComputingShareTotalVM: ${len(share_instances)}
 GLUE2CloudComputingShareRunningVM: ${len(share_running_instances)}
-## XXX Missing
+## XXX Missing
 ## GLUE2CloudComputingSharePendingVM:
 GLUE2CloudComputingShareSuspendedVM: ${len(share_suspended_instances)}
 GLUE2CloudComputingShareHaltedVM: ${len(share_halted_instances)}
@@ -258,7 +258,7 @@ GLUE2CloudComputingShareNetworkInfo: ${share['network_info']}
 % if share_max_vm:
 GLUE2CloudComputingShareMaxVM: ${share_max_vm}
 % endif
-## XXX Missing
+## XXX Missing
 ## GLUE2CloudComputingShareDefaultNetworkType:
 ## GLUE2CloudComputingSharePublicNetworkName:
 ## GLUE2CloudComputingShareProjectID:
@@ -355,10 +355,10 @@ GLUE2CloudComputingImageInstalledsoftware: ${software}
 GLUE2EntityOtherInfo: ${other}
 % endfor
 ## XXX Missing
-## GLUE2CloudComputingImageContextualizationVersion:
-## GLUE2CloudComputingImageDefaultUsername:
-## GLUE2CloudComputingImageDefaultPassword:
-## GLUE2CloudComputingImageVersion:
+## GLUE2CloudComputingImageContextualizationVersion:
+## GLUE2CloudComputingImageDefaultUsername:
+## GLUE2CloudComputingImageDefaultPassword:
+## GLUE2CloudComputingImageVersion:
 
 
 % endfor
@@ -395,9 +395,9 @@ GLUE2CloudComputingInstanceTypeEphemeralStorage: ${template['template_ephemeral'
 % endif
 GLUE2CloudComputingInstanceTypeDisk: ${template['template_disk']}
 ## XXX Missing
-## GLUE2CloudComputingInstanceTypeMarketplaceURL:
-## GLUE2CloudComputingInstanceTypeNetworkPortsIn:
-## GLUE2CloudComputingInstanceTypeNetworkPortsOut:
+## GLUE2CloudComputingInstanceTypeMarketplaceURL:
+## GLUE2CloudComputingInstanceTypeNetworkPortsIn:
+## GLUE2CloudComputingInstanceTypeNetworkPortsOut:
 
 % endfor
 ##
