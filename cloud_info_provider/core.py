@@ -6,8 +6,8 @@ import six
 from cloud_info_provider import exceptions
 from cloud_info_provider import importutils
 
-import mako.exceptions
-import mako.template
+from stevedore import driver
+
 
 SUPPORTED_MIDDLEWARE = {
     'openstack': 'cloud_info_provider.providers.openstack.OpenStackProvider',
@@ -176,9 +176,11 @@ def parse_opts():
         help=('Path to the directory containing the needed templates'))
 
     parser.add_argument(
-        '--template-extension',
-        default='ldif',
-        help=('Extension to use for the templates'))
+        'format',
+        nargs='?',
+        default='glue',
+        choices=['glue', 'cmdb'],
+        help=('Selects the output format'))
 
     parser.add_argument(
         '--site-in-suffix',
@@ -217,10 +219,12 @@ def parse_opts():
 def main():
     opts = parse_opts()
 
-    for cls_ in (CloudBDII, ComputeBDII, StorageBDII):
-        bdii = cls_(opts)
-        bdii.load_templates()
-        print(bdii.render().encode('utf-8'))
+    mgr = driver.DriverManager(
+        namespace='cip.formatters',
+        name=opts.format,
+        invoke_on_load=True,
+    )
+    mgr.driver.format(opts)
 
 
 if __name__ == '__main__':
