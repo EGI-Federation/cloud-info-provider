@@ -1,4 +1,3 @@
-from cloud_info_provider import core
 from cloud_info_provider.formatters import base
 
 
@@ -10,9 +9,4 @@ class GLUE(base.BaseFormatter):
             'clouddomain',
             'compute',
             'storage',
-        ]
-        self.cls = [
-            core.CloudFetcher,
-            core.ComputeFetcher,
-            core.StorageFetcher,
         ]
