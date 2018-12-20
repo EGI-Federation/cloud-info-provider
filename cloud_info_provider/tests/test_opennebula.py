@@ -117,6 +117,19 @@ class OpenNebulaBaseProviderTest(base.TestCase):
 
         self.provider = FakeProvider(Opts())
 
+    def test_get_shares_project(self):
+        static_shares = {
+            "vo1": {},
+            "vo2": {"auth": {"group": "foo"}}
+        }
+        self.provider.static.get_compute_shares.return_value = static_shares
+        expected_shares = {
+            "vo1": {"project": "vo1", "auth": {"group": "vo1"}},
+            "vo2": {"project": "foo", "auth": {"group": "foo"}}
+        }
+        self.assertDictEqual(expected_shares,
+                             self.provider.get_compute_shares())
+
     def test_get_images(self):
         self.assertDictEqual(
             self.expected_images, self.provider.get_images())

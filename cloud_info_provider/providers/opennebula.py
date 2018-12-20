@@ -43,6 +43,17 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
         self.xml_parser = defusedxml.ElementTree
         self.server_proxy = xmlrpclib.ServerProxy(self.on_rpcxml_endpoint)
 
+    def get_compute_shares(self, **kwargs):
+        shares = self.static.get_compute_shares(prefix=True)
+        for vo, share in shares.items():
+            auth = share.get('auth', dict())
+            # default group name == vo name
+            if 'group' not in auth:
+                auth['group'] = vo
+            share['auth'] = auth
+            share['project'] = auth['group']
+        return shares
+
     def _handle_response(self, response):
         if not response:
             msg = 'Invalid response from OpenNebula\'s XML RPC endpoint'
