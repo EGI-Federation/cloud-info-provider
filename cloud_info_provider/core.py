@@ -1,6 +1,7 @@
+import abc
 import argparse
 import itertools
-import os.path
+import six
 
 from cloud_info_provider import exceptions
 from cloud_info_provider import importutils
@@ -19,12 +20,10 @@ SUPPORTED_MIDDLEWARE = {
 }
 
 
-class BaseBDII(object):
+@six.add_metaclass(abc.ABCMeta)
+class BaseFetcher(object):
     def __init__(self, opts):
         self.opts = opts
-
-        self.templates = ()
-        self.templates_files = {}
 
         if (opts.middleware != 'static' and
                 opts.middleware in SUPPORTED_MIDDLEWARE):
@@ -40,14 +39,6 @@ class BaseBDII(object):
         )
         self.static_provider = provider_cls(opts)
 
-    def load_templates(self):
-        self.templates_files = {}
-        for tpl in self.templates:
-            template_extension = self.opts.template_extension
-            template_file = os.path.join(self.opts.template_dir,
-                                         '%s.%s' % (tpl, template_extension))
-            self.templates_files[tpl] = template_file
-
     def _get_info_from_providers(self, method, **provider_kwargs):
         info = {}
         for i in (self.static_provider, self.dynamic_provider):
@@ -57,28 +48,22 @@ class BaseBDII(object):
             info.update(result)
         return info
 
-    def _format_template(self, template, info, extra={}):
-        info = info.copy()
-        info.update(extra)
-        t = self.templates_files[template]
-        tpl = mako.template.Template(filename=t)
-        try:
-            return tpl.render(attributes=info)
-        except Exception:
-            return mako.exceptions.text_error_template().render()
+    @abc.abstractmethod
+    def fetch(self):
+        """Fetch information from the resource type."""
 
 
-class StorageBDII(BaseBDII):
+class StorageFetcher(BaseFetcher):
     def __init__(self, opts):
-        super(StorageBDII, self).__init__(opts)
+        super(StorageFetcher, self).__init__(opts)
 
         self.templates = ['storage']
 
-    def render(self):
+    def fetch(self):
         endpoints = self._get_info_from_providers('get_storage_endpoints')
 
         if not endpoints.get('endpoints'):
-            return ''
+            return {}
 
         site_info = self._get_info_from_providers('get_site_info')
         static_storage_info = dict(endpoints, **site_info)
@@ -91,15 +76,15 @@ class StorageBDII(BaseBDII):
         info.update({'endpoints': endpoints})
         info.update({'static_storage_info': static_storage_info})
 
-        return self._format_template('storage', info)
+        return info
 
 
-class ComputeBDII(BaseBDII):
+class ComputeFetcher(BaseFetcher):
     def __init__(self, opts):
-        super(ComputeBDII, self).__init__(opts)
+        super(ComputeFetcher, self).__init__(opts)
         self.templates = ['compute']
 
-    def render(self):
+    def fetch(self):
         info = {}
 
         # Retrieve global site information
@@ -156,22 +141,16 @@ class ComputeBDII(BaseBDII):
         info.update({'static_compute_info': static_compute_info})
         info.update({'shares': shares})
 
-        return self._format_template('compute', info)
+        return info
 
 
-class CloudBDII(BaseBDII):
+class CloudFetcher(BaseFetcher):
     def __init__(self, opts):
-        super(CloudBDII, self).__init__(opts)
+        super(CloudFetcher, self).__init__(opts)
         self.templates = ('headers', 'clouddomain')
 
-    def render(self):
-        output = []
-        info = self._get_info_from_providers('get_site_info')
-
-        for tpl in self.templates:
-            output.append(self._format_template(tpl, info))
-
-        return '\n'.join(output)
+    def fetch(self):
+        return self._get_info_from_providers('get_site_info')
 
 
 def parse_opts():
