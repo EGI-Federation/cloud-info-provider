@@ -7,150 +7,17 @@ from cloud_info_provider import exceptions
 from cloud_info_provider import importutils
 
 from stevedore import driver
+from stevedore import extension
 
 
-SUPPORTED_MIDDLEWARE = {
-    'openstack': 'cloud_info_provider.providers.openstack.OpenStackProvider',
-    'opennebula': 'cloud_info_provider.providers.opennebula.'
-                  'OpenNebulaProvider',
-    'opennebularocci': 'cloud_info_provider.providers.opennebula.'
-                       'OpenNebulaROCCIProvider',
-    'static': 'cloud_info_provider.providers.static.StaticProvider',
-    'ooi': 'cloud_info_provider.providers.ooi.OoiProvider',
-}
+SUPPORTED_MIDDLEWARE = {}
 
 
-@six.add_metaclass(abc.ABCMeta)
-class BaseFetcher(object):
-    def __init__(self, opts):
-        self.opts = opts
-
-        if (opts.middleware != 'static' and
-                opts.middleware in SUPPORTED_MIDDLEWARE):
-            provider_cls = importutils.import_class(
-                SUPPORTED_MIDDLEWARE[opts.middleware]
-            )
-            self.dynamic_provider = provider_cls(opts)
-        else:
-            self.dynamic_provider = None
-
-        provider_cls = importutils.import_class(
-            SUPPORTED_MIDDLEWARE['static']
-        )
-        self.static_provider = provider_cls(opts)
-
-    def _get_info_from_providers(self, method, **provider_kwargs):
-        info = {}
-        for i in (self.static_provider, self.dynamic_provider):
-            if not i:
-                continue
-            result = getattr(i, method)(**provider_kwargs)
-            info.update(result)
-        return info
-
-    @abc.abstractmethod
-    def fetch(self):
-        """Fetch information from the resource type."""
-
-
-class StorageFetcher(BaseFetcher):
-    def __init__(self, opts):
-        super(StorageFetcher, self).__init__(opts)
-
-        self.templates = ['storage']
-
-    def fetch(self):
-        endpoints = self._get_info_from_providers('get_storage_endpoints')
-
-        if not endpoints.get('endpoints'):
-            return {}
-
-        site_info = self._get_info_from_providers('get_site_info')
-        static_storage_info = dict(endpoints, **site_info)
-        static_storage_info.pop('endpoints')
-
-        for endpoint in endpoints['endpoints'].values():
-            endpoint.update(static_storage_info)
-
-        info = {}
-        info.update({'endpoints': endpoints})
-        info.update({'static_storage_info': static_storage_info})
-
-        return info
-
-
-class ComputeFetcher(BaseFetcher):
-    def __init__(self, opts):
-        super(ComputeFetcher, self).__init__(opts)
-        self.templates = ['compute']
-
-    def fetch(self):
-        info = {}
-
-        # Retrieve global site information
-        # XXX Validate if really project agnostic
-        # XXX Here it uses the "default" project from the CLI parameters
-        site_info = self._get_info_from_providers('get_site_info')
-
-        # Get shares / projects and related images and templates
-        shares = self._get_info_from_providers('get_compute_shares')
-
-        for share in shares.values():
-            kwargs = share.copy()
-
-            endpoints = self._get_info_from_providers('get_compute_endpoints',
-                                                      **kwargs)
-            if not endpoints.get('endpoints'):
-                return ''
-
-            # Collect static information for endpoints
-            static_compute_info = dict(endpoints, **site_info)
-            static_compute_info.pop('endpoints')
-
-            # Collect dynamic information
-            images = self._get_info_from_providers('get_images',
-                                                   **kwargs)
-            templates = self._get_info_from_providers('get_templates',
-                                                      **kwargs)
-            instances = self._get_info_from_providers('get_instances',
-                                                      **kwargs)
-            quotas = self._get_info_from_providers('get_compute_quotas',
-                                                   **kwargs)
-
-            # Add same static information to endpoints, images and templates
-            for d in itertools.chain(endpoints['endpoints'].values(),
-                                     templates.values(),
-                                     images.values()):
-                d.update(static_compute_info)
-
-            share['images'] = images
-            share['templates'] = templates
-            share['instances'] = instances
-            share['endpoints'] = endpoints
-            share['quotas'] = quotas
-
-        # XXX Avoid creating a new list
-        endpoints = {endpoint_id: endpoint for share_id, share in
-                     shares.items() for endpoint_id,
-                     endpoint in share['endpoints'].items()}
-
-        # XXX Avoid redoing what was done in the previous shares loop
-        static_compute_info = dict(endpoints, **site_info)
-        static_compute_info.pop('endpoints')
-
-        info.update({'static_compute_info': static_compute_info})
-        info.update({'shares': shares})
-
-        return info
-
-
-class CloudFetcher(BaseFetcher):
-    def __init__(self, opts):
-        super(CloudFetcher, self).__init__(opts)
-        self.templates = ('headers', 'clouddomain')
-
-    def fetch(self):
-        return self._get_info_from_providers('get_site_info')
+def get_providers():
+    mgr = extension.ExtensionManager(
+        namespace='cip.providers',
+    )
+    return dict((x.name, x.plugin) for x in mgr)
 
 
 def parse_opts():
@@ -207,7 +74,6 @@ def parse_opts():
         # as those options will not be present until the dependencies are
         # satisfied...
         try:
-            provider = importutils.import_class(provider)
             provider.populate_parser(group)
         except (exceptions.OpenStackProviderException,
                 exceptions.OpenNebulaProviderException):
@@ -217,6 +83,9 @@ def parse_opts():
 
 
 def main():
+    global SUPPORTED_MIDDLEWARE
+    SUPPORTED_MIDDLEWARE = get_providers()
+
     opts = parse_opts()
 
     mgr = driver.DriverManager(
@@ -224,7 +93,7 @@ def main():
         name=opts.format,
         invoke_on_load=True,
     )
-    mgr.driver.format(opts)
+    mgr.driver.format(opts, SUPPORTED_MIDDLEWARE)
 
 
 if __name__ == '__main__':
