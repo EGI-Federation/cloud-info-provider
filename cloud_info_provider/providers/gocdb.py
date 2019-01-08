@@ -3,11 +3,14 @@ Simple utilities for getting information fro GOCDB about the endpoints
 '''
 import logging
 
+
 import defusedxml.ElementTree
 import requests
 from six.moves.urllib.parse import urlparse
 from xml.etree.ElementTree import ParseError  # nosec
 
+
+logger = logging.getLogger(__name__)
 
 _goc_info = {}
 
@@ -44,7 +47,7 @@ def _find_url_in_result(svc_url, result):
         if _are_url_similar(svc_url, url):
             return {'gocdb_id': svc.attrib['PRIMARY_KEY'],
                     'site_name': svc.find('SITENAME').text}
-    logging.warning('Unable to find URL %s in GOCDB!', svc_url)
+    logger.warning('Unable to find URL %s in GOCDB!', svc_url)
     return {}
 
 
@@ -60,13 +63,13 @@ def find_in_gocdb(svc_url, svc_type, insecure=False,
                              'service_type': svc_type},
                      verify=verify)
     if r.status_code != 200:
-        logging.warning("Something went wrong with GOC %s", r.text)
+        logger.warning("Something went wrong with GOC %s", r.text)
         return {}
     try:
         return _find_url_in_result(svc_url,
                                    defusedxml.ElementTree.fromstring(r.text))
     except ParseError:
-        logging.warning('Something went wrong with parsing GOC output')
+        logger.warning('Something went wrong with parsing GOC output')
         return {}
 
 
