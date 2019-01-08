@@ -1,24 +1,62 @@
 site:
     # Your site name, as in GODCB (if omitted or set to None, this value is
     # retreived from /etc/glite-info-static/site/site.cfg )
-    #name: SITE_NAME
+    # name: SITE_NAME
 
 compute:
+    # Configure here the VOs supported at your installation
+    shares:
+        # Name of the VO
+        ops:
+            # Authentication for the VO into OpenStack
+            auth:
+                # the project id in OpenStack
+                project_id: xxxxx
+            # Other optional information follows:
+            # link to the SLA document
+            # sla: UNKNOWN
+            # Type of network: infiniband, gigabiteethernet...
+            # network_info: UNKNOWN
+            # default membership is VO:<share name>, no need to specify
+            # membership:
+            #     - VO:ops
+
+        # A second VO
+        # fedcloud.egi.eu:
+        #     auth:
+        #         project_id: xxxx
+        #     sla: https://egi.eu/sla/fedcloud
+        #     network_info: UNKNOWN
+        #     membership:
+        #         - VOMS:/fedcloud.egi.eu/Role=VMOperators
+
+    # Extra information on your OpenStack endpoints
+    # (optional)
+    endpoints:
+        defaults:
+            # middleware_version: Liberty
+            # api_endpoint_technology: webservice
+            # api_authn_method: oidc
+            # production_level: production
+
+
+    # Available resources, uncomment and set as needed
+    # Below default values are used
     # Total number of cores available
-    total_cores: 0
+    # total_cores: 0
     # Total RAM available (GB)
-    total_ram: 0
-    max_dedicated_ram: 0
-    min_dedicated_ram: 0
+    # total_ram: 0
+    # max_dedicated_ram: 0
+    # min_dedicated_ram: 0
     # accelerators_virt_type should be type:virt
     # type can be GPU, FPGA, MIC...
     # virt can be vgpu, hardware, emulation, paravirtualization...
     # accelerators_virt_type: UNKNOWN
-    total_accelerators: 0
+    # total_accelerators: 0
     # Site-wide default for max_accelerators
     # can be configured at a share level
-    max_accelerators: 0
-    min_accelerators: 0
+    # max_accelerators: 0
+    # min_accelerators: 0
     # Uncomment to configure Network virtualization type
     # Can be: none, vswithc, ebtables, vlan, firewall
     # network_virt_type: UNKNOWN
@@ -26,87 +64,43 @@ compute:
     # Can be: emulation, paravirtualization, hardware
     # cpu_virt_type: UNKNOWN
     # Hypervisor name (e.g. KVM, Xen, etc.)
-    hypervisor: UNKNOWN
+    # hypervisor: UNKNOWN
     # Hypervisor version
-    hypervisor_version: UNKNOWN
+    # hypervisor_version: UNKNOWN
     # Supported images' virtual disk format: qcow2, raw, vmdk,...
     # virtual_disk_formats:
     #     - 'qcow2'
     # Service Production level (testing, candidate, production...)
-    service_production_level: production
+    # service_production_level: production
     # Service capabilities
-    capabilities:
-        # dynamically deploying a virtual machine image
-        - executionmanagement.dynamicvmdeploy
-        # srecording, reporting, and analyzing the usage of resources
-        - security.accounting
+    # capabilities:
+    #    dynamically deploying a virtual machine image
+    #    - executionmanagement.dynamicvmdeploy
+    #    srecording, reporting, and analyzing the usage of resources
+    #    - security.accounting
     # Automatic failover to another host
-    failover: false
+    # failover: false
     # Migration to another host without downtime
-    live_migration: false
+    # live_migration: false
     # Backup and restoration of VMs
-    vm_backup_restore: false
+    # vm_backup_restore: false
 
-    quotas:
-        # Default values for quotas
-        defaults:
-            # instances: 10
+    # Default values for quotas
+    # quotas:
+    #   defaults:
+    #    instances: 10
 
-    endpoints:
-        # Default values for the endpoints. We will
-        # produce entries for two kind of endpoints if they
-        # are in the catalog: occi and native (OpenStack). So as to
-        # specify a version, set the options below.
-        defaults:
-            # Needs to be set for OpenStack
-            middleware_version: Liberty
-            # Should be retrieved automatically by the provider
-            # compute_api_version: v2
-            # occi_middleware_version: 0.3.2
-            # occi_api_version: 1.1
-            api_endpoint_technology: webservice
-            api_authn_method: X509-VOMS
-            production_level: production
+    # Default values for the templates
+    # templates:
+    #     defaults:
+    #         platform: amd64
+    #         network: public
+    #         # Inbound connection true Or false
+    #         network_in: undefined
+    #         # Outbound connection true or true
+    #         network_out: true
 
-    shares:
-        # Name of the VO
-        ops:
-            auth:
-                # the project id in OpenStack
-                project_id: xxxxx
-            # link to the SLA document
-            sla: UNKNOWN
-            # Type of network: infiniband, gigabiteethernet...
-            network_info: UNKNOWN
-            # default membership is VO:<share name>, no need to specify
-            # membership:
-            #     - VO:ops
-        fedcloud.egi.eu:
-            auth:
-                project_id: xxxx
-            sla: https://egi.eu/sla/fedcloud
-            # Type of network: infiniband, gigabiteethernet...
-            network_info: UNKNOWN
-            membership:
-                - VOMS:/fedcloud.egi.eu/Role=VMOperators
-        training.egi.eu:
-            auth:
-                project_id: xxxxx
-            sla: https://egi.eu/sla/training
-            # Type of network: infiniband, gigabiteethernet...
-            network_info: UNKNOWN
-            membership:
-                - VO:training.egi.eu
-
-    templates:
-        defaults:
-            platform: amd64
-            network: public
-            # Inbound connection true Or false
-            network_in: undefined
-            # Outbound connection true or true
-            network_out: true
-
-    images:
-        defaults:
-            platform: amd64
+    # Default values for the images
+    # images:
+    #     defaults:
+    #         platform: amd64

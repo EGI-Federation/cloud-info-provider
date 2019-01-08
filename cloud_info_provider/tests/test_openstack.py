@@ -82,6 +82,18 @@ class OpenStackProviderTest(base.TestCase):
             for f in fields:
                 self.assertIn(f, v)
 
+    def test_get_shares(self):
+        with utils.nested(
+                mock.patch.object(self.provider.static, 'get_compute_shares'),
+        ) as (m_get_compute_shares, ):
+            m_get_compute_shares.return_value = {
+                'vo1': {'auth': {'project_id': 'foobar'}}
+            }
+            shares = self.provider.get_compute_shares(**{
+                'auth': {'project_id': None}})
+            self.assertEqual('foobar', shares['vo1']['project'])
+            self.assertTrue(m_get_compute_shares.called)
+
     def test_get_templates_with_defaults(self):
         expected_templates = {}
         url = 'http://schemas.openstack.org/template/resource'
@@ -422,6 +434,7 @@ class OpenStackProviderTest(base.TestCase):
                 'image_traffic_in': [],
                 'image_traffic_out': [],
                 'image_context_format': None,
+                'other_info': [],
             },
             'foo.id': {
                 'name': 'fooimage',
@@ -452,6 +465,8 @@ class OpenStackProviderTest(base.TestCase):
                 'image_traffic_in': [],
                 'image_traffic_out': [],
                 'image_context_format': None,
+                'other_info': ['base_mpuri=foobar'],
+                'APPLIANCE_ATTRIBUTES': '{"ad:base_mpuri": "foobar"}',
             },
             'baz id': {
                 'name': 'bazimage',
@@ -486,6 +501,7 @@ class OpenStackProviderTest(base.TestCase):
                 'image_traffic_in': [],
                 'image_traffic_out': [],
                 'image_context_format': None,
+                'other_info': [],
             }
         }
 
@@ -699,6 +715,7 @@ class OoiProviderTest(OpenStackProviderTest):
                 'image_traffic_in': [],
                 'image_traffic_out': [],
                 'image_context_format': None,
+                'other_info': [],
             },
             'foo.id': {
                 'name': 'fooimage',
@@ -729,6 +746,8 @@ class OoiProviderTest(OpenStackProviderTest):
                 'image_traffic_in': [],
                 'image_traffic_out': [],
                 'image_context_format': None,
+                'other_info': ['base_mpuri=foobar'],
+                'APPLIANCE_ATTRIBUTES': '{"ad:base_mpuri": "foobar"}',
             },
             'baz id': {
                 'name': 'bazimage',
@@ -763,6 +782,7 @@ class OoiProviderTest(OpenStackProviderTest):
                 'image_traffic_in': [],
                 'image_traffic_out': [],
                 'image_context_format': None,
+                'other_info': [],
             }
         }
 
