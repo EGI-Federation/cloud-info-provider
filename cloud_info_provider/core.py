@@ -1,7 +1,6 @@
-import abc
 import argparse
 import itertools
-import six
+import logging
 
 from cloud_info_provider import exceptions
 from cloud_info_provider import importutils
@@ -14,8 +13,15 @@ SUPPORTED_MIDDLEWARE = {}
 
 
 def get_providers():
+    def _handle_exception(*args, **kwargs):
+        mgr, entry_point, exception = args
+        logging.getLogger('stevedore.extension').error("Cannot load '%s': %s"
+            % (entry_point, exception))
+
     mgr = extension.ExtensionManager(
         namespace='cip.providers',
+        on_load_failure_callback=_handle_exception,
+        propagate_map_exceptions=True,
     )
     return dict((x.name, x.plugin) for x in mgr)
 
@@ -68,16 +74,7 @@ def parse_opts():
     for provider_name, provider in SUPPORTED_MIDDLEWARE.items():
         group = parser.add_argument_group('%s provider options' %
                                           provider_name)
-
-        # NOTE(aloga): importing the class may fail because of missing
-        # dependencies, so we skip those options. This is not the best option,
-        # as those options will not be present until the dependencies are
-        # satisfied...
-        try:
-            provider.populate_parser(group)
-        except (exceptions.OpenStackProviderException,
-                exceptions.OpenNebulaProviderException):
-            pass
+        provider.populate_parser(group)
 
     return parser.parse_args()
 
@@ -85,7 +82,6 @@ def parse_opts():
 def main():
     global SUPPORTED_MIDDLEWARE
     SUPPORTED_MIDDLEWARE = get_providers()
-
     opts = parse_opts()
 
     mgr = driver.DriverManager(
