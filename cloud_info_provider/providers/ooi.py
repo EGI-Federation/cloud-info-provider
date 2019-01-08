@@ -12,6 +12,7 @@ except ImportError:
 
 class OoiProvider(OpenStackProvider):
     service_type = 'occi'
+    goc_service_type = 'eu.egi.cloud.vm-management.occi'
     service_data = {
         'compute_api_type': 'OCCI',
         'compute_middleware': 'ooi',

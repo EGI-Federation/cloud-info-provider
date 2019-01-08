@@ -5,6 +5,7 @@ import os
 
 from cloud_info_provider import exceptions
 from cloud_info_provider import providers
+from cloud_info_provider.providers import gocdb
 from cloud_info_provider.providers import ssl_utils
 from cloud_info_provider import utils
 
@@ -200,6 +201,8 @@ class OpenNebulaProvider(OpenNebulaBaseProvider):
 
 
 class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
+    goc_service_type = 'eu.egi.cloud.vm-management.occi'
+
     def __init__(self, opts):
         self.rocci_template_dir = opts.rocci_template_dir
         self.rocci_remote_templates = opts.rocci_remote_templates
@@ -226,6 +229,7 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
                 'endpoint_trusted_cas': ca_info['trusted_cas'],
                 'endpoint_issuer': ca_info['issuer'],
             })
+            epts.update(gocdb.get_goc_info(url, self.goc_service_type))
             epts[url] = ept
         return {'endpoints': epts}
 

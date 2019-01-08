@@ -57,6 +57,9 @@ GLUE2CloudComputingServiceRunningVM: ${len(running_instances)}
 ## GLUE2CloudComputingServicePendingVM:
 GLUE2CloudComputingServiceSuspendedVM: ${len(suspended_instances)}
 GLUE2CloudComputingServiceHaltedVM: ${len(halted_instances)}
+% if 'gocdb_id' in static_compute_info:
+GLUE2EntityOtherInfo: gocdb_id=${static_compute_info['gocdb_id']}
+% endif
 
 ##
 ## Computing Manager - GLUE2CloudComputingManager
