@@ -40,14 +40,6 @@ except ImportError:
     msg = 'Cannot import novaclient module.'
     raise exceptions.OpenStackProviderException(msg)
 
-# Remove info log messages from output
-logging.getLogger('stevedore.extension').setLevel(logging.WARNING)
-logging.getLogger('requests').setLevel(logging.WARNING)
-logging.getLogger('urllib3').setLevel(logging.WARNING)
-logging.getLogger('novaclient').setLevel(logging.WARNING)
-logging.getLogger('keystoneauth').setLevel(logging.WARNING)
-logging.getLogger('keystoneclient').setLevel(logging.WARNING)
-
 
 # TODO(enolfc): should this be completely inside the provider class?
 def _rescope(f):
@@ -66,6 +58,21 @@ class OpenStackProvider(providers.BaseProvider):
         'compute_middleware': 'OpenStack Nova',
         'compute_middleware_developer': 'OpenStack Foundation',
     }
+
+    def setup_logging(self):
+        super(OpenStackProvider, self).setup_logging()
+        # Remove info log messages from output
+        external_logs = [
+            'stevedore.extension',
+            'requests',
+            'urllib3',
+            'novaclient',
+            'keystoneauth',
+            'keystoneclient',
+        ]
+        log_level = logging.DEBUG if self.opts.debug else logging.WARNING
+        for log in external_logs:
+            logging.getLogger(log).setLevel(log_level)
 
     def __init__(self, opts):
         super(OpenStackProvider, self).__init__(opts)
