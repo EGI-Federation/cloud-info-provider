@@ -1,9 +1,5 @@
 import argparse
-import itertools
 import logging
-
-from cloud_info_provider import exceptions
-from cloud_info_provider import importutils
 
 from stevedore import driver
 from stevedore import extension
@@ -13,10 +9,10 @@ SUPPORTED_MIDDLEWARE = {}
 
 
 def get_providers():
-    def _handle_exception(*args, **kwargs):
+    def _handle_exception(*args):
         mgr, entry_point, exception = args
-        logging.getLogger('stevedore.extension').error("Cannot load '%s': %s"
-            % (entry_point, exception))
+        logging.getLogger('stevedore.extension').error((
+            "Cannot load '%s': %s") % (entry_point, exception))
 
     mgr = extension.ExtensionManager(
         namespace='cip.providers',
