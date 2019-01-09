@@ -19,6 +19,7 @@ class StaticProviderTest(base.TestCase):
             yaml_file = None
             site_in_suffix = False
             glite_site_info_static = "foo"
+            debug = False
 
         cwd = os.path.dirname(__file__)
         yaml_file = os.path.join(cwd, "..", "..", "etc", "sample.static.yaml")

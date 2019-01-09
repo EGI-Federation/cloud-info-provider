@@ -183,6 +183,12 @@ def parse_opts():
     )
 
     parser.add_argument(
+        '--debug',
+        action='store_true',
+        default=False,
+        help='Provide extra logging information')
+
+    parser.add_argument(
         '--yaml-file',
         default='/etc/cloud-info-provider/static.yaml',
         help=('Path to the YAML file containing configuration static values. '

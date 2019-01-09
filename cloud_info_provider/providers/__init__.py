@@ -1,6 +1,10 @@
+import logging
+
+
 class BaseProvider(object):
     def __init__(self, opts):
         self.opts = opts
+        self.setup_logging()
 
     def get_site_info(self, **kwargs):
         return {}
@@ -29,3 +33,7 @@ class BaseProvider(object):
     @staticmethod
     def populate_parser(parser):
         '''Populate the argparser 'parser' with the needed options.'''
+
+    def setup_logging(self):
+        level = logging.DEBUG if self.opts.debug else logging.INFO
+        logging.basicConfig(level=level)

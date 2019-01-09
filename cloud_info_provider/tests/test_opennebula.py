@@ -34,6 +34,7 @@ class OpenNebulaBaseProviderOptionsTest(base.TestCase):
             on_auth = 'foo'
             on_rpcxml_endpoint = 'bar'
             all_images = True
+            debug = True
 
         # Check that the required opts are there
         for opt in ('on_auth', 'on_rpcxml_endpoint'):
@@ -76,6 +77,7 @@ class OpenNebulaROCCIProviderOptionsTest(OpenNebulaBaseProviderOptionsTest):
             rocci_template_dir = 'test'
             rocci_remote_templates = False
             all_images = False
+            debug = True
 
         # Check that the required opts are there
         for opt in ('on_auth', 'on_rpcxml_endpoint', 'rocci_template_dir'):
