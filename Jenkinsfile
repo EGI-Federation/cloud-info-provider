@@ -83,6 +83,7 @@ pipeline {
                     steps {
                         checkout scm
                         echo 'Within build on CentOS7'
+                        sh 'sudo yum --enablerepo=extras install -y epel-release && sudo yum clean all && sudo yum makecache fast'
                         sh 'sudo yum install -y rpm-build centos-release-openstack-newton python-pbr python-setuptools'
                         sh 'python setup.py sdist'
                         sh 'mkdir ~/rpmbuild'
@@ -117,7 +118,13 @@ pipeline {
                     "Check new artifacts at:\n\t- RPMs/DEBs: ${env.BUILD_URL}\n",
                     ['wp3', 'preview-testbed', "DEEPaaS-${env.BRANCH_NAME}"],
                     'Task',
-                    'mariojmdavid'
+                    'mariojmdavid',
+                    ['wgcastell',
+                     'vkozlov',
+                     'dlugo',
+                     'keiichiito',
+                     'laralloret',
+                     'ignacioheredia']
                 )
             }
         }
