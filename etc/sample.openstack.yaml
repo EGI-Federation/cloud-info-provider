@@ -4,7 +4,7 @@ site:
     # name: SITE_NAME
 
 compute:
-    # Configure here the VOs supported at your installation
+    # Configure here the VOs supported at your installation
     shares:
         # Name of the VO
         ops:
@@ -39,8 +39,7 @@ compute:
             # api_authn_method: oidc
             # production_level: production
 
-
-    # Available resources, uncomment and set as needed
+    # Available resources, uncomment and set as needed
     # Below default values are used
     # Total number of cores available
     # total_cores: 0
@@ -58,7 +57,7 @@ compute:
     # max_accelerators: 0
     # min_accelerators: 0
     # Uncomment to configure Network virtualization type
-    # Can be: none, vswithc, ebtables, vlan, firewall
+    # Can be: none, vswitch, ebtables, vlan, firewall
     # network_virt_type: UNKNOWN
     # Uncomment to configure CPU virtualization type
     # Can be: emulation, paravirtualization, hardware
