@@ -89,6 +89,10 @@ compute:
             sla: UNKNOWN
             # Type of network: infiniband, gigabiteethernet...
             network_info: UNKNOWN
+            # Default network type: none, public, public_only, private, private_only
+            default_network_type: public
+            # Public Network name
+            public_network_name: PUBLIC
             membership:
                 - VO:ops
         fedcloud.egi.eu:
@@ -97,6 +101,10 @@ compute:
             sla: https://egi.eu/sla/fedcloud
             # Type of network: infiniband, gigabiteethernet...
             network_info: UNKNOWN
+            # Default network type: none, public, public_only, private, private_only
+            default_network_type: public
+            # Public Network name
+            public_network_name: PUBLIC
             membership:
                 - VOMS:/fedcloud.egi.eu/Role=VMOperators
         training.egi.eu:
@@ -105,6 +113,10 @@ compute:
             sla: https://egi.eu/sla/training
             # Type of network: infiniband, gigabiteethernet...
             network_info: UNKNOWN
+            # Default network type: none, public, public_only, private, private_only
+            default_network_type: public
+            # Public Network name
+            public_network_name: PUBLIC
             membership:
                 - VO:training.egi.eu
 

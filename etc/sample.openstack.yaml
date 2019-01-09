@@ -12,6 +12,11 @@ compute:
             auth:
                 # the project id in OpenStack
                 project_id: xxxxx
+            # Default network type: none, public, public_only, private, private_only
+            default_network_type: public
+            # Public Network name
+            public_network_name: PUBLIC
+
             # Other optional information follows:
             # link to the SLA document
             # sla: UNKNOWN
@@ -26,6 +31,10 @@ compute:
         #     auth:
         #         project_id: xxxx
         #     sla: https://egi.eu/sla/fedcloud
+        #     # Default network type: none, public, public_only, private, private_only
+        #     default_network_type: public
+        #     # Public Network name
+        #     public_network_name: PUBLIC
         #     network_info: UNKNOWN
         #     membership:
         #         - VOMS:/fedcloud.egi.eu/Role=VMOperators
