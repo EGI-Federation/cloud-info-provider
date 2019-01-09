@@ -132,6 +132,8 @@ class OpenStackProvider(providers.BaseProvider):
         shares = self.static.get_compute_shares(prefix=True)
         for share in shares.values():
             share['project'] = share.get('auth', {}).get('project_id')
+            share['default_network_type'] = share.get('default_network_type', 'public')
+            share['public_network_name'] = share.get('default_network_type', 'PUBLIC')
         return shares
 
     def _rescope_project(self, project_id):
@@ -326,6 +328,12 @@ class OpenStackProvider(providers.BaseProvider):
                     marketplace_id = link
                 else:
                     continue
+
+            if 'ad:traffic_in' in extra_attrs:
+                aux_img['network_traffic_in'] = extra_attrs['ad:traffic_in'])
+
+            if 'ad:traffic_out' in extra_attrs:
+                aux_img['network_traffic_out'] = extra_attrs['ad:traffic_out'])
 
             aux_img.update({
                 'image_native_id': img_id,
