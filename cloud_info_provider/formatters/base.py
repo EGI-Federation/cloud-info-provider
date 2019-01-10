@@ -12,7 +12,7 @@ from stevedore import extension
 class BaseFormatter(object):
     """Base class for the formatters."""
     def __init__(self):
-        self.template_extension = None
+        self.template_extension = ''
         self.templates = []
         self.templates_files = {}
 

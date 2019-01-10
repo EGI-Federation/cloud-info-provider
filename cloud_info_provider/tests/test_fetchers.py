@@ -1,0 +1,173 @@
+import mock
+
+import cloud_info_provider.fetchers.base
+import cloud_info_provider.fetchers.cloud
+import cloud_info_provider.fetchers.compute
+import cloud_info_provider.fetchers.storage
+
+from cloud_info_provider.tests import data
+from cloud_info_provider.tests import test_core
+from cloud_info_provider.tests import utils
+
+
+DATA = data.DATA
+
+
+class BaseFetcherTest(test_core.BaseTest):
+    @mock.patch.multiple(
+        cloud_info_provider.fetchers.base.BaseFetcher,
+        __abstractmethods__=set(),
+        fetch=mock.Mock(return_value={}))
+    def test_get_info_from_providers(self):
+        cases = (
+            (
+                {},
+                {},
+                {}
+            ),
+            (
+                {'foo': 'bar'},
+                {'bar': 'bazonk'},
+                {'foo': 'bar', 'bar': 'bazonk'},
+            ),
+            (
+                {'foo': 'bar'},
+                {'foo': 'bazonk'},
+                {'foo': 'bazonk'},
+            ),
+            (
+                {},
+                {'foo': 'bazonk'},
+                {'foo': 'bazonk'},
+            ),
+            (
+                {'foo': 'bar'},
+                {},
+                {'foo': 'bar'},
+            ),
+        )
+
+        base = cloud_info_provider.fetchers.base.BaseFetcher(self.opts,
+                                                             self.providers)
+
+        for s, d, e in cases:
+            with utils.nested(
+                mock.patch.object(base.static_provider, 'method'),
+                mock.patch.object(base.dynamic_provider, 'method')
+            ) as (m_static, m_dynamic):
+                m_static.return_value = s
+                m_dynamic.return_value = d
+
+                self.assertEqual(e, base._get_info_from_providers('method'))
+
+
+class CloudFetcherTest(test_core.BaseTest):
+    @mock.patch.object(cloud_info_provider.fetchers.cloud.CloudFetcher,
+                       '_get_info_from_providers')
+    def test_fetch(self, m_get_info):
+        m_get_info.return_value = DATA.site_info
+        cloud = cloud_info_provider.fetchers.cloud.CloudFetcher(self.opts,
+                                                                self.providers)
+        self.assertIsNotNone(cloud.fetch())
+        self.assertEqual(cloud.fetch(), DATA.site_info)
+
+
+class StorageFetcherTEst(test_core.BaseTest):
+    @mock.patch.object(cloud_info_provider.fetchers.storage.StorageFetcher,
+                       '_get_info_from_providers')
+    def test_fetch(self, m_get_info):
+        m_get_info.side_effect = (
+            DATA.storage_endpoints,
+            DATA.site_info
+        )
+        endpoints = DATA.storage_endpoints
+        static_storage_info = dict(endpoints, **DATA.site_info)
+        static_storage_info.pop('endpoints')
+
+        for endpoint in endpoints['endpoints'].values():
+            endpoint.update(static_storage_info)
+
+        info = {}
+        info.update({'endpoints': endpoints})
+        info.update({'static_storage_info': static_storage_info})
+
+        storage = cloud_info_provider.fetchers.storage.StorageFetcher(
+            self.opts, self.providers)
+        self.assertIsNotNone(storage.fetch())
+
+    @mock.patch.object(cloud_info_provider.fetchers.storage.StorageFetcher,
+                       '_get_info_from_providers')
+    def test_fetch_empty(self, m_get_info):
+        m_get_info.side_effect = (
+            {},
+            DATA.site_info
+        )
+        storage = cloud_info_provider.fetchers.storage.StorageFetcher(
+            self.opts, self.providers)
+        self.assertEqual({}, storage.fetch())
+
+
+class ComputeFetcherTest(test_core.BaseTest):
+    @mock.patch.object(cloud_info_provider.fetchers.compute.ComputeFetcher,
+                       '_get_info_from_providers')
+    def test_fetch(self, m_get_info):
+
+        def get_info_side_effect(what, **kwargs):
+            data_mapping = {
+                'get_site_info': DATA.site_info,
+                'get_compute_shares': DATA.compute_shares,
+                'get_compute_endpoints': DATA.compute_endpoints,
+                'get_images': DATA.compute_images,
+                'get_templates': DATA.compute_templates,
+                'get_instances': {},
+                'get_compute_quotas': {},
+            }
+            return data_mapping[what]
+
+        m_get_info.side_effect = get_info_side_effect
+        endpoints = DATA.compute_endpoints
+        static_compute_info = dict(endpoints, **DATA.site_info)
+        static_compute_info.pop('endpoints')
+        templates = DATA.compute_templates
+        images = DATA.compute_images
+        shares = DATA.compute_shares
+
+        for endpoint in endpoints['endpoints'].values():
+            endpoint.update(static_compute_info)
+
+        for template in templates.values():
+            template.update(static_compute_info)
+
+        for image in images.values():
+            image.update(static_compute_info)
+
+        for share in shares.values():
+            share.update({"endpoints": endpoints,
+                          "images": images,
+                          "templates": templates,
+                          "instances": {},
+                          "quotas": {}})
+
+        info = {}
+        info.update({'static_compute_info': static_compute_info})
+        info.update({'shares': shares})
+
+        compute = cloud_info_provider.fetchers.compute.ComputeFetcher(
+            self.opts, self.providers)
+        self.assertIsNotNone(compute.fetch())
+
+    @mock.patch.object(cloud_info_provider.fetchers.compute.ComputeFetcher,
+                       '_get_info_from_providers')
+    def test_fetch_empty(self, m_get_info):
+        m_get_info.side_effect = (
+            DATA.site_info,
+            DATA.compute_shares,
+            {},
+            DATA.site_info,
+            DATA.compute_shares,
+            {},
+        )
+        compute = cloud_info_provider.fetchers.compute.ComputeFetcher(
+            self.opts, self.providers)
+        self.assertFalse(compute.fetch())
+        self.assertEqual({}, compute.fetch())

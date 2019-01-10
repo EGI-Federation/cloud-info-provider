@@ -25,7 +25,7 @@ class ComputeFetcher(base.BaseFetcher):
             endpoints = self._get_info_from_providers('get_compute_endpoints',
                                                       **kwargs)
             if not endpoints.get('endpoints'):
-                return ''
+                return {}
 
             # Collect static information for endpoints
             static_compute_info = dict(endpoints, **site_info)
