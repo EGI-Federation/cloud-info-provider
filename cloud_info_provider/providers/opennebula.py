@@ -145,10 +145,12 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
                 continue
 
             if template.get('cloudkeeper_appliance_traffic_in'):
-                aux_tpl['network_traffic_in'] = template['cloudkeeper_appliance_traffic_in']
+                aux_tpl['network_traffic_in'] = template[
+                    'cloudkeeper_appliance_traffic_in']
 
             if template.get('cloudkeeper_appliance_traffic_out'):
-                aux_tpl['network_traffic_out'] = template['cloudkeeper_appliance_traffic_out']
+                aux_tpl['network_traffic_out'] = template[
+                    'cloudkeeper_appliance_traffic_out']
 
             templates[tpl_id] = aux_tpl
         return templates
