@@ -373,7 +373,7 @@ GLUE2EntityOtherInfo: ${other}
 ## GLUE2CloudComputingImageDefaultPassword:
 
 ## All NetworkTraffic for $img_id
-% for idx,network_conf in enumare(image.get(x) for x in ['network_traffic_in', 'network_traffic_out']):
+% for idx,network_conf in enumerate(image.get(x) for x in ['network_traffic_in', 'network_traffic_out']):
 <%
     network_conf_id = "%s_%s_%s" % (network_conf['direction'], network_conf['protocol'], idx)
 %>\
