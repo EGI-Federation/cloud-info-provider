@@ -330,7 +330,7 @@ GLUE2CloudComputingImageOSFamily: ${image['image_os_family']}
 GLUE2CloudComputingImageOSName: ${image['image_os_name']}
 GLUE2CloudComputingImageOSVersion: ${image['image_os_version']}
 % if image.get('image_version'):
-GLUE2CloudComputingImageVersion: ${image[image_version]}
+GLUE2CloudComputingImageVersion: ${image['image_version']}
 % endif
 % if image.get('image_minimal_cpu'):
 GLUE2CloudComputingImageMinCPU: ${image['image_minimal_cpu']}
