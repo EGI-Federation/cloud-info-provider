@@ -22,7 +22,6 @@ Currently supported cloud middleware:
 
 ### From binaries
 
-
 Packages are always attached to the [releases page in GitHub](https://github.com/EGI-Foundation/cloud-info-provider/releases)
 and after they are made available at [EGI's AppDB](https://appdb.egi.eu/store/software/cloud.info.provider).
 AppDB providers package repositores ready to be used with `yum` or `apt`.
