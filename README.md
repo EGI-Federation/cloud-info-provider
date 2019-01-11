@@ -36,16 +36,15 @@ OS-specific tools.
 
 Dependencies are maintained in the `requirements.txt` file. Binary packages
 already include those dependencies (RH based distributions need to enable the
-[EPEL repository](http://fedoraproject.org/wiki/EPEL).
+[EPEL repository](http://fedoraproject.org/wiki/EPEL)).
 
 For running the provider in a production environment with a BDII you will
 also need the `bdii` package (available in Ubuntu/Debian repos, in EPEL for RH
 based distros it is in EPEL).
 
-Providers-specific dependencies are managed using provider-specific
-metapackages. Those metapackages are dependent on the main cloud-info-provider
-that is common to all the providers and also includes the provider-specific
-dependencies.
+Providers-specific metapackages bring a convenient way to install the tool
+as they depend on the main cloud-info-provider package (common to all
+providers) and on any extra provider-specific dependencies.
 
 #### Available packages
 
