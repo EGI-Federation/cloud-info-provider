@@ -19,8 +19,8 @@ Depends:
  python-glanceclient,
  python-keystoneauth1
 Provides: ${python:Provides}
-Description: Cloud information provider meta-pacakge for OpenNebula.
+Description: Cloud information provider meta-pacakge for OpenStack.
  .
- OpenNebula-specific meta-package for Information provider for Cloud Compute and
+ OpenStack-specific meta-package for Information provider for Cloud Compute and
  Cloud Storage services.
  Install the cloud-information-provider and the Cloud Middleware dependencies.

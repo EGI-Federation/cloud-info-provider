@@ -27,6 +27,8 @@ Install the cloud-information-provider and the Cloud Middleware dependencies.
 %files
 
 %changelog
+* Wed Jan 09 2019 Enol Fernández <enol.fernandez@egi.eu> 0.10.3
+- Updated dependencies
 * Mon Oct 15 2018 Baptiste Grenier <baptiste.grenier@egi.eu> 0.10.2
 - Version bump (Baptiste Grenier)
 * Mon Oct 01 2018 Baptiste Grenier <baptiste.grenier@egi.eu> 0.10.0

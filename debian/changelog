@@ -1,3 +1,9 @@
+python-cloud-info-provider (0.10.3-1) xenial; urgency=medium
+
+  * Update dependencies.
+
+ -- Enol Fernández <enol.fernandez@egi.eu>  Wed, 09 Jan 2019 13:45:33 +0100
+
 python-cloud-info-provider (0.10.2-1) xenial; urgency=medium
 
   * Version bump.

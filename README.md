@@ -5,41 +5,47 @@
 [![GitHub release](https://img.shields.io/github/release/EGI-Foundation/cloud-info-provider.svg)](https://github.com/EGI-Foundation/cloud-info-provider/releases)
 
 The Cloud Information provider generates a representation of cloud resources,
-that can be published inside a BDII (using the provided LDIF templates for a
-GlueSchema v2 representation) or any other component like the INDIGO
-Configuration Management Database (CMDB) (Using specific templates).
+that can be published by different systems, like a BDII (using the provided
+LDIF templates for GlueSchema represntation) or any other component like the
+INDIGO Configuration Management Database (CMDB) (Using specific templates).
 
-The generated representation is described using a
-[Mako](http://www.makotemplates.org/) template having access to the cloud
-middleware information.
+The provider extracts information from a cloud deployment using its public API
+and formats it according to [Mako](http://www.makotemplates.org/) templates.
 
-Supported cloud middleware providers:
+Currently supported cloud middleware:
 
-* OpenNebula
-* OpenStack/ooi using Keystone authentication with API v3 *only*
+* OpenNebula/rOCCI
+* OpenStack
+* OpenStack/ooi
 
 ## Installation
 
-### Dependencies
+### From binaries
 
-The cloud-provider depends on PyYAML, which is already included as a dependency for
-binary packages and when installing from source.
+Packages are always attached to the [releases page in GitHub](https://github.com/EGI-Foundation/cloud-info-provider/releases)
+and after they are made available at [EGI's AppDB](https://appdb.egi.eu/store/software/cloud.info.provider).
+AppDB providers package repositores ready to be used with `yum` or `apt`.
 
-For running the cloud-provider in a production environment with a BDII you will
-probably need:
+Packages having gone through a the [EGI CMD](https://wiki.egi.eu/wiki/EGI_Cloud_Middleware_Distribution)
+[Stagged Rollout and SQA process](https://wiki.egi.eu/wiki/EGI_Cloud_Middleware_Distribution_process)
+are available in the [CMD repositories](http://repository.egi.eu/).
 
-* bdii (available in Ubuntu/Debian repos, for RH based distros it is in EPEL, for
-  Debian wheezy it is available in the backports repo).
-* if you are generating information for OpenStack, you will also need
-  to install python-novaclient.
+Use the appropriate repository for your distribution and install using the
+OS-specific tools.
 
-On RHEL you will also need to enable the
-[EPEL repository](http://fedoraproject.org/wiki/EPEL) for python-defusedxml
-that is required for the OpenNebula provider.
+Dependencies are maintained in the `requirements.txt` file. Binary packages
+already include those dependencies (RH based distributions need to enable the
+[EPEL repository](http://fedoraproject.org/wiki/EPEL)).
 
-Providers-specific dependencies are managed using provider-specific metapackages.
-Those metapackages are dependent on the main cloud-info-provider that is common
-to all the providers and also includes the provider-specific dependencies.
+For running the provider in a production environment with a BDII you will
+also need the `bdii` package (available in Ubuntu/Debian repos, in EPEL for RH
+based distros it is in EPEL).
+
+Providers-specific metapackages bring a convenient way to install the tool
+as they depend on the main cloud-info-provider package (common to all
+providers) and on any extra provider-specific dependencies.
+
+#### Available packages
 
 RPMs:
 
@@ -53,26 +59,39 @@ debs:
 * python-cloud-info-provider-opennebula
 * python-cloud-info-provider
 
-#### OpenStack/ooi provider dependencies
+### From source
 
+#### Using pip
+
+Source-based installation is not recommended for production usage, but is very
+handy for testing or development purpose.
+Get the source by cloning this repo and do a pip install.
+
+As pip will have to copy files to /etc/cloud-info-provider directory, the
+installation user should be able to write to it, so it is recommended to create
+it before using pip.
+
+```sh
+sudo mkdir /etc/cloud-info-provider
+sudo chgrp you_user /etc/cloud-info-provider
+sudo chmod g+rwx /etc/cloud-info-provider
+```
+
+```sh
+git clone https://github.com/EGI-Foundation/cloud-info-provider
+cd cloud-info-provider
+pip install .
+```
+
+##### Provider dependencies
+
+The OpenStack/ooi providers require the following extra libraries:
+
+* python-keystoneclient
 * python-novaclient
 * python-glanceclient
-* python-keystoneauth1
 
-#### OpenNebula provider dependencies
-
-* python-defusedxml
-
-### Binary packages
-
-Latest packages are made available at [EGI's AppDB](https://appdb.egi.eu/store/software/cloud.info.provider).
-
-Packages having gone through a the [EGI CMD](https://wiki.egi.eu/wiki/EGI_Cloud_Middleware_Distribution)
-[Stagged Rollout and SQA process](https://wiki.egi.eu/wiki/EGI_Cloud_Middleware_Distribution_process)
-are available in the [CMD repositories](http://repository.egi.eu/).
-
-Use the appropriate repository for your distribution and install using the
-OS-specific tools.
+These are not installed by default.
 
 #### Building the packages using docker containers
 
@@ -137,113 +156,140 @@ cp ../*.deb ~/debs/xenial
 
 The deb will be available into the `~/debs/xenial` directory.
 
-### From source
-
-Source-based installation is not recommended for production usage, but is very
-handy for testing or development purpose.
-Get the source by cloning this repo and do a pip install.
-
-As pip will have to copy files to /etc/cloud-info-provider directory, the
-installation user should be able to write to it, so it is recommended to create
-it before using pip.
-
-```sh
-sudo mkdir /etc/cloud-info-provider
-sudo chgrp you_user /etc/cloud-info-provider
-sudo chmod g+rwx /etc/cloud-info-provider
-```
-
-```sh
-git clone https://github.com/EGI-Foundation/cloud-info-provider
-cd cloud-info-provider
-pip install .
-```
-
 ## Usage
 
-### Generation of the LDIF
+### Configuration
 
-By default the cloud-info-provider generates a LDIF according to the
-information in a yaml file describing the static information of the cloud
-resources.
-It will uses template located inside `/etc/cloud-info-provider/templates` with
-the LDIF extension. It is possible to specify another template extension using
-the `--template-extension` parameter.
-By default `/etc/cloud-info-provider/static.yaml` is used, but this path can be
-overriden with the `--yaml-file` option. A complete example with comments is
-available in the `sample.static.yaml` file.
+#### Static information
 
-Dynamic information can be further obtained with the middleware providers
-(OpenStack, ooi, and OpenNebula via rOCCI supported currently). Use the
-`--middleware` option for specifying the provider to use (see the command
-help for exact names). cloud-info-provider will fallback to static information
-defined in the yaml file if a dynamic provider is not able to return any
-information. See the `sample.openstack.yaml` and `sample.opennebularocci.yaml`
-for example configurations for each provider.
+The cloud-info-provider uses a YAML file describing the static information of
+the cloud resources to represent. Default location of this YAML file is
+`/etc/cloud-info-provider/static.yaml` and can be overriden with the
+`--yaml-file` option. [Sample configuration files](etc) are available at
+`/etc/cloud-info-providder`.  The file has two main maps:
 
-There are three different maps in the yaml file considered by the provider:
-`site`, `compute`, and `storage`:
+* `site`: includes a single attribute `name` with the site name as available
+  in GOCDB.
 
-* `site` contains basic information of the site. The only attribute to define
-   here is the `name` which must contain the site name as defined in GOCDB.
-   Alternatively, the site name can be fetched from
-   `/etc/glite-info-static/site/site.cfg` (or by the file set with the
-   `--glite-site-info-static` option).
-   Any other information is only relevant to generate a LDIF for a complete
-   site-BDII (*this is not the recommended deployment mode*).
-* `compute` should be present for those sites providing a IaaS computing
-   service. It describes the available resources, service endpoints,
-   the available VM images and the templates to run those images.
-   Dynamic providers will fetch most of the information in this section.
-   See the sample yaml files for details.
-* `storage` should be present for sites providing IaaS storage service.
-   Similarly to the `compute`, it contains a description of the resources
-   and enpoints providing the service. There are no dynamic providers for
-   `storage`at the moment.
+* `compute`: configures the VOs supported at a given cloud deployment and
+  extra information not retrievable using the middleware APIs. Every
+  supported VO must be described by a map under `shares`. Name of the share
+  should match the name of the VO. Only mandatory configuration is the
+  authorisation options for OpenStack/ooi (OpenNebula will consider the name
+  of the VO as the name of the OpenNebula group). See below an example for
+  ops VO. For other attributes of the `compute` map, check the sample
+  configuration files that contain documentation on the available keys and
+  values.
+
+```yaml
+compute:
+    # Configure here the VOs supported at your site
+    shares:
+        # include one share for each supported VO
+        # should match the name of the VO
+        ops:
+            # Authentication for the VO into OpenStack
+            auth:
+                # the project id in OpenStack
+                project_id: xxxxx
+            # Other optional information:
+            # sla: https://egi.eu/sla/ops    # link to the SLA document
+            # network_info: infiniband       # Type of network: infiniband, gigabiteethernet...
+            # default membership is VO:<share name>, only specify if
+            # using a more restrictive role/group for authorising users
+            # membership:
+            #    - VO:ops
+```
+
+#### Templates
+
+By default the cloud-info-provider generates a LDIF using the templates located
+inside `/etc/cloud-info-provider/templates` with a `ldif` extension. The
+`--template-dir` and `--template-extension` allow to change the location and
+extension of the templates.
+
+For generating GLUE 2.1 Schema use `glue21` as extension.
+
+#### Providers
+
+Dynamic information is obtained with the middleware providers (OpenStack, ooi,
+and OpenNebula via rOCCI supported currently). Use the `--middleware` option
+for specifying the provider to use (see the command help for exact names).
+cloud-info-provider will fallback to static information defined in the YAML
+file if a dynamic provider is not able to return any information.
 
 Each dynamic provider has its own commandline options for specifying how
 to connect to the underlying service. Use the `--help` option for a complete
 listing of options.
 
-For example for OpenStack, use a command line similar to the following:
+##### OpenStack/ooi
+
+The `openstack` and `ooi` providers require a working keystone endpoint and
+valid credentials to access that endpoint. It uses [keystoneauth](https://docs.openstack.org/keystoneauth/latest/)
+so any Keystone authentication method available in that library can be used.
+The configured user for authentication must be a member of every project
+configured in your shares. Authentication options largely depend on the
+authentication method used, default is username/password. For example, using
+OpenID Connect against a EGI Check-in integrated endpoint:
 
 ```sh
-cloud-info-provider-service --yaml-file /etc/cloud-info-provider/static.yaml \
-    --middleware openstack --os-username <username> --os-password <password> \
-    --os-user-domain-name default --os-project-name <tenant> \
-    --os-project-domain-name default --os-auth-url <auth-url>
+cloud-info-provider-service --middleware openstack \
+    --os-auth-type v3oidcaccesstoken \
+    --os-identity-provider egi.eu --os-protocol oidc \
+    --os-access-token $ACCESS_TOKEN \
+    --os-auth-url https://<keystone-endpoint>:5000/v3
 ```
 
-**Test the generation of the LDIF before running the provider into your BDII!**
+The `openstack` provider will only generate native OpenStack information, while
+the `ooi` provider will only generate OCCI information and requires a correctly
+configured [ooi](https://ooi.readthedocs.io/en/stable/) deployment.
 
-### OpenStack provider
+Other extra options for the providers (defaults should be ok):
 
-The OpenStack provider only publishes information about native OpenStack API access,
-for ooi information check below
+* `--select-flavors {all,public,private}` Select all (default), public or
+  private flavors/templates. For more details see [OpenStack flavors
+  documentation](https://docs.openstack.org/nova/pike/admin/flavors.html).
 
-#### Filtering public or private flavors
+* `--all-images` If set, include information about all images (including
+  snapshots), otherwise only publish images with cloudkeeper metadata,
+  ignoring the others.
 
-By default the OpenStack provider will return 'all' flavors, but it is also
-possible to select only 'public' or 'private' flavors using the
-`--select-flavors` parameter set to `all`, `public` or `private`.
-For more details see
-[OpenStack flavors documentation](https://docs.openstack.org/nova/pike/admin/flavors.html).
+##### OpenNebula
 
-### ooi provider
+The `opennebularocci` require a OpenNebula with rOCCI installation available.
+The following options can be used to specify authentication against the
+OpenNebula:
 
-The ooi provider publishes information for those sites using ooi on top of OpenStack
-nova to provide OCCI support. It has the same options as the openstack provider and
-yaml configuration file can be used without any changes.
+* `--on-auth <auth>` Specify authorization information. For core drivers,
+  it should be `<username>:<password>`. Defaults to `env[ON_USERNAME]` or
+  `oneadmin:opennebula`.
 
-### Running the provider in a resource-BDII
+* `--on-rpcxml-endpoint <auth-url>` Specify OpenNebula XML RPC endpoint.
+  Defaults to `env[ON_RPCXML_ENDPOINT]` or `http://localhost:2633/RPC2`.
+
+Extra configuration can be provided with:
+
+* `--rocci-template-dir <rocci-template-dir>` Location of the rOCCI-server
+  resource template definitions. (default: `/etc/occi-server/backends/opennebula/fixtures/resource_tpl`)
+
+* `--rocci-remote-templates` If set, resource template definitions will be
+  retrieved via OCA, not from a local directory.
+
+### Running the provider
+
+The provider will represent the resources using the configured providers and
+templates and dump it to standard output. Normally this is run within a
+resource-level BDII so the information is published into the site BDII.
+
+#### Running the provider in a resource-BDII
 
 This is the normal deployment mode for the cloud provider. It should be installed
 in a node with access to your cloud infrastructure: for OpenStack/ooi, access to
-nova service is needed; for OpenNebula-rOCCI provider, access to the files
-describing the rOCCI templates is needed (e.g. installing the provider in the same
+nova/glance APIs is needed; for OpenNebula-rOCCI provider, access to the files
+describing the rOCCI templates is needed (i.e. installing the provider in the same
 host as rOCCI-server).
 
-### Create the provider script
+##### Create the provider script
 
 In `/var/lib/bdii/gip/provider/` create a `cloud-info-provider` file that
 calls the provider with the correct options for your site:
@@ -260,7 +306,7 @@ cloud-info-provider-service --yaml /etc/cloud-info-provider/openstack.yaml \
                             --os-auth-url <auth-url>
 ```
 
-Give execution permission:
+Give it execution permission:
 
 ```sh
 chmod +x /var/lib/bdii/gip/provider/cloud-info-provider
@@ -274,7 +320,9 @@ and test it:
 
 It should output the full ldif describing your site.
 
-#### Publishing both native OpenStack and ooi information
+**Test the generation of the LDIF before running the provider into your BDII!**
+
+###### Publishing both native OpenStack and ooi information
 
 In your `/var/lib/bdii/gip/provider/cloud-info-provider` include calls to both
 OpenStack and ooi providers:
@@ -296,7 +344,7 @@ cloud-info-provider-service --yaml /etc/cloud-info-provider/openstack.yaml \
                             --os-project-domain-name default --os-auth-url <auth-url>
 ```
 
-### Start the bdii service
+##### Start the bdii service
 
 Once the provider script is working, start the bdii service:
 
@@ -310,7 +358,7 @@ The ldap server should contain all your cloud resource information:
 ldapsearch -x -h localhost -p 2170 -b o=glue
 ```
 
-### Adding the resource provider to the site-BDII
+##### Adding the resource provider to the site-BDII
 
 Sites should have a dedicated host for the site-BDII. Information on how to
 set up this machine is avaiable in the EGI.eu wiki at
@@ -320,17 +368,11 @@ Add your cloud-info-provider to your site-BDII by adding a new URL that looks
 like this:
 
 ```
-ldap://<cloud-info-provier-hostname>:2170/GLUE2GroupID=cloud,o=glue
+ldap://<cloud-info-provider-hostname>:2170/GLUE2GroupID=cloud,o=glue
 ```
 
-## Other deployment modes
+### GLUE 2.1 Schema
 
-**These deployment modes cover special cases that should not be used in
-  production!**
-
-### Running the cloud-provider in a site-BDII
-
-If your site does not have a separated site-BDII and you want to use the cloud
-provider in the site-BDII host (NOTE: any problems in the cloud provider
-will affect your site-BDII!), you can add the `--site-in-suffix` to the provider
-in `/var/lib/bdii/gip/provider/cloud-info-provider`.
+GLUE 2.1 Schema output can be generated by using the `--template-extension glue21`
+option. This cannot be used with current BDII implementations as the schema is
+still not supported by the infrastructure.
