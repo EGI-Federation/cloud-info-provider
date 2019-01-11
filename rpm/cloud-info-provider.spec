@@ -22,7 +22,10 @@ Requires: python-yaml
 Requires: python-mako
 Requires: python-six
 # gocdb
+Requires: python-requests
 Requires: python-defusedxml
+# ssl_utils
+Requires: pyOpenSSL
 #Recommends: bdii
 Obsoletes: cloud-info-provider-service
 BuildArch: noarch

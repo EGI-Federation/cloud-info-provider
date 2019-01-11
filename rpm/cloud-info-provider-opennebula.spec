@@ -14,6 +14,7 @@ URL: https://github.com/EGI-Foundation/cloud-info-provider
 
 Requires: cloud-info-provider
 # OpenNebula-specific dependencies
+Requires: python-defusedxml
 BuildArch: noarch
 
 %description

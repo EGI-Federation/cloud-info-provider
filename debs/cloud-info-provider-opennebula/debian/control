@@ -14,7 +14,8 @@ Section: python
 Depends:
  ${python:Depends},
  ${misc:Depends},
- python-cloud-info-provider (>= 0.9.1)
+ python-cloud-info-provider (>= 0.9.1),
+ python-defusedxml
 Provides: ${python:Provides}
 Description: Cloud information provider meta-pacakge for OpenNebula.
  .
