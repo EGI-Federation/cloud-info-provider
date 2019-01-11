@@ -374,10 +374,11 @@ GLUE2EntityOtherInfo: ${other}
 
 ## All NetworkTraffic for $img_id
 % for idx,network_conf in enumerate(image.get(x) for x in ['network_traffic_in', 'network_traffic_out']):
+% if network_conf:
 <%
     network_conf_id = "%s_%s_%s" % (network_conf['direction'], network_conf['protocol'], idx)
 %>\
-dn: GLUE2CloudComputingImageNetwokConfigurationID=${netwok_conf_id},GLUE2CloudComputingImageID=${img_id},GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${suffix}
+dn: GLUE2CloudComputingImageNetwokConfigurationID=${network_conf_id},GLUE2CloudComputingImageID=${img_id},GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${suffix}
 objectClass: GLUE2Entity
 objectClass: GLUE2CloudComputingImageNetworkConfiguration
 GLUE2EntityName: ${network_conf['name']}
@@ -390,6 +391,7 @@ GLUE2CloudComputingImageNetworkConfigurationProtocol: ${network_conf['protocol']
 GLUE2CloudComputingImageNetworkConfigurationPort: ${network_conf['port']}
 GLUE2CloudComputingImageNetworkConfigurationAddressRange: ${network_conf['address_range']}
 
+% endif
 % endfor
 
 % endfor
