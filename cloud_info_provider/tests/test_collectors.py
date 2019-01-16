@@ -47,8 +47,9 @@ class BaseCollectorTest(test_core.BaseTest):
             ),
         )
 
-        base = cloud_info_provider.collectors.base.BaseCollector(self.opts,
-                                                             self.providers)
+        base = cloud_info_provider.collectors.base.BaseCollector(
+            self.opts,
+            self.providers)
 
         for s, d, e in cases:
             with utils.nested(
@@ -66,8 +67,9 @@ class CloudCollectorTest(test_core.BaseTest):
                        '_get_info_from_providers')
     def test_fetch(self, m_get_info):
         m_get_info.return_value = DATA.site_info
-        cloud = cloud_info_provider.collectors.cloud.CloudCollector(self.opts,
-                                                                self.providers)
+        cloud = cloud_info_provider.collectors.cloud.CloudCollector(
+            self.opts,
+            self.providers)
         self.assertIsNotNone(cloud.fetch())
         self.assertEqual(cloud.fetch(), DATA.site_info)
 
