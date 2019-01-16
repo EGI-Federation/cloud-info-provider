@@ -1,9 +1,9 @@
 import mock
 
-import cloud_info_provider.fetchers.base
-import cloud_info_provider.fetchers.cloud
-import cloud_info_provider.fetchers.compute
-import cloud_info_provider.fetchers.storage
+import cloud_info_provider.collectors.base
+import cloud_info_provider.collectors.cloud
+import cloud_info_provider.collectors.compute
+import cloud_info_provider.collectors.storage
 
 from cloud_info_provider.tests import data
 from cloud_info_provider.tests import test_core
@@ -13,9 +13,9 @@ from cloud_info_provider.tests import utils
 DATA = data.DATA
 
 
-class BaseFetcherTest(test_core.BaseTest):
+class BaseCollectorTest(test_core.BaseTest):
     @mock.patch.multiple(
-        cloud_info_provider.fetchers.base.BaseFetcher,
+        cloud_info_provider.collectors.base.BaseCollector,
         __abstractmethods__=set(),
         fetch=mock.Mock(return_value={}))
     def test_get_info_from_providers(self):
@@ -47,7 +47,7 @@ class BaseFetcherTest(test_core.BaseTest):
             ),
         )
 
-        base = cloud_info_provider.fetchers.base.BaseFetcher(self.opts,
+        base = cloud_info_provider.collectors.base.BaseCollector(self.opts,
                                                              self.providers)
 
         for s, d, e in cases:
@@ -61,19 +61,19 @@ class BaseFetcherTest(test_core.BaseTest):
                 self.assertEqual(e, base._get_info_from_providers('method'))
 
 
-class CloudFetcherTest(test_core.BaseTest):
-    @mock.patch.object(cloud_info_provider.fetchers.cloud.CloudFetcher,
+class CloudCollectorTest(test_core.BaseTest):
+    @mock.patch.object(cloud_info_provider.collectors.cloud.CloudCollector,
                        '_get_info_from_providers')
     def test_fetch(self, m_get_info):
         m_get_info.return_value = DATA.site_info
-        cloud = cloud_info_provider.fetchers.cloud.CloudFetcher(self.opts,
+        cloud = cloud_info_provider.collectors.cloud.CloudCollector(self.opts,
                                                                 self.providers)
         self.assertIsNotNone(cloud.fetch())
         self.assertEqual(cloud.fetch(), DATA.site_info)
 
 
-class StorageFetcherTEst(test_core.BaseTest):
-    @mock.patch.object(cloud_info_provider.fetchers.storage.StorageFetcher,
+class StorageCollectorTEst(test_core.BaseTest):
+    @mock.patch.object(cloud_info_provider.collectors.storage.StorageCollector,
                        '_get_info_from_providers')
     def test_fetch(self, m_get_info):
         m_get_info.side_effect = (
@@ -91,24 +91,24 @@ class StorageFetcherTEst(test_core.BaseTest):
         info.update({'endpoints': endpoints})
         info.update({'static_storage_info': static_storage_info})
 
-        storage = cloud_info_provider.fetchers.storage.StorageFetcher(
+        storage = cloud_info_provider.collectors.storage.StorageCollector(
             self.opts, self.providers)
         self.assertIsNotNone(storage.fetch())
 
-    @mock.patch.object(cloud_info_provider.fetchers.storage.StorageFetcher,
+    @mock.patch.object(cloud_info_provider.collectors.storage.StorageCollector,
                        '_get_info_from_providers')
     def test_fetch_empty(self, m_get_info):
         m_get_info.side_effect = (
             {},
             DATA.site_info
         )
-        storage = cloud_info_provider.fetchers.storage.StorageFetcher(
+        storage = cloud_info_provider.collectors.storage.StorageCollector(
             self.opts, self.providers)
         self.assertEqual({}, storage.fetch())
 
 
-class ComputeFetcherTest(test_core.BaseTest):
-    @mock.patch.object(cloud_info_provider.fetchers.compute.ComputeFetcher,
+class ComputeCollectorTest(test_core.BaseTest):
+    @mock.patch.object(cloud_info_provider.collectors.compute.ComputeCollector,
                        '_get_info_from_providers')
     def test_fetch(self, m_get_info):
 
@@ -152,11 +152,11 @@ class ComputeFetcherTest(test_core.BaseTest):
         info.update({'static_compute_info': static_compute_info})
         info.update({'shares': shares})
 
-        compute = cloud_info_provider.fetchers.compute.ComputeFetcher(
+        compute = cloud_info_provider.collectors.compute.ComputeCollector(
             self.opts, self.providers)
         self.assertIsNotNone(compute.fetch())
 
-    @mock.patch.object(cloud_info_provider.fetchers.compute.ComputeFetcher,
+    @mock.patch.object(cloud_info_provider.collectors.compute.ComputeCollector,
                        '_get_info_from_providers')
     def test_fetch_empty(self, m_get_info):
         m_get_info.side_effect = (
@@ -167,7 +167,7 @@ class ComputeFetcherTest(test_core.BaseTest):
             DATA.compute_shares,
             {},
         )
-        compute = cloud_info_provider.fetchers.compute.ComputeFetcher(
+        compute = cloud_info_provider.collectors.compute.ComputeCollector(
             self.opts, self.providers)
         self.assertFalse(compute.fetch())
         self.assertEqual({}, compute.fetch())

@@ -1,9 +1,9 @@
-from cloud_info_provider.fetchers import base
+from cloud_info_provider.collectors import base
 
 
-class StorageFetcher(base.BaseFetcher):
+class StorageCollector(base.BaseCollector):
     def __init__(self, opts, providers):
-        super(StorageFetcher, self).__init__(opts, providers)
+        super(StorageCollector, self).__init__(opts, providers)
         self.templates = ['storage']
 
     def fetch(self):

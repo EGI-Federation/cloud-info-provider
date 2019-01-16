@@ -3,7 +3,7 @@ import six
 
 
 @six.add_metaclass(abc.ABCMeta)
-class BaseFetcher(object):
+class BaseCollector(object):
     def __init__(self, opts, providers):
         self.opts = opts
         self.providers = providers

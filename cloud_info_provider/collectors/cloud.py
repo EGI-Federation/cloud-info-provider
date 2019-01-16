@@ -1,9 +1,9 @@
-from cloud_info_provider.fetchers import base
+from cloud_info_provider.collectors import base
 
 
-class CloudFetcher(base.BaseFetcher):
+class CloudCollector(base.BaseCollector):
     def __init__(self, opts, providers):
-        super(CloudFetcher, self).__init__(opts, providers)
+        super(CloudCollector, self).__init__(opts, providers)
         self.templates = ('headers', 'clouddomain')
 
     def fetch(self):

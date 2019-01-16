@@ -1,11 +1,11 @@
 import itertools
 
-from cloud_info_provider.fetchers import base
+from cloud_info_provider.collectors import base
 
 
-class ComputeFetcher(base.BaseFetcher):
+class ComputeCollector(base.BaseCollector):
     def __init__(self, opts, providers):
-        super(ComputeFetcher, self).__init__(opts, providers)
+        super(ComputeCollector, self).__init__(opts, providers)
         self.templates = ['compute']
 
     def fetch(self):
