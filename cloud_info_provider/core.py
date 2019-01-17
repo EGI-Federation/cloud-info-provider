@@ -5,9 +5,6 @@ from stevedore import driver
 from stevedore import extension
 
 
-SUPPORTED_MIDDLEWARE = {}
-
-
 def get_providers():
     def _handle_exception(*args):
         mgr, entry_point, exception = args
@@ -22,7 +19,14 @@ def get_providers():
     return dict((x.name, x.plugin) for x in mgr)
 
 
-def parse_opts():
+def get_formatters():
+    mgr = extension.ExtensionManager(
+        namespace='cip.formatters',
+    )
+    return [x.name for x in mgr]
+
+
+def parse_opts(providers, formatters):
     parser = argparse.ArgumentParser(
         description='Cloud BDII provider',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -48,7 +52,7 @@ def parse_opts():
         'format',
         nargs='?',
         default='glue',
-        choices=['glue', 'cmdb'],
+        choices=formatters,
         help=('Selects the output format'))
 
     parser.add_argument(
@@ -61,13 +65,13 @@ def parse_opts():
     parser.add_argument(
         '--middleware',
         metavar='MIDDLEWARE',
-        choices=SUPPORTED_MIDDLEWARE,
+        choices=providers,
         default='static',
         help=('Middleware used. Only the following middlewares are '
               'supported: %s. If you do not specify anything, static '
-              'values will be used.' % SUPPORTED_MIDDLEWARE.keys()))
+              'values will be used.' % providers.keys()))
 
-    for provider_name, provider in SUPPORTED_MIDDLEWARE.items():
+    for provider_name, provider in providers.items():
         group = parser.add_argument_group('%s provider options' %
                                           provider_name)
         provider.populate_parser(group)
@@ -76,16 +80,17 @@ def parse_opts():
 
 
 def main():
-    global SUPPORTED_MIDDLEWARE
-    SUPPORTED_MIDDLEWARE = get_providers()
-    opts = parse_opts()
+    providers = get_providers()
+    formatters = get_formatters()
+
+    opts = parse_opts(providers, formatters)
 
     mgr = driver.DriverManager(
         namespace='cip.formatters',
         name=opts.format,
         invoke_on_load=True,
     )
-    mgr.driver.format(opts, SUPPORTED_MIDDLEWARE)
+    mgr.driver.format(opts, providers)
 
 
 if __name__ == '__main__':
