@@ -5,6 +5,7 @@ pbr
 defusedxml
 requests
 pyOpenSSL
+stevedore
 # For OpenStack
 #python-keystoneclient
 #python-novaclient
