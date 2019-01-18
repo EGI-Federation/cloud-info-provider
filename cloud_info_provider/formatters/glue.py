@@ -10,3 +10,14 @@ class GLUE(base.BaseFormatter):
             'compute',
             'storage',
         ]
+
+
+class GLUE21(base.BaseFormatter):
+    def __init__(self):
+        self.template_extension = 'glue21'
+        self.templates = [
+            'headers',
+            'clouddomain',
+            'compute',
+            'storage',
+        ]
