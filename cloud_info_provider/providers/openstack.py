@@ -132,8 +132,6 @@ class OpenStackProvider(providers.BaseProvider):
         shares = self.static.get_compute_shares(prefix=True)
         for share in shares.values():
             share['project'] = share.get('auth', {}).get('project_id')
-            share['default_network_type'] = share.get('default_network_type')
-            share['public_network_name'] = share.get('public_network_name')
         return shares
 
     def _rescope_project(self, project_id):
