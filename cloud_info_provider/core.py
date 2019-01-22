@@ -28,7 +28,7 @@ def get_formatters():
 
 def parse_opts(providers, formatters):
     parser = argparse.ArgumentParser(
-        description='Cloud BDII provider',
+        description='Cloud Information System provider',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
         fromfile_prefix_chars='@',
         conflict_handler="resolve",
