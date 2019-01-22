@@ -35,10 +35,19 @@ def parse_opts(providers, formatters):
     )
 
     parser.add_argument(
-        '--debug',
-        action='store_true',
-        default=False,
-        help='Provide extra logging information')
+        '--middleware',
+        metavar='MIDDLEWARE',
+        choices=providers,
+        default='static',
+        help=('Middleware used. Only the following middlewares are '
+              'supported: {%(choices)s}'))
+
+    parser.add_argument(
+        '--format',
+        metavar='FORMAT',
+        choices=formatters,
+        default='glue',
+        help=('Selects the output format. Allowed values: {%(choices)s}'))
 
     parser.add_argument(
         '--yaml-file',
@@ -55,13 +64,6 @@ def parse_opts(providers, formatters):
         help=('Path to the directory containing the needed templates'))
 
     parser.add_argument(
-        'format',
-        nargs='?',
-        default='glue',
-        choices=formatters,
-        help=('Selects the output format'))
-
-    parser.add_argument(
         '--site-in-suffix',
         action='store_true',
         default=False,
@@ -69,13 +71,10 @@ def parse_opts(providers, formatters):
               'suffix (Use only for execution as a site-BDII provider)'))
 
     parser.add_argument(
-        '--middleware',
-        metavar='MIDDLEWARE',
-        choices=providers,
-        default='static',
-        help=('Middleware used. Only the following middlewares are '
-              'supported: %s. If you do not specify anything, static '
-              'values will be used.' % providers.keys()))
+        '--debug',
+        action='store_true',
+        default=False,
+        help='Provide extra logging information')
 
     for provider_name, provider in providers.items():
         group = parser.add_argument_group('%s provider options' %
