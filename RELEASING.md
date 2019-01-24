@@ -12,6 +12,9 @@ Steps:
 * Preparing changelog
   * Provide main changes, with related author(s)
     * Document changes impacting deployment/configuration/usage
+* Updating AUTHORS as needed
+* Updating zenodo.json as needed
+  * Bump version, description and authors
 * Merging a PR for updating build files to bump release version and changelog
 * Creating a Tag in GitHub
   * Release title == Tag version, in a [semver](https://semver.org/) form like 0.42.0
@@ -34,6 +37,11 @@ git checkout -b prepare-0.9.0
 # debian/changelog: add an entry at the top
 # rpm/cloud-info-provider.spec: bump version at the top, add entry at the bottom
 vim -o debian/changelog rpm/cloud-info-provider.spec
+# Update AUTHORS file if needed
+vim AUTHORS
+# Update Zenodo configuration
+vim .zenodo.json
+# Commit changes
 git commit -am 'Prepare release 0.9.0'
 # Push new branch to fork
 git push --set-upstream origin prepare-0.9.0
