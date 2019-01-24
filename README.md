@@ -402,3 +402,7 @@ cloud-info-provider-service --format cmdb \
     --os-project-name <tenant> \
     --os-project-domain-name default --os-auth-url <auth-url>
 ```
+
+## Release management
+
+Release management is documented in [RELEASING.md](RELEASING.md)
