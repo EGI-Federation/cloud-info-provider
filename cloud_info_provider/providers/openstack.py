@@ -327,6 +327,12 @@ class OpenStackProvider(providers.BaseProvider):
                 else:
                     continue
 
+            if 'ad:traffic_in' in extra_attrs:
+                aux_img['network_traffic_in'] = extra_attrs['ad:traffic_in']
+
+            if 'ad:traffic_out' in extra_attrs:
+                aux_img['network_traffic_out'] = extra_attrs['ad:traffic_out']
+
             aux_img.update({
                 'image_native_id': img_id,
                 'image_id': '%s%s#%s' % (URI, img_sch, self.adapt_id(img_id)),

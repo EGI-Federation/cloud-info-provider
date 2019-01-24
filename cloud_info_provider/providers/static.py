@@ -131,7 +131,8 @@ class StaticProvider(providers.BaseProvider):
     def get_compute_shares(self, **kwargs):
         fields = ('instance_max_cpu', 'instance_max_ram',
                   'instance_max_accelerators',
-                  'auth', 'sla', 'network_info', 'membership')
+                  'auth', 'sla', 'network_info', 'default_network_type',
+                  'public_network_name', 'membership')
         shares = self._get_what('compute',
                                 'shares',
                                 None,
