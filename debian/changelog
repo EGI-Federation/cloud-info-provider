@@ -1,3 +1,17 @@
+python-cloud-info-provider (0.11.0-1) xenial; urgency=medium
+
+  * Split OpenStack and OOI providers. (Enol Fernandez)
+  * Fix os_tpl identifier for OpenNebula with rOCCI. (Boris Parak)
+  * Clarify usage of project ID in configuration file. (Pablo Orviz)
+  * Review and update output to implement latest GLUE2.1 updates. (Enol Fernandez, Baptiste Grenier)
+  * Extract information from the GOCDB. (Enol Fernandez)
+  * Add debug switch. (Enol Fernandez)
+  * Clean up documentation. (Enol Fernandez)
+  * Use stevedore module to load code extensions. (Pablo Orviz)
+  * Document release management. (Baptiste Grenier)
+
+ -- Baptiste Grenier <baptiste.grenier@egi.eu>  Su, 27 Jan 2019 19:34:33 +0100
+
 python-cloud-info-provider (0.10.3-1) xenial; urgency=medium
 
   * Update dependencies.

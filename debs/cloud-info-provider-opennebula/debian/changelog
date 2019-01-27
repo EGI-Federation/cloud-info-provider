@@ -1,3 +1,10 @@
+python-cloud-info-provider-opennebula (0.11.0-1) xenial; urgency=medium
+
+  * Fix os_tpl identifier for OpenNebula with rOCCI. (Boris Parak)
+  * Review and update output to implement latest GLUE2.1 updates. (Enol Fernandez, Baptiste Grenier)
+
+ -- Baptiste Grenier <baptiste.grenier@egi.eu>  Su, 27 Jan 2019 19:34:33 +0100
+
 python-cloud-info-provider-opennebula (0.10.3-1) xenial; urgency=medium
 
   * Update dependencies.
