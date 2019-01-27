@@ -30,7 +30,10 @@ git checkout master
 # Check latest tag
 git tag --list
 # Compare latest tag (0.8.3 here) with master
+# hub features, showing diff in GitHub
 git compare EGI-FCTF 0.8.3..master
+# In the CLI
+git log --abbrev-commit 0.8.3..master
 # Prepare a PR to prepare version (0.9.0 here)
 git checkout -b prepare-0.9.0
 # Prepare a complete changelog in a text file
