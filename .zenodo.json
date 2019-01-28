@@ -1,8 +1,8 @@
 {
     "license": "Apache-2.0",
-    "description": "<p>Expected to be the last version before the merge of the GLUE2.1 effort.</p>\n\n<p>Two new packages have been introduced to automatically install the required dependencies (including <code>cloud-info-provider</code> package):</p>\n\n<ul>\n\t<li>RPM: <code>cloud-info-provider-openstack</code>, deb: <code>python-cloud-info-provider-openstack</code></li>\n\t<li>RPM: <code>cloud-info-provider-opennebula</code>, deb: <code>python-cloud-info-provider-opennebula</code></li>\n</ul>\n\n<p>Full changelog:</p>\n\n<ul>\n\t<li>Integrate badges from shields.io and coveralls.io. (Alvaro Lopez)</li>\n\t<li>Improve and cleanup configuration files. (Enol Fernandez)</li>\n\t<li>Import a Jenkinsfile to handle SQA on Jenkins at IFCA. (Pablo Orviz)</li>\n\t<li>Fix UTF-8 output for OpenNebula. (Ruben Diez)</li>\n\t<li>Introduce CMF-specific meta-packages to deploy required dependencies. (Baptiste Grenier)</li>\n\t<li>Allow filtering private flavours. (Baptiste Grenier)</li>\n\t<li>Improve community health following discussions with Bruce Becker and al. (Baptiste Grenier)</li>\n\t<li>Use travis to lint, test, build and upload packages. (Baptiste Grenier)</li>\n<li>Integrate with zenodo. (Bruce Becker)</li></ul>",
+    "description": "<ul>\n<li>Split OpenStack and OOI providers. (Enol Fernandez)</li>\n<li>Fix os_tpl identifier for OpenNebula with rOCCI. (Boris Parak)</li>\n<li>Clarify usage of project ID in configuration file. (Pablo Orviz)</li>\n<li>Review and update output to implement latest GLUE2.1 updates. (Enol Fernandez, Baptiste Grenier)</li>\n<li>Extract information from the GOCDB. (Enol Fernandez)</li>\n<li>Add debug switch. (Enol Fernandez)</li>\n<li>Clean up documentation. (Enol Fernandez)</li>\n<li>Use stevedore module to load code extensions. (Pablo Orviz)</li>\n<li>Document release management. (Baptiste Grenier)</li>\n</ul>",
     "language": "eng",
-    "title": "EGI-Foundation/cloud-info-provider: 0.10.0",
+    "title": "EGI-Foundation/cloud-info-provider: 0.11.0",
     "keywords": [
         "bdii",
         "grid",
@@ -14,13 +14,13 @@
         }
     ],
     "upload_type": "software",
-    "version": "0.10.0",
+    "version": "0.11.0",
     "communities": [
         {
             "identifier": "egi-foundation"
         }
     ],
-    "publication_date": "2018-10-02",
+    "publication_date": "2019-01-27",
     "creators": [
         {
             "orcid": "0000-0002-5686-3193",
@@ -70,7 +70,7 @@
     "related_identifiers": [
         {
             "scheme": "url",
-            "identifier": "https://github.com/EGI-Foundation/cloud-info-provider/tree/0.10.0",
+            "identifier": "https://github.com/EGI-Foundation/cloud-info-provider/tree/0.11.0",
             "relation": "isSupplementTo"
         },
         {

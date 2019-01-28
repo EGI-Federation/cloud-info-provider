@@ -26,6 +26,7 @@ Depends:
  python-six,
  python-defusedxml,
  python-requests,
+ python-stevedore,
 # this is implicit in python-requests, but still want to keep it explicit
  python-openssl
 #Recommends: bdii

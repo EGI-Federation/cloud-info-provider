@@ -30,13 +30,25 @@ git checkout master
 # Check latest tag
 git tag --list
 # Compare latest tag (0.8.3 here) with master
+# hub feature, showing diff in GitHub
+# https://hub.github.com/
 git compare EGI-FCTF 0.8.3..master
+# In the CLI
+git log --abbrev-commit 0.8.3..master
 # Prepare a PR to prepare version (0.9.0 here)
 git checkout -b prepare-0.9.0
-# Update changelog in
-# debian/changelog: add an entry at the top
-# rpm/cloud-info-provider.spec: bump version at the top, add entry at the bottom
-vim -o debian/changelog rpm/cloud-info-provider.spec
+# Prepare a complete changelog in a text file
+# Take care to changes in dependencies and configuration
+# Depending on the changes update relevant packages
+# Debian: debian/changelog: add an entry at the top
+# Debian: changelog: add an entry at the top
+# Debian: dependencies in debian/control files
+# Debian: debs/cloud-info-provider-opennebula/debian/changelog
+# Debian: debs/cloud-info-provider-openstack/debian/changelog
+# RHEL: bump version and dependencies at the top, add entry at the bottom
+# RHEL: rpm/cloud-info-provider.spec
+# RHEL: rpm/cloud-info-provider-opennebula.spec
+# RHEL: rpm/cloud-info-provider-openstack.spec
 # Update AUTHORS file if needed
 vim AUTHORS
 # Update Zenodo configuration
