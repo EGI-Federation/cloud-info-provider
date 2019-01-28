@@ -3,7 +3,7 @@ python-cloud-info-provider-openstack (0.11.0-1) xenial; urgency=medium
   * Split OpenStack and OOI providers. (Enol Fernandez)
   * Review and update output to implement latest GLUE2.1 updates. (Enol Fernandez, Baptiste Grenier)
 
- -- Baptiste Grenier <baptiste.grenier@egi.eu>  Su, 27 Jan 2019 19:34:33 +0100
+ -- Baptiste Grenier <baptiste.grenier@egi.eu>  Sun, 27 Jan 2019 19:34:33 +0100
 
 python-cloud-info-provider-openstack (0.10.3-1) xenial; urgency=medium
 

@@ -10,7 +10,7 @@ python-cloud-info-provider (0.11.0-1) xenial; urgency=medium
   * Use stevedore module to load code extensions. (Pablo Orviz)
   * Document release management. (Baptiste Grenier)
 
- -- Baptiste Grenier <baptiste.grenier@egi.eu>  Su, 27 Jan 2019 19:34:33 +0100
+ -- Baptiste Grenier <baptiste.grenier@egi.eu>  Sun, 27 Jan 2019 19:34:33 +0100
 
 python-cloud-info-provider (0.10.3-1) xenial; urgency=medium
 
