@@ -57,7 +57,7 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/cloud-info-provider/
 
 %changelog
-* Sun Jan 27 2018 Baptiste Grenier <baptiste.grenier@egi.eu> 0.11.0
+* Sun Jan 27 2019 Baptiste Grenier <baptiste.grenier@egi.eu> 0.11.0
 - Split OpenStack and OOI providers. (Enol Fernandez)
 - Fix os_tpl identifier for OpenNebula with rOCCI. (Boris Parak)
 - Clarify usage of project ID in configuration file. (Pablo Orviz)
