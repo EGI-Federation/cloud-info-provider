@@ -30,7 +30,8 @@ git checkout master
 # Check latest tag
 git tag --list
 # Compare latest tag (0.8.3 here) with master
-# hub features, showing diff in GitHub
+# hub feature, showing diff in GitHub
+# https://hub.github.com/
 git compare EGI-FCTF 0.8.3..master
 # In the CLI
 git log --abbrev-commit 0.8.3..master
