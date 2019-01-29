@@ -4,7 +4,7 @@
 
 Summary: Cloud Information provider meta-package for OpenNebula
 Name: cloud-info-provider-opennebula
-Version: 0.11.0
+Version: 0.11.1
 Release: 1%{?dist}
 Group: Applications/Internet
 License: Apache Software License 2.0
@@ -23,6 +23,8 @@ Install the cloud-information-provider and the Cloud Middleware dependencies.
 %files
 
 %changelog
+* Tue Jan 29 2019 Baptiste Grenier <baptiste.grenier@egi.eu> 0.11.1
+- Version bump (Baptiste Grenier)
 * Sun Jan 27 2019 Baptiste Grenier <baptiste.grenier@egi.eu> 0.11.0
 - Fix os_tpl identifier for OpenNebula with rOCCI. (Boris Parak)
 - Review and update output to implement latest GLUE2.1 updates. (Enol Fernandez, Baptiste Grenier)
