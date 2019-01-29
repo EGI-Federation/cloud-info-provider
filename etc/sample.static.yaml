@@ -113,6 +113,10 @@ compute:
             network_info: UNKNOWN
             membership:
                 - VO:ops
+            # Default network type: none, public, public_only, private, private_only
+            default_network_type: public
+            # Public Network name
+            public_network_name: PUBLIC
         fedcloud.egi.eu:
             project: fedcloud
             sla: https://egi.eu/sla/fedcloud
@@ -120,6 +124,10 @@ compute:
             network_info: UNKNOWN
             membership:
                 - VOMS:/fedcloud.egi.eu/Role=VMOperators
+            # Default network type: none, public, public_only, private, private_only
+            default_network_type: public
+            # Public Network name
+            public_network_name: PUBLIC
         training.egi.eu:
             project: training
             sla: https://egi.eu/sla/training
@@ -127,6 +135,10 @@ compute:
             network_info: UNKNOWN
             membership:
                 - VO:training.egi.eu
+            # Default network type: none, public, public_only, private, private_only
+            default_network_type: public
+            # Public Network name
+            public_network_name: PUBLIC
 
     templates:
         defaults:

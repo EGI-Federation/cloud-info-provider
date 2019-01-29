@@ -23,7 +23,12 @@ Depends:
  python,
  python-yaml,
  python-mako,
- python-six
+ python-six,
+ python-defusedxml,
+ python-requests,
+ python-stevedore,
+# this is implicit in python-requests, but still want to keep it explicit
+ python-openssl
 #Recommends: bdii
 #Suggests: python-cloud-info-provider-deep-openstack, python-cloud-info-provider-deep-opennebula
 Suggests: python-cloud-info-provider-deep-openstack

@@ -2,11 +2,11 @@ Mako
 PyYAML
 six
 pbr
-# For OpenNebula provider
-# defusedxml
+defusedxml
+requests
+pyOpenSSL
+stevedore
 # For OpenStack
-#requests
-#pyOpenSSL
 #python-keystoneclient
 #python-novaclient
 #python-glanceclient

@@ -5,6 +5,7 @@ import logging
 
 from cloud_info_provider import exceptions
 from cloud_info_provider import providers
+from cloud_info_provider.providers import gocdb
 from cloud_info_provider.providers import ssl_utils
 from cloud_info_provider import utils
 
@@ -39,14 +40,6 @@ except ImportError:
     msg = 'Cannot import novaclient module.'
     raise exceptions.OpenStackProviderException(msg)
 
-# Remove info log messages from output
-logging.getLogger('stevedore.extension').setLevel(logging.WARNING)
-logging.getLogger('requests').setLevel(logging.WARNING)
-logging.getLogger('urllib3').setLevel(logging.WARNING)
-logging.getLogger('novaclient').setLevel(logging.WARNING)
-logging.getLogger('keystoneauth').setLevel(logging.WARNING)
-logging.getLogger('keystoneclient').setLevel(logging.WARNING)
-
 
 # TODO(enolfc): should this be completely inside the provider class?
 def _rescope(f):
@@ -59,11 +52,27 @@ def _rescope(f):
 
 class OpenStackProvider(providers.BaseProvider):
     service_type = "compute"
+    goc_service_type = 'org.openstack.nova'
     service_data = {
         'compute_api_type': 'OpenStack',
         'compute_middleware': 'OpenStack Nova',
         'compute_middleware_developer': 'OpenStack Foundation',
     }
+
+    def setup_logging(self):
+        super(OpenStackProvider, self).setup_logging()
+        # Remove info log messages from output
+        external_logs = [
+            'stevedore.extension',
+            'requests',
+            'urllib3',
+            'novaclient',
+            'keystoneauth',
+            'keystoneclient',
+        ]
+        log_level = logging.DEBUG if self.opts.debug else logging.WARNING
+        for log in external_logs:
+            logging.getLogger(log).setLevel(log_level)
 
     def __init__(self, opts):
         super(OpenStackProvider, self).__init__(opts)
@@ -116,6 +125,8 @@ class OpenStackProvider(providers.BaseProvider):
         self.os_cacert = opts.os_cacert
         # Select 'public', 'private' or 'all' (default) templates.
         self.select_flavors = opts.select_flavors
+        # GOCDB info
+        self.goc_info = {}
 
     def get_compute_shares(self, **kwargs):
         shares = self.static.get_compute_shares(prefix=True)
@@ -221,6 +232,9 @@ class OpenStackProvider(providers.BaseProvider):
                 'compute_api_type': self.service_data['compute_api_type'],
                 'compute_api_version': e_api_version,
             })
+            # overwrites goc info for all endpoints but that's ok
+            ret.update(gocdb.get_goc_info(e_id_url, self.goc_service_type,
+                                          self.insecure))
             e.update(self._get_extra_endpoint_info(e_url))
             ret['endpoints'][e_id_url] = e
         return ret
@@ -321,6 +335,12 @@ class OpenStackProvider(providers.BaseProvider):
                     marketplace_id = link
                 else:
                     continue
+
+            if 'ad:traffic_in' in extra_attrs:
+                aux_img['network_traffic_in'] = extra_attrs['ad:traffic_in']
+
+            if 'ad:traffic_out' in extra_attrs:
+                aux_img['network_traffic_out'] = extra_attrs['ad:traffic_out']
 
             aux_img.update({
                 'image_native_id': img_id,

@@ -5,6 +5,7 @@ import os
 
 from cloud_info_provider import exceptions
 from cloud_info_provider import providers
+from cloud_info_provider.providers import gocdb
 from cloud_info_provider.providers import ssl_utils
 from cloud_info_provider import utils
 
@@ -143,6 +144,14 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
             if not (self.all_images or aux_tpl['image_marketplace_id']):
                 continue
 
+            if template.get('cloudkeeper_appliance_traffic_in'):
+                aux_tpl['network_traffic_in'] = template[
+                    'cloudkeeper_appliance_traffic_in']
+
+            if template.get('cloudkeeper_appliance_traffic_out'):
+                aux_tpl['network_traffic_out'] = template[
+                    'cloudkeeper_appliance_traffic_out']
+
             templates[tpl_id] = aux_tpl
         return templates
 
@@ -200,6 +209,8 @@ class OpenNebulaProvider(OpenNebulaBaseProvider):
 
 
 class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
+    goc_service_type = 'eu.egi.cloud.vm-management.occi'
+
     def __init__(self, opts):
         self.rocci_template_dir = opts.rocci_template_dir
         self.rocci_remote_templates = opts.rocci_remote_templates
@@ -226,6 +237,7 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
                 'endpoint_trusted_cas': ca_info['trusted_cas'],
                 'endpoint_issuer': ca_info['issuer'],
             })
+            epts.update(gocdb.get_goc_info(url, self.goc_service_type))
             epts[url] = ept
         return {'endpoints': epts}
 

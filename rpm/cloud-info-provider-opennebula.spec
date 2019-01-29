@@ -7,9 +7,7 @@ Name: cloud-info-provider-opennebula
 Version: %{_pbr_version}
 Release: 1%{?dist}
 Group: Applications/Internet
-# License: ASL 2.0
-# License: MIT
-License: DWTF
+License: Apache Software License 2.0
 URL: https://github.com/EGI-Foundation/cloud-info-provider
 
 Requires: cloud-info-provider
@@ -25,6 +23,11 @@ Install the cloud-information-provider and the Cloud Middleware dependencies.
 %files
 
 %changelog
+* Sun Jan 27 2019 Baptiste Grenier <baptiste.grenier@egi.eu> 0.11.0
+- Fix os_tpl identifier for OpenNebula with rOCCI. (Boris Parak)
+- Review and update output to implement latest GLUE2.1 updates. (Enol Fernandez, Baptiste Grenier)
+* Wed Jan 09 2019 Enol Fernández <enol.fernandez@egi.eu> 0.10.3
+- Updated dependencies
 * Mon Oct 15 2018 Baptiste Grenier <baptiste.grenier@egi.eu> 0.10.2
 - Version bump (Baptiste Grenier)
 * Mon Oct 01 2018 Baptiste Grenier <baptiste.grenier@egi.eu> 0.10.0
