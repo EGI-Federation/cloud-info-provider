@@ -5,6 +5,8 @@ from six.moves.urllib.parse import urlparse
 
 from OpenSSL import SSL
 
+logger = logging.getLogger(__name__)
+
 
 def get_dn(x509name):
     '''Return the DN of an X509Name object.'''
@@ -60,6 +62,6 @@ def get_endpoint_ca_information(endpoint_url, insecure=False, cafile=None,
         ca_info['issuer'] = issuer
         ca_info['trusted_cas'] = trusted_cas
     except SSL.Error as e:
-        logging.warning('Issue when getting CA info from endpoint: %s', e)
+        logger.warning('Issue when getting CA info from endpoint: %s', e)
 
     return ca_info

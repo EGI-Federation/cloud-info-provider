@@ -88,7 +88,9 @@ script:
       # and install packages in dedicated clean containers
       docker exec -i -w /root openstack_container sh -c "yum install -y centos-release-openstack-queens"
       docker exec -i -w /src openstack_container sh -c "yum localinstall -y cloud-info-provider-openstack-*.rpm cloud-info-provider-$VERSION-*.rpm"
-      docker exec -i -w /src opennebula_container sh -c "yum localinstall -y cloud-info-provider-opensnebula-*.rpm cloud-info-provider-$VERSION-*.rpm"
+      # EPEL is needed for defusedxml
+      docker exec -i -w /root opennebula_container sh -c "yum install -y epel-release"
+      docker exec -i -w /src opennebula_container sh -c "yum localinstall -y cloud-info-provider-opennebula-*.rpm cloud-info-provider-$VERSION-*.rpm"
     fi
   - |
     if [ $OS_NAME = 'ubuntu' ]; then

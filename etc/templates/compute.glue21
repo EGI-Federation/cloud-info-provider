@@ -53,10 +53,13 @@ GLUE2ServiceCapability: ${capability}
 % endfor
 GLUE2CloudComputingServiceTotalVM: ${len(instances)}
 GLUE2CloudComputingServiceRunningVM: ${len(running_instances)}
-## XXX Missing
+## XXX Missing
 ## GLUE2CloudComputingServicePendingVM:
 GLUE2CloudComputingServiceSuspendedVM: ${len(suspended_instances)}
 GLUE2CloudComputingServiceHaltedVM: ${len(halted_instances)}
+% if 'gocdb_id' in static_compute_info:
+GLUE2EntityOtherInfo: gocdb_id=${static_compute_info['gocdb_id']}
+% endif
 
 ##
 ## Computing Manager - GLUE2CloudComputingManager
@@ -76,9 +79,11 @@ GLUE2CloudComputingManagerHypervisorVersion: ${static_compute_info['compute_hype
 GLUE2ManagerServiceForeignKey: ${compute_service_id}
 GLUE2CloudComputingManagerCloudComputingServiceForeignKey: ${compute_service_id}
 % if static_compute_info['compute_network_virt_type']:
+## XXX could be present mulitple times
 GLUE2CloudComputingManagerNetworkVirtualizationType: ${static_compute_info['compute_network_virt_type']}
 % endif
 % if static_compute_info['compute_cpu_virt_type']:
+## XXX could be present mulitple times
 GLUE2CloudComputingManagerCPUVirtualizationType: ${static_compute_info['compute_cpu_virt_type']}
 % endif
 ## XXX Not in GlueSchema 2.1
@@ -109,9 +114,15 @@ GLUE2CloudComputingManagerInstanceMinDedicatedRAM: ${static_compute_info['comput
 GLUE2CloudComputingManagerVirtualdiskFormat: ${virtual_disk_format}
 % endfor
 % endif
+% if static_compute_info.get('compute_failover'):
 GLUE2CloudComputingManagerFailover: ${static_compute_info['compute_failover']}
+% endif
+% if static_compute_info.get('compute_live_migration'):
 GLUE2CloudComputingManagerLiveMigration: ${static_compute_info['compute_live_migration']}
+% endif
+% if static_compute_info.get('compute_vm_backup_restore'):
 GLUE2CloudComputingManagerVMBackupRestore: ${static_compute_info['compute_vm_backup_restore']}
+% endif
 
 ##
 ## List of Cloud Computing Endpoints - GLUE2CloudComputingEndpoint
@@ -157,11 +168,11 @@ GLUE2EndpointCapability: ${capability}
 % endfor
 GLUE2EndpointQualityLevel: ${endpoint['compute_production_level']}
 GLUE2EndpointInterfaceName: ${interface_name}
+GLUE2EndpointInterfaceVersion: ${endpoint['compute_api_version']}
 GLUE2EndpointHealthState: ok
 GLUE2EndpointHealthStateInfo: Endpoint functioning properly
 GLUE2EndpointServingState: ${endpoint['compute_production_level']}
 GLUE2EndpointTechnology: ${endpoint['compute_api_endpoint_technology']}
-GLUE2EndpointInterfaceVersion: ${endpoint['compute_api_version']}
 GLUE2EndpointImplementor: ${endpoint['compute_middleware_developer']}
 GLUE2EndpointImplementationName: ${endpoint['compute_middleware']}
 GLUE2EndpointImplementationVersion: ${endpoint['compute_middleware_version']}
@@ -172,7 +183,7 @@ GLUE2EndpointIssuerCA: ${endpoint['endpoint_issuer']}
 % for trusted_ca in endpoint['endpoint_trusted_cas']:
 GLUE2EndpointTrustedCA: ${trusted_ca}
 % endfor
-## XXX Missing
+## XXX Missing
 ## GLUE2EndpointDowntimeAnnounce:
 ## GLUE2EndpointDowntimeStart:
 ## GLUE2EndpointDowntimeEnd:
@@ -221,6 +232,11 @@ GLUE2EndpointTrustedCA: ${trusted_ca}
         share_max_vm = quotas['instances']
     else:
         share_max_vm = False
+
+    fields =  {'sla', 'network_info', 'default_network_type', 'public_network_name'}
+    for field in fields:
+      if field not in share or share[field] is None:
+          share[field] = 'UNKNOWN'
 %>\
 # Share ${share_id}
 dn: GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${suffix}
@@ -248,20 +264,19 @@ GLUE2CloudComputingShareInstanceMaxRAM: ${share_template_max_memory}
 GLUE2CloudComputingShareSLA: ${share['sla']}
 GLUE2CloudComputingShareTotalVM: ${len(share_instances)}
 GLUE2CloudComputingShareRunningVM: ${len(share_running_instances)}
-## XXX Missing
+## XXX Missing
 ## GLUE2CloudComputingSharePendingVM:
 GLUE2CloudComputingShareSuspendedVM: ${len(share_suspended_instances)}
 GLUE2CloudComputingShareHaltedVM: ${len(share_halted_instances)}
 GLUE2CloudComputingShareNetworkInfo: ${share['network_info']}
+GLUE2CloudComputingShareDefaultNetworkType: ${share['default_network_type']}
+GLUE2CloudComputingSharePublicNetworkName: ${share['public_network_name']}
 ## XXX Not in GlueSchema 2.1
 ## GLUE2CloudComputingShareInstanceMaxAccelerators: ${share_max_accelerators}
 % if share_max_vm:
 GLUE2CloudComputingShareMaxVM: ${share_max_vm}
 % endif
-## XXX Missing
-## GLUE2CloudComputingShareDefaultNetworkType:
-## GLUE2CloudComputingSharePublicNetworkName:
-## GLUE2CloudComputingShareProjectID:
+GLUE2CloudComputingShareProjectID: ${share['project']}
 
 ## Iterate over all the endpoints of the share to display corresponding:
 ## images, templates and AccessPolicies
@@ -310,10 +325,13 @@ GLUE2CloudComputingImageCloudComputingShareForeignKey: ${share_id}
 GLUE2CloudComputingImageCloudComputingManagerForeignKey: ${compute_service_manager}
 GLUE2CloudComputingImageCloudComputingEndpointForeignKey: ${endpoint_id}
 GLUE2CloudComputingImageMarketPlaceURL: ${image['image_marketplace_id']}
+GLUE2CloudComputingImageOSPlatform: ${image['image_platform']}
+GLUE2CloudComputingImageOSFamily: ${image['image_os_family']}
 GLUE2CloudComputingImageOSName: ${image['image_os_name']}
 GLUE2CloudComputingImageOSVersion: ${image['image_os_version']}
-GLUE2CloudComputingImageOSFamily: ${image['image_os_family']}
-GLUE2CloudComputingImageOSPlatform: ${image['image_platform']}
+% if image.get('image_version'):
+GLUE2CloudComputingImageVersion: ${image['image_version']}
+% endif
 % if image.get('image_minimal_cpu'):
 GLUE2CloudComputingImageMinCPU: ${image['image_minimal_cpu']}
 % endif
@@ -338,15 +356,9 @@ GLUE2CloudComputingImageRecommendedRAM: ${image['image_recommended_ram']}
 ## % endif
 GLUE2CloudComputingImageDescription: ${image['image_description']}
 GLUE2CloudComputingImageDiskSize: ${image['image_size']}
-% for traffic_in in image.get('image_traffic_in', []):
-GLUE2EntityOtherInfo: traffic_in:${traffic_in}
-% endfor
-% for traffic_out in image.get('image_traffic_out', []):
-GLUE2EntityOtherInfo: traffic_out:${traffic_out}
-% endfor
 GLUE2CloudComputingImageAccessInfo: ${image.get('image_access_info', 'none')}
 % if image.get('image_context_format'):
-GLUE2CloudComputingImageContextualizationFormat: context_format:${image['image_context_format']}
+GLUE2CloudComputingImageContextualizationName: context_format:${image['image_context_format']}
 % endif
 % for software in image.get('image_software', []):
 GLUE2CloudComputingImageInstalledsoftware: ${software}
@@ -355,11 +367,32 @@ GLUE2CloudComputingImageInstalledsoftware: ${software}
 GLUE2EntityOtherInfo: ${other}
 % endfor
 ## XXX Missing
-## GLUE2CloudComputingImageContextualizationVersion:
-## GLUE2CloudComputingImageDefaultUsername:
-## GLUE2CloudComputingImageDefaultPassword:
-## GLUE2CloudComputingImageVersion:
+## GLUE2CloudComputingImageContextualizationVersion:
+## XXX Not exposed for security reasons
+## GLUE2CloudComputingImageDefaultUsername:
+## GLUE2CloudComputingImageDefaultPassword:
 
+## All NetworkTraffic for $img_id
+% for idx,network_conf in enumerate(image.get(x) for x in ['network_traffic_in', 'network_traffic_out']):
+% if network_conf:
+<%
+    network_conf_id = "%s_%s_%s" % (network_conf['direction'], network_conf['protocol'], idx)
+%>\
+dn: GLUE2CloudComputingImageNetwokConfigurationID=${network_conf_id},GLUE2CloudComputingImageID=${img_id},GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${suffix}
+objectClass: GLUE2Entity
+objectClass: GLUE2CloudComputingImageNetworkConfiguration
+GLUE2EntityName: ${network_conf['name']}
+GLUE2CloudComputingImageNetworkConfigurationID: ${network_conf_id}
+GLUE2EntityCreationTime: ${timestamp}
+GLUE2EntityValidity: ${validity}
+GLUE2CloudComputingImageForeignKey: ${img_id}
+GLUE2CloudComputingImageNetworkConfigurationDirection: ${network_conf['direction']}
+GLUE2CloudComputingImageNetworkConfigurationProtocol: ${network_conf['protocol']}
+GLUE2CloudComputingImageNetworkConfigurationPort: ${network_conf['port']}
+GLUE2CloudComputingImageNetworkConfigurationAddressRange: ${network_conf['address_range']}
+
+% endif
+% endfor
 
 % endfor
 ##
@@ -387,17 +420,17 @@ GLUE2CloudComputingInstanceTypeCloudComputingEndpointForeignKey: ${endpoint_id}
 GLUE2CloudComputingInstanceTypePlatform: ${template['template_platform']}
 GLUE2CloudComputingInstanceTypeCPU: ${template['template_cpu']}
 GLUE2CloudComputingInstanceTypeRAM: ${template['template_memory']}
-GLUE2CloudComputingInstanceTypeNetworkIn: ${template.get('template_network_in', 'undefined')}
-GLUE2CloudComputingInstanceTypeNetworkOut: ${template.get('template_network_out', 'undefined')}
+GLUE2CloudComputingInstanceTypeNetworkIn: ${template.get('template_network_in', 'UNKNOWN')}
+GLUE2CloudComputingInstanceTypeNetworkOut: ${template.get('template_network_out', 'UNKNOWN')}
 GLUE2CloudComputingInstanceTypeNetworkInfo: ${share['network_info']}
+GLUE2CloudComputingInstanceTypeDisk: ${template['template_disk']}
 % if template.get('template_ephemeral'):
 GLUE2CloudComputingInstanceTypeEphemeralStorage: ${template['template_ephemeral']}
 % endif
-GLUE2CloudComputingInstanceTypeDisk: ${template['template_disk']}
 ## XXX Missing
-## GLUE2CloudComputingInstanceTypeMarketplaceURL:
-## GLUE2CloudComputingInstanceTypeNetworkPortsIn:
-## GLUE2CloudComputingInstanceTypeNetworkPortsOut:
+## GLUE2CloudComputingInstanceTypeMarketplaceURL:
+## GLUE2CloudComputingInstanceTypeNetworkPortsIn:
+## GLUE2CloudComputingInstanceTypeNetworkPortsOut:
 
 % endfor
 ##

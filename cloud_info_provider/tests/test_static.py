@@ -19,6 +19,7 @@ class StaticProviderTest(base.TestCase):
             yaml_file = None
             site_in_suffix = False
             glite_site_info_static = "foo"
+            debug = False
 
         cwd = os.path.dirname(__file__)
         yaml_file = os.path.join(cwd, "..", "..", "etc", "sample.static.yaml")
@@ -70,7 +71,7 @@ class StaticProviderTest(base.TestCase):
                                                        defaults=defaults)
             self.assertEqual(expected, ret)
 
-    def test_get_defaults(self):
+    def test_get_defaults_from_yaml(self):
         cases = (
             (
                 'foo',  # what
@@ -103,7 +104,9 @@ class StaticProviderTest(base.TestCase):
         )
         for what, which, prefix, yaml, expected in cases:
             self.provider.yaml = yaml
-            ret = self.provider._get_defaults(what, which, prefix=prefix)
+            ret = self.provider._get_defaults_from_yaml(what,
+                                                        which,
+                                                        prefix=prefix)
             self.assertEqual(expected, ret)
 
     def test_get_what(self):
@@ -167,21 +170,60 @@ class StaticProviderTest(base.TestCase):
         yaml = {'compute': {'templates': {'defaults': {'foo': 'bar',
                                                        'baz': 'bazonk'}}}}
         self.provider.yaml = yaml
-        self.assertEqual({'foo': 'bar', 'baz': 'bazonk'},
+        self.assertEqual({'foo': 'bar', 'baz': 'bazonk', 'network_out': True},
                          self.provider.get_template_defaults())
-        self.assertEqual({'template_foo': 'bar', 'template_baz': 'bazonk'},
+        self.assertEqual({'template_foo': 'bar', 'template_baz': 'bazonk',
+                          'template_network_out': True},
                          self.provider.get_template_defaults(prefix=True))
 
     def test_get_compute_endpoint_defaults(self):
         yaml = {'compute': {'endpoints': {'defaults': {'foo': 'bar',
                                                        'baz': 'bazonk'}}}}
         self.provider.yaml = yaml
-        self.assertEqual({'foo': 'bar', 'baz': 'bazonk'},
-                         self.provider.get_compute_endpoint_defaults())
-        self.assertEqual(
-            {'compute_foo': 'bar', 'compute_baz': 'bazonk'},
-            self.provider.get_compute_endpoint_defaults(prefix=True)
-        )
+        unprefixed = self.provider.get_compute_endpoint_defaults()
+        self.assertEqual(unprefixed.pop('foo'), 'bar')
+        self.assertEqual(unprefixed.pop('baz'), 'bazonk')
+        self.assertEqual({'api_authn_method': 'oidc',
+                          'api_endpoint_technology': 'webservice',
+                          'capabilities': [
+                              'executionmanagement.dynamicvmdeploy',
+                              'security.accounting'
+                          ],
+                          'failover': False,
+                          'live_migration': False,
+                          'max_dedicated_ram': 0,
+                          'min_dedicated_ram': 0,
+                          'production_level': 'production',
+                          'service_capabilities': [
+                              'executionmanagement.dynamicvmdeploy',
+                              'security.accounting'
+                          ],
+                          'service_production_level': 'production',
+                          'total_cores': 0,
+                          'total_ram': 0,
+                          'vm_backup_restore': False}, unprefixed)
+        prefixed = self.provider.get_compute_endpoint_defaults(prefix=True)
+        self.assertEqual(prefixed.pop('compute_foo'), 'bar')
+        self.assertEqual(prefixed.pop('compute_baz'), 'bazonk')
+        self.assertEqual({'compute_api_authn_method': 'oidc',
+                          'compute_api_endpoint_technology': 'webservice',
+                          'compute_capabilities': [
+                              'executionmanagement.dynamicvmdeploy',
+                              'security.accounting'
+                          ],
+                          'compute_failover': False,
+                          'compute_live_migration': False,
+                          'compute_max_dedicated_ram': 0,
+                          'compute_min_dedicated_ram': 0,
+                          'compute_production_level': 'production',
+                          'compute_service_capabilities': [
+                              'executionmanagement.dynamicvmdeploy',
+                              'security.accounting'
+                          ],
+                          'compute_service_production_level': 'production',
+                          'compute_total_cores': 0,
+                          'compute_total_ram': 0,
+                          'compute_vm_backup_restore': False}, prefixed)
 
     def test_get_storage_endpoint_defaults(self):
         yaml = {'storage': {'endpoints': {'defaults': {'foo': 'bar',

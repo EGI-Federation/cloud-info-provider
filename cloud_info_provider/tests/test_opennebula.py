@@ -34,6 +34,7 @@ class OpenNebulaBaseProviderOptionsTest(base.TestCase):
             on_auth = 'foo'
             on_rpcxml_endpoint = 'bar'
             all_images = True
+            debug = True
 
         # Check that the required opts are there
         for opt in ('on_auth', 'on_rpcxml_endpoint'):
@@ -76,6 +77,7 @@ class OpenNebulaROCCIProviderOptionsTest(OpenNebulaBaseProviderOptionsTest):
             rocci_template_dir = 'test'
             rocci_remote_templates = False
             all_images = False
+            debug = True
 
         # Check that the required opts are there
         for opt in ('on_auth', 'on_rpcxml_endpoint', 'rocci_template_dir'):
@@ -116,6 +118,19 @@ class OpenNebulaBaseProviderTest(base.TestCase):
             all_images = True
 
         self.provider = FakeProvider(Opts())
+
+    def test_get_shares_project(self):
+        static_shares = {
+            "vo1": {},
+            "vo2": {"auth": {"group": "foo"}}
+        }
+        self.provider.static.get_compute_shares.return_value = static_shares
+        expected_shares = {
+            "vo1": {"project": "vo1", "auth": {"group": "vo1"}},
+            "vo2": {"project": "foo", "auth": {"group": "foo"}}
+        }
+        self.assertDictEqual(expected_shares,
+                             self.provider.get_compute_shares())
 
     def test_get_images(self):
         self.assertDictEqual(

@@ -82,6 +82,18 @@ class OpenStackProviderTest(base.TestCase):
             for f in fields:
                 self.assertIn(f, v)
 
+    def test_get_shares(self):
+        with utils.nested(
+                mock.patch.object(self.provider.static, 'get_compute_shares'),
+        ) as (m_get_compute_shares, ):
+            m_get_compute_shares.return_value = {
+                'vo1': {'auth': {'project_id': 'foobar'}}
+            }
+            shares = self.provider.get_compute_shares(**{
+                'auth': {'project_id': None}})
+            self.assertEqual('foobar', shares['vo1']['project'])
+            self.assertTrue(m_get_compute_shares.called)
+
     def test_get_templates_with_defaults(self):
         expected_templates = {}
         url = 'http://schemas.openstack.org/template/resource'
@@ -570,20 +582,27 @@ class OpenStackProviderTest(base.TestCase):
             'compute_service_name': 'http://foo.example.org:5000/v2',
         }
 
-        with mock.patch.object(
-                self.provider.static, 'get_compute_endpoint_defaults'
-        ) as m_get_endpoint_defaults:
+        with utils.nested(
+                mock.patch.object(self.provider.static,
+                                  'get_compute_endpoint_defaults'),
+                mock.patch('cloud_info_provider.providers.gocdb.get_goc_info'),
+        ) as (m_get_endpoint_defaults, m_get_goc_info):
             m_get_endpoint_defaults.return_value = {
                 'compute_occi_api_version': '11.11',
                 'compute_compute_api_version': '99.99',
             }
+            m_get_goc_info.return_value = {'gocfoo': 'baz'}
             r = mock.Mock()
             r.service_catalog = FAKES.catalog
             self.provider.auth_plugin.get_access.return_value = r
             endpoints = self.provider.get_compute_endpoints(**{
                 'auth': {'project_id': None}})
             self.assertTrue(m_get_endpoint_defaults.called)
-
+            m_get_goc_info.assert_called_with(
+                'http://foo.example.org:5000/v2',
+                'org.openstack.nova',
+                False)
+        self.assertEqual('baz', endpoints.pop('gocfoo'))
         for k, v in expected_endpoints['endpoints'].items():
             self.assertDictContainsSubset(v, endpoints['endpoints'].get(k, {}))
 
@@ -608,17 +627,25 @@ class OpenStackProviderTest(base.TestCase):
             'compute_service_name': 'http://foo.example.org:5000/v2',
         }
 
-        with mock.patch.object(
-                self.provider.static, 'get_compute_endpoint_defaults'
-        ) as m_get_endpoint_defaults:
+        with utils.nested(
+                mock.patch.object(self.provider.static,
+                                  'get_compute_endpoint_defaults'),
+                mock.patch('cloud_info_provider.providers.gocdb.get_goc_info'),
+        ) as (m_get_endpoint_defaults, m_get_goc_info):
             m_get_endpoint_defaults.return_value = {}
+            m_get_goc_info.return_value = {'gocfoo': 'baz'}
             r = mock.Mock()
             r.service_catalog = FAKES.catalog
             self.provider.auth_plugin.get_access.return_value = r
             endpoints = self.provider.get_compute_endpoints(**{
                 'auth': {'project_id': None}})
             self.assertTrue(m_get_endpoint_defaults.called)
+            m_get_goc_info.assert_called_with(
+                'http://foo.example.org:5000/v2',
+                'org.openstack.nova',
+                False)
 
+        self.assertEqual('baz', endpoints.pop('gocfoo'))
         self.assertDictEqual(expected_endpoints, endpoints)
 
     def test_occify_terms(self):
@@ -830,20 +857,28 @@ class OoiProviderTest(OpenStackProviderTest):
             'compute_service_name': 'http://foo.example.org:5000/v2',
         }
 
-        with mock.patch.object(
-                self.provider.static, 'get_compute_endpoint_defaults'
-        ) as m_get_endpoint_defaults:
+        with utils.nested(
+                mock.patch.object(self.provider.static,
+                                  'get_compute_endpoint_defaults'),
+                mock.patch('cloud_info_provider.providers.gocdb.get_goc_info'),
+        ) as (m_get_endpoint_defaults, m_get_goc_info):
             m_get_endpoint_defaults.return_value = {
                 'compute_occi_api_version': '11.11',
                 'compute_compute_api_version': '99.99',
             }
+            m_get_goc_info.return_value = {'gocfoo': 'baz'}
             r = mock.Mock()
             r.service_catalog = FAKES.catalog
             self.provider.auth_plugin.get_access.return_value = r
             endpoints = self.provider.get_compute_endpoints(**{
                 'auth': {'project_id': None}})
             self.assertTrue(m_get_endpoint_defaults.called)
+            m_get_goc_info.assert_called_with(
+                'https://cloud.example.org:8787/',
+                'eu.egi.cloud.vm-management.occi',
+                False)
 
+        self.assertEqual('baz', endpoints.pop('gocfoo'))
         for k, v in expected_endpoints['endpoints'].items():
             self.assertDictContainsSubset(v, endpoints['endpoints'].get(k, {}))
 
@@ -864,15 +899,23 @@ class OoiProviderTest(OpenStackProviderTest):
             'compute_service_name': 'http://foo.example.org:5000/v2',
         }
 
-        with mock.patch.object(
-                self.provider.static, 'get_compute_endpoint_defaults'
-        ) as m_get_endpoint_defaults:
+        with utils.nested(
+                mock.patch.object(self.provider.static,
+                                  'get_compute_endpoint_defaults'),
+                mock.patch('cloud_info_provider.providers.gocdb.get_goc_info'),
+        ) as (m_get_endpoint_defaults, m_get_goc_info):
             m_get_endpoint_defaults.return_value = {}
+            m_get_goc_info.return_value = {'gocfoo': 'baz'}
             r = mock.Mock()
             r.service_catalog = FAKES.catalog
             self.provider.auth_plugin.get_access.return_value = r
             endpoints = self.provider.get_compute_endpoints(**{
                 'auth': {'project_id': None}})
             self.assertTrue(m_get_endpoint_defaults.called)
+            m_get_goc_info.assert_called_with(
+                'https://cloud.example.org:8787/',
+                'eu.egi.cloud.vm-management.occi',
+                False)
 
+        self.assertEqual('baz', endpoints.pop('gocfoo'))
         self.assertDictEqual(expected_endpoints, endpoints)
