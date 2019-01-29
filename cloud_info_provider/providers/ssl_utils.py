@@ -34,6 +34,10 @@ def get_endpoint_ca_information(endpoint_url, insecure=False, cafile=None,
     if scheme != 'https':
         return ca_info
 
+    # use default port for https
+    if not port:
+        port = 443
+
     try:
         ctx = SSL.Context(SSL.SSLv23_METHOD)
         ctx.set_options(SSL.OP_NO_SSLv2)
