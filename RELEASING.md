@@ -60,3 +60,12 @@ git push --set-upstream origin prepare-0.9.0
 # Create pull request
 git pull-request
 ```
+
+## Updating the entry on the AppDB
+
+* Sign in to https://appdb.egi.eu/store/software/cloud.info.provider/releases/
+* Create a new update (or a new release if appropriate)
+  * Document description, release notes and changelog (same as the one used on
+    GitHub) as needed.
+  * Upload files/packages downloaded from the GitHub release
+  * Publish release
