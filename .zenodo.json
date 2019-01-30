@@ -1,6 +1,6 @@
 {
     "license": "Apache-2.0",
-    "description": "<ul>\n<li>Split OpenStack and OOI providers. (Enol Fernandez)</li>\n<li>Fix os_tpl identifier for OpenNebula with rOCCI. (Boris Parak)</li>\n<li>Clarify usage of project ID in configuration file. (Pablo Orviz)</li>\n<li>Review and update output to implement latest GLUE2.1 updates. (Enol Fernandez, Baptiste Grenier)</li>\n<li>Extract information from the GOCDB. (Enol Fernandez)</li>\n<li>Add debug switch. (Enol Fernandez)</li>\n<li>Clean up documentation. (Enol Fernandez)</li>\n<li>Use stevedore module to load code extensions. (Pablo Orviz)</li>\n<li>Document release management. (Baptiste Grenier)</li>\n</ul>",
+    "description": "<ul>\n<li>Split OpenStack and OOI providers. (Enol Fernandez)</li>\n<li>Fix os_tpl identifier for OpenNebula with rOCCI. (Boris Parak)</li>\n<li>Clarify usage of project ID in configuration file. (Pablo Orviz)</li>\n<li>Review and update output to implement latest GLUE2.1 updates. (Enol Fernandez, Baptiste Grenier)</li>\n<li>Extract information from the GOCDB. (Enol Fernandez)</li>\n<li>Add debug switch. (Enol Fernandez)</li>\n<li>Clean up documentation. (Enol Fernandez)</li>\n<li>Use stevedore module to load code extensions. (Pablo Orviz)</li>\n<li>Document release management. (Baptiste Grenier)</li>\n<li>Fixes <a href='https://github.com/EGI-Foundation/cloud-info-provider/issues/140'>#140</a>: SSL utils fail when URL does not contain port.<il>\n</ul>",
     "language": "eng",
     "title": "EGI-Foundation/cloud-info-provider: 0.11.1",
     "keywords": [
