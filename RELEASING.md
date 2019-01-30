@@ -14,7 +14,7 @@ Steps:
     * Document changes impacting deployment/configuration/usage
 * Updating AUTHORS as needed
 * Updating zenodo.json as needed
-  * Bump version, description and authors
+  * Bump version, description, authors and path to tree (at bottom)
 * Merging a PR for updating build files to bump release version and changelog
 * Creating a Tag in GitHub
   * Release title == Tag version, in a [semver](https://semver.org/) form like 0.42.0

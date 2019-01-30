@@ -6,7 +6,7 @@
 
 Summary: Information provider for Cloud Compute and Cloud Storage services for BDII
 Name: cloud-info-provider
-Version: 0.11.0
+Version: 0.11.1
 Release: 1%{?dist}
 Group: Applications/Internet
 License: Apache Software License 2.0
@@ -57,6 +57,8 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/cloud-info-provider/
 
 %changelog
+* Tue Jan 29 2019 Baptiste Grenier <baptiste.grenier@egi.eu> 0.11.1
+- Fixes #140: SSL utils fail when URL does not contain port. (Enol Fernandez)
 * Sun Jan 27 2019 Baptiste Grenier <baptiste.grenier@egi.eu> 0.11.0
 - Split OpenStack and OOI providers. (Enol Fernandez)
 - Fix os_tpl identifier for OpenNebula with rOCCI. (Boris Parak)
