@@ -14,13 +14,13 @@
         }
     ],
     "upload_type": "software",
-    "version": "0.11.0",
+    "version": "0.11.1",
     "communities": [
         {
             "identifier": "egi-foundation"
         }
     ],
-    "publication_date": "2019-01-27",
+    "publication_date": "2019-01-30",
     "creators": [
         {
             "orcid": "0000-0002-5686-3193",
@@ -34,11 +34,11 @@
         },
         {
             "orcid": "0000-0002-5152-5902",
-            "affiliation": "@EGI-Foundation",
+            "affiliation": "EGI-Foundation",
             "name": "Enol Fern\u00e1ndez"
         },
         {
-            "affiliation": "@CESNET",
+            "affiliation": "CESNET",
             "name": "Boris Parak"
         },
         {
@@ -62,7 +62,7 @@
             "name": "Salvatore Pinto"
         },
         {
-            "affiliation": "@adimobile",
+            "affiliation": "adimobile",
             "name": "Carlos Gimeno Y\u00e1\u00f1ez"
         }
     ],
