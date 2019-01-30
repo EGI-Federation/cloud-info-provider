@@ -19,6 +19,8 @@ Steps:
 * Creating a Tag in GitHub
   * Release title == Tag version, in a [semver](https://semver.org/) form like 0.42.0
   * Description is the changelog added to the build files
+* Publishing release to [EGI AppDB](https://appdb.egi.eu/store/software/cloud.info.provider/releases)
+* Presenting release to [EGI UMD Release Team](https://wiki.egi.eu/wiki/URT)
 
 ### Doing it from the Command Line Interface
 
