@@ -1,6 +1,6 @@
 # Instructions for creating a new release
 
-Once a release and corresponding tag are created in GitHub, packages will be
+Once a release and corresponding tag have been created in GitHub, packages will be
 built using Travis and attached to the tag.
 
 ## Preparing the release
@@ -65,7 +65,7 @@ git pull-request
 
 ## Updating the entry on the AppDB
 
-* Sign in to https://appdb.egi.eu/store/software/cloud.info.provider/releases/
+* Sign in to [project page in AppDB](https://appdb.egi.eu/store/software/cloud.info.provider/releases/)
 * Create a new update (or a new release if appropriate)
   * Document description, release notes and changelog (same as the one used on
     GitHub) as needed.
