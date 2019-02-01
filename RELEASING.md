@@ -1,6 +1,6 @@
 # Instructions for creating a new release
 
-Once a release and corresponding tag are created in GitHub, packages will be
+Once a release and corresponding tag have been created in GitHub, packages will be
 built using Travis and attached to the tag.
 
 ## Preparing the release
@@ -19,6 +19,8 @@ Steps:
 * Creating a Tag in GitHub
   * Release title == Tag version, in a [semver](https://semver.org/) form like 0.42.0
   * Description is the changelog added to the build files
+* Publishing release to [EGI AppDB](https://appdb.egi.eu/store/software/cloud.info.provider/releases)
+* Presenting release to [EGI UMD Release Team](https://wiki.egi.eu/wiki/URT)
 
 ### Doing it from the Command Line Interface
 
@@ -60,3 +62,12 @@ git push --set-upstream origin prepare-0.9.0
 # Create pull request
 git pull-request
 ```
+
+## Updating the entry on the AppDB
+
+* Sign in to [project page in AppDB](https://appdb.egi.eu/store/software/cloud.info.provider/releases/)
+* Create a new update (or a new release if appropriate)
+  * Document description, release notes and changelog (same as the one used on
+    GitHub) as needed.
+  * Upload files/packages downloaded from the GitHub release
+  * Publish release
