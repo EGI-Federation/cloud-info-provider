@@ -71,3 +71,18 @@ git pull-request
     GitHub) as needed.
   * Upload files/packages downloaded from the GitHub release
   * Publish release
+
+## Submitting the package to EGI Cloud Middleware Distribution (CMD)
+
+To distribute the `cloud-info-provider` as part of CMD, it's required to
+follow the
+[EGI Software provisioning process](https://wiki.egi.eu/wiki/EGI_Software_Provisioning).
+
+* Submitting a [GGUS ticket](https://ggus.eu/?mode=ticket_submit) to the
+  `EGI Software provisioning support` Support Unit
+  * Ticket category: release
+  * Type of issue: Middleware
+  * Assign to support unit: `EGI Software Provisioning Support`
+  * Version number
+  * Link to release notes (GitHub and AppDB release pages)
+  * List of packages to release in UMD
