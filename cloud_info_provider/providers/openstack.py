@@ -242,7 +242,7 @@ class OpenStackProvider(providers.BaseProvider):
 
     @_rescope
     def get_templates(self, **kwargs):
-        """Return templates/flavors selected accroding to --select-flavors"""
+        """Return templates/flavors selected according to --select-flavors"""
         flavors = {}
         defaults = {'template_platform': 'amd64',
                     'template_network': 'private'}
@@ -250,11 +250,10 @@ class OpenStackProvider(providers.BaseProvider):
         tpl_sch = defaults.get('template_schema', 'resource')
         URI = 'http://schemas.openstack.org/template/'
         add_all = self.select_flavors == 'all'
-        # extra-specs arguments must match the pattern 'extra_specs_\w+_key'
-        extra_specs_keys = [_opt
-            for _opt in vars(self.opts)
-                if re.search('extra_specs_\w+_key', _opt)]
-
+        # properties
+        property_keys = [_opt for _opt in vars(self.opts)
+                         if _opt.startswith('property_')
+                         and not _opt.endswith('_value')]
         for flavor in self.nova.flavors.list(detailed=True):
             add_pub = self.select_flavors == 'public' and flavor.is_public
             add_priv = (self.select_flavors == 'private' and not
@@ -270,23 +269,22 @@ class OpenStackProvider(providers.BaseProvider):
                         'template_ephemeral': flavor.ephemeral,
                         'template_disk': flavor.disk,
                         'template_cpu': flavor.vcpus})
-            # extra-specs
-            d_extra_specs = {}
-            for k in extra_specs_keys:
+            # properties
+            d_properties = {}
+            for k in property_keys:
                 opts_k = vars(self.opts)[k]
-                v = flavor.get_keys().get(
-                    ':'.join(['aggregate_instance_extra_specs', opts_k]), False)
+                v = flavor.get_keys().get(opts_k)
+                property_id = re.search('property_(\w+)', k).group(1)
+                # if '_value' suffix provided, validate it
                 try:
-                    opts_v = vars(self.opts)[k.replace('key', 'value')]
+                    opts_v = vars(self.opts)['_'.join([k, 'value'])]
                 except KeyError:
                     opts_v = False
-
-                extra_specs_id = re.search('extra_specs_(\w+)_key', k).group(1)
                 if opts_v:
-                    d_extra_specs['template_%s' % extra_specs_id] = v == opts_v
+                    d_properties['template_%s' % property_id] = v == opts_v
                 else:
-                    d_extra_specs['template_%s' % extra_specs_id] = v
-            aux.update(d_extra_specs)
+                    d_properties['template_%s' % property_id] = v
+            aux.update(d_properties)
 
             flavors[flavor.id] = aux
         return flavors
@@ -519,42 +517,37 @@ class OpenStackProvider(providers.BaseProvider):
             help=('If set, include information about all images (including '
                   'snapshots), otherwise only publish images with cloudkeeper '
                   'metadata, ignoring the others.'))
-        # EXTRA SPECS must match wildcard 'extra-specs-*-key' for easier
-        # management (see get_templates() method)
+        # PROPERTIES
+        # If 'property-<property>-value' is provided, the capability will only
+        # be published when the given value matches the one in the flavor
         parser.add_argument(
-            '--extra-specs-infiniband-key',
-            metavar='EXTRA_SPECS_KEY',
+            '--property-infiniband',
+            metavar='PROPERTY_KEY',
             default='infiniband',
-            help=('When Infiniband is supported, this option specifies the '
-                  'key id in the flavor\'s extra-specs field'))
+            help=('Flavor\'s property key for Infiniband support.'))
         parser.add_argument(
-            '--extra-specs-infiniband-value',
-            metavar='EXTRA_SPECS_VALUE',
+            '--property-infiniband-value',
+            metavar='PROPERTY_VALUE',
             default='true',
             help=('When Infiniband is supported, this option specifies the '
-                  'value to search for/match in the flavor\'s extra-specs '
-                  'field'))
+                  'value to match.'))
         parser.add_argument(
-            '--extra-specs-gpu-number-key',
-            metavar='EXTRA_SPECS_KEY',
+            '--property-gpu-number',
+            metavar='PROPERTY_KEY',
             default='gpu_number',
-            help=('Specifies the key id in the flavor\'s extra-specs field '
-                  'that refers to the number of GPUs'))
+            help=('Flavor\'s property key pointing to number of GPUs.'))
         parser.add_argument(
-            '--extra-specs-gpu-vendor-key',
-            metavar='EXTRA_SPECS_KEY',
+            '--property-gpu-vendor',
+            metavar='PROPERTY_KEY',
             default='gpu_vendor',
-            help=('Specifies the key id in the flavor\'s extra-specs field '
-                  'that refers to the GPU vendor'))
+            help=('Flavor\'s property key pointing to the GPU vendor.'))
         parser.add_argument(
-            '--extra-specs-gpu-model-key',
-            metavar='EXTRA_SPECS_KEY',
+            '--property-gpu-model',
+            metavar='PROPERTY_KEY',
             default='gpu_model',
-            help=('Specifies the key id in the flavor\'s extra-specs field '
-                  'that refers to the GPU model'))
+            help=('Flavor\'s property key pointing to the GPU model.'))
         parser.add_argument(
-            '--extra-specs-gpu-driver-key',
-            metavar='EXTRA_SPECS_KEY',
+            '--property-gpu-driver',
+            metavar='PROPERTY_KEY',
             default='gpu_driver',
-            help=('Specifies the key id in the flavor\'s extra-specs field '
-                  'that refers to the GPU driver version'))
+            help=('Flavor\'s property key pointing to the GPU driver version'))
