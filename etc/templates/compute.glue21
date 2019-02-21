@@ -372,11 +372,14 @@ GLUE2EntityOtherInfo: ${other}
 ## GLUE2CloudComputingImageDefaultUsername:
 ## GLUE2CloudComputingImageDefaultPassword:
 
-## Incoming NetworkTraffic for $img_id
-% if image.get('network_traffic_in'):
-% for idx,network_conf in enumerate(image.get('network_traffic_in')):
+## All NetworkTraffic for $img_id
 <%
-    network_type = 'inbound'
+    network_types = {'inbound': 'network_traffic_in', 'outbound': 'network_traffic_out'}
+%>\
+% for network_type, network_traffic in network_types.items():
+% if image.get(network_traffic):
+% for idx,network_conf in enumerate(image.get(network_traffic)):
+<%
     network_conf_id = "%s_%s_%s" % (network_type, network_conf['ad:net_protocol'], idx)
 %>\
 dn: GLUE2CloudComputingImageNetwokConfigurationID=${network_conf_id},GLUE2CloudComputingImageID=${img_id},GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${suffix}
@@ -394,29 +397,7 @@ GLUE2CloudComputingImageNetworkConfigurationAddressRange: ${network_conf['ad:net
 
 % endfor
 % endif
-##
-## Outgoing NetworkTraffic for $img_id
-% if image.get('network_traffic_out'):
-% for idx,network_conf in enumerate(image.get('network_traffic_out')):
-<%
-    network_type = 'outbound'
-    network_conf_id = "%s_%s_%s" % (network_type, network_conf['ad:net_protocol'], idx)
-%>\
-dn: GLUE2CloudComputingImageNetwokConfigurationID=${network_conf_id},GLUE2CloudComputingImageID=${img_id},GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${suffix}
-objectClass: GLUE2Entity
-objectClass: GLUE2CloudComputingImageNetworkConfiguration
-GLUE2EntityName: ${network_conf_id}
-GLUE2CloudComputingImageNetworkConfigurationID: ${network_conf_id}
-GLUE2EntityCreationTime: ${timestamp}
-GLUE2EntityValidity: ${validity}
-GLUE2CloudComputingImageForeignKey: ${img_id}
-GLUE2CloudComputingImageNetworkConfigurationDirection: ${network_type}
-GLUE2CloudComputingImageNetworkConfigurationProtocol: ${network_conf['ad:net_protocol']}
-GLUE2CloudComputingImageNetworkConfigurationPort: ${network_conf['ad:net_port']}
-GLUE2CloudComputingImageNetworkConfigurationAddressRange: ${network_conf['ad:net_range']}
-
 % endfor
-% endif
 ## End loop on images
 % endfor
 ##
