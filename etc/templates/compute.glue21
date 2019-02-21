@@ -371,7 +371,7 @@ GLUE2EntityOtherInfo: ${other}
 ## XXX Not exposed for security reasons
 ## GLUE2CloudComputingImageDefaultUsername:
 ## GLUE2CloudComputingImageDefaultPassword:
-##
+
 ## Incoming NetworkTraffic for $img_id
 % if image.get('network_traffic_in'):
 % for idx,network_conf in enumerate(image.get('network_traffic_in')):
