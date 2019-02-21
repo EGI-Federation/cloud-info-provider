@@ -2,6 +2,7 @@ import copy
 import functools
 import json
 import logging
+import re
 
 from cloud_info_provider import exceptions
 from cloud_info_provider import providers
@@ -241,7 +242,7 @@ class OpenStackProvider(providers.BaseProvider):
 
     @_rescope
     def get_templates(self, **kwargs):
-        """Return templates/flavors selected accroding to --select-flavors"""
+        """Return templates/flavors selected according to --select-flavors"""
         flavors = {}
         defaults = {'template_platform': 'amd64',
                     'template_network': 'private'}
@@ -249,11 +250,10 @@ class OpenStackProvider(providers.BaseProvider):
         tpl_sch = defaults.get('template_schema', 'resource')
         URI = 'http://schemas.openstack.org/template/'
         add_all = self.select_flavors == 'all'
-        opts_infiniband_k = self.opts.extra_specs_infiniband_key
-        opts_infiniband_v = self.opts.extra_specs_infiniband_value
-        flavor_infiniband_k = ':'.join([
-            'aggregate_instance_extra_specs',
-            opts_infiniband_k])
+        # properties
+        property_keys = [_opt for _opt in vars(self.opts)
+                         if _opt.startswith('property_')
+                         and not _opt.endswith('_value')]
         for flavor in self.nova.flavors.list(detailed=True):
             add_pub = self.select_flavors == 'public' and flavor.is_public
             add_priv = (self.select_flavors == 'private' and not
@@ -263,16 +263,29 @@ class OpenStackProvider(providers.BaseProvider):
             aux = defaults.copy()
             flavor_id = str(getattr(flavor, 'id'))
             template_id = '%s%s#%s' % (URI, tpl_sch, self.adapt_id(flavor_id))
-            flavor_infiniband_v = flavor.get_keys().get(
-                flavor_infiniband_k, False)
-            has_infiniband = flavor_infiniband_v == opts_infiniband_v
             aux.update({'template_id': template_id,
                         'template_native_id': flavor_id,
                         'template_memory': flavor.ram,
                         'template_ephemeral': flavor.ephemeral,
                         'template_disk': flavor.disk,
-                        'template_cpu': flavor.vcpus,
-                        'template_infiniband': has_infiniband})
+                        'template_cpu': flavor.vcpus})
+            # properties
+            d_properties = {}
+            for k in property_keys:
+                opts_k = vars(self.opts)[k]
+                v = flavor.get_keys().get(opts_k)
+                property_id = re.search('property_(\w+)', k).group(1)
+                # if '_value' suffix provided, validate it
+                try:
+                    opts_v = vars(self.opts)['_'.join([k, 'value'])]
+                except KeyError:
+                    opts_v = False
+                if opts_v:
+                    d_properties['template_%s' % property_id] = v == opts_v
+                else:
+                    d_properties['template_%s' % property_id] = v
+            aux.update(d_properties)
+
             flavors[flavor.id] = aux
         return flavors
 
@@ -504,16 +517,37 @@ class OpenStackProvider(providers.BaseProvider):
             help=('If set, include information about all images (including '
                   'snapshots), otherwise only publish images with cloudkeeper '
                   'metadata, ignoring the others.'))
+        # PROPERTIES
+        # If 'property-<property>-value' is provided, the capability will only
+        # be published when the given value matches the one in the flavor
         parser.add_argument(
-            '--extra-specs-infiniband-key',
-            metavar='EXTRA_SPECS_KEY',
+            '--property-infiniband',
+            metavar='PROPERTY_KEY',
             default='infiniband',
-            help=('When Infiniband is supported, this option specifies the '
-                  'key id in the flavor\'s extra-specs field'))
+            help=('Flavor\'s property key for Infiniband support.'))
         parser.add_argument(
-            '--extra-specs-infiniband-value',
-            metavar='EXTRA_SPECS_VALUE',
+            '--property-infiniband-value',
+            metavar='PROPERTY_VALUE',
             default='true',
             help=('When Infiniband is supported, this option specifies the '
-                  'value to search for/match in the flavor\'s extra-specs '
-                  'field'))
+                  'value to match.'))
+        parser.add_argument(
+            '--property-gpu-number',
+            metavar='PROPERTY_KEY',
+            default='gpu_number',
+            help=('Flavor\'s property key pointing to number of GPUs.'))
+        parser.add_argument(
+            '--property-gpu-vendor',
+            metavar='PROPERTY_KEY',
+            default='gpu_vendor',
+            help=('Flavor\'s property key pointing to the GPU vendor.'))
+        parser.add_argument(
+            '--property-gpu-model',
+            metavar='PROPERTY_KEY',
+            default='gpu_model',
+            help=('Flavor\'s property key pointing to the GPU model.'))
+        parser.add_argument(
+            '--property-gpu-driver',
+            metavar='PROPERTY_KEY',
+            default='gpu_driver',
+            help=('Flavor\'s property key pointing to the GPU driver version'))
