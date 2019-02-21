@@ -1,4 +1,4 @@
-import ast
+import json
 import os
 import string
 
@@ -34,4 +34,4 @@ def get_tag_value(xml, tag):
 
 def pythonize_network_info(network_info):
     '''Pythonize network_info string'''
-    return ast.literal_eval(network_info.replace(':"', '"').replace("=>", ":"))
+    return json.loads(network_info.replace(':"', '"').replace("=>", ":"))
