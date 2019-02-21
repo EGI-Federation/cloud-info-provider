@@ -373,27 +373,32 @@ GLUE2EntityOtherInfo: ${other}
 ## GLUE2CloudComputingImageDefaultPassword:
 
 ## All NetworkTraffic for $img_id
-% for idx,network_conf in enumerate(image.get(x) for x in ['network_traffic_in', 'network_traffic_out']):
-% if network_conf:
 <%
-    network_conf_id = "%s_%s_%s" % (network_conf['direction'], network_conf['protocol'], idx)
+    network_types = {'inbound': 'network_traffic_in', 'outbound': 'network_traffic_out'}
+%>\
+% for network_type, network_traffic in network_types.items():
+% if image.get(network_traffic):
+% for idx,network_conf in enumerate(image.get(network_traffic)):
+<%
+    network_conf_id = "%s_%s_%s" % (network_type, network_conf['ad:net_protocol'], idx)
 %>\
 dn: GLUE2CloudComputingImageNetwokConfigurationID=${network_conf_id},GLUE2CloudComputingImageID=${img_id},GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${suffix}
 objectClass: GLUE2Entity
 objectClass: GLUE2CloudComputingImageNetworkConfiguration
-GLUE2EntityName: ${network_conf['name']}
+GLUE2EntityName: ${network_conf_id}
 GLUE2CloudComputingImageNetworkConfigurationID: ${network_conf_id}
 GLUE2EntityCreationTime: ${timestamp}
 GLUE2EntityValidity: ${validity}
 GLUE2CloudComputingImageForeignKey: ${img_id}
-GLUE2CloudComputingImageNetworkConfigurationDirection: ${network_conf['direction']}
-GLUE2CloudComputingImageNetworkConfigurationProtocol: ${network_conf['protocol']}
-GLUE2CloudComputingImageNetworkConfigurationPort: ${network_conf['port']}
-GLUE2CloudComputingImageNetworkConfigurationAddressRange: ${network_conf['address_range']}
+GLUE2CloudComputingImageNetworkConfigurationDirection: ${network_type}
+GLUE2CloudComputingImageNetworkConfigurationProtocol: ${network_conf['ad:net_protocol']}
+GLUE2CloudComputingImageNetworkConfigurationPort: ${network_conf['ad:net_port']}
+GLUE2CloudComputingImageNetworkConfigurationAddressRange: ${network_conf['ad:net_range']}
 
+% endfor
 % endif
 % endfor
-
+## End loop on images
 % endfor
 ##
 ## List of templates - GLUE2CloudComputingInstanceType
