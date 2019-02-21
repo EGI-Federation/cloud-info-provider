@@ -1,3 +1,4 @@
+import ast
 import os
 import string
 
@@ -29,3 +30,8 @@ def get_tag_value(xml, tag):
         return xml.getElementsByTagName(tag)[0].firstChild.nodeValue
     else:
         return None
+
+
+def pythonize_network_info(network_info):
+    '''Pythonize network_info string'''
+    return ast.literal_eval(network_info.replace(':"', '"').replace("=>", ":"))

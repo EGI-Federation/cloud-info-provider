@@ -1,4 +1,3 @@
-import ast
 import copy
 import functools
 import json
@@ -329,12 +328,12 @@ class OpenStackProvider(providers.BaseProvider):
                     continue
 
             if 'ad:traffic_in' in extra_attrs:
-                aux_img['network_traffic_in'] = ast.literal_eval(
-                        extra_attrs['ad:traffic_in'].replace(':"', '"').replace("=>", ":"))
+                aux_img['network_traffic_in'] = utils.pythonize_network_info(
+                    extra_attrs['ad:traffic_in'])
 
             if 'ad:traffic_out' in extra_attrs:
-                aux_img['network_traffic_out'] = ast.literal_eval(
-                    extra_attrs['ad:traffic_out'].replace(':"', '"').replace("=>", ":"))
+                aux_img['network_traffic_out'] = utils.pythonize_network_info(
+                    extra_attrs['ad:traffic_out'])
 
             aux_img.update({
                 'image_native_id': img_id,
