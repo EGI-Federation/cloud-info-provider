@@ -1,0 +1,30 @@
+<%
+    static_compute_info = attributes['static_compute_info']
+    shares = attributes['shares']
+    images = {image_id: image for vo, share in shares.items() for image_id, image in share['images'].items()}
+%>\
+{"images": [
+% for image_id, image in images.items():
+<%
+    if image['image_description'] is None:
+        image['image_description'] = ('%(image_name)s version '
+            '%(image_version)s on '
+            '%(image_os_family)s %(image_os_name)s '
+            '%(image_os_version)s '
+            '%(image_platform)s' % image)
+%>\
+        {
+            "image_id": "${image['id']}",
+            "image_name": "${image['image_name']}",
+            "image_description": "${image['image_description']}",
+            "image_marketplace_id": "${image['image_marketplace_id']}",
+            "architecture": "${image['architecture']}",
+            "image_os": "${image['image_os_name']}",
+            "distribution": "${image['os_distro']}",
+            "version": "${image['image_os_version']}",
+            "type": "${image['os_distro']}",
+            "gpu_driver": "NA",
+            "cuda_support": "NA"
+        }${'' if loop.last else ','}
+% endfor
+]}
