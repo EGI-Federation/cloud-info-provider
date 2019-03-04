@@ -1,3 +1,10 @@
+python-cloud-info-provider-openstack (0.11.3-1) xenial; urgency=medium
+
+  [ Baptiste Grenier ]
+  * Fix handling of network info (#151).
+
+ -- Baptiste Grenier <baptiste.grenier@egi.eu>  Mon, 04 Mar 2019 17:57:33 +0100
+
 python-cloud-info-provider-openstack (0.11.2-1) xenial; urgency=medium
 
   [ Enol Fernández ]
