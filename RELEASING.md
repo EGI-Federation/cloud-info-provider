@@ -7,6 +7,7 @@ built using Travis and attached to the tag.
 
 Steps:
 
+* Open an issue to track the release process
 * Checking changes since latest tag (using browser or CLI)
 * Agreeing release version
 * Preparing changelog
@@ -25,25 +26,28 @@ Steps:
 ### Doing it from the Command Line Interface
 
 ```console
+# Using hub feature: https://hub.github.com/
+# git must be an alias to hub
+
+# Create a new issue
+git create -m 'Release a new pacakge version'
 # Synchronize fork with upstream
 git fetch upstream
 git rebase upstream/master master
 git checkout master
 # Check latest tag
-git tag --list
+git tag --list --sort version:refname
 # Compare latest tag (0.8.3 here) with master
-# hub feature, showing diff in GitHub
-# https://hub.github.com/
-git compare EGI-FCTF 0.8.3..master
-# In the CLI
+# Using GitHub
+git compare EGI-Foundation 0.8.3..master
+# Using CLI
 git log --abbrev-commit 0.8.3..master
 # Prepare a PR to prepare version (0.9.0 here)
 git checkout -b prepare-0.9.0
-# Prepare a complete changelog in a text file
+# Prepare a complete changelog and add it to the issue as reference
 # Take care to changes in dependencies and configuration
 # Depending on the changes update relevant packages
 # Debian: debian/changelog: add an entry at the top
-# Debian: changelog: add an entry at the top
 # Debian: dependencies in debian/control files
 # Debian: debs/cloud-info-provider-opennebula/debian/changelog
 # Debian: debs/cloud-info-provider-openstack/debian/changelog
@@ -54,6 +58,7 @@ git checkout -b prepare-0.9.0
 # Update AUTHORS file if needed
 vim AUTHORS
 # Update Zenodo configuration
+# Description, title, version, publication_Date
 vim .zenodo.json
 # Commit changes
 git commit -am 'Prepare release 0.9.0'
