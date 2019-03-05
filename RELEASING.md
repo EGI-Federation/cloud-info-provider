@@ -58,7 +58,7 @@ git checkout -b prepare-0.9.0
 # Update AUTHORS file if needed
 vim AUTHORS
 # Update Zenodo configuration
-# Description, title, version, publication_Date
+# Description, title, version, publication_date, creators
 vim .zenodo.json
 # Commit changes
 git commit -am 'Prepare release 0.9.0'
@@ -66,6 +66,8 @@ git commit -am 'Prepare release 0.9.0'
 git push --set-upstream origin prepare-0.9.0
 # Create pull request
 git pull-request
+# After PR merging
+git release create -m 0.9.0 0.9.0
 ```
 
 ## Updating the entry on the AppDB
