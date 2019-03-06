@@ -249,7 +249,7 @@ class OpenStackProvider(providers.BaseProvider):
         tpl_sch = defaults.get('template_schema', 'resource')
         URI = 'http://schemas.openstack.org/template/'
         add_all = self.select_flavors == 'all'
-        for flavor in self.nova.flavors.list(detailed=True):
+        for flavor in self.nova.flavors.list(detailed=True, is_public=None):
             add_pub = self.select_flavors == 'public' and flavor.is_public
             add_priv = (self.select_flavors == 'private' and not
                         flavor.is_public)
