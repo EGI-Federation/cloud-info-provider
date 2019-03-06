@@ -23,6 +23,12 @@ Install the cloud-information-provider and the Cloud Middleware dependencies.
 %files
 
 %changelog
+* Mon Mar 04 2019 Baptiste Grenier <baptiste.grenier@egi.eu> 0.11.3
+- Fix handling of network info (#151). (Baptiste Grenier)
+* Thu Jan 31 2019 Enol Fernández <enol.fernandez@egi.eu> 0.11.2
+- Version bump (Enol Fernandez)
+* Tue Jan 29 2019 Baptiste Grenier <baptiste.grenier@egi.eu> 0.11.1
+- Version bump (Baptiste Grenier)
 * Sun Jan 27 2019 Baptiste Grenier <baptiste.grenier@egi.eu> 0.11.0
 - Fix os_tpl identifier for OpenNebula with rOCCI. (Boris Parak)
 - Review and update output to implement latest GLUE2.1 updates. (Enol Fernandez, Baptiste Grenier)

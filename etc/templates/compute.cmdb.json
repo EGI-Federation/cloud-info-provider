@@ -2,13 +2,10 @@
     static_compute_info = attributes['static_compute_info']
     shares = attributes['shares']
     images = {image_id: image for vo, share in shares.items() for image_id, image in share['images'].items()}
-    images_no = len(images)
-    c = 0 
 %>\
 {"images": [
 % for image_id, image in images.items():
 <%
-    c += 1
     if image['image_description'] is None:
         image['image_description'] = ('%(image_name)s version '
             '%(image_version)s on '
@@ -28,10 +25,6 @@
             "type": "${image['os_distro']}",
             "gpu_driver": "NA",
             "cuda_support": "NA"
-% if c == images_no:
-        }
-% else:
-        },
-% endif
+        }${'' if loop.last else ','}
 % endfor
 ]}

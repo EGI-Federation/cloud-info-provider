@@ -1,3 +1,26 @@
+python-cloud-info-provider (0.11.3-1) xenial; urgency=medium
+
+  [ Pablo Orviz ]
+  * Add templates for CMDB.
+
+  [ Baptiste Grenier ]
+  * Fix handling of network info (#151).
+
+ -- Baptiste Grenier <baptiste.grenier@egi.eu>  Mon, 04 Mar 2019 17:57:33 +0100
+
+python-cloud-info-provider (0.11.2-1) xenial; urgency=medium
+
+  [ Enol Fernández ]
+  * Bump version.
+
+ -- Enol Fernández <enol.fernandez@egi.eu>  Thu, 31 Jan 2019 09:59:33 +0100
+
+python-cloud-info-provider (0.11.1-1) xenial; urgency=medium
+
+  * Fixes #140: SSL utils fail when URL does not contain port. (Enol Fernandez)
+
+ -- Baptiste Grenier <baptiste.grenier@egi.eu>  Tue, 29 Jan 2019 17:34:33 +0100
+
 python-cloud-info-provider (0.11.0-1) xenial; urgency=medium
 
   * Split OpenStack and OOI providers. (Enol Fernandez)
