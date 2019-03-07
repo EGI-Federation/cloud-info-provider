@@ -7,7 +7,9 @@
 %>\
 {
     "service": {
+        "sitename": "${static_compute_info['site_name']}",
         "service_type": "${goc_service_type}",
+        "endpoint": "${static_compute_info['compute_service_name']}",
 % if middleware == "mesos":
         "gpu_support": False,
 % endif
