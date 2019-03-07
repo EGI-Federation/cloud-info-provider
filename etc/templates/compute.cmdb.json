@@ -1,11 +1,13 @@
 <%
     middleware = attributes['middleware']
+    goc_service_type = attributes['dynamic_provider'].goc_service_type
     static_compute_info = attributes['static_compute_info']
     shares = attributes['shares']
     images = {image_id: image for vo, share in shares.items() for image_id, image in share['images'].items()}
 %>\
 {
     "service": {
+        "service_type": "${goc_service_type}",
 % if middleware == "mesos":
         "gpu_support": False,
 % endif
