@@ -1,9 +1,16 @@
 <%
+    middleware = attributes['middleware']
     static_compute_info = attributes['static_compute_info']
     shares = attributes['shares']
     images = {image_id: image for vo, share in shares.items() for image_id, image in share['images'].items()}
 %>\
-{"images": [
+{
+    "service": {
+% if middleware == "mesos":
+        "gpu_support": False,
+% endif
+    },
+    "images": [
 % for image_id, image in images.items():
 <%
     if image['image_description'] is None:
@@ -27,4 +34,5 @@
             "cuda_support": "NA"
         }${'' if loop.last else ','}
 % endfor
-]}
+    ]
+}
