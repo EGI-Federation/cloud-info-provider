@@ -33,5 +33,8 @@ def get_tag_value(xml, tag):
 
 
 def pythonize_network_info(network_info):
-    '''Pythonize network_info string'''
-    return json.loads(network_info.replace(':"', '"').replace("=>", ":"))
+    '''Pythonize Ruby dict-like network_info string. Do nothing otherwise.'''
+    try:
+        return json.loads(network_info.replace(':"', '"').replace("=>", ":"))
+    except AttributeError:
+        return network_info
