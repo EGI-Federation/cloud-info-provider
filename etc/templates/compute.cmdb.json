@@ -37,17 +37,24 @@
         "images": [
 % for _image_id, _image in _share['images'].items():
             {
-                "image_id": "${_image['id']}",
-                "image_name": "${_image['image_name']}",
-                "image_description": "${_image['image_description']}",
-                "image_marketplace_id": "${_image['image_marketplace_id']}",
-                "architecture": "${_image['architecture']}",
-                "image_os": "${_image['image_os_name']}",
-                "distribution": "${_image['os_distro']}",
-                "version": "${_image['image_os_version']}",
-                "type": "${_image['os_distro']}",
-                "gpu_driver": "NA",
-                "cuda_support": "NA"
+                "type": "image",
+                "data": {
+                    "image_id": "${_image['id']}",
+                    "image_name": "${_image['image_name']}",
+                    "image_description": "${_image['image_description']}",
+                    "image_marketplace_id": "${_image['image_marketplace_id']}",
+                    "architecture": "${_image['architecture']}",
+                    "type": "${_image['os_distro']}",
+                    "distribution": "${_image['os_distro']}",
+                    "version": "${_image['image_os_version']}",
+                    "image_os": "${_image['image_os_name']}",
+                    "gpu_driver": "NA",
+                    "gpu_driver_version": "NA",
+                    "cuda_support": "NA",
+                    "cuda_version": "NA",
+                    "cuDNN_version": "NA",
+                    "service": "NA"
+                }
             }${'' if loop.last else ','}
 % endfor
         ]
