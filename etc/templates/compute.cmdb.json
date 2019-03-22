@@ -3,7 +3,6 @@
     goc_service_type = attributes['dynamic_provider'].goc_service_type
     static_compute_info = attributes['static_compute_info']
     shares = attributes['shares']
-    images = {image_id: image for vo, share in shares.items() for image_id, image in share['images'].items()}
 %>\
 {
     "service": {
@@ -16,6 +15,25 @@
     },
 % for _vo, _share in shares.items():
     "${_vo}": {
+        "flavors": [
+% for _flavor_id, _flavor in _share['templates'].items():
+            {
+                "type": "flavor",
+                "data": {
+                    "flavor_id": "${_flavor_id}",
+                    "flavor_name": "NA",
+                    "num_vcpus": "${_flavor['template_cpu']}",
+                    "ram": "${_flavor['template_memory']}",
+                    "disk": "${_flavor['template_disk']}",
+                    "num_gpus": "${_flavor['template_gpu_number']}",
+                    "gpu_vendor": "${_flavor['template_gpu_vendor']}",
+                    "gpu_model": "${_flavor['template_gpu_model']}",
+                    "gpu_driver_version": "${_flavor['template_gpu_driver']}",
+                    "service": "NA"
+                }
+            }${'' if loop.last else ','}
+% endfor
+        ],
         "images": [
 % for _image_id, _image in _share['images'].items():
             {
