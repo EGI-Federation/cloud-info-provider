@@ -55,4 +55,3 @@ class BaseFormatter(object):
                 print(self._format_template(tpl,
                                             info,
                                             extra_info).encode('utf-8'))
-
