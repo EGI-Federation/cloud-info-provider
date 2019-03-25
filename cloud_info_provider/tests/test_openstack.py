@@ -65,8 +65,8 @@ class OpenStackProviderTest(base.TestCase):
                 self._rescope_project = mock.Mock()
                 self.all_images = False
                 self.opts = mock.Mock()
-                self.opts.extra_specs_infiniband_key = 'infiniband'
-                self.opts.extra_specs_infiniband_value = 'true'
+                self.opts.property_infiniband = 'infiniband'
+                self.opts.property_infiniband_value = 'true'
 
         self.provider = FakeProvider(None)
 
@@ -682,8 +682,8 @@ class OoiProviderTest(OpenStackProviderTest):
                 self._rescope_project = mock.Mock()
                 self.all_images = False
                 self.opts = mock.Mock()
-                self.opts.extra_specs_infiniband_key = 'infiniband'
-                self.opts.extra_specs_infiniband_value = 'true'
+                self.opts.property_infiniband = 'infiniband'
+                self.opts.property_infiniband_value = 'true'
 
         self.provider = FakeProvider(None)
 
