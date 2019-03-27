@@ -1,0 +1,74 @@
+<%
+    middleware = attributes['middleware']
+    goc_service_type = attributes['dynamic_provider'].goc_service_type
+    static_compute_info = attributes['static_compute_info']
+    shares = attributes['shares']
+%>\
+{
+    "info": {
+        "data": {
+            "properties": {
+% if middleware == "mesos":
+                "gpu_support": False,
+                "load_balancer_ips": [],
+                "local_volumes_host_base_path": "NA",
+                "gpu_support": false,
+                "persistent_storage_drivers": []
+% endif
+            },
+            "service_type": "${goc_service_type}",
+            "endpoint": "${static_compute_info['compute_service_name']}",
+            "provider_id": "NA",
+            "sitename": "${static_compute_info['site_name']}",
+            "hostname": "NA",
+            "type": "compute",
+% for _vo, _share in shares.items():
+            "${_vo}": {
+                "templates": [
+% for _flavor_id, _flavor in _share['templates'].items():
+                    {
+                        "type": "flavor",
+                        "data": {
+                            "flavor_id": "${_flavor_id}",
+                            "flavor_name": "NA",
+                            "num_vcpus": "${_flavor['template_cpu']}",
+                            "ram": "${_flavor['template_memory']}",
+                            "disk": "${_flavor['template_disk']}",
+                            "num_gpus": "${_flavor['template_gpu_number']}",
+                            "gpu_vendor": "${_flavor['template_gpu_vendor']}",
+                            "gpu_model": "${_flavor['template_gpu_model']}",
+                            "gpu_driver_version": "${_flavor['template_gpu_driver']}",
+                            "service": "NA"
+                        }
+                    }${'' if loop.last else ','}
+% endfor
+                ],
+                "images": [
+% for _image_id, _image in _share['images'].items():
+                    {
+                        "type": "image",
+                        "data": {
+                            "image_id": "${_image['id']}",
+                            "image_name": "${_image['image_name']}",
+                            "image_description": "${_image['image_description']}",
+                            "image_marketplace_id": "${_image['image_marketplace_id']}",
+                            "architecture": "${_image['architecture']}",
+                            "type": "${_image['os_distro']}",
+                            "distribution": "${_image['os_distro']}",
+                            "version": "${_image['image_os_version']}",
+                            "image_os": "${_image['image_os_name']}",
+                            "gpu_driver": "NA",
+                            "gpu_driver_version": "NA",
+                            "cuda_support": "NA",
+                            "cuda_version": "NA",
+                            "cuDNN_version": "NA",
+                            "service": "NA"
+                        }
+                    }${'' if loop.last else ','}
+% endfor
+                ]
+            }
+% endfor
+        }
+    }
+}
