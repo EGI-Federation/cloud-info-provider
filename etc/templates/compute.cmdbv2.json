@@ -9,10 +9,9 @@
         "data": {
             "properties": {
 % if middleware == "mesos":
-                "gpu_support": False,
+                "gpu_support": ${True if static_compute_info['master/gpus_total'] else False},
                 "load_balancer_ips": [],
                 "local_volumes_host_base_path": "NA",
-                "gpu_support": false,
                 "persistent_storage_drivers": []
 % endif
             },
