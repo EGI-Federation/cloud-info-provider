@@ -7,6 +7,9 @@ from cloud_info_provider import utils
 
 
 class MesosProvider(providers.BaseProvider):
+    service_type = "compute"
+    goc_service_type = 'eu.indigo-datacloud.mesos'
+
     def __init__(self, opts):
         super(MesosProvider, self).__init__(opts)
 
