@@ -7,7 +7,13 @@
 {
     "service": {
 % if middleware == "mesos":
-        "gpu_support": False,
+<%
+    if 'master/gpus_total' in static_compute_info.keys():
+        gpu_support = static_compute_info['master/gpus_total']
+    elif 'marathon_config' in static_compute_info.keys():
+        gpu_support = "gpu_resources" in static_compute_info['marathon_config']['features']
+%>
+        "gpu_support": ${True if gpu_support else False},
 % endif
         "sitename": "${static_compute_info['site_name']}",
         "service_type": "${goc_service_type}",
