@@ -174,7 +174,10 @@ class StaticProvider(providers.BaseProvider):
                            'middleware', 'middleware_developer',
                            'middleware_version',
                            'occi_api_version',
-                           'occi_middleware_version')
+                           'occi_middleware_version',
+                           # mesos
+                           'local_volumes_host_base_path',
+                           'persistent_storage_drivers')
         endpoints = self._get_what('compute',
                                    'endpoints',
                                    global_fields,
@@ -191,7 +194,6 @@ class StaticProvider(providers.BaseProvider):
         endpoint_fields = ('production_level', 'api_type', 'api_version',
                            'api_endpoint_technology',
                            'api_authn_method')
-
         endpoints = self._get_what('storage',
                                    'endpoints',
                                    global_fields,
