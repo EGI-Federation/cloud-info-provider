@@ -10,10 +10,23 @@
 <%
     if 'master/gpus_total' in static_compute_info.keys():
         gpu_support = static_compute_info['master/gpus_total']
+        is_master = True
     elif 'marathon_config' in static_compute_info.keys():
         gpu_support = "gpu_resources" in static_compute_info['marathon_config']['features']
+        is_master = False
 %>
         "gpu_support": ${True if gpu_support else False},
+    % if is_master:
+        'num_gpus': "${static_compute_info['master/gpus_total']}"
+        'num_gpus_used': "${static_compute_info['master/gpus_used']}"
+        'num_cpus': "${static_compute_info['master/cpus_total']}"
+        'num_cpus_used': "${static_compute_info['master/cpus_used']}"
+        'mem_total': "${static_compute_info['master/mem_total']}"
+        'mem_used': "${static_compute_info['master/mem_used']}"
+    % else:
+        'local_volumes_host_base_path': "NA",
+        'persistent_storage_drivers': "NA",
+    % endif
 % endif
         "sitename": "${static_compute_info['site_name']}",
         "service_type": "${goc_service_type}",
