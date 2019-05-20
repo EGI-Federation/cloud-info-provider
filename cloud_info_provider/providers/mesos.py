@@ -7,23 +7,44 @@ from cloud_info_provider import utils
 
 
 class MesosProvider(providers.BaseProvider):
+    service_type = "compute"
+    goc_service_type = None
+
     def __init__(self, opts):
         super(MesosProvider, self).__init__(opts)
 
-        self.opts = opts
-        self.mesos_endpoint = opts.mesos_endpoint
+        self.endpoint = None
+        self.endpoint_type = None
+        self.api_path = None
 
-        if not self.mesos_endpoint:
-            msg = ('You must provide a Mesos API endpoint '
-                   'via either --mesos-endpoint or '
-                   'env[MESOS_ENDPOINT]')
+        if not any([opts.mesos_endpoint,
+                    opts.marathon_endpoint]):
+            msg = ('You must provide a Mesos, Marathon or Chronos API '
+                   'endpoint via --mesos-endpoint, --marathon-endpoint or '
+                   '--chronos-endpoint respectively (alternatively using '
+                   'the environment variables MESOS_ENDPOINT, '
+                   'MARATHON_ENDPOINT or CHRONOS_ENDPOINT)')
             raise exceptions.MesosProviderException(msg)
+        if len(filter(None,
+                      [opts.mesos_endpoint,
+                       opts.marathon_endpoint])) > 1:
+            msg = ('Please provide only one API endpoint')
+            raise exceptions.MesosProviderException(msg)
+        if opts.mesos_endpoint:
+            self.endpoint = opts.mesos_endpoint
+            self.endpoint_type = 'mesos'
+            self.api_path = '/metrics/snapshot'
+        elif opts.marathon_endpoint:
+            self.endpoint = opts.marathon_endpoint
+            self.endpoint_type = 'marathon'
+            self.api_path = '/v2/info'
+        self.goc_service_type = 'eu.indigo-datacloud.%s' % self.endpoint_type
 
         self.static = providers.static.StaticProvider(opts)
 
     def get_site_info(self):
-        r = requests.get(urllib.parse.urljoin(self.mesos_endpoint,
-                                              '/metrics/snapshot'))
+        api_url = urllib.parse.urljoin(self.endpoint, self.api_path)
+        r = requests.get(api_url)
         return r.json()
 
     def get_compute_shares(self, **kwargs):
@@ -33,7 +54,7 @@ class MesosProvider(providers.BaseProvider):
     def get_compute_endpoints(self, **kwargs):
         ret = {
             'endpoints': {
-                self.opts.mesos_endpoint: {}},
+                self.endpoint: {}},
         }
 
         defaults = self.static.get_compute_endpoint_defaults(prefix=True)
@@ -48,3 +69,9 @@ class MesosProvider(providers.BaseProvider):
             default=utils.env('MESOS_ENDPOINT'),
             help=('Specify Mesos API endpoint. '
                   'Defaults to env[MESOS_ENDPOINT]'))
+        parser.add_argument(
+            '--marathon-endpoint',
+            metavar='<api-url>',
+            default=utils.env('MARATHON_ENDPOINT'),
+            help=('Specify Marathon API endpoint. '
+                  'Defaults to env[MARATHON_ENDPOINT]'))

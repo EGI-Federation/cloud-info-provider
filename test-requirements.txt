@@ -11,8 +11,8 @@ testtools>=0.9.34
 mock
 requests
 pyOpenSSL
+warlock<=1.3.0
 python-keystoneclient
 python-novaclient
 python-glanceclient
 keystoneauth1
-defusedxml
