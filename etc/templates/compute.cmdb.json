@@ -9,7 +9,7 @@
 % if middleware == "mesos":
 <%
     if 'master/gpus_total' in static_compute_info.keys():
-        is_master = True
+        is_master = False
         has_gpu = static_compute_info['master/gpus_total']
     elif 'marathon_config' in static_compute_info.keys():
         is_master = False
@@ -27,8 +27,8 @@
         'num_gpus': "${static_compute_info['compute_total_accelerators']}"
         'num_cpus': "${static_compute_info['compute_total_cores']}"
         'mem_total': "${static_compute_info['compute_total_ram']}"
-        'local_volumes_host_base_path': "NA",
-        'persistent_storage_drivers': "NA",
+        'local_volumes_host_base_path': "${static_compute_info['compute_local_volumes_host_base_path']}"
+        'persistent_storage_drivers': "${static_compute_info['compute_persistent_storage_drivers']}"
     % endif
 % endif
         "sitename": "${static_compute_info['site_name']}",
