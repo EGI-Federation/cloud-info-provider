@@ -29,6 +29,7 @@
         'mem_total': "${static_compute_info['compute_total_ram']}"
         'local_volumes_host_base_path': "${static_compute_info['compute_local_volumes_host_base_path']}"
         'persistent_storage_drivers': "${static_compute_info['compute_persistent_storage_drivers']}"
+        'load_balancer_ips': "${static_compute_info['compute_load_balancer_ips']}"
     % endif
 % endif
         "sitename": "${static_compute_info['site_name']}",
