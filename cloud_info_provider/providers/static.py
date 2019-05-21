@@ -174,10 +174,7 @@ class StaticProvider(providers.BaseProvider):
                            'middleware', 'middleware_developer',
                            'middleware_version',
                            'occi_api_version',
-                           'occi_middleware_version',
-                           # mesos
-                           'local_volumes_host_base_path',
-                           'persistent_storage_drivers')
+                           'occi_middleware_version')
         endpoints = self._get_what('compute',
                                    'endpoints',
                                    global_fields,
