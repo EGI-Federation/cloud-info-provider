@@ -191,7 +191,6 @@ class StaticProvider(providers.BaseProvider):
         endpoint_fields = ('production_level', 'api_type', 'api_version',
                            'api_endpoint_technology',
                            'api_authn_method')
-
         endpoints = self._get_what('storage',
                                    'endpoints',
                                    global_fields,
