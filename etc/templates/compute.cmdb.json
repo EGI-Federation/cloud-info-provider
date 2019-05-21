@@ -6,35 +6,45 @@
 %>\
 {
     "service": {
-% if middleware == "mesos":
-<%
-    if 'master/gpus_total' in static_compute_info.keys():
-        is_master = False
-        has_gpu = static_compute_info['master/gpus_total']
-    elif 'marathon_config' in static_compute_info.keys():
-        is_master = False
-        has_gpu = 'gpu_resources' in static_compute_info['marathon_config']['features']
-%>
-        'gpu_support': ${True if has_gpu else False}
-    % if is_master:
-        'num_gpus': "${static_compute_info['master/gpus_total']}"
-        'num_gpus_used': "${static_compute_info['master/gpus_used']}"
-        'num_cpus': "${static_compute_info['master/cpus_total']}"
-        'num_cpus_used': "${static_compute_info['master/cpus_used']}"
-        'mem_total': "${static_compute_info['master/mem_total']}"
-        'mem_used': "${static_compute_info['master/mem_used']}"
-    % else:
-        'num_gpus': "${static_compute_info['compute_total_accelerators']}"
-        'num_cpus': "${static_compute_info['compute_total_cores']}"
-        'mem_total': "${static_compute_info['compute_total_ram']}"
-        'local_volumes_host_base_path': "${static_compute_info['compute_local_volumes_host_base_path']}"
-        'persistent_storage_drivers': "${static_compute_info['compute_persistent_storage_drivers']}"
-        'load_balancer_ips': "${static_compute_info['compute_load_balancer_ips']}"
-    % endif
-% endif
-        "sitename": "${static_compute_info['site_name']}",
-        "service_type": "${goc_service_type}",
-        "endpoint": "${static_compute_info['compute_service_name']}"
+        "data": {
+            "service_type": "${goc_service_type}",
+            "properties": {
+            % if middleware == "mesos":
+            "endpoint": "${static_compute_info['leader']}"
+            <%
+                if 'master/gpus_total' in static_compute_info.keys():
+                    is_master = True
+                    has_gpu = static_compute_info['master/gpus_total']
+                elif 'marathon_config' in static_compute_info.keys():
+                    is_master = False
+                    has_gpu = 'gpu_resources' in static_compute_info['marathon_config']['features']
+            %>
+                "gpu_support": ${'true' if has_gpu else 'false'},
+                % if is_master:
+                "num_gpus": ${static_compute_info['master/gpus_total']},
+                "num_gpus_used": ${static_compute_info['master/gpus_used']},
+                "num_cpus": ${static_compute_info['master/cpus_total']},
+                "num_cpus_used": ${static_compute_info['master/cpus_used']},
+                "mem_total": ${static_compute_info['master/mem_total']},
+                "mem_used": ${static_compute_info['master/mem_used']}
+                % else:
+                "num_gpus": ${static_compute_info['compute_total_accelerators']},
+                "num_cpus": ${static_compute_info['compute_total_cores']},
+                "mem_total": ${static_compute_info['compute_total_ram']},
+                "local_volumes_host_base_path": "${static_compute_info['compute_local_volumes_host_base_path']}",
+                "persistent_storage_drivers": ${static_compute_info['compute_persistent_storage_drivers']},
+                "load_balancer_ips": ${static_compute_info['compute_load_balancer_ips']}
+                % endif
+            % else:
+            "endpoint": "${static_compute_info['compute_service_name']}",
+            % endif
+            },
+            "provider_id": "NA",
+            "sitename": "${static_compute_info['site_name']}",
+            "hostname": "${static_compute_info['leader_info']['hostname']}",
+            "type": "compute"
+        },
+        "type": "service"
     }${',' if shares else ''}
 % for _vo, _share in shares.items():
     "${_vo}": {
