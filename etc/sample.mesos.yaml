@@ -15,3 +15,4 @@ compute:
         defaults:
             # local_volumes_host_base_path: /tmp
             # persistent_storage_drivers: []
+            # load_balancer_ips: []
