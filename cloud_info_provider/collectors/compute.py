@@ -27,11 +27,6 @@ class ComputeCollector(base.BaseCollector):
             for share in shares.values():
                 kwargs = share.copy()
 
-                #endpoints = self._get_info_from_providers('get_compute_endpoints',
-                #                                          **kwargs)
-                #if not endpoints.get('endpoints'):
-                #    return {}
-
                 # Collect static information for endpoints
                 static_compute_info = dict(endpoints, **site_info)
                 static_compute_info.pop('endpoints')
