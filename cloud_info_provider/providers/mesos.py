@@ -15,7 +15,7 @@ class MesosProvider(providers.BaseProvider):
 
         self.endpoint = None
         self.endpoint_type = None
-        self.api_path = None
+        self.api_endpoints = []
 
         if not any([opts.mesos_endpoint,
                     opts.marathon_endpoint]):
@@ -33,19 +33,22 @@ class MesosProvider(providers.BaseProvider):
         if opts.mesos_endpoint:
             self.endpoint = opts.mesos_endpoint
             self.endpoint_type = 'mesos'
-            self.api_path = '/metrics/snapshot'
+            self.api_endpoints = ['/metrics/snapshot', 'state']
         elif opts.marathon_endpoint:
             self.endpoint = opts.marathon_endpoint
             self.endpoint_type = 'marathon'
-            self.api_path = '/v2/info'
+            self.api_endpoints = ['/v2/info', 'v2/leader']
         self.goc_service_type = 'eu.indigo-datacloud.%s' % self.endpoint_type
 
         self.static = providers.static.StaticProvider(opts)
 
     def get_site_info(self):
-        api_url = urllib.parse.urljoin(self.endpoint, self.api_path)
-        r = requests.get(api_url)
-        return r.json()
+        d = {}
+        for endp in self.api_endpoints:
+            api_url = urllib.parse.urljoin(self.endpoint, endp)
+            r = requests.get(api_url)
+            d.update(r.json())
+        return d
 
     def get_compute_shares(self, **kwargs):
         shares = self.static.get_compute_shares(prefix=True)
