@@ -41,7 +41,7 @@ class ComputeCollector(base.BaseCollector):
                 quotas = self._get_info_from_providers('get_compute_quotas',
                                                        **kwargs)
 
-                # Add same static information to endpoints, images and templates
+                # Add same static information to endpoints, images & templates
                 for d in itertools.chain(endpoints['endpoints'].values(),
                                          templates.values(),
                                          images.values()):
