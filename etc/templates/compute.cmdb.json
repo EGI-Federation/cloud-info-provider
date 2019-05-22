@@ -59,7 +59,7 @@
                 "type": "flavor",
                 "data": {
                     "flavor_id": "${_flavor_id}",
-                    "flavor_name": "NA",
+                    "flavor_name": "${_flavor['flavor_name']}",
                     "num_vcpus": "${_flavor['template_cpu']}",
                     "ram": "${_flavor['template_memory']}",
                     "disk": "${_flavor['template_disk']}",
