@@ -252,7 +252,7 @@ class OpenStackProvider(providers.BaseProvider):
         add_all = self.select_flavors == 'all'
         # properties
         property_keys = [_opt for _opt in vars(self.opts)
-                         if _opt.startswith('property_')
+                         if _opt.startswith('property_flavor_')
                          and not _opt.endswith('_value')]
         for flavor in self.nova.flavors.list(detailed=True, is_public=None):
             add_pub = self.select_flavors == 'public' and flavor.is_public
@@ -525,33 +525,33 @@ class OpenStackProvider(providers.BaseProvider):
         # If 'property-<property>-value' is provided, the capability will only
         # be published when the given value matches the one in the flavor
         parser.add_argument(
-            '--property-infiniband',
+            '--property-flavor-infiniband',
             metavar='PROPERTY_KEY',
             default='infiniband',
             help=('Flavor\'s property key for Infiniband support.'))
         parser.add_argument(
-            '--property-infiniband-value',
+            '--property-flavor-infiniband-value',
             metavar='PROPERTY_VALUE',
             default='true',
             help=('When Infiniband is supported, this option specifies the '
                   'value to match.'))
         parser.add_argument(
-            '--property-gpu-number',
+            '--property-flavor-gpu-number',
             metavar='PROPERTY_KEY',
             default='gpu_number',
             help=('Flavor\'s property key pointing to number of GPUs.'))
         parser.add_argument(
-            '--property-gpu-vendor',
+            '--property-flavor-gpu-vendor',
             metavar='PROPERTY_KEY',
             default='gpu_vendor',
             help=('Flavor\'s property key pointing to the GPU vendor.'))
         parser.add_argument(
-            '--property-gpu-model',
+            '--property-flavor-gpu-model',
             metavar='PROPERTY_KEY',
             default='gpu_model',
             help=('Flavor\'s property key pointing to the GPU model.'))
         parser.add_argument(
-            '--property-gpu-driver',
+            '--property-flavor-gpu-driver',
             metavar='PROPERTY_KEY',
             default='gpu_driver',
             help=('Flavor\'s property key pointing to the GPU driver version'))
