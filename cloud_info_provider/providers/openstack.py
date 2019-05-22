@@ -550,8 +550,3 @@ class OpenStackProvider(providers.BaseProvider):
             metavar='PROPERTY_KEY',
             default='gpu_model',
             help=('Flavor\'s property key pointing to the GPU model.'))
-        parser.add_argument(
-            '--property-flavor-gpu-driver',
-            metavar='PROPERTY_KEY',
-            default='gpu_driver',
-            help=('Flavor\'s property key pointing to the GPU driver version'))
