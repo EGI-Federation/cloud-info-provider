@@ -322,17 +322,32 @@ class OpenStackProvider(providers.BaseProvider):
             'image_context_format': None,
             'image_software': [],
             'other_info': [],
+            'image_gpu_driver': None,
+            'image_gpu_cuda_driver': None,
+            'image_gpu_cudnn_driver': None
         }
         defaults = self.static.get_image_defaults(prefix=True)
         img_sch = defaults.get('image_schema', 'os')
         URI = 'http://schemas.openstack.org/template/'
 
         for image in self.glance.images.list(detailed=True):
+            img_id = image.get("id")
+
             aux_img = copy.deepcopy(template)
             aux_img.update(defaults)
             aux_img.update(image)
 
-            img_id = image.get("id")
+            # properties
+            property_keys = [_opt for _opt in vars(self.opts)
+                             if _opt.startswith('property_image_')]
+            d_properties = {}
+            for k in property_keys:
+                opts_k = vars(self.opts)[k]
+                v = image.get(opts_k)
+                d_properties[k] = v
+            aux_img.update(d_properties)
+
+            # EGI AppDB stuff
             image_descr = image.get('vmcatcher_event_dc_description',
                                     image.get('vmcatcher_event_dc_title'))
             marketplace_id = image.get('vmcatcher_event_ad_mpuri',
@@ -550,3 +565,18 @@ class OpenStackProvider(providers.BaseProvider):
             metavar='PROPERTY_KEY',
             default='gpu_model',
             help=('Flavor\'s property key pointing to the GPU model.'))
+        parser.add_argument(
+            '--property-image-gpu-driver',
+            metavar='PROPERTY_KEY',
+            default='gpu_driver',
+            help=('Image\'s property key to specify the GPU driver version'))
+        parser.add_argument(
+            '--property-image-gpu-cuda',
+            metavar='PROPERTY_KEY',
+            default='gpu_cuda',
+            help=('Image\'s property key to specify the CUDA toolkit version'))
+        parser.add_argument(
+            '--property-image-gpu-cudnn',
+            metavar='PROPERTY_KEY',
+            default='gpu_cudnn',
+            help=('Image\'s property key to specify the cuDNN library version'))
