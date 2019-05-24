@@ -85,11 +85,11 @@
                     "distribution": "${_image['os_distro']}",
                     "version": "${_image['image_os_version']}",
                     "image_os": "${_image['image_os_name']}",
-                    "gpu_driver": "NA",
-                    "gpu_driver_version": "NA",
-                    "cuda_support": "NA",
-                    "cuda_version": "NA",
-                    "cuDNN_version": "NA",
+                    "gpu_driver": "${'yes' if _image['property_image_gpu_driver'] else 'no'}",
+                    "gpu_driver_version": "${_image['property_image_gpu_driver']}",
+                    "cuda_support": "${'yes' if _image['property_image_gpu_cuda'] else 'no'}",
+                    "cuda_version": "${_image['property_image_gpu_cuda']}",
+                    "cuDNN_version": "${_image['property_image_gpu_cudnn']}",
                     "service": "NA"
                 }
             }${'' if loop.last else ','}
