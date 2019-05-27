@@ -283,7 +283,7 @@ class OpenStackProvider(providers.BaseProvider):
             for k in property_keys:
                 opts_k = vars(self.opts)[k]
                 v = flavor.get_keys().get(opts_k)
-		if v:
+                if v:
                     property_id = re.search('property_(\w+)', k).group(1)
                     # if '_value' suffix provided, validate it
                     try:
@@ -353,7 +353,7 @@ class OpenStackProvider(providers.BaseProvider):
             for k in property_keys:
                 opts_k = vars(self.opts)[k]
                 v = image.get(opts_k)
-               	d_properties[k] = v
+                d_properties[k] = v
             aux_img.update(d_properties)
 
             # EGI AppDB stuff
@@ -588,4 +588,5 @@ class OpenStackProvider(providers.BaseProvider):
             '--property-image-gpu-cudnn',
             metavar='PROPERTY_KEY',
             default='gpu_cudnn',
-            help=('Image\'s property key to specify the cuDNN library version'))
+            help=('Image\'s property key to specify the cuDNN library '
+                  'version'))
