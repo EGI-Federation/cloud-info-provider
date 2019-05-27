@@ -244,8 +244,17 @@ class OpenStackProvider(providers.BaseProvider):
     def get_templates(self, **kwargs):
         """Return templates/flavors selected according to --select-flavors"""
         flavors = {}
-        defaults = {'template_platform': 'amd64',
-                    'template_network': 'private'}
+        defaults = {
+            'template_platform': 'amd64',
+            'template_network': 'private',
+            'template_memory': 0,
+            'template_ephemeral': 0,
+            'template_disk': 0,
+            'template_cpu': 0,
+            'template_flavor_gpu_number': 0,
+            'template_flavor_gpu_vendor': None,
+            'template_flavor_gpu_model': None,
+        }
         defaults.update(self.static.get_template_defaults(prefix=True))
         tpl_sch = defaults.get('template_schema', 'resource')
         URI = 'http://schemas.openstack.org/template/'
@@ -274,7 +283,7 @@ class OpenStackProvider(providers.BaseProvider):
             for k in property_keys:
                 opts_k = vars(self.opts)[k]
                 v = flavor.get_keys().get(opts_k)
-                if v:
+		if v:
                     property_id = re.search('property_(\w+)', k).group(1)
                     # if '_value' suffix provided, validate it
                     try:
@@ -323,6 +332,8 @@ class OpenStackProvider(providers.BaseProvider):
             'image_context_format': None,
             'image_software': [],
             'other_info': [],
+            'architecture': None,
+            'os_distro': None,
         }
         defaults = self.static.get_image_defaults(prefix=True)
         img_sch = defaults.get('image_schema', 'os')
@@ -342,8 +353,7 @@ class OpenStackProvider(providers.BaseProvider):
             for k in property_keys:
                 opts_k = vars(self.opts)[k]
                 v = image.get(opts_k)
-                if v:
-                    d_properties[k] = v
+               	d_properties[k] = v
             aux_img.update(d_properties)
 
             # EGI AppDB stuff
