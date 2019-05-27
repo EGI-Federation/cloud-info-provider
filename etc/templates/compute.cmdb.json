@@ -1,16 +1,20 @@
+[
 <%
     middleware = attributes['middleware']
     goc_service_type = attributes['dynamic_provider'].goc_service_type
     static_compute_info = attributes['static_compute_info']
     shares = attributes['shares']
 %>\
-{
-    "service": {
+    {
+        "type": "service",
         "data": {
-            "service_type": "${goc_service_type}",
+            "service_type": ${goc_service_type},
+            "provider_id": null,
+            "sitename": ${static_compute_info.get('site_name', 'null')},
+            "type": "compute",
             % if middleware == "mesos":
-            "endpoint": "${static_compute_info['leader']}",
-            "hostname": "${static_compute_info['leader_info']['hostname']}",
+            "endpoint": ${static_compute_info['leader']},
+            "hostname": ${static_compute_info['leader_info']['hostname']},
             "properties": {
             <%
                 if 'master/gpus_total' in static_compute_info.keys():
@@ -22,79 +26,71 @@
             %>
                 "gpu_support": ${'true' if has_gpu else 'false'},
                 % if is_master:
-                "num_gpus": ${static_compute_info['master/gpus_total']},
-                "num_gpus_used": ${static_compute_info['master/gpus_used']},
-                "num_cpus": ${static_compute_info['master/cpus_total']},
-                "num_cpus_used": ${static_compute_info['master/cpus_used']},
-                "mem_total": ${static_compute_info['master/mem_total']},
-                "mem_used": ${static_compute_info['master/mem_used']}
+                "num_gpus": ${static_compute_info.get('master/gpus_total', 0)},
+                "num_gpus_used": ${static_compute_info.get('master/gpus_used', 0)},
+                "num_cpus": ${static_compute_info.get('master/cpus_total')},
+                "num_cpus_used": ${static_compute_info.get('master/cpus_used')},
+                "mem_total": ${static_compute_info.get('master/mem_total')},
+                "mem_used": ${static_compute_info.get('master/mem_used')}
                 % else:
-                "num_gpus": ${static_compute_info['compute_total_accelerators']},
-                "num_cpus": ${static_compute_info['compute_total_cores']},
-                "mem_total": ${static_compute_info['compute_total_ram']},
-                "local_volumes_host_base_path": "${static_compute_info['compute_local_volumes_host_base_path']}",
-                "persistent_storage_drivers": ${static_compute_info['compute_persistent_storage_drivers']},
-                "load_balancer_ips": ${static_compute_info['compute_load_balancer_ips']}
+                "num_gpus": ${static_compute_info.get('compute_total_accelerators', 0)},
+                "num_cpus": ${static_compute_info.get('compute_total_cores', 0)},
+                "mem_total": ${static_compute_info.get('compute_total_ram', 0)},
+                "local_volumes_host_base_path": ${static_compute_info.get('compute_local_volumes_host_base_path', 'null')}",
+                "persistent_storage_drivers": ${static_compute_info.get('compute_persistent_storage_drivers', 'null')},
+                "load_balancer_ips": ${static_compute_info.get('compute_load_balancer_ips', 'null')}
                 % endif
-            },
+            }
             % else:
             <%
                 from six.moves import urllib
                 host_name = urllib.parse.urlparse(static_compute_info['compute_service_name']).hostname
             %>
-            "endpoint": "${static_compute_info['compute_service_name']}",
-            "hostname": "${host_name}",
+            "endpoint": ${static_compute_info.get('compute_service_name', 'null')},
+            "hostname": ${host_name}
             % endif
-            "provider_id": "NA",
-            "sitename": "${static_compute_info['site_name']}",
-            "type": "compute"
-        },
-        "type": "service"
+        }
     }${',' if shares else ''}
 % for _vo, _share in shares.items():
-    "${_vo}": {
-        "flavors": [
 % for _flavor_id, _flavor in _share['templates'].items():
-            {
-                "type": "flavor",
-                "data": {
-                    "flavor_id": "${_flavor_id}",
-                    "flavor_name": "${_flavor['flavor_name']}",
-                    "num_vcpus": "${_flavor['template_cpu']}",
-                    "ram": "${_flavor['template_memory']}",
-                    "disk": "${_flavor['template_disk']}",
-                    "num_gpus": ${_flavor['template_flavor_gpu_number']},
-                    "gpu_vendor": "${_flavor['template_flavor_gpu_vendor']}",
-                    "gpu_model": "${_flavor['template_flavor_gpu_model']}",
-                    "service": "NA"
-                }
-            }${'' if loop.last else ','}
+    {
+        "type": "flavor",
+        "data": {
+            "flavor_id": ${_flavor_id if _flavor_id else 'null'},
+            "flavor_name": ${_flavor.get('flavor_name', 'null')},
+            "num_vcpus": ${_flavor.get('template_cpu', 0)},
+            "ram": ${_flavor.get('template_memory', 0)},
+            "disk": ${_flavor.get('template_disk', 0)},
+            "num_gpus": ${_flavor.get('template_flavor_gpu_number', 0)},
+            "gpu_vendor": ${_flavor.get('template_flavor_gpu_vendor', 'null')},
+            "gpu_model": ${_flavor.get('template_flavor_gpu_model', 'null')},
+            "service": null,
+            "vo": "${_vo}"
+        }
+    }${'' if loop.last else ','}
 % endfor
-        ],
-        "images": [
 % for _image_id, _image in _share['images'].items():
-            {
-                "type": "image",
-                "data": {
-                    "image_id": "${_image['id']}",
-                    "image_name": "${_image['image_name']}",
-                    "image_description": "${_image['image_description']}",
-                    "image_marketplace_id": "${_image['image_marketplace_id']}",
-                    "architecture": "${_image['architecture']}",
-                    "type": "${_image['os_distro']}",
-                    "distribution": "${_image['os_distro']}",
-                    "version": "${_image['image_os_version']}",
-                    "image_os": "${_image['image_os_name']}",
-                    "gpu_driver": "${'yes' if _image['property_image_gpu_driver'] else 'no'}",
-                    "gpu_driver_version": "${_image['property_image_gpu_driver']}",
-                    "cuda_support": "${'yes' if _image['property_image_gpu_cuda'] else 'no'}",
-                    "cuda_version": "${_image['property_image_gpu_cuda']}",
-                    "cuDNN_version": "${_image['property_image_gpu_cudnn']}",
-                    "service": "NA"
-                }
-            }${'' if loop.last else ','}
+       {
+           "type": "image",
+           "data": {
+               "image_id": "${_image.get('id', None)}" or 'null',
+               "image_name": ${_image.get('image_name', 'null')},
+               "image_description": ${_image.get('image_description', 'null')},
+               "image_marketplace_id": ${_image.get('image_marketplace_id', 'null')},
+               "architecture": ${_image.get('architecture', 'null')},
+               "type": ${_image.get('os_distro', 'null')},
+               "distribution": ${_image.get('os_distro', 'null')},
+               "version": ${_image.get('image_os_version', 'null')},
+               "image_os": ${_image['image_os_name']},
+               "gpu_driver": ${'yes' if _image.get('property_image_gpu_driver', None) else 'no'},
+               "gpu_driver_version": ${_image.get('property_image_gpu_driver', 'null')},
+               "cuda_support": ${'yes' if _image.get('property_image_gpu_cuda', None) else 'no'},
+               "cuda_version": ${_image.get('property_image_gpu_cuda', 'null')},
+               "cuDNN_version": ${_image.get('property_image_gpu_cudnn', 'null')},
+               "service": null,
+               "vo": "${_vo}"
+           }
+       }${'' if loop.last else ','}
 % endfor
-        ]
-    }
 % endfor
-}
+]

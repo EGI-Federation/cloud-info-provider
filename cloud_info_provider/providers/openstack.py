@@ -274,16 +274,17 @@ class OpenStackProvider(providers.BaseProvider):
             for k in property_keys:
                 opts_k = vars(self.opts)[k]
                 v = flavor.get_keys().get(opts_k)
-                property_id = re.search('property_(\w+)', k).group(1)
-                # if '_value' suffix provided, validate it
-                try:
-                    opts_v = vars(self.opts)['_'.join([k, 'value'])]
-                except KeyError:
-                    opts_v = False
-                if opts_v:
-                    d_properties['template_%s' % property_id] = v == opts_v
-                else:
-                    d_properties['template_%s' % property_id] = v
+                if v:
+                    property_id = re.search('property_(\w+)', k).group(1)
+                    # if '_value' suffix provided, validate it
+                    try:
+                        opts_v = vars(self.opts)['_'.join([k, 'value'])]
+                    except KeyError:
+                        opts_v = False
+                    if opts_v:
+                        d_properties['template_%s' % property_id] = v == opts_v
+                    else:
+                        d_properties['template_%s' % property_id] = v
             aux.update(d_properties)
             # name
             aux.update({'flavor_name': flavor.name})
@@ -322,9 +323,6 @@ class OpenStackProvider(providers.BaseProvider):
             'image_context_format': None,
             'image_software': [],
             'other_info': [],
-            'image_gpu_driver': None,
-            'image_gpu_cuda_driver': None,
-            'image_gpu_cudnn_driver': None
         }
         defaults = self.static.get_image_defaults(prefix=True)
         img_sch = defaults.get('image_schema', 'os')
@@ -344,7 +342,8 @@ class OpenStackProvider(providers.BaseProvider):
             for k in property_keys:
                 opts_k = vars(self.opts)[k]
                 v = image.get(opts_k)
-                d_properties[k] = v
+                if v:
+                    d_properties[k] = v
             aux_img.update(d_properties)
 
             # EGI AppDB stuff
