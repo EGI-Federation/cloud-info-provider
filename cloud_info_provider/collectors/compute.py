@@ -16,16 +16,17 @@ class ComputeCollector(base.BaseCollector):
         # XXX Here it uses the "default" project from the CLI parameters
         site_info = self._get_info_from_providers('get_site_info')
 
-        endpoints = self._get_info_from_providers('get_compute_endpoints')
-        if not endpoints.get('endpoints'):
-            return {}
-
         # Get shares / projects and related images and templates
         shares = self._get_info_from_providers('get_compute_shares')
 
         if shares:
             for share in shares.values():
                 kwargs = share.copy()
+
+                endpoints = self._get_info_from_providers(
+                    'get_compute_endpoints', **kwargs)
+                if not endpoints.get('endpoints'):
+                    return {}
 
                 # Collect static information for endpoints
                 static_compute_info = dict(endpoints, **site_info)
@@ -57,6 +58,10 @@ class ComputeCollector(base.BaseCollector):
             endpoints = {endpoint_id: endpoint for share_id, share in
                          shares.items() for endpoint_id,
                          endpoint in share['endpoints'].items()}
+        else:
+            endpoints = self._get_info_from_providers('get_compute_endpoints')
+            if not endpoints.get('endpoints'):
+                return {}
 
         # XXX Avoid redoing what was done in the previous shares loop
         static_compute_info = dict(endpoints, **site_info)

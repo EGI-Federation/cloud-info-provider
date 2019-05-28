@@ -42,6 +42,9 @@ class BaseFormatter(object):
         except Exception:
             return mako.exceptions.text_error_template().render()
 
+    def to_stdout(self, template):
+        print(template)
+
     def format(self, opts, providers):
         available_collectors = self._load_collectors(opts, providers)
         self._load_templates(opts.template_dir)
@@ -52,6 +55,7 @@ class BaseFormatter(object):
                 extra_info = {
                     'middleware': opts.middleware,
                     'dynamic_provider': _collector.dynamic_provider}
-                print(self._format_template(tpl,
-                                            info,
-                                            extra_info).encode('utf-8'))
+                self.to_stdout(
+                    self._format_template(tpl,
+                                          info,
+                                          extra_info).encode('utf-8'))
