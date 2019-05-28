@@ -251,6 +251,7 @@ class OpenStackProvider(providers.BaseProvider):
             'template_ephemeral': 0,
             'template_disk': 0,
             'template_cpu': 0,
+            'template_infiniband': False,
             'template_flavor_gpu_number': 0,
             'template_flavor_gpu_vendor': None,
             'template_flavor_gpu_model': None,
