@@ -2,6 +2,8 @@ site:
     # Your site name, as in GODCB (if omitted or set to None, this value is
     # retreived from /etc/glite-info-static/site/site.cfg )
     # name: SITE_NAME
+    # [cmdbv1] provider identifier
+    # id: SITE_ID
 
 compute:
     # Configure here the VOs supported at your installation

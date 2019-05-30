@@ -16,7 +16,7 @@
         "type": "service",
         "data": {
             ${render_string('service_type', goc_service_type)}
-            "provider_id": null,
+            ${render_string('provider_id', static_compute_info['site_id'])}
             ${render_string('sitename', static_compute_info['site_name'])}
             "type": "compute",
             % if middleware == "mesos":
