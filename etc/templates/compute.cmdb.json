@@ -70,8 +70,7 @@
         "data": {
             ${render_string('tenant_id', project_id)}
             ${render_string('tenant_name', _vo)}
-            "service": "${service_id}",
-            "vo": "${_vo}"
+            "service": "${service_id}"
         }
     },
 % for _flavor_id, _flavor in _share['templates'].items():
