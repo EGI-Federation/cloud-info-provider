@@ -11,12 +11,15 @@
     goc_service_type = attributes['dynamic_provider'].goc_service_type
     static_compute_info = attributes['static_compute_info']
     shares = attributes['shares']
+    provider_id = static_compute_info['site_id']
+    service_id = static_compute_info['compute_service_id']
 %>\
     {
         "type": "service",
         "data": {
+            "provider_id": "${provider_id}",
+            "id": "${service_id}",
             ${render_string('service_type', goc_service_type)}
-            ${render_string('provider_id', static_compute_info['site_id'])}
             ${render_string('sitename', static_compute_info['site_name'])}
             "type": "compute",
             % if middleware == "mesos":
@@ -67,7 +70,7 @@
         "data": {
             ${render_string('tenant_id', project_id)}
             ${render_string('tenant_name', _vo)}
-            "service": null,
+            "service": "${service_id}",
             "vo": "${_vo}"
         }
     },
@@ -83,7 +86,7 @@
             "num_gpus": ${_flavor.get('template_flavor_gpu_number', 0)},
             ${render_string('gpu_vendor', _flavor['template_flavor_gpu_vendor'])}
             ${render_string('gpu_model', _flavor['template_flavor_gpu_model'])}
-            "service": null,
+            "service": "${service_id}",
             ${render_string('tenant_id', project_id)}
             "tenant_name": "${_vo}"
         }
@@ -107,7 +110,7 @@
             "cuda_support": ${'true' if _image['property_image_gpu_cuda'] else 'false'},
             ${render_string('cuda_version', _image['property_image_gpu_cuda'])}
             ${render_string('cuDNN_version', _image['property_image_gpu_cudnn'])}
-            "service": null,
+            "service": "${service_id}",
             ${render_string('tenant_id', project_id)}
             "tenant_name": "${_vo}"
         }
