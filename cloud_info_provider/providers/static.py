@@ -83,7 +83,10 @@ class StaticProvider(providers.BaseProvider):
 
     def get_site_info(self, **kwargs):
         data = self.yaml.get('site', {'name': None})
-        site_info = self._get_fields_and_prefix(('name', 'id', ), 'site_', data)
+        site_info = self._get_fields_and_prefix(
+            ('name', 'id', ),
+            'site_',
+            data)
 
         # Resolve site name from BDII configuration
         if site_info['site_name'] is None:
