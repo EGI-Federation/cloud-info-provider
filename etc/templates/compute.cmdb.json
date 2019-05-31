@@ -15,6 +15,17 @@
     service_id = static_compute_info['compute_service_id']
 %>\
     {
+        "type": "provider",
+        "data": {
+            ${render_string('name', static_compute_info['site_name'])}
+            ${render_string('country', static_compute_info['site_country'])}
+            ${render_string('country_code', static_compute_info['site_country_code'])}
+            ${render_string('roc', static_compute_info['site_roc'])}
+            ${render_string('subgrid', static_compute_info['site_subgrid'])}
+            ${render_string('giis_url', static_compute_info['site_giis_url'], comma=False)}
+        }
+    },
+    {
         "type": "service",
         "data": {
             "provider_id": "${provider_id}",
