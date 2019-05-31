@@ -96,7 +96,8 @@ class StaticProvider(providers.BaseProvider):
         site_info['suffix'] = self._get_suffix(site_info)
 
         # Extra info from GOCDB
-        site_info.update(providers.gocdb.get_goc_site_info(site_info['site_name']))
+        info_gocdb = providers.gocdb.get_goc_site_info(site_info['site_name'])
+        site_info.update(info_gocdb)
 
         return site_info
 

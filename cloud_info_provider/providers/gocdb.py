@@ -104,7 +104,7 @@ def get_goc_site_info(site_id):
         xml = defusedxml.ElementTree.fromstring(r)
         d = dict(xml.getchildren()[0].items())
         d_lower = {k.lower(): v for k, v in d.items()}
-        return {'site_'+k: v for k, v in d_lower.items() if k in required_fields}
-    except:
+        return {
+            'site_' + k: v for k, v in d_lower.items() if k in required_fields}
+    except Exception:
         return {}
-
