@@ -2,6 +2,8 @@ site:
     # Your site name, as in GODCB (if omitted or set to None, this value is
     # retreived from /etc/glite-info-static/site/site.cfg )
     # name: SITE_NAME
+    # [cmdbv1] provider identifier
+    # id: SITE_ID
 
 compute:
     # Configure here the VOs supported at your installation
@@ -47,6 +49,8 @@ compute:
             # api_endpoint_technology: webservice
             # api_authn_method: oidc
             # production_level: production
+            # [cmdbv1] service identifier
+            # service_id: SERVICE_ID
 
     # Available resources, uncomment and set as needed
     # Below default values are used

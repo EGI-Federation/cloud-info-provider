@@ -83,13 +83,21 @@ class StaticProvider(providers.BaseProvider):
 
     def get_site_info(self, **kwargs):
         data = self.yaml.get('site', {'name': None})
-        site_info = self._get_fields_and_prefix(('name', ), 'site_', data)
+        site_info = self._get_fields_and_prefix(
+            ('name', 'id',
+             'country', 'country_code', 'roc', 'subgrid', 'giis_url'),
+            'site_',
+            data)
 
         # Resolve site name from BDII configuration
         if site_info['site_name'] is None:
             site_info['site_name'] = self._get_site_info_from_bdii_conf()
 
         site_info['suffix'] = self._get_suffix(site_info)
+
+        # Extra info from GOCDB
+        info_gocdb = providers.gocdb.get_goc_site_info(site_info['site_name'])
+        site_info.update(info_gocdb)
 
         return site_info
 
