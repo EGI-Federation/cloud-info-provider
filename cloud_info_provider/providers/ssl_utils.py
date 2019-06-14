@@ -51,7 +51,7 @@ def get_endpoint_ca_information(endpoint_url, insecure=False, cafile=None,
 
         client_ssl = SSL.Connection(ctx, client)
         client_ssl.set_connect_state()
-        client_ssl.set_tlsext_host_name(host)
+        client_ssl.set_tlsext_host_name(host.encode('utf-8'))
         client_ssl.do_handshake()
 
         cert = client_ssl.get_peer_certificate()
