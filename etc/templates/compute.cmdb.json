@@ -12,7 +12,7 @@
     static_compute_info = attributes['static_compute_info']
     shares = attributes['shares']
     provider_id = static_compute_info['site_id']
-    service_id = static_compute_info['compute_service_id']
+    service_id = static_compute_info['compute_service_name']
 %>\
     {
         "type": "provider",
