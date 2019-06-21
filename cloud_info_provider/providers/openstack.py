@@ -102,6 +102,7 @@ class OpenStackProvider(providers.BaseProvider):
         # enforce auth type to token
         if opts.external_auth:
             self.opts.os_auth_type = 'token'
+        self.project_id = None
 
         # Hide urllib3 warnings when allowing unverified connection
         if opts.insecure:
