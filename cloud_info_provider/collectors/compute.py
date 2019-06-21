@@ -19,8 +19,9 @@ class ComputeCollector(base.BaseCollector):
         # Get shares / projects and related images and templates
         shares = self._get_info_from_providers('get_compute_shares')
 
-        for share in shares.values():
+        for vo, share in shares.items():
             kwargs = share.copy()
+            kwargs.update({'vo': vo})
 
             endpoints = self._get_info_from_providers('get_compute_endpoints',
                                                       **kwargs)
