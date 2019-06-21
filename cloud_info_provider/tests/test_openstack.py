@@ -60,7 +60,7 @@ class OpenStackProviderAuthTest(base.TestCase):
                            'load_auth_from_argparse_arguments'),
                 mock.patch('keystoneauth1.loading.'
                            'load_session_from_argparse_arguments')
-        ) as (m_load_auth, m_load_session):
+        ) as (_, m_load_session):
             session = mock.Mock()
             session.get_project_id.return_value = 'foo'
             m_load_session.return_value = session
@@ -75,7 +75,7 @@ class OpenStackProviderAuthTest(base.TestCase):
                 mock.patch('keystoneauth1.loading.'
                            'load_session_from_argparse_arguments'),
                 mock.patch.object(self.provider, '_get_external_token')
-        ) as (m_load_auth, m_load_session, m_get_token):
+        ) as (_, m_load_session, m_get_token):
             session = mock.Mock()
             session.get_project_id.return_value = 'foo'
             m_get_token.return_value = 'foobar'

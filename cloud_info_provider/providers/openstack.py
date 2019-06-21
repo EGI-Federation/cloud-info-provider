@@ -143,32 +143,36 @@ class OpenStackProvider(providers.BaseProvider):
             msg = "Non 0 exit code for %s" % e.cmd
             raise exceptions.OpenStackProviderException(msg)
 
+    def _authenticate(self, project_id, vo):
+        self.opts.os_project_id = project_id
+        # make sure that it also works for v2voms
+        self.opts.os_tenant_id = project_id
+        self.auth_plugin = loading.load_auth_from_argparse_arguments(
+            self.opts
+        )
+        self.session = loading.load_session_from_argparse_arguments(
+            self.opts, auth=self.auth_plugin
+        )
+        self.auth_plugin.invalidate()
+        try:
+            self.project_id = self.session.get_project_id()
+        except http_exc.Unauthorized:
+            msg = "Could not authorize user in project '%s'" % project_id
+            raise exceptions.OpenStackProviderException(msg)
+        # make sure the clients know about the change
+        self.nova = novaclient.client.Client(2, session=self.session)
+        self.glance = glanceclient.Client('2', session=self.session)
+
     def _rescope_project(self, project_id, vo):
         '''Switch to new OS project whenever there is a change.
 
            It updates every OpenStack client used in case of new project.
         '''
-        if (not self.project_id or project_id != self.project_id):
-            self.opts.os_project_id = project_id
-            # make sure that it also works for v2voms
-            self.opts.os_tenant_id = project_id
-            if self.opts.external_auth:
-                self.opts.os_token = self._get_external_token(project_id, vo)
-            self.auth_plugin = loading.load_auth_from_argparse_arguments(
-                self.opts
-            )
-            self.session = loading.load_session_from_argparse_arguments(
-                self.opts, auth=self.auth_plugin
-            )
-            self.auth_plugin.invalidate()
-            try:
-                self.project_id = self.session.get_project_id()
-            except http_exc.Unauthorized:
-                msg = "Could not authorize user in project '%s'" % project_id
-                raise exceptions.OpenStackProviderException(msg)
-            # make sure the clients know about the change
-            self.nova = novaclient.client.Client(2, session=self.session)
-            self.glance = glanceclient.Client('2', session=self.session)
+        if self.project_id == project_id:
+            return
+        if self.opts.external_auth:
+            self.opts.os_token = self._get_external_token(project_id, vo)
+        self._authenticate(project_id, vo)
 
     @staticmethod
     def _get_endpoint_versions(endpoint_url):
