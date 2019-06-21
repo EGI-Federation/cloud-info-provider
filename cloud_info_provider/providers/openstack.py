@@ -12,6 +12,8 @@ from cloud_info_provider import utils
 from six.moves.urllib.parse import urljoin
 from six.moves.urllib.parse import urlparse
 
+import subprocess32 as subprocess
+
 try:
     import requests
 except ImportError:
@@ -44,8 +46,10 @@ except ImportError:
 # TODO(enolfc): should this be completely inside the provider class?
 def _rescope(f):
     @functools.wraps(f)
-    def inner(self, auth=None, **kwargs):
-        self._rescope_project(auth['project_id'])
+    def inner(self, **kwargs):
+        auth = kwargs.get('auth')
+        vo = kwargs.get('vo')
+        self._rescope_project(auth['project_id'], vo)
         return f(self, **kwargs)
     return inner
 
@@ -91,26 +95,17 @@ class OpenStackProvider(providers.BaseProvider):
             opts.os_project_id = None
             opts.os_tenant_id = None
 
-        # need to keep this to be able to rescope
+        # need to keep this to be able to authenticat later on
         self.opts = opts
-        self.auth_plugin = loading.load_auth_from_argparse_arguments(opts)
 
-        self.session = loading.load_session_from_argparse_arguments(
-            opts, auth=self.auth_plugin
-        )
+        # if we have an external command for getting tokens,
+        # enforce auth type to token
+        if opts.external_auth:
+            self.opts.os_auth_type = 'token'
 
         # Hide urllib3 warnings when allowing unverified connection
         if opts.insecure:
             requests.packages.urllib3.disable_warnings()
-
-        self.nova = novaclient.client.Client(2, session=self.session)
-        self.glance = glanceclient.Client('2', session=self.session)
-
-        try:
-            self.project_id = self.session.get_project_id()
-        except http_exc.Unauthorized:
-            msg = "Could not authorize user"
-            raise exceptions.OpenStackProviderException(msg)
 
         self.static = providers.static.StaticProvider(opts)
         self.insecure = opts.insecure
@@ -134,7 +129,21 @@ class OpenStackProvider(providers.BaseProvider):
             share['project'] = share.get('auth', {}).get('project_id')
         return shares
 
-    def _rescope_project(self, project_id):
+    def _get_external_token(self, project_id, vo):
+        try:
+            s = subprocess.run([self.opts.external_auth, project_id, vo],
+                               stdout=subprocess.PIPE,
+                               timeout=self.opts.external_auth_timeout,
+                               check=True)
+            return s.stdout.decode('utf-8').strip()
+        except subprocess.TimeoutExpired as e:
+            msg = "Timeout occurred while executing %s" % e.cmd
+            raise exceptions.OpenStackProviderException(msg)
+        except subprocess.CalledProcessError as e:
+            msg = "Non 0 exit code for %s" % e.cmd
+            raise exceptions.OpenStackProviderException(msg)
+
+    def _rescope_project(self, project_id, vo):
         '''Switch to new OS project whenever there is a change.
 
            It updates every OpenStack client used in case of new project.
@@ -143,6 +152,8 @@ class OpenStackProvider(providers.BaseProvider):
             self.opts.os_project_id = project_id
             # make sure that it also works for v2voms
             self.opts.os_tenant_id = project_id
+            if self.opts.external_auth:
+                self.opts.os_token = self._get_external_token(project_id, vo)
             self.auth_plugin = loading.load_auth_from_argparse_arguments(
                 self.opts
             )
@@ -497,3 +508,17 @@ class OpenStackProvider(providers.BaseProvider):
             help=('If set, include information about all images (including '
                   'snapshots), otherwise only publish images with cloudkeeper '
                   'metadata, ignoring the others.'))
+
+        parser.add_argument(
+            '--external-auth',
+            metavar='<command>',
+            help=('Use external <command> to fetch authentication tokens, it '
+                  'will be called with current share name (VO) and project '
+                  'name as arguments'))
+
+        parser.add_argument(
+            '--external-auth-timeout',
+            default=600,
+            metavar='<seconds>',
+            help=('Timeout is seconds for getting authentication token from '
+                  'external command'))

@@ -1,14 +1,16 @@
 import argparse
 
 import mock
+from six.moves.urllib.parse import urljoin
+import subprocess32 as subprocess
 
+from cloud_info_provider import exceptions
 from cloud_info_provider.providers import ooi as ooi_provider
 from cloud_info_provider.providers import openstack as os_provider
 from cloud_info_provider.tests import base
 from cloud_info_provider.tests import data
 from cloud_info_provider.tests import utils as utils
 
-from six.moves.urllib.parse import urljoin
 
 FAKES = data.OS_FAKES
 
@@ -36,6 +38,88 @@ class OpenStackProviderOptionsTest(base.TestCase):
         self.assertEqual(opts.select_flavors, 'public')
 
 
+class OpenStackProviderAuthTest(base.TestCase):
+
+    # Do not limit diff output on failures
+    maxDiff = None
+
+    def setUp(self):
+        super(OpenStackProviderAuthTest, self).setUp()
+
+        class FakeProvider(os_provider.OpenStackProvider):
+            def __init__(self, opts):
+                self.project_id = None
+                self.opts = mock.Mock()
+
+        self.provider = FakeProvider(None)
+
+    def test_rescope_simple(self):
+        self.provider.opts.external_auth = None
+        with utils.nested(
+                mock.patch('keystoneauth1.loading.'
+                           'load_auth_from_argparse_arguments'),
+                mock.patch('keystoneauth1.loading.'
+                           'load_session_from_argparse_arguments')
+        ) as (m_load_auth, m_load_session):
+            session = mock.Mock()
+            session.get_project_id.return_value = 'foo'
+            m_load_session.return_value = session
+            self.provider._rescope_project('foo', 'bar')
+            self.assertEqual('foo', self.provider.project_id)
+
+    def test_rescope_command(self):
+        self.provider.opts.external_auth = 'something'
+        with utils.nested(
+                mock.patch('keystoneauth1.loading.'
+                           'load_auth_from_argparse_arguments'),
+                mock.patch('keystoneauth1.loading.'
+                           'load_session_from_argparse_arguments'),
+                mock.patch.object(self.provider, '_get_external_token')
+        ) as (m_load_auth, m_load_session, m_get_token):
+            session = mock.Mock()
+            session.get_project_id.return_value = 'foo'
+            m_get_token.return_value = 'foobar'
+            m_load_session.return_value = session
+            self.provider._rescope_project('foo', 'bar')
+            self.assertEqual('foo', self.provider.project_id)
+            self.assertEqual('foobar', self.provider.opts.os_token)
+
+    def test_external_token(self):
+        self.provider.opts.external_auth = 'cmd'
+        self.provider.opts.external_auth_timeout = 1
+        with utils.nested(
+                mock.patch('subprocess32.run'),
+        ) as (m_sub, ):
+            m_cmd = mock.Mock()
+            m_cmd.stdout = b'123'
+            m_sub.return_value = m_cmd
+            self.assertEqual('123',
+                             self.provider._get_external_token('foo', 'bar'))
+            m_sub.assert_called_with(['cmd', 'foo', 'bar'],
+                                     stdout=subprocess.PIPE,
+                                     timeout=1, check=True)
+
+    def test_external_token_timeout(self):
+        self.provider.opts.external_auth = 'cmd'
+        self.provider.opts.external_auth_timeout = 1
+        with utils.nested(
+                mock.patch('subprocess32.run'),
+        ) as (m_sub, ):
+            m_sub.side_effect = subprocess.TimeoutExpired(cmd='cmd', timeout=1)
+            self.assertRaises(exceptions.OpenStackProviderException,
+                              self.provider._get_external_token, 'foo', 'bar')
+
+    def test_external_token_error(self):
+        self.provider.opts.external_auth = 'cmd'
+        self.provider.opts.external_auth_timeout = 1
+        with utils.nested(
+                mock.patch('subprocess32.run'),
+        ) as (m_sub, ):
+            m_sub.side_effect = subprocess.CalledProcessError(1, 'cmd')
+            self.assertRaises(exceptions.OpenStackProviderException,
+                              self.provider._get_external_token, 'foo', 'bar')
+
+
 class OpenStackProviderTest(base.TestCase):
 
     # Do not limit diff output on failures
@@ -60,7 +144,6 @@ class OpenStackProviderTest(base.TestCase):
                 self.keystone_trusted_cas = []
                 self.insecure = False
                 self.os_cacert = '/etc/ssl/cas'
-                self.os_project_id = None
                 self.select_flavors = 'all'
                 self._rescope_project = mock.Mock()
                 self.all_images = False
@@ -668,7 +751,6 @@ class OoiProviderTest(OpenStackProviderTest):
                 self.keystone_trusted_cas = []
                 self.insecure = False
                 self.os_cacert = '/etc/ssl/cas'
-                self.os_project_id = None
                 self.select_flavors = 'all'
                 self._rescope_project = mock.Mock()
                 self.all_images = False
