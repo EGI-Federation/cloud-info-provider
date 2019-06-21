@@ -6,6 +6,7 @@ defusedxml
 requests
 pyOpenSSL
 stevedore
+subprocess32
 # For OpenStack
 #python-keystoneclient
 #python-novaclient
