@@ -12,7 +12,7 @@ class FakeBDIIOpts(object):
 
 
 class FakeProvider(object):
-    def __init__(self, opts):
+    def __init__(self, *args, **kwargs):
         pass
 
     def method(self):

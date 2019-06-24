@@ -2,8 +2,8 @@ from cloud_info_provider.collectors import base
 
 
 class StorageCollector(base.BaseCollector):
-    def __init__(self, opts, providers):
-        super(StorageCollector, self).__init__(opts, providers)
+    def __init__(self, *args):
+        super(StorageCollector, self).__init__(*args)
         self.templates = ['storage']
 
     def fetch(self):

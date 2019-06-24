@@ -34,3 +34,7 @@ class StaticProviderException(CloudInfoException):
 
 class OpenNebulaProviderException(CloudInfoException):
     pass
+
+
+class RefresherException(CloudInfoException):
+    pass
