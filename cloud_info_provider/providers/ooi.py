@@ -19,8 +19,8 @@ class OoiProvider(OpenStackProvider):
         'compute_middleware_developer': 'CSIC',
     }
 
-    def __init__(self, opts):
-        super(OoiProvider, self).__init__(opts)
+    def __init__(self, *args, **kwargs):
+        super(OoiProvider, self).__init__(*args, **kwargs)
 
     def _get_endpoint_versions(self, endpoint_url):
         '''Return the API and middleware versions of a compute endpoint.'''

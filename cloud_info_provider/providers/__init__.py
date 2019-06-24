@@ -2,7 +2,7 @@ import logging
 
 
 class BaseProvider(object):
-    def __init__(self, opts):
+    def __init__(self, opts, **kwargs):
         self.opts = opts
         self.setup_logging()
 

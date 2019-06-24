@@ -74,8 +74,9 @@ class OpenStackProvider(providers.BaseProvider):
         for log in external_logs:
             logging.getLogger(log).setLevel(log_level)
 
-    def __init__(self, opts):
-        super(OpenStackProvider, self).__init__(opts)
+    def __init__(self, opts, **kwargs):
+        super(OpenStackProvider, self).__init__(opts,
+                                                **kwargs)
 
         # NOTE(aloga): we do not want a project to be passed from the CLI,
         # as we will iterate over it for each configured VO and project.  We
@@ -91,10 +92,7 @@ class OpenStackProvider(providers.BaseProvider):
             opts.os_project_id = None
             opts.os_tenant_id = None
 
-        # need to keep this to be able to rescope
-        self.opts = opts
         self.auth_plugin = loading.load_auth_from_argparse_arguments(opts)
-
         self.session = loading.load_session_from_argparse_arguments(
             opts, auth=self.auth_plugin
         )

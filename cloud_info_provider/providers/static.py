@@ -9,8 +9,8 @@ from cloud_info_provider import providers
 
 
 class StaticProvider(providers.BaseProvider):
-    def __init__(self, *args):
-        super(StaticProvider, self).__init__(*args)
+    def __init__(self, *args, **kwargs):
+        super(StaticProvider, self).__init__(*args, **kwargs)
 
         self._load_yaml(self.opts.yaml_file)
 
