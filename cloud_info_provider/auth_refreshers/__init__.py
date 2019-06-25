@@ -1,7 +1,7 @@
 """
 Authentication refreshers
 
-Provides a pluggable to dynamically refresh authentication credentials if
+Provides a pluggable way to dynamically refresh authentication credentials if
 needed. The actual refresh mechanism depends greatly on the actual credential
 type and the provider used.
 
