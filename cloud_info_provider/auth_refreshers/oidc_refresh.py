@@ -5,9 +5,6 @@ from cloud_info_provider import exceptions
 
 
 class OidcRefreshToken(auth_refreshers.BaseRefresher):
-    def __init__(self, opts):
-        self.opts = opts
-
     def refresh(self, provider, **kwargs):
         refresh_data = {
             "client_id": self.opts.oidc_client_id,
