@@ -5,7 +5,7 @@ Provides a pluggable way to dynamically refresh authentication credentials if
 needed. The actual refresh mechanism depends greatly on the actual credential
 type and the provider used.
 
-The `auth_refresh` method is invoked every time the provider needs to rescope
+The `refresh` method is invoked every time the provider needs to rescope
 authentication for a new share (i.e. VO)
 """
 
