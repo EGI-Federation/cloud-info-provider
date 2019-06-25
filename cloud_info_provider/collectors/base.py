@@ -4,13 +4,14 @@ import six
 
 @six.add_metaclass(abc.ABCMeta)
 class BaseCollector(object):
-    def __init__(self, opts, providers):
+    def __init__(self, opts, providers, auth_refresher):
         self.opts = opts
         self.providers = providers
 
         if (opts.middleware != 'static' and
                 opts.middleware in self.providers):
-            self.dynamic_provider = self.providers[opts.middleware](opts)
+            self.dynamic_provider = self.providers[opts.middleware](
+                opts, auth_refresher=auth_refresher)
         else:
             self.dynamic_provider = None
 

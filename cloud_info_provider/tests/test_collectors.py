@@ -49,7 +49,8 @@ class BaseCollectorTest(test_core.BaseTest):
 
         base = cloud_info_provider.collectors.base.BaseCollector(
             self.opts,
-            self.providers)
+            self.providers,
+            None)
 
         for s, d, e in cases:
             with utils.nested(
@@ -69,12 +70,13 @@ class CloudCollectorTest(test_core.BaseTest):
         m_get_info.return_value = DATA.site_info
         cloud = cloud_info_provider.collectors.cloud.CloudCollector(
             self.opts,
-            self.providers)
+            self.providers,
+            None)
         self.assertIsNotNone(cloud.fetch())
         self.assertEqual(cloud.fetch(), DATA.site_info)
 
 
-class StorageCollectorTEst(test_core.BaseTest):
+class StorageCollectorTest(test_core.BaseTest):
     @mock.patch.object(cloud_info_provider.collectors.storage.StorageCollector,
                        '_get_info_from_providers')
     def test_fetch(self, m_get_info):
@@ -94,7 +96,7 @@ class StorageCollectorTEst(test_core.BaseTest):
         info.update({'static_storage_info': static_storage_info})
 
         storage = cloud_info_provider.collectors.storage.StorageCollector(
-            self.opts, self.providers)
+            self.opts, self.providers, None)
         self.assertIsNotNone(storage.fetch())
 
     @mock.patch.object(cloud_info_provider.collectors.storage.StorageCollector,
@@ -105,7 +107,7 @@ class StorageCollectorTEst(test_core.BaseTest):
             DATA.site_info
         )
         storage = cloud_info_provider.collectors.storage.StorageCollector(
-            self.opts, self.providers)
+            self.opts, self.providers, None)
         self.assertEqual({}, storage.fetch())
 
 
@@ -155,7 +157,7 @@ class ComputeCollectorTest(test_core.BaseTest):
         info.update({'shares': shares})
 
         compute = cloud_info_provider.collectors.compute.ComputeCollector(
-            self.opts, self.providers)
+            self.opts, self.providers, None)
         self.assertIsNotNone(compute.fetch())
 
     @mock.patch.object(cloud_info_provider.collectors.compute.ComputeCollector,
@@ -170,6 +172,6 @@ class ComputeCollectorTest(test_core.BaseTest):
             {},
         )
         compute = cloud_info_provider.collectors.compute.ComputeCollector(
-            self.opts, self.providers)
+            self.opts, self.providers, None)
         self.assertFalse(compute.fetch())
         self.assertEqual({}, compute.fetch())

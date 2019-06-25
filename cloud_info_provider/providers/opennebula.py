@@ -21,10 +21,9 @@ except ImportError:
 
 
 class OpenNebulaBaseProvider(providers.BaseProvider):
-    def __init__(self, opts):
-        super(OpenNebulaBaseProvider, self).__init__(opts)
+    def __init__(self, opts, **kwargs):
+        super(OpenNebulaBaseProvider, self).__init__(opts, **kwargs)
 
-        self.opts = opts
         self.on_auth = opts.on_auth
         self.on_rpcxml_endpoint = opts.on_rpcxml_endpoint
         self.all_images = opts.all_images

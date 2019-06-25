@@ -26,7 +26,14 @@ def get_formatters():
     return [x.name for x in mgr]
 
 
-def parse_opts(providers, formatters):
+def get_auth_refreshers():
+    mgr = extension.ExtensionManager(
+        namespace='cip.auth_refreshers',
+    )
+    return dict((x.name, x.plugin) for x in mgr)
+
+
+def parse_opts(providers, formatters, auth_refreshers):
     parser = argparse.ArgumentParser(
         description='Cloud Information System provider',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -48,6 +55,12 @@ def parse_opts(providers, formatters):
         choices=formatters,
         default='glue',
         help=('Selects the output format. Allowed values: {%(choices)s}'))
+
+    parser.add_argument(
+        '--auth-refresher',
+        metavar='REFRESHER',
+        choices=auth_refreshers,
+        help=('Selects the token refresher. Allowed values: {%(choices)s}'))
 
     parser.add_argument(
         '--yaml-file',
@@ -81,21 +94,30 @@ def parse_opts(providers, formatters):
                                           provider_name)
         provider.populate_parser(group)
 
+    for refresher_name, refresher in auth_refreshers.items():
+        group = parser.add_argument_group('%s auth refresher options' %
+                                          refresher_name)
+        refresher.populate_parser(group)
+
     return parser.parse_args()
 
 
 def main():
     providers = get_providers()
     formatters = get_formatters()
+    auth_refreshers = get_auth_refreshers()
 
-    opts = parse_opts(providers, formatters)
+    opts = parse_opts(providers, formatters, auth_refreshers)
 
     mgr = driver.DriverManager(
         namespace='cip.formatters',
         name=opts.format,
         invoke_on_load=True,
     )
-    mgr.driver.format(opts, providers)
+    auth_refresher = None
+    if opts.auth_refresher:
+        auth_refresher = auth_refresher[opts.auth_refresher](opts)
+    mgr.driver.format(opts, providers, auth_refresher)
 
 
 if __name__ == '__main__':

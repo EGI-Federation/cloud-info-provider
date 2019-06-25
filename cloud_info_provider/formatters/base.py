@@ -16,11 +16,11 @@ class BaseFormatter(object):
         self.templates = []
         self.templates_files = {}
 
-    def _load_collectors(self, opts, providers):
+    def _load_collectors(self, opts, providers, auth_refresher):
         mgr = extension.ExtensionManager(
             namespace='cip.collectors',
             invoke_on_load=True,
-            invoke_args=(opts, providers),
+            invoke_args=(opts, providers, auth_refresher),
         )
         return dict((x.name, x.obj) for x in mgr)
 
@@ -42,8 +42,9 @@ class BaseFormatter(object):
         except Exception:
             return mako.exceptions.text_error_template().render()
 
-    def format(self, opts, providers):
-        available_collectors = self._load_collectors(opts, providers)
+    def format(self, opts, providers, auth_refreshers):
+        available_collectors = self._load_collectors(opts, providers,
+                                                     auth_refreshers)
         self._load_templates(opts.template_dir)
         for tpl in self.templates:
             info = available_collectors[tpl].fetch()

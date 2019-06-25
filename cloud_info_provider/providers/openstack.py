@@ -44,8 +44,10 @@ except ImportError:
 # TODO(enolfc): should this be completely inside the provider class?
 def _rescope(f):
     @functools.wraps(f)
-    def inner(self, auth=None, **kwargs):
-        self._rescope_project(auth['project_id'])
+    def inner(self, **kwargs):
+        auth = kwargs.get('auth')
+        vo = kwargs.get('vo')
+        self._rescope_project(auth['project_id'], vo)
         return f(self, **kwargs)
     return inner
 
@@ -74,8 +76,10 @@ class OpenStackProvider(providers.BaseProvider):
         for log in external_logs:
             logging.getLogger(log).setLevel(log_level)
 
-    def __init__(self, opts):
-        super(OpenStackProvider, self).__init__(opts)
+    def __init__(self, opts, auth_refresher=None, **kwargs):
+        super(OpenStackProvider, self).__init__(opts,
+                                                auth_refresher=auth_refresher,
+                                                **kwargs)
 
         # NOTE(aloga): we do not want a project to be passed from the CLI,
         # as we will iterate over it for each configured VO and project.  We
@@ -90,27 +94,12 @@ class OpenStackProvider(providers.BaseProvider):
         if "os_project_id" not in opts:
             opts.os_project_id = None
             opts.os_tenant_id = None
-
-        # need to keep this to be able to rescope
-        self.opts = opts
-        self.auth_plugin = loading.load_auth_from_argparse_arguments(opts)
-
-        self.session = loading.load_session_from_argparse_arguments(
-            opts, auth=self.auth_plugin
-        )
+        self.project_id = None
+        self.auth_refresher = auth_refresher
 
         # Hide urllib3 warnings when allowing unverified connection
         if opts.insecure:
             requests.packages.urllib3.disable_warnings()
-
-        self.nova = novaclient.client.Client(2, session=self.session)
-        self.glance = glanceclient.Client('2', session=self.session)
-
-        try:
-            self.project_id = self.session.get_project_id()
-        except http_exc.Unauthorized:
-            msg = "Could not authorize user"
-            raise exceptions.OpenStackProviderException(msg)
 
         self.static = providers.static.StaticProvider(opts)
         self.insecure = opts.insecure
@@ -134,30 +123,33 @@ class OpenStackProvider(providers.BaseProvider):
             share['project'] = share.get('auth', {}).get('project_id')
         return shares
 
-    def _rescope_project(self, project_id):
+    def _rescope_project(self, project_id, vo):
         '''Switch to new OS project whenever there is a change.
 
            It updates every OpenStack client used in case of new project.
         '''
-        if (not self.project_id or project_id != self.project_id):
-            self.opts.os_project_id = project_id
-            # make sure that it also works for v2voms
-            self.opts.os_tenant_id = project_id
-            self.auth_plugin = loading.load_auth_from_argparse_arguments(
-                self.opts
-            )
-            self.session = loading.load_session_from_argparse_arguments(
-                self.opts, auth=self.auth_plugin
-            )
-            self.auth_plugin.invalidate()
-            try:
-                self.project_id = self.session.get_project_id()
-            except http_exc.Unauthorized:
-                msg = "Could not authorize user in project '%s'" % project_id
-                raise exceptions.OpenStackProviderException(msg)
-            # make sure the clients know about the change
-            self.nova = novaclient.client.Client(2, session=self.session)
-            self.glance = glanceclient.Client('2', session=self.session)
+        if self.project_id == project_id:
+            return
+        self.opts.os_project_id = project_id
+        # make sure that it also works for v2voms
+        self.opts.os_tenant_id = project_id
+        if self.auth_refresher:
+            self.auth_refresher.refresh(self, project_id, vo)
+        self.auth_plugin = loading.load_auth_from_argparse_arguments(
+            self.opts
+        )
+        self.session = loading.load_session_from_argparse_arguments(
+            self.opts, auth=self.auth_plugin
+        )
+        self.auth_plugin.invalidate()
+        try:
+            self.project_id = self.session.get_project_id()
+        except http_exc.Unauthorized:
+            msg = "Could not authorize user in project '%s'" % project_id
+            raise exceptions.OpenStackProviderException(msg)
+        # make sure the clients know about the change
+        self.nova = novaclient.client.Client(2, session=self.session)
+        self.glance = glanceclient.Client('2', session=self.session)
 
     @staticmethod
     def _get_endpoint_versions(endpoint_url):
