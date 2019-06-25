@@ -52,6 +52,7 @@ class OpenStackProviderAuthTest(base.TestCase):
         self.provider = FakeProvider(None)
 
     def test_rescope_simple(self):
+        self.provider.auth_refresher = None
         with utils.nested(
                 mock.patch('keystoneauth1.loading.'
                            'load_auth_from_argparse_arguments'),
@@ -63,6 +64,23 @@ class OpenStackProviderAuthTest(base.TestCase):
             m_load_session.return_value = session
             self.provider._rescope_project('foo', 'bar')
             self.assertEqual('foo', self.provider.project_id)
+
+    def test_rescope_refresh(self):
+        m_refresh = mock.Mock()
+        self.provider.auth_refresher = mock.Mock()
+        self.provider.auth_refresher.auth_refresh = m_refresh
+        with utils.nested(
+                mock.patch('keystoneauth1.loading.'
+                           'load_auth_from_argparse_arguments'),
+                mock.patch('keystoneauth1.loading.'
+                           'load_session_from_argparse_arguments'),
+        ) as (_, m_load_session):
+            session = mock.Mock()
+            session.get_project_id.return_value = 'foo'
+            m_load_session.return_value = session
+            self.provider._rescope_project('foo', 'bar')
+            self.assertEqual('foo', self.provider.project_id)
+            m_refresh.assert_called_with(self.provider, 'foo', 'bar')
 
 
 class OpenStackProviderTest(base.TestCase):

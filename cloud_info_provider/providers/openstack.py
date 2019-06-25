@@ -76,8 +76,9 @@ class OpenStackProvider(providers.BaseProvider):
         for log in external_logs:
             logging.getLogger(log).setLevel(log_level)
 
-    def __init__(self, opts, **kwargs):
+    def __init__(self, opts, auth_refresher=None, **kwargs):
         super(OpenStackProvider, self).__init__(opts,
+                                                auth_refresher=auth_refresher,
                                                 **kwargs)
 
         # NOTE(aloga): we do not want a project to be passed from the CLI,
@@ -94,6 +95,7 @@ class OpenStackProvider(providers.BaseProvider):
             opts.os_project_id = None
             opts.os_tenant_id = None
         self.project_id = None
+        self.auth_refresher = auth_refresher
 
         # Hide urllib3 warnings when allowing unverified connection
         if opts.insecure:
@@ -131,6 +133,8 @@ class OpenStackProvider(providers.BaseProvider):
         self.opts.os_project_id = project_id
         # make sure that it also works for v2voms
         self.opts.os_tenant_id = project_id
+        if self.auth_refresher:
+            self.auth_refresher.auth_refresh(self, project_id, vo)
         self.auth_plugin = loading.load_auth_from_argparse_arguments(
             self.opts
         )
