@@ -8,7 +8,7 @@ class OidcRefreshToken(auth_refreshers.BaseRefresher):
     def __init__(self, opts):
         self.opts = opts
 
-    def auth_refresh(self, provider, **kwargs):
+    def refresh(self, provider, **kwargs):
         refresh_data = {
             "client_id": self.opts.oidc_client_id,
             "client_secret": self.opts.oidc_client_secret,

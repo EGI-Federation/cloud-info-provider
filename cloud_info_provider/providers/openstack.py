@@ -134,7 +134,7 @@ class OpenStackProvider(providers.BaseProvider):
         # make sure that it also works for v2voms
         self.opts.os_tenant_id = project_id
         if self.auth_refresher:
-            self.auth_refresher.auth_refresh(self, project_id, vo)
+            self.auth_refresher.refresh(self, project_id, vo)
         self.auth_plugin = loading.load_auth_from_argparse_arguments(
             self.opts
         )

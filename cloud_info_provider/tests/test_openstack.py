@@ -68,7 +68,7 @@ class OpenStackProviderAuthTest(base.TestCase):
     def test_rescope_refresh(self):
         m_refresh = mock.Mock()
         self.provider.auth_refresher = mock.Mock()
-        self.provider.auth_refresher.auth_refresh = m_refresh
+        self.provider.auth_refresher.refresh = m_refresh
         with utils.nested(
                 mock.patch('keystoneauth1.loading.'
                            'load_auth_from_argparse_arguments'),

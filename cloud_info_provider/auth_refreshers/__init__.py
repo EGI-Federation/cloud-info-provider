@@ -14,7 +14,7 @@ class BaseRefresher(object):
     def __init__(self, opts):
         self.opts = opts
 
-    def auth_refresh(self, provider, **kwargs):
+    def refresh(self, provider, **kwargs):
         pass
 
     @staticmethod

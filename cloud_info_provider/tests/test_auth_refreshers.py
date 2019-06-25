@@ -54,7 +54,7 @@ class OidcRefreshTest(base.TestCase):
         m_post.return_value = m_ret
         m_ret.status_code = 200
         m_ret.json.return_value = {"access_token": "a token"}
-        self.refresher.auth_refresh(self.provider)
+        self.refresher.refresh(self.provider)
         self.assertEqual("a token", self.provider.opts.oidcaccesstoken)
         m_post.assert_called_with('http://example.org/oidc',
                                   auth=('foo', 'bar'),
@@ -70,14 +70,14 @@ class OidcRefreshTest(base.TestCase):
         m_post.return_value = m_ret
         m_ret.status_code = 400
         self.assertRaises(RefresherException,
-                          self.refresher.auth_refresh,
+                          self.refresher.refresh,
                           self.provider)
 
     @mock.patch('requests.post')
     def test_refresh_request_exception(self, m_post):
         m_post.side_effect = requests.exceptions.RequestException
         self.assertRaises(RefresherException,
-                          self.refresher.auth_refresh,
+                          self.refresher.refresh,
                           self.provider)
 
     @mock.patch('requests.post')
@@ -88,7 +88,7 @@ class OidcRefreshTest(base.TestCase):
         m_ret.json.side_effect = ValueError
         m_ret = mock.Mock()
         self.assertRaises(RefresherException,
-                          self.refresher.auth_refresh,
+                          self.refresher.refresh,
                           self.provider)
 
     @mock.patch('requests.post')
@@ -99,5 +99,5 @@ class OidcRefreshTest(base.TestCase):
         m_ret.json.return_value = {}
         m_ret = mock.Mock()
         self.assertRaises(RefresherException,
-                          self.refresher.auth_refresh,
+                          self.refresher.refresh,
                           self.provider)
