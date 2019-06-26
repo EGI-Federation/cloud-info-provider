@@ -4,6 +4,7 @@ import mock
 import requests
 
 from cloud_info_provider.auth_refreshers import oidc_refresh
+from cloud_info_provider.auth_refreshers import oidc_vo_refresh
 from cloud_info_provider.exceptions import RefresherException
 from cloud_info_provider.tests import base
 
@@ -101,3 +102,47 @@ class OidcRefreshTest(base.TestCase):
         self.assertRaises(RefresherException,
                           self.refresher.refresh,
                           self.provider)
+
+
+class OidcRefreshVOTest(base.TestCase):
+    def setUp(self):
+        super(OidcRefreshVOTest, self).setUp()
+
+        class FakeRefresher(oidc_vo_refresh.OidcVORefreshToken):
+            def __init__(self):
+                self.opts = mock.Mock()
+                self.opts.oidc_token_endpoint = 'http://example.org/oidc'
+                self.opts.oidc_credentials_path = '/abc'
+                self.opts.oidc_scopes = 'foobar'
+
+        class FakeProvider(object):
+            def __init__(self):
+                self.opts = mock.Mock()
+
+        self.refresher = FakeRefresher()
+        self.provider = FakeProvider()
+
+    @mock.patch('requests.post')
+    def test_refresh_success(self, m_post):
+        m_open = mock.mock_open(read_data='foo')
+        m_open.side_effect = [m_open.return_value,
+                              mock.mock_open(read_data='bar').return_value,
+                              mock.mock_open(read_data='baz').return_value]
+        m_ret = mock.Mock()
+        m_post.return_value = m_ret
+        m_ret.status_code = 200
+        m_ret.json.return_value = {"access_token": "a token"}
+        with mock.patch('cloud_info_provider.auth_refreshers.oidc_vo_refresh.'
+                        'open', m_open):
+            self.refresher.refresh(self.provider, vo="vo.foo.bar")
+        self.assertEqual("a token", self.provider.opts.oidcaccesstoken)
+        m_post.assert_called_with('http://example.org/oidc',
+                                  auth=('foo', 'bar'),
+                                  data={"client_id": "foo",
+                                        "client_secret": "bar",
+                                        "grant_type": "refresh_token",
+                                        "refresh_token": "baz",
+                                        "scope": "foobar"})
+        m_open.assert_has_calls([mock.call("/abc/vo.foo.bar/client_id"),
+                                 mock.call("/abc/vo.foo.bar/client_secret"),
+                                 mock.call("/abc/vo.foo.bar/refresh_token")])
