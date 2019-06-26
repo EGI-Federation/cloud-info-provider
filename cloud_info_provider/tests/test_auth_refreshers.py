@@ -1,3 +1,7 @@
+"""
+Tests for the auth refreshers
+"""
+
 import argparse
 
 import mock
@@ -11,6 +15,8 @@ from cloud_info_provider.tests import base
 
 class OidcRefreshOptionsTest(base.TestCase):
     def test_populate_parser(self):
+        """Tests that the right options are added to the argument parser"""
+
         parser = argparse.ArgumentParser(conflict_handler='resolve')
         refresher = oidc_refresh.OidcRefreshToken(None)
         refresher.populate_parser(parser)
@@ -51,6 +57,12 @@ class OidcRefreshTest(base.TestCase):
 
     @mock.patch('requests.post')
     def test_refresh_success(self, m_post):
+        """Tests a successful invocation of the refresher.
+
+           Checks that the token endpoint is called with the right parameters
+           and that the provider gets its access_token updated with the value
+           returned bt the endpoint
+        """
         m_ret = mock.Mock()
         m_post.return_value = m_ret
         m_ret.status_code = 200
@@ -67,6 +79,7 @@ class OidcRefreshTest(base.TestCase):
 
     @mock.patch('requests.post')
     def test_refresh_bad_code(self, m_post):
+        """Ensures exception is raised on HTTP status code != 200"""
         m_ret = mock.Mock()
         m_post.return_value = m_ret
         m_ret.status_code = 400
@@ -76,6 +89,7 @@ class OidcRefreshTest(base.TestCase):
 
     @mock.patch('requests.post')
     def test_refresh_request_exception(self, m_post):
+        """Ensures exception is raised on requests errors"""
         m_post.side_effect = requests.exceptions.RequestException
         self.assertRaises(RefresherException,
                           self.refresher.refresh,
@@ -83,6 +97,7 @@ class OidcRefreshTest(base.TestCase):
 
     @mock.patch('requests.post')
     def test_refresh_no_json(self, m_post):
+        """Ensures exception is raised when bad json is returned"""
         m_ret = mock.Mock()
         m_post.return_value = m_ret
         m_ret.status_code = 200
@@ -94,6 +109,7 @@ class OidcRefreshTest(base.TestCase):
 
     @mock.patch('requests.post')
     def test_refresh_bad_json(self, m_post):
+        """Ensures exception is raised json does not contain access_token"""
         m_ret = mock.Mock()
         m_post.return_value = m_ret
         m_ret.status_code = 200
@@ -124,6 +140,11 @@ class OidcRefreshVOTest(base.TestCase):
 
     @mock.patch('requests.post')
     def test_refresh_success(self, m_post):
+        """Test the successful renewal of tokens for a vo.foo.bar VO.
+
+           Checks that the files with the credentials are read and
+           that the token endpoint is contacted with the right parameters
+        """
         m_open = mock.mock_open(read_data='foo')
         m_open.side_effect = [m_open.return_value,
                               mock.mock_open(read_data='bar').return_value,

@@ -5,6 +5,12 @@ from cloud_info_provider import exceptions
 
 
 class OidcRefreshToken(auth_refreshers.BaseRefresher):
+    """Refreshes OAuth 2.0 access tokens using refresh_token grant.
+
+    OAuth2.0 token endpoint and credentials are specified in the options to
+    perform token refresh request following
+    https://tools.ietf.org/html/rfc6749#section-1.5
+    """
     def _refresh_token(self, token_endpoint, client_id, client_secret,
                        refresh_token, scopes):
         refresh_data = {
@@ -58,4 +64,4 @@ class OidcRefreshToken(auth_refreshers.BaseRefresher):
 
         parser.add_argument("--oidc-scopes", metavar="<scopes>",
                             default="openid email profile",
-                            help="OIDC scopes for token")
+                            help="OIDC scopes for token refresh")

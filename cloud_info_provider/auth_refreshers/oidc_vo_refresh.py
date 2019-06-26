@@ -4,6 +4,18 @@ from cloud_info_provider.auth_refreshers import oidc_refresh
 
 
 class OidcVORefreshToken(oidc_refresh.OidcRefreshToken):
+    """Refreshes OAuth 2.0 access tokens using different credentials per VO.
+
+    Expects that the credentials are available on files named as
+    follows:
+      - /base_path/<name of the vo>/client_id with the OIDC client id
+      - /base_path/<name of the vo>/client_secret with the OIDC client secret
+      - /base_path/<name of the vo>/refresh_token with the refresh token
+
+    The refresher will read the files and perform a token refresh request
+    following https://tools.ietf.org/html/rfc6749#section-1.5
+    """
+
     def refresh(self, provider, vo=None, **kwargs):
         base = os.path.join(self.opts.oidc_credentials_path, vo)
         args = {}
