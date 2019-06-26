@@ -116,7 +116,7 @@ def main():
     )
     auth_refresher = None
     if opts.auth_refresher:
-        auth_refresher = auth_refresher[opts.auth_refresher](opts)
+        auth_refresher = auth_refreshers[opts.auth_refresher](opts)
     mgr.driver.format(opts, providers, auth_refresher)
 
 
