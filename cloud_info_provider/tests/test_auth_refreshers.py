@@ -143,6 +143,3 @@ class OidcRefreshVOTest(base.TestCase):
                                         "grant_type": "refresh_token",
                                         "refresh_token": "baz",
                                         "scope": "foobar"})
-        m_open.assert_has_calls([mock.call("/abc/vo.foo.bar/client_id"),
-                                 mock.call("/abc/vo.foo.bar/client_secret"),
-                                 mock.call("/abc/vo.foo.bar/refresh_token")])

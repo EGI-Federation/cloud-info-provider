@@ -80,7 +80,8 @@ class OpenStackProviderAuthTest(base.TestCase):
             m_load_session.return_value = session
             self.provider._rescope_project('foo', 'bar')
             self.assertEqual('foo', self.provider.project_id)
-            m_refresh.assert_called_with(self.provider, 'foo', 'bar')
+            m_refresh.assert_called_with(self.provider, project_id='foo',
+                                         vo='bar')
 
 
 class OpenStackProviderTest(base.TestCase):
