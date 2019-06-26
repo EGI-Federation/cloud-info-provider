@@ -1,15 +1,22 @@
+"""
+Tests for the auth refreshers
+"""
+
 import argparse
 
 import mock
 import requests
 
 from cloud_info_provider.auth_refreshers import oidc_refresh
+from cloud_info_provider.auth_refreshers import oidc_vo_refresh
 from cloud_info_provider.exceptions import RefresherException
 from cloud_info_provider.tests import base
 
 
 class OidcRefreshOptionsTest(base.TestCase):
     def test_populate_parser(self):
+        """Tests that the right options are added to the argument parser"""
+
         parser = argparse.ArgumentParser(conflict_handler='resolve')
         refresher = oidc_refresh.OidcRefreshToken(None)
         refresher.populate_parser(parser)
@@ -50,6 +57,12 @@ class OidcRefreshTest(base.TestCase):
 
     @mock.patch('requests.post')
     def test_refresh_success(self, m_post):
+        """Tests a successful invocation of the refresher.
+
+           Checks that the token endpoint is called with the right parameters
+           and that the provider gets its access_token updated with the value
+           returned bt the endpoint
+        """
         m_ret = mock.Mock()
         m_post.return_value = m_ret
         m_ret.status_code = 200
@@ -66,6 +79,7 @@ class OidcRefreshTest(base.TestCase):
 
     @mock.patch('requests.post')
     def test_refresh_bad_code(self, m_post):
+        """Ensures exception is raised on HTTP status code != 200"""
         m_ret = mock.Mock()
         m_post.return_value = m_ret
         m_ret.status_code = 400
@@ -75,6 +89,7 @@ class OidcRefreshTest(base.TestCase):
 
     @mock.patch('requests.post')
     def test_refresh_request_exception(self, m_post):
+        """Ensures exception is raised on requests errors"""
         m_post.side_effect = requests.exceptions.RequestException
         self.assertRaises(RefresherException,
                           self.refresher.refresh,
@@ -82,6 +97,7 @@ class OidcRefreshTest(base.TestCase):
 
     @mock.patch('requests.post')
     def test_refresh_no_json(self, m_post):
+        """Ensures exception is raised when bad json is returned"""
         m_ret = mock.Mock()
         m_post.return_value = m_ret
         m_ret.status_code = 200
@@ -93,6 +109,7 @@ class OidcRefreshTest(base.TestCase):
 
     @mock.patch('requests.post')
     def test_refresh_bad_json(self, m_post):
+        """Ensures exception is raised json does not contain access_token"""
         m_ret = mock.Mock()
         m_post.return_value = m_ret
         m_ret.status_code = 200
@@ -101,3 +118,49 @@ class OidcRefreshTest(base.TestCase):
         self.assertRaises(RefresherException,
                           self.refresher.refresh,
                           self.provider)
+
+
+class OidcRefreshVOTest(base.TestCase):
+    def setUp(self):
+        super(OidcRefreshVOTest, self).setUp()
+
+        class FakeRefresher(oidc_vo_refresh.OidcVORefreshToken):
+            def __init__(self):
+                self.opts = mock.Mock()
+                self.opts.oidc_token_endpoint = 'http://example.org/oidc'
+                self.opts.oidc_credentials_path = '/abc'
+                self.opts.oidc_scopes = 'foobar'
+
+        class FakeProvider(object):
+            def __init__(self):
+                self.opts = mock.Mock()
+
+        self.refresher = FakeRefresher()
+        self.provider = FakeProvider()
+
+    @mock.patch('requests.post')
+    def test_refresh_success(self, m_post):
+        """Test the successful renewal of tokens for a vo.foo.bar VO.
+
+           Checks that the files with the credentials are read and
+           that the token endpoint is contacted with the right parameters
+        """
+        m_open = mock.mock_open(read_data='foo')
+        m_open.side_effect = [m_open.return_value,
+                              mock.mock_open(read_data='bar').return_value,
+                              mock.mock_open(read_data='baz').return_value]
+        m_ret = mock.Mock()
+        m_post.return_value = m_ret
+        m_ret.status_code = 200
+        m_ret.json.return_value = {"access_token": "a token"}
+        with mock.patch('cloud_info_provider.auth_refreshers.oidc_vo_refresh.'
+                        'open', m_open):
+            self.refresher.refresh(self.provider, vo="vo.foo.bar")
+        self.assertEqual("a token", self.provider.opts.oidcaccesstoken)
+        m_post.assert_called_with('http://example.org/oidc',
+                                  auth=('foo', 'bar'),
+                                  data={"client_id": "foo",
+                                        "client_secret": "bar",
+                                        "grant_type": "refresh_token",
+                                        "refresh_token": "baz",
+                                        "scope": "foobar"})
