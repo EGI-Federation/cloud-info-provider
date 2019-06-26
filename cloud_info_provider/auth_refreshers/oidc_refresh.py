@@ -38,7 +38,7 @@ class OidcRefreshToken(auth_refreshers.BaseRefresher):
         # this requires some inner knowledge on the oidc auth of OpenStack
         # and won't work for others, but I'm not sure if we can make
         # this generic
-        provider.opts.oidcaccesstoken = token
+        provider.opts.os_access_token = token
 
     def refresh(self, provider, **kwargs):
         token = self._refresh_token(self.opts.oidc_token_endpoint,
