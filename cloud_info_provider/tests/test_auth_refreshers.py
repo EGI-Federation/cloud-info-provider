@@ -68,7 +68,7 @@ class OidcRefreshTest(base.TestCase):
         m_ret.status_code = 200
         m_ret.json.return_value = {"access_token": "a token"}
         self.refresher.refresh(self.provider)
-        self.assertEqual("a token", self.provider.opts.oidcaccesstoken)
+        self.assertEqual("a token", self.provider.opts.os_access_token)
         m_post.assert_called_with('http://example.org/oidc',
                                   auth=('foo', 'bar'),
                                   data={"client_id": "foo",
@@ -156,7 +156,7 @@ class OidcRefreshVOTest(base.TestCase):
         with mock.patch('cloud_info_provider.auth_refreshers.oidc_vo_refresh.'
                         'open', m_open):
             self.refresher.refresh(self.provider, vo="vo.foo.bar")
-        self.assertEqual("a token", self.provider.opts.oidcaccesstoken)
+        self.assertEqual("a token", self.provider.opts.os_access_token)
         m_post.assert_called_with('http://example.org/oidc',
                                   auth=('foo', 'bar'),
                                   data={"client_id": "foo",
