@@ -49,8 +49,6 @@ compute:
             # api_endpoint_technology: webservice
             # api_authn_method: oidc
             # production_level: production
-            # [cmdbv1] service identifier
-            # service_id: SERVICE_ID
 
     # Available resources, uncomment and set as needed
     # Below default values are used

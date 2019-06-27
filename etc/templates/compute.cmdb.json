@@ -1,5 +1,5 @@
-<%def name="render_string(k, v, comma=True)">
-% if v is None:
+<%def name="render_string(k, v, schema_required_type=False, comma=True)">
+% if v is None and schema_required_type is True:
 "${k}": null${',' if comma else ''}
 % else:
 "${k}": "${v}"${',' if comma else ''}
@@ -12,7 +12,7 @@
     static_compute_info = attributes['static_compute_info']
     shares = attributes['shares']
     provider_id = static_compute_info['site_id']
-    service_id = static_compute_info['compute_service_id']
+    service_id = static_compute_info['compute_service_name']
 %>\
     {
         "type": "provider",
@@ -79,8 +79,8 @@
     {
         "type": "tenant",
         "data": {
-            ${render_string('tenant_id', project_id)}
-            ${render_string('tenant_name', _vo)}
+            ${render_string('tenant_id', project_id, schema_required_type=True)}
+            ${render_string('tenant_name', _vo, schema_required_type=True)}
             "service": "${service_id}"
         }
     },
@@ -88,8 +88,8 @@
     {
         "type": "flavor",
         "data": {
-            ${render_string('flavor_id', _flavor_id)}
-            ${render_string('flavor_name', _flavor['flavor_name'])}
+            ${render_string('flavor_id', _flavor_id, schema_required_type=True)}
+            ${render_string('flavor_name', _flavor['flavor_name'], schema_required_type=True)}
             "num_vcpus": ${_flavor.get('template_cpu', 0)},
             "ram": ${_flavor.get('template_memory', 0)},
             "disk": ${_flavor.get('template_disk', 0)},
@@ -97,7 +97,7 @@
             ${render_string('gpu_vendor', _flavor['template_flavor_gpu_vendor'])}
             ${render_string('gpu_model', _flavor['template_flavor_gpu_model'])}
             "service": "${service_id}",
-            ${render_string('tenant_id', project_id)}
+            ${render_string('tenant_id', project_id, schema_required_type=True)}
             "tenant_name": "${_vo}"
         }
     },
@@ -106,8 +106,8 @@
     {
         "type": "image",
         "data": {
-            ${render_string('image_id', _image['id'])}
-            ${render_string('image_name', _image['image_name'])}
+            ${render_string('image_id', _image['id'], schema_required_type=True)}
+            ${render_string('image_name', _image['image_name'], schema_required_type=True)}
             ${render_string('image_description', _image['image_description'])}
             ${render_string('image_marketplace_id', _image['image_marketplace_id'])}
             ${render_string('architecture', _image['architecture'])}
@@ -121,7 +121,7 @@
             ${render_string('cuda_version', _image['property_image_gpu_cuda'])}
             ${render_string('cuDNN_version', _image['property_image_gpu_cudnn'])}
             "service": "${service_id}",
-            ${render_string('tenant_id', project_id)}
+            ${render_string('tenant_id', project_id, schema_required_type=True)}
             "tenant_name": "${_vo}"
         }
     }${'' if loop.last else ','}
