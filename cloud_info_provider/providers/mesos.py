@@ -37,7 +37,7 @@ class MesosProvider(providers.BaseProvider):
         elif opts.marathon_endpoint:
             self.framework_url = opts.marathon_endpoint
             self.framework_type = 'marathon'
-            self.api_endpoints = ['/v2/info', 'v2/leader']
+            self.api_endpoints = ['v2/info', 'v2/leader']
         self.goc_service_type = 'eu.indigo-datacloud.%s' % self.framework_type
 
         self.static = providers.static.StaticProvider(opts)
