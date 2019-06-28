@@ -42,12 +42,18 @@ class MesosProvider(providers.BaseProvider):
 
         self.static = providers.static.StaticProvider(opts)
 
+        self.headers = {}
+        if opts.oidc_token:
+            self.headers['Authorization'] = 'Bearer %s' % opts.oidc_token
+
     def get_site_info(self):
         d = {}
         for endp in self.api_endpoints:
             api_url = urllib.parse.urljoin(self.framework_url, endp)
-            r = requests.get(api_url)
-            d.update(r.json())
+            api_url = '/'.join([self.framework_url, endp])
+            r = requests.get(api_url, headers=self.headers)
+            if r.status_code == requests.codes.ok:
+                d.update(r.json())
         return d
 
     def get_compute_shares(self, **kwargs):
@@ -78,3 +84,11 @@ class MesosProvider(providers.BaseProvider):
             default=utils.env('MARATHON_ENDPOINT'),
             help=('Specify Marathon API endpoint. '
                   'Defaults to env[MARATHON_ENDPOINT]'))
+        parser.add_argument(
+            '--oidc-auth-bearer-token',
+            metavar='<bearer-token>',
+            default=utils.env('IAM_ACCESS_TOKEN'),
+            dest='oidc_token',
+            help=('Specify OIDC bearer token to use when '
+                  'authenticating with the API. Defaults '
+                  'to env[IAM_ACCESS_TOKEN]'))
