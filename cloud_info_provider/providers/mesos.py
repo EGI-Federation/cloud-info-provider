@@ -1,5 +1,4 @@
 import requests
-from six.moves import urllib
 
 from cloud_info_provider import exceptions
 from cloud_info_provider import providers
@@ -14,7 +13,6 @@ class MesosProvider(providers.BaseProvider):
         super(MesosProvider, self).__init__(opts)
 
         self.framework_url = None
-        self.framework_type = None
         self.api_endpoints = []
 
         if not any([opts.mesos_endpoint,
@@ -30,15 +28,13 @@ class MesosProvider(providers.BaseProvider):
                        opts.marathon_endpoint])) > 1:
             msg = ('Please provide only one API endpoint')
             raise exceptions.MesosProviderException(msg)
-        if opts.mesos_endpoint:
+        if opts.framework == 'mesos':
             self.framework_url = opts.mesos_endpoint
-            self.framework_type = 'mesos'
             self.api_endpoints = ['/metrics/snapshot', 'state']
-        elif opts.marathon_endpoint:
+        elif opts.framework == 'marathon':
             self.framework_url = opts.marathon_endpoint
-            self.framework_type = 'marathon'
             self.api_endpoints = ['v2/info', 'v2/leader']
-        self.goc_service_type = 'eu.indigo-datacloud.%s' % self.framework_type
+        self.goc_service_type = 'eu.indigo-datacloud.%s' % opts.framework
 
         self.static = providers.static.StaticProvider(opts)
 
@@ -49,11 +45,14 @@ class MesosProvider(providers.BaseProvider):
     def get_site_info(self):
         d = {}
         for endp in self.api_endpoints:
-            api_url = urllib.parse.urljoin(self.framework_url, endp)
             api_url = '/'.join([self.framework_url, endp])
             r = requests.get(api_url, headers=self.headers)
             if r.status_code == requests.codes.ok:
+                print("CONTENT: ", r.content)
                 d.update(r.json())
+            else:
+                msg = 'Request failed: %s' % r.content
+                raise exceptions.MesosProviderException(msg)
         return d
 
     def get_compute_shares(self, **kwargs):
@@ -72,6 +71,12 @@ class MesosProvider(providers.BaseProvider):
 
     @staticmethod
     def populate_parser(parser):
+        parser.add_argument(
+            '--framework',
+            choices=['mesos', 'marathon'],
+            required=True,
+            help=('Select the type of framework to collect data from '
+                  '(required).'))
         parser.add_argument(
             '--mesos-endpoint',
             metavar='<api-url>',
