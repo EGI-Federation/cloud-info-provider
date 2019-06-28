@@ -11,7 +11,7 @@
     goc_service_type = attributes['dynamic_provider'].goc_service_type
     static_compute_info = attributes['static_compute_info']
     shares = attributes['shares']
-    provider_id = static_compute_info['site_id']
+    provider_id = static_compute_info['site_name']
     service_id = static_compute_info['compute_service_name']
 %>\
     {
