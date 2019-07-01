@@ -34,7 +34,7 @@
             ${render_string('sitename', static_compute_info['site_name'])}
             "type": "compute",
             % if middleware == "mesos":
-            ${render_string('endpoint', static_compute_info['leader'])}
+            ${render_string('endpoint', static_compute_info['framework_url'])}
             "properties": {
             <%
                 if 'master/gpus_total' in static_compute_info.keys():

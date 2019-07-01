@@ -48,8 +48,9 @@ class MesosProvider(providers.BaseProvider):
             api_url = '/'.join([self.framework_url, endp])
             r = requests.get(api_url, headers=self.headers)
             if r.status_code == requests.codes.ok:
-                print("CONTENT: ", r.content)
                 d.update(r.json())
+                # add external endpoint URL
+                d['framework_url'] = self.framework_url
             else:
                 msg = 'Request failed: %s' % r.content
                 raise exceptions.MesosProviderException(msg)
