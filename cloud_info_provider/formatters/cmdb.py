@@ -12,7 +12,6 @@ class CMDB(base.BaseFormatter):
     def to_stdout(self, template):
         template_str = StringIO(template)
         json_data = json.load(template_str)
-        print(json.dumps(json_data, indent=4, sort_keys=True))
 
 
 class CMDBv2(base.BaseFormatter):

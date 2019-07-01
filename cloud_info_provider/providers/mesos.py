@@ -26,6 +26,10 @@ class MesosProvider(providers.BaseProvider):
         self.framework_url = opts.mesos_endpoint
         self.api_endpoints = []
         self.insecure = opts.insecure
+        self.cacert = opts.mesos_cacert
+        if self.insecure:
+            requests.packages.urllib3.disable_warnings()
+            self.cacert = False
 
         if opts.mesos_framework == 'mesos':
             self.api_endpoints = ['/metrics/snapshot', 'state']
@@ -43,7 +47,7 @@ class MesosProvider(providers.BaseProvider):
         d = {}
         for endp in self.api_endpoints:
             api_url = '/'.join([self.framework_url, endp])
-            r = requests.get(api_url, headers=self.headers)
+            r = requests.get(api_url, headers=self.headers, verify=self.cacert)
             if r.status_code == requests.codes.ok:
                 d.update(r.json())
                 # add external endpoint URL
@@ -62,10 +66,6 @@ class MesosProvider(providers.BaseProvider):
             'endpoints': {
                 self.framework_url: {}},
         }
-        if self.goc_service_type:
-            ret.update(gocdb.get_goc_info(self.framework_url,
-                                          self.goc_service_type,
-                                          self.insecure))
 
         defaults = self.static.get_compute_endpoint_defaults(prefix=True)
         ret.update(defaults)
@@ -84,6 +84,12 @@ class MesosProvider(providers.BaseProvider):
             default=utils.env('MESOS_ENDPOINT'),
             help=('Specify Mesos|Marathon API endpoint. '
                   'Defaults to env[MESOS_ENDPOINT]'))
+        parser.add_argument(
+            '--mesos-cacert',
+            metavar='<ca-certificate>',
+            default=utils.env('MESOS_ENDPOINT'),
+            help=('Specify a CA bundle file to verify HTTPS connections '
+                  'to Mesos endpoints.'))
         parser.add_argument(
             '--oidc-auth-bearer-token',
             metavar='<bearer-token>',
