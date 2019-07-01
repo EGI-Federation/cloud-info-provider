@@ -2,6 +2,7 @@ import requests
 
 from cloud_info_provider import exceptions
 from cloud_info_provider import providers
+from cloud_info_provider.providers import gocdb
 from cloud_info_provider import utils
 
 
@@ -14,6 +15,7 @@ class MesosProvider(providers.BaseProvider):
 
         self.framework_url = None
         self.api_endpoints = []
+        self.insecure = opts.insecure
 
         if not any([opts.mesos_endpoint,
                     opts.marathon_endpoint]):
@@ -28,6 +30,11 @@ class MesosProvider(providers.BaseProvider):
                        opts.marathon_endpoint])) > 1:
             msg = ('Please provide only one API endpoint')
             raise exceptions.MesosProviderException(msg)
+
+        if not opts.framework:
+            msg = ('You must provide the endpoint URL to connect to')
+            raise exceptions.MesosProviderException(msg)
+
         if opts.framework == 'mesos':
             self.framework_url = opts.mesos_endpoint
             self.api_endpoints = ['/metrics/snapshot', 'state']
@@ -65,6 +72,10 @@ class MesosProvider(providers.BaseProvider):
             'endpoints': {
                 self.framework_url: {}},
         }
+        if self.goc_service_type:
+            ret.update(gocdb.get_goc_info(self.framework_url,
+                                          self.goc_service_type,
+                                          self.insecure))
 
         defaults = self.static.get_compute_endpoint_defaults(prefix=True)
         ret.update(defaults)
@@ -75,7 +86,6 @@ class MesosProvider(providers.BaseProvider):
         parser.add_argument(
             '--framework',
             choices=['mesos', 'marathon'],
-            required=True,
             help=('Select the type of framework to collect data from '
                   '(required).'))
         parser.add_argument(
