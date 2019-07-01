@@ -13,35 +13,25 @@ class MesosProvider(providers.BaseProvider):
     def __init__(self, opts):
         super(MesosProvider, self).__init__(opts)
 
-        self.framework_url = None
-        self.api_endpoints = []
-        self.insecure = opts.insecure
-
-        if not any([opts.mesos_endpoint,
-                    opts.marathon_endpoint]):
+        if not opts.mesos_endpoint:
             msg = ('You must provide a Mesos, Marathon or Chronos API '
-                   'endpoint via --mesos-endpoint, --marathon-endpoint or '
-                   '--chronos-endpoint respectively (alternatively using '
-                   'the environment variables MESOS_ENDPOINT, '
-                   'MARATHON_ENDPOINT or CHRONOS_ENDPOINT)')
-            raise exceptions.MesosProviderException(msg)
-        if len(filter(None,
-                      [opts.mesos_endpoint,
-                       opts.marathon_endpoint])) > 1:
-            msg = ('Please provide only one API endpoint')
+                   'endpoint via --mesos-endpoint (alternatively using '
+                   'the environment variable MESOS_ENDPOINT)')
             raise exceptions.MesosProviderException(msg)
 
-        if not opts.framework:
+        if not opts.mesos_framework:
             msg = ('You must provide the endpoint URL to connect to')
             raise exceptions.MesosProviderException(msg)
 
-        if opts.framework == 'mesos':
-            self.framework_url = opts.mesos_endpoint
+        self.framework_url = opts.mesos_endpoint
+        self.api_endpoints = []
+        self.insecure = opts.insecure
+
+        if opts.mesos_framework == 'mesos':
             self.api_endpoints = ['/metrics/snapshot', 'state']
-        elif opts.framework == 'marathon':
-            self.framework_url = opts.marathon_endpoint
+        elif opts.mesos_framework == 'marathon':
             self.api_endpoints = ['v2/info', 'v2/leader']
-        self.goc_service_type = 'eu.indigo-datacloud.%s' % opts.framework
+        self.goc_service_type = 'eu.indigo-datacloud.%s' % opts.mesos_framework
 
         self.static = providers.static.StaticProvider(opts)
 
@@ -84,7 +74,7 @@ class MesosProvider(providers.BaseProvider):
     @staticmethod
     def populate_parser(parser):
         parser.add_argument(
-            '--framework',
+            '--mesos-framework',
             choices=['mesos', 'marathon'],
             help=('Select the type of framework to collect data from '
                   '(required).'))
@@ -92,14 +82,8 @@ class MesosProvider(providers.BaseProvider):
             '--mesos-endpoint',
             metavar='<api-url>',
             default=utils.env('MESOS_ENDPOINT'),
-            help=('Specify Mesos API endpoint. '
+            help=('Specify Mesos|Marathon API endpoint. '
                   'Defaults to env[MESOS_ENDPOINT]'))
-        parser.add_argument(
-            '--marathon-endpoint',
-            metavar='<api-url>',
-            default=utils.env('MARATHON_ENDPOINT'),
-            help=('Specify Marathon API endpoint. '
-                  'Defaults to env[MARATHON_ENDPOINT]'))
         parser.add_argument(
             '--oidc-auth-bearer-token',
             metavar='<bearer-token>',
