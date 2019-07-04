@@ -68,6 +68,7 @@ class MesosProvider(providers.BaseProvider):
         }
 
         defaults = self.static.get_compute_endpoint_defaults(prefix=True)
+        ret['compute_service_name'] = self.framework_url
         ret.update(defaults)
         return ret
 
