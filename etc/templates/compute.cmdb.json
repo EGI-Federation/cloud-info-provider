@@ -13,6 +13,7 @@
     shares = attributes['shares']
     provider_id = static_compute_info['site_name']
     service_id = static_compute_info['compute_service_name']
+    service_info = static_compute_info['endpoints'][service_id]
 %>\
     {
         "type": "provider",
@@ -34,15 +35,15 @@
             ${render_string('sitename', static_compute_info['site_name'])}
             "type": "compute",
             % if middleware == "mesos":
-            ${render_string('endpoint', static_compute_info['framework_url'])}
+            ${render_string('endpoint', service_info['framework_url'])}
             "properties": {
             <%
-                if 'master/gpus_total' in static_compute_info.keys():
+                if 'master/gpus_total' in service_info.keys():
                     framework_type = 'mesos'
-                    has_gpu = static_compute_info['master/gpus_total']
-                elif 'marathon_config' in static_compute_info.keys():
+                    has_gpu = service_info['master/gpus_total']
+                elif 'marathon_config' in service_info.keys():
                     framework_type = 'marathon'
-                    has_gpu = 'gpu_resources' in static_compute_info['marathon_config']['features']
+                    has_gpu = 'gpu_resources' in service_info['marathon_config']['features']
             %>
                 "gpu_support": ${'true' if has_gpu else 'false'},
                 % if framework_type == 'mesos':
@@ -59,9 +60,9 @@
                 ${render_string('local_volumes_host_base_path', static_compute_info['compute_local_volumes_host_base_path'])}
                 ${render_string('persistent_storage_drivers', static_compute_info['compute_persistent_storage_drivers'])}
                 ${render_string('load_balancer_ips', static_compute_info['compute_load_balancer_ips'])}
-                ${render_string('master', static_compute_info['marathon_config']['master'])}
-                ${render_string('hostname', static_compute_info['marathon_config']['hostname'])}
-                ${render_string('mesos_leader_ui_url', static_compute_info['marathon_config']['mesos_leader_ui_url'], comma=False)}
+                ${render_string('master', service_info['marathon_config']['master'])}
+                ${render_string('hostname', service_info['marathon_config']['hostname'])}
+                ${render_string('mesos_leader_ui_url', service_info['marathon_config']['mesos_leader_ui_url'], comma=False)}
                 % endif
             }
             % else:
