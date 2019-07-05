@@ -13,7 +13,9 @@
     shares = attributes['shares']
     provider_id = static_compute_info['site_name']
     service_id = static_compute_info['compute_service_name']
-    service_info = static_compute_info['endpoints'][service_id]
+
+    from six.moves import urllib
+    host_name = urllib.parse.urlparse(static_compute_info['compute_service_name']).hostname
 %>\
     {
         "type": "provider",
@@ -31,13 +33,13 @@
         "data": {
             "provider_id": "${provider_id}",
             "id": "${service_id}",
+            ${render_string('hostname', host_name)}
             ${render_string('service_type', goc_service_type)}
             ${render_string('sitename', static_compute_info['site_name'])}
             "type": "compute",
             % if middleware == "mesos":
-            ${render_string('endpoint', service_info['framework_url'])}
-            "properties": {
             <%
+                service_info = static_compute_info['endpoints'][service_id]
                 if 'master/gpus_total' in service_info.keys():
                     framework_type = 'mesos'
                     has_gpu = service_info['master/gpus_total']
@@ -45,6 +47,8 @@
                     framework_type = 'marathon'
                     has_gpu = 'gpu_resources' in service_info['marathon_config']['features']
             %>
+            ${render_string('endpoint', service_info['framework_url'])}
+            "properties": {
                 "gpu_support": ${'true' if has_gpu else 'false'},
                 % if framework_type == 'mesos':
                 "num_gpus": ${static_compute_info.get('master/gpus_total', 0)},
@@ -66,12 +70,7 @@
                 % endif
             }
             % else:
-            <%
-                from six.moves import urllib
-                host_name = urllib.parse.urlparse(static_compute_info['compute_service_name']).hostname
-            %>
-            ${render_string('endpoint', static_compute_info['compute_service_name'])}
-            ${render_string('hostname', host_name, comma=False)}
+            ${render_string('endpoint', service_id, comma=False)}
             % endif
         }
     }${',' if shares else ''}

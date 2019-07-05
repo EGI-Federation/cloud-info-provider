@@ -2,7 +2,6 @@ import requests
 
 from cloud_info_provider import exceptions
 from cloud_info_provider import providers
-from cloud_info_provider.providers import gocdb
 from cloud_info_provider import utils
 
 

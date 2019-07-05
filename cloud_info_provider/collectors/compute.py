@@ -61,7 +61,7 @@ class ComputeCollector(base.BaseCollector):
             # XXX Avoid redoing what was done in the previous shares loop
             static_compute_info = dict(endpoints, **site_info)
             static_compute_info.pop('endpoints')
-        else: # providers with no shares
+        else:  # providers with no shares
             endpoints = self._get_info_from_providers('get_compute_endpoints')
             if not endpoints.get('endpoints'):
                 return {}
