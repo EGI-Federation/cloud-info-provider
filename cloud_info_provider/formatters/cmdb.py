@@ -15,7 +15,7 @@ class CMDB(base.BaseFormatter):
         try:
             json_data = json.load(template_str)
         except ValueError as e:
-            raise exceptions.MesosProviderException(e.message)
+            raise exceptions.CMDBFormatterException(e.message)
         print(json.dumps(json_data, indent=4, sort_keys=True))
 
 

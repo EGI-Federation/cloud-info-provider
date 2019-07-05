@@ -38,3 +38,7 @@ class OpenNebulaProviderException(CloudInfoException):
 
 class MesosProviderException(CloudInfoException):
     pass
+
+
+class CMDBFormatterException(CloudInfoException):
+    pass
