@@ -13,6 +13,9 @@
     shares = attributes['shares']
     provider_id = static_compute_info['site_name']
     service_id = static_compute_info['compute_service_name']
+
+    from six.moves import urllib
+    host_name = urllib.parse.urlparse(static_compute_info['compute_service_name']).hostname
 %>\
     {
         "type": "provider",
@@ -30,45 +33,44 @@
         "data": {
             "provider_id": "${provider_id}",
             "id": "${service_id}",
+            ${render_string('hostname', host_name)}
             ${render_string('service_type', goc_service_type)}
             ${render_string('sitename', static_compute_info['site_name'])}
             "type": "compute",
             % if middleware == "mesos":
-            ${render_string('endpoint', static_compute_info['leader'])}
-			${render_string('hostname', static_compute_info['leader_info']['hostname'])}
-            "properties": {
             <%
-                if 'master/gpus_total' in static_compute_info.keys():
-                    is_master = True
-                    has_gpu = static_compute_info['master/gpus_total']
-                elif 'marathon_config' in static_compute_info.keys():
-                    is_master = False
-                    has_gpu = 'gpu_resources' in static_compute_info['marathon_config']['features']
+                service_info = static_compute_info['endpoints'][service_id]
+                if 'master/gpus_total' in service_info.keys():
+                    framework_type = 'mesos'
+                    has_gpu = service_info['master/gpus_total']
+                elif 'marathon_config' in service_info.keys():
+                    framework_type = 'marathon'
+                    has_gpu = 'gpu_resources' in service_info['marathon_config']['features']
             %>
+            ${render_string('endpoint', service_info['framework_url'])}
+            "properties": {
                 "gpu_support": ${'true' if has_gpu else 'false'},
-                % if is_master:
+                % if framework_type == 'mesos':
                 "num_gpus": ${static_compute_info.get('master/gpus_total', 0)},
                 "num_gpus_used": ${static_compute_info.get('master/gpus_used', 0)},
                 "num_cpus": ${static_compute_info.get('master/cpus_total')},
                 "num_cpus_used": ${static_compute_info.get('master/cpus_used')},
                 "mem_total": ${static_compute_info.get('master/mem_total')},
                 "mem_used": ${static_compute_info.get('master/mem_used')}
-                % else:
+                % elif framework_type == 'marathon':
                 "num_gpus": ${static_compute_info.get('compute_total_accelerators', 0)},
                 "num_cpus": ${static_compute_info.get('compute_total_cores', 0)},
                 "mem_total": ${static_compute_info.get('compute_total_ram', 0)},
                 ${render_string('local_volumes_host_base_path', static_compute_info['compute_local_volumes_host_base_path'])}
                 ${render_string('persistent_storage_drivers', static_compute_info['compute_persistent_storage_drivers'])}
-                ${render_string('load_balancer_ips', static_compute_info['compute_load_balancer_ips'], comma=False)}
+                ${render_string('load_balancer_ips', static_compute_info['compute_load_balancer_ips'])}
+                ${render_string('master', service_info['marathon_config']['master'])}
+                ${render_string('hostname', service_info['marathon_config']['hostname'])}
+                ${render_string('mesos_leader_ui_url', service_info['marathon_config']['mesos_leader_ui_url'], comma=False)}
                 % endif
             }
             % else:
-            <%
-                from six.moves import urllib
-                host_name = urllib.parse.urlparse(static_compute_info['compute_service_name']).hostname
-            %>
-            ${render_string('endpoint', static_compute_info['compute_service_name'])}
-            ${render_string('hostname', host_name, comma=False)}
+            ${render_string('endpoint', service_id, comma=False)}
             % endif
         }
     }${',' if shares else ''}

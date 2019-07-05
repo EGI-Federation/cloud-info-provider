@@ -1,6 +1,7 @@
 import json
 from StringIO import StringIO
 
+from cloud_info_provider import exceptions
 from cloud_info_provider.formatters import base
 
 
@@ -11,7 +12,10 @@ class CMDB(base.BaseFormatter):
 
     def to_stdout(self, template):
         template_str = StringIO(template)
-        json_data = json.load(template_str)
+        try:
+            json_data = json.load(template_str)
+        except ValueError as e:
+            raise exceptions.CMDBFormatterException(e.message)
         print(json.dumps(json_data, indent=4, sort_keys=True))
 
 
