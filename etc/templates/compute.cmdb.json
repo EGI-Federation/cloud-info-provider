@@ -51,12 +51,12 @@
             "properties": {
                 "gpu_support": ${'true' if has_gpu else 'false'},
                 % if framework_type == 'mesos':
-                "num_gpus": ${static_compute_info.get('master/gpus_total', 0)},
-                "num_gpus_used": ${static_compute_info.get('master/gpus_used', 0)},
-                "num_cpus": ${static_compute_info.get('master/cpus_total')},
-                "num_cpus_used": ${static_compute_info.get('master/cpus_used')},
-                "mem_total": ${static_compute_info.get('master/mem_total')},
-                "mem_used": ${static_compute_info.get('master/mem_used')}
+                "num_gpus": ${service_info.get('master/gpus_total', 0)},
+                "num_gpus_used": ${service_info.get('master/gpus_used', 0)},
+                "num_cpus": ${service_info.get('master/cpus_total', 0)},
+                "num_cpus_used": ${service_info.get('master/cpus_used', 0)},
+                "mem_total": ${service_info.get('master/mem_total', 0)},
+                "mem_used": ${service_info.get('master/mem_used', 0)}
                 % elif framework_type == 'marathon':
                 "num_gpus": ${static_compute_info.get('compute_total_accelerators', 0)},
                 "num_cpus": ${static_compute_info.get('compute_total_cores', 0)},
