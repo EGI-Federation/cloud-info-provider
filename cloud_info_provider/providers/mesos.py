@@ -52,18 +52,34 @@ class MesosProvider(providers.BaseProvider):
                 self.framework_url: {}},
         }
 
+        # just gather the relevant variables
+        global_f = ('total_cores', 'total_ram', 'total_accelerators',
+                    'local_volumes_host_base_path',
+                    'persistent_storage_drivers',
+                    'load_balancer_ips')
+        endp_f = global_f
+
         defaults = self.static.get_compute_endpoint_defaults(prefix=True)
         ret['compute_service_name'] = self.framework_url
         ret.update(defaults)
 
-        d = defaults.copy()
+        defaults_endpoint = self.static.get_compute_endpoints(
+            global_f=global_f, endp_f=endp_f)
+        endp_data = defaults_endpoint.pop('endpoints')
+        if self.framework_url in endp_data.keys():
+            d = {k: v
+                 for (k, v) in endp_data[self.framework_url].items()
+                 if v is not None}
+            ret.update(d)
+
+        d = ret.copy()
+        # add external endpoint URL
+        d['framework_url'] = self.framework_url
         for api_endp in self.api_endpoints:
             api_url = '/'.join([self.framework_url, api_endp])
             r = requests.get(api_url, headers=self.headers, verify=self.cacert)
             if r.status_code == requests.codes.ok:
                 d.update(r.json())
-                # add external endpoint URL
-                d['framework_url'] = self.framework_url
             else:
                 msg = 'Request failed: %s' % r.content
                 raise exceptions.MesosProviderException(msg)
@@ -75,7 +91,7 @@ class MesosProvider(providers.BaseProvider):
     def populate_parser(parser):
         parser.add_argument(
             '--mesos-framework',
-            choices=['mesos', 'marathon'],
+            choices=['mesos', 'marathon', 'chronos'],
             help=('Select the type of framework to collect data from '
                   '(required).'))
         parser.add_argument(

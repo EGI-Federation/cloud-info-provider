@@ -84,7 +84,7 @@ class Data(object):
             'compute_total_cores': 0,
             'compute_total_ram': 0,
             'compute_service_production_level': 'production',
-            'compute_service_name': 'example.org',
+            'compute_service_name': None,
             'endpoints': {
                 'https://cloud-service01.example.org:8787': {
                     'compute_endpoint_url':

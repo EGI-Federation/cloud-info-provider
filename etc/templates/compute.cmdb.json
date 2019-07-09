@@ -1,7 +1,7 @@
 <%def name="render_string(k, v, schema_required_type=False, comma=True)">
 % if v is None and schema_required_type is True:
 "${k}": null${',' if comma else ''}
-% else:
+% elif v is not None:
 "${k}": "${v}"${',' if comma else ''}
 % endif
 </%def>
@@ -40,33 +40,38 @@
             % if middleware == "mesos":
             <%
                 service_info = static_compute_info['endpoints'][service_id]
+                framework_type = None
                 if 'master/gpus_total' in service_info.keys():
                     framework_type = 'mesos'
                     has_gpu = service_info['master/gpus_total']
                 elif 'marathon_config' in service_info.keys():
                     framework_type = 'marathon'
                     has_gpu = 'gpu_resources' in service_info['marathon_config']['features']
+                else:
+                    has_gpu = service_info['compute_total_accelerators']
             %>
             ${render_string('endpoint', service_info['framework_url'])}
             "properties": {
                 "gpu_support": ${'true' if has_gpu else 'false'},
-                % if framework_type == 'mesos':
-                "num_gpus": ${static_compute_info.get('master/gpus_total', 0)},
-                "num_gpus_used": ${static_compute_info.get('master/gpus_used', 0)},
-                "num_cpus": ${static_compute_info.get('master/cpus_total')},
-                "num_cpus_used": ${static_compute_info.get('master/cpus_used')},
-                "mem_total": ${static_compute_info.get('master/mem_total')},
-                "mem_used": ${static_compute_info.get('master/mem_used')}
-                % elif framework_type == 'marathon':
-                "num_gpus": ${static_compute_info.get('compute_total_accelerators', 0)},
-                "num_cpus": ${static_compute_info.get('compute_total_cores', 0)},
-                "mem_total": ${static_compute_info.get('compute_total_ram', 0)},
-                ${render_string('local_volumes_host_base_path', static_compute_info['compute_local_volumes_host_base_path'])}
-                ${render_string('persistent_storage_drivers', static_compute_info['compute_persistent_storage_drivers'])}
-                ${render_string('load_balancer_ips', static_compute_info['compute_load_balancer_ips'])}
+                % if framework_type == 'marathon':
                 ${render_string('master', service_info['marathon_config']['master'])}
                 ${render_string('hostname', service_info['marathon_config']['hostname'])}
-                ${render_string('mesos_leader_ui_url', service_info['marathon_config']['mesos_leader_ui_url'], comma=False)}
+                ${render_string('mesos_leader_ui_url', service_info['marathon_config']['mesos_leader_ui_url'])}
+                % endif
+                % if framework_type == 'mesos':
+                "num_gpus": ${service_info.get('master/gpus_total', 0)},
+                "num_gpus_used": ${service_info.get('master/gpus_used', 0)},
+                "num_cpus": ${service_info.get('master/cpus_total', 0)},
+                "num_cpus_used": ${service_info.get('master/cpus_used', 0)},
+                "mem_total": ${service_info.get('master/mem_total', 0)},
+                "mem_used": ${service_info.get('master/mem_used', 0)}
+                % else:
+                ${render_string('local_volumes_host_base_path', static_compute_info.get('compute_local_volumes_host_base_path', None))}
+                ${render_string('persistent_storage_drivers', static_compute_info.get('compute_persistent_storage_drivers', None))}
+                ${render_string('load_balancer_ips', static_compute_info.get('compute_load_balancer_ips', None))}
+                "num_gpus": ${service_info.get('compute_total_accelerators', 0)},
+                "num_cpus": ${service_info.get('compute_total_cores', 0)},
+                "mem_total": ${service_info.get('compute_total_ram', 0)}
                 % endif
             }
             % else:
