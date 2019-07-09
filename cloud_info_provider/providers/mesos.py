@@ -53,7 +53,8 @@ class MesosProvider(providers.BaseProvider):
         }
 
         # just gather the relevant variables
-        global_f = ('total_cores', 'total_ram', 'total_accelerators',
+        global_f = ('mesos_master_id',
+                    'total_cores', 'total_ram', 'total_accelerators',
                     'local_volumes_host_base_path',
                     'persistent_storage_drivers',
                     'load_balancer_ips')
