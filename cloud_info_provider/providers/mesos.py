@@ -57,7 +57,8 @@ class MesosProvider(providers.BaseProvider):
                     'total_cores', 'total_ram', 'total_accelerators',
                     'local_volumes_host_base_path',
                     'persistent_storage_drivers',
-                    'load_balancer_ips')
+                    'load_balancer_ips',
+                    'accelerators')
         endp_f = global_f
 
         defaults = self.static.get_compute_endpoint_defaults(prefix=True)
