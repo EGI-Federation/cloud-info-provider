@@ -97,7 +97,8 @@ class StaticProvider(providers.BaseProvider):
 
         # Extra info from GOCDB
         info_gocdb = providers.gocdb.get_goc_site_info(site_info['site_name'])
-        site_info.update(info_gocdb)
+        d = {k: v for (k, v) in info_gocdb.items() if v}
+        site_info.update(d)
 
         return site_info
 
