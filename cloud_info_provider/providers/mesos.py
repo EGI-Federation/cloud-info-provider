@@ -63,10 +63,13 @@ class MesosProvider(providers.BaseProvider):
         ret['compute_service_name'] = self.framework_url
         ret.update(defaults)
 
-        defaults_endpoint = self.static.get_compute_endpoints(global_f=global_f, endp_f=endp_f)
+        defaults_endpoint = self.static.get_compute_endpoints(
+            global_f=global_f, endp_f=endp_f)
         endp_data = defaults_endpoint.pop('endpoints')
         if self.framework_url in endp_data.keys():
-            d = {k:v for (k,v) in endp_data[self.framework_url].items() if v is not None}
+            d = {k: v
+                 for (k, v) in endp_data[self.framework_url].items()
+                 if v is not None}
             ret.update(d)
 
         d = ret.copy()
