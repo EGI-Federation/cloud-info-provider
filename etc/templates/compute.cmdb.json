@@ -50,11 +50,12 @@
                 else:
                     has_gpu = service_info['compute_total_accelerators']
             %>
+            ${render_string('mesos_master_id', static_compute_info.get('compute_mesos_master_id', None))}
             ${render_string('endpoint', service_info['framework_url'])}
             "properties": {
                 "gpu_support": ${'true' if has_gpu else 'false'},
                 % if framework_type == 'marathon':
-                ${render_string('master', service_info['marathon_config']['master'])}
+                ${render_string('master_zk', service_info['marathon_config']['master'])}
                 ${render_string('hostname', service_info['marathon_config']['hostname'])}
                 ${render_string('mesos_leader_ui_url', service_info['marathon_config']['mesos_leader_ui_url'])}
                 % endif
