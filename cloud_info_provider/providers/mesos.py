@@ -88,7 +88,7 @@ class MesosProvider(providers.BaseProvider):
     def populate_parser(parser):
         parser.add_argument(
             '--mesos-framework',
-            choices=['mesos', 'marathon'],
+            choices=['mesos', 'marathon', 'chronos'],
             help=('Select the type of framework to collect data from '
                   '(required).'))
         parser.add_argument(
