@@ -47,6 +47,7 @@ class MesosProvider(providers.BaseProvider):
         return shares
 
     def get_compute_endpoints(self, **kwargs):
+
         ret = {
             'endpoints': {
                 self.framework_url: {}},
@@ -69,11 +70,9 @@ class MesosProvider(providers.BaseProvider):
             global_f=global_f, endp_f=endp_f)
         endp_data = defaults_endpoint.pop('endpoints')
         if self.framework_url in endp_data.keys():
-            d = {k: v
-                 for (k, v) in endp_data[self.framework_url].items()
-                 if v is not None}
-            defaults_endpoint.update(d)
-            ret.update(defaults_endpoint)
+            framework_data = endp_data[self.framework_url]
+            defaults_endpoint.update(utils.get_defined_values(framework_data))
+            ret.update(utils.get_defined_values(defaults_endpoint))
 
         d = ret.copy()
         # add external endpoint URL

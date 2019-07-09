@@ -6,6 +6,7 @@ import yaml
 
 from cloud_info_provider import exceptions
 from cloud_info_provider import providers
+from cloud_info_provider import utils
 
 
 class StaticProvider(providers.BaseProvider):
@@ -97,8 +98,8 @@ class StaticProvider(providers.BaseProvider):
 
         # Extra info from GOCDB
         info_gocdb = providers.gocdb.get_goc_site_info(site_info['site_name'])
-        d = {k: v for (k, v) in info_gocdb.items() if v}
-        site_info.update(d)
+        site_info.update(utils.get_defined_values(
+            info_gocdb, ignore_empty_string=True))
 
         return site_info
 
@@ -270,6 +271,7 @@ class StaticProvider(providers.BaseProvider):
             'failover': False,
             'live_migration': False,
             'vm_backup_restore': False,
+            'total_accelerators': 0,
         }
         return self._populate_default_values(
             self._get_defaults_from_yaml('compute',
