@@ -71,7 +71,8 @@ class MesosProvider(providers.BaseProvider):
             d = {k: v
                  for (k, v) in endp_data[self.framework_url].items()
                  if v is not None}
-            ret.update(d)
+            defaults_endpoint.update(d)
+            ret.update(defaults_endpoint)
 
         d = ret.copy()
         # add external endpoint URL
