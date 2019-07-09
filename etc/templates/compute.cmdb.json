@@ -58,9 +58,9 @@
                 "mem_total": ${service_info.get('master/mem_total', 0)},
                 "mem_used": ${service_info.get('master/mem_used', 0)}
                 % elif framework_type == 'marathon':
-                "num_gpus": ${static_compute_info.get('compute_total_accelerators', 0)},
-                "num_cpus": ${static_compute_info.get('compute_total_cores', 0)},
-                "mem_total": ${static_compute_info.get('compute_total_ram', 0)},
+                "num_gpus": ${service_info.get('compute_total_accelerators', 0)},
+                "num_cpus": ${service_info.get('compute_total_cores', 0)},
+                "mem_total": ${service_info.get('compute_total_ram', 0)},
                 ${render_string('local_volumes_host_base_path', static_compute_info['compute_local_volumes_host_base_path'])}
                 ${render_string('persistent_storage_drivers', static_compute_info['compute_persistent_storage_drivers'])}
                 ${render_string('load_balancer_ips', static_compute_info['compute_load_balancer_ips'])}
