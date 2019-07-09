@@ -165,30 +165,28 @@ class StaticProvider(providers.BaseProvider):
                                 prefix='compute_')
         return quotas['quotas']
 
-    def get_compute_endpoints(self, **kwargs):
-        global_fields = ('service_production_level', 'total_ram',
-                         'total_cores', 'capabilities',
-                         'hypervisor', 'hypervisor_version',
-                         'virtual_disk_formats',
-                         'max_dedicated_ram', 'min_dedicated_ram',
-                         'max_accelerators', 'min_accelerators',
-                         'total_accelerators', 'accelerators_virt_type',
-                         'network_virt_type', 'cpu_virt_type',
-                         'failover', 'live_migration', 'vm_backup_restore',
-                         'service_name')
-        endpoint_fields = ('production_level', 'api_type', 'api_version',
-                           'api_endpoint_technology', 'api_authn_method',
-                           'endpoint_url',
-                           'middleware', 'middleware_developer',
-                           'middleware_version',
-                           'occi_api_version',
-                           'occi_middleware_version')
+    def get_compute_endpoints(self, global_f=None, endp_f=None, **kwargs):
+        global_fields = global_f or ('service_production_level', 'total_ram',
+                                     'total_cores', 'capabilities',
+                                     'hypervisor', 'hypervisor_version',
+                                     'virtual_disk_formats',
+                                     'max_dedicated_ram', 'min_dedicated_ram',
+                                     'max_accelerators', 'min_accelerators',
+                                     'total_accelerators', 'accelerators_virt_type',
+                                     'network_virt_type', 'cpu_virt_type',
+                                     'failover', 'live_migration', 'vm_backup_restore',
+                                     'service_name')
+        endpoint_fields = endp_f or ('production_level', 'api_type', 'api_version',
+                                     'api_endpoint_technology', 'api_authn_method',
+                                     'endpoint_url',
+                                     'middleware', 'middleware_developer',
+                                     'middleware_version',
+                                     'occi_api_version',
+                                     'occi_middleware_version')
         endpoints = self._get_what('compute',
                                    'endpoints',
                                    global_fields,
                                    endpoint_fields)
-        if endpoints and not endpoints.get('compute_service_name'):
-            endpoints['compute_service_name'] = socket.getfqdn()
         return endpoints
 
     def get_storage_endpoints(self, **kwargs):
