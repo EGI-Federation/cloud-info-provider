@@ -72,7 +72,7 @@ class MesosProvider(providers.BaseProvider):
         if self.framework_url in endp_data.keys():
             framework_data = endp_data[self.framework_url]
             defaults_endpoint.update(utils.get_defined_values(framework_data))
-            ret.update(utils.get_defined_values(defaults_endpoint))
+        ret.update(utils.get_defined_values(defaults_endpoint))
 
         d = ret.copy()
         # add external endpoint URL
