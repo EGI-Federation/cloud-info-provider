@@ -47,6 +47,7 @@
                 elif 'marathon_config' in service_info.keys():
                     framework_type = 'marathon'
                     has_gpu = 'gpu_resources' in service_info['marathon_config']['features']
+                    has_secrets = 'secrets' in service_info['marathon_config']['features']
                 else:
                     has_gpu = service_info['compute_total_accelerators']
                 gpu_info = service_info.get('compute_accelerators', {})
@@ -63,6 +64,7 @@
                 ${render_string('gpu_cuDNN_version', gpu_info.get('cudnn_version', None))}
                 % endif
                 % if framework_type == 'marathon':
+                "secrets_support": ${'true' if has_secrets else 'false'},
                 ${render_string('master_zk', service_info['marathon_config']['master'])}
                 ${render_string('hostname', service_info['marathon_config']['hostname'])}
                 ${render_string('mesos_leader_ui_url', service_info['marathon_config']['mesos_leader_ui_url'])}
