@@ -51,7 +51,7 @@
                     has_gpu = service_info['compute_total_accelerators']
                 gpu_info = service_info.get('compute_accelerators', {})
             %>
-            ${render_string('mesos_master_id', static_compute_info.get('compute_mesos_master_id', None))}
+            ${render_string('service_parent_id', static_compute_info.get('compute_service_parent_id', None))}
             ${render_string('endpoint', service_info['framework_url'])}
             "properties": {
                 "gpu_support": ${'true' if has_gpu else 'false'},

@@ -13,6 +13,10 @@ compute:
 
     endpoints:
         defaults:
+            # If Marathon or Chronos, it points to the 
+            # parent Mesos endpoint
+            # service_parent_id: https://example.org/mesos
+            
             # local_volumes_host_base_path: /tmp
             # persistent_storage_drivers: []
             # load_balancer_ips: []
