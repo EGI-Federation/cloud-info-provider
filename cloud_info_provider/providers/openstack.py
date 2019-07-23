@@ -353,10 +353,14 @@ class OpenStackProvider(providers.BaseProvider):
 
         for instance in self.nova.servers.list():
             ret = instance_template.copy()
+            if type(instance.image) == dict:
+                image_id = instance.image.get('id', '')
+            else:
+                image_id = instance.image
             ret.update({
                 'instance_name': instance.name,
-                'instance_image_id': instance.image['id'],
-                'instance_template_id': instance.flavor['id'],
+                'instance_image_id': image_id,
+                'instance_template_id': instance.flavor.get('id', ''),
                 'instance_status': instance.status,
             })
             instances[instance.id] = ret

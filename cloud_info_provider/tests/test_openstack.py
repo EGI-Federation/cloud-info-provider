@@ -695,6 +695,46 @@ class OpenStackProviderTest(base.TestCase):
     def test_service_type(self):
         self.assertEqual('compute', self.provider.service_type)
 
+    def test_get_instances(self):
+
+        class FakeInstance(object):
+            def __init__(self, name, image, flavor, status):
+                self.id = self.name = name
+                self.image = image
+                self.flavor = flavor
+                self.status = status
+
+        expected_instances = {
+            'foo': {
+                'instance_name': 'foo',
+                'instance_image_id': '',
+                'instance_template_id': '123',
+                'instance_status': 'RUNNING',
+            },
+            'baz': {
+                'instance_name': 'baz',
+                'instance_image_id': 'bar',
+                'instance_template_id': '456',
+                'instance_status': 'RUNNING',
+            },
+            'foobar': {
+                'instance_name': 'foobar',
+                'instance_image_id': '',
+                'instance_template_id': '',
+                'instance_status': 'SUSPENDED',
+            },
+        }
+
+        with mock.patch.object(self.provider.nova.servers, 'list') as m_list:
+            m_list.return_value = [
+                FakeInstance('foo', '', {'id': '123'}, 'RUNNING'),
+                FakeInstance('baz', {'id': 'bar'}, {'id': '456'}, 'RUNNING'),
+                FakeInstance('foobar', '', {}, 'SUSPENDED'),
+            ]
+            kwargs = {'auth': {'project_id': None}}
+            instances = self.provider.get_instances(**kwargs)
+            self.assertEqual(expected_instances, instances)
+
 
 class OoiProviderTest(OpenStackProviderTest):
     def setUp(self):
