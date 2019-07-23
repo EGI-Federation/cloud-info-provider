@@ -1,3 +1,20 @@
+python-cloud-info-provider (0.11.4-1) xenial; urgency=medium
+
+  [ Pablo Orviz ]
+  * Pythonize only for Ruby dict-like strings.
+  * Fix: use is_public=None to fetch both public and private flavors..
+
+  [ Baptiste Grenier ]
+  * RELEASING: document making a release from CLI.
+
+  [ Enol Fernández ]
+  * Fix get instances for volume-based instances.
+  * Add external authentication plugin support.
+  * Add OpenID Connect refresh plugin.
+  * Python 3 fixes.
+
+ -- Enol Fernández <enol.fernandez@egi.eu>  Tue, 23 Jul 2019 09:27:33 +0100
+
 python-cloud-info-provider (0.11.3-1) xenial; urgency=medium
 
   [ Pablo Orviz ]
