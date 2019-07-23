@@ -4,7 +4,7 @@
 
 Summary: Cloud Information provider meta-package for OpenStack
 Name: cloud-info-provider-openstack
-Version: 0.11.3
+Version: 0.11.4
 Release: 1%{?dist}
 Group: Applications/Internet
 License: Apache Software License 2.0
@@ -25,6 +25,12 @@ Install the cloud-information-provider and the Cloud Middleware dependencies.
 %files
 
 %changelog
+* Tue Jul 23 2019 Enol Fernández <enol.fernandez@egi.eu> 0.11.4
+- Fix get instances for volume-based instances. (Enol Fernández)
+- Add external authentication plugin support. (Enol Fernández)
+- Add OpenID Connect refresh plugin (OpenStack). (Enol Fernández)
+- Pythonize only for Ruby dict-like strings. (Pablo Orviz)
+- Fix: use is_public=None to fetch both public and private flavors. (Pablo Orviz)
 * Mon Mar 04 2019 Baptiste Grenier <baptiste.grenier@egi.eu> 0.11.3
 - Fix handling of network info (#151). (Baptiste Grenier)
 * Thu Jan 31 2019 Enol Fernández <enol.fernandez@egi.eu> 0.11.2
