@@ -92,6 +92,13 @@ class MesosProvider(providers.BaseProvider):
     @staticmethod
     def populate_parser(parser):
         parser.add_argument(
+            '--insecure',
+            action='store_true',
+            help="Explicitly allow to perform 'insecure' "
+                 "SSL (https) requests. The server's certificate will "
+                 'not be verified against any certificate authorities. '
+                 'This option should be used with caution.')
+        parser.add_argument(
             '--mesos-framework',
             choices=['mesos', 'marathon', 'chronos'],
             help=('Select the type of framework to collect data from '
