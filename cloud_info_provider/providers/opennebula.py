@@ -211,6 +211,11 @@ class OpenNebulaProvider(OpenNebulaBaseProvider):
 
 class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
     goc_service_type = 'eu.egi.cloud.vm-management.occi'
+    service_data = {
+        'compute_api_type': 'OCCI',
+        'compute_middleware': 'rOCCI',
+        'compute_middleware_developer': 'CESNET',
+    }
 
     def __init__(self, opts, **kwargs):
         self.rocci_template_dir = opts.rocci_template_dir
@@ -239,6 +244,7 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
                 'endpoint_issuer': ca_info['issuer'],
             })
             ept.update(gocdb.get_goc_info(url, self.goc_service_type))
+            ept.update(self.service_data)
             epts[url] = ept
         return {'endpoints': epts}
 
