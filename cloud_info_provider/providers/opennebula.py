@@ -203,14 +203,14 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
 
 
 class OpenNebulaProvider(OpenNebulaBaseProvider):
-    def __init__(self, opts):
-        super(OpenNebulaProvider, self).__init__(opts)
+    def __init__(self, opts, **kwargs):
+        super(OpenNebulaProvider, self).__init__(opts, **kwargs)
 
 
 class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
     goc_service_type = 'eu.egi.cloud.vm-management.occi'
 
-    def __init__(self, opts):
+    def __init__(self, opts, **kwargs):
         self.rocci_template_dir = opts.rocci_template_dir
         self.rocci_remote_templates = opts.rocci_remote_templates
         if not self.rocci_template_dir and not self.rocci_remote_templates:
@@ -218,7 +218,7 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
                    'via --rocci-template-dir')
             raise exceptions.OpenNebulaProviderException(msg)
         self.ca_info = {}
-        super(OpenNebulaROCCIProvider, self).__init__(opts)
+        super(OpenNebulaROCCIProvider, self).__init__(opts, **kwargs)
 
     def _get_endpoint_ca_information(self, url, **kwargs):
         if url not in self.ca_info:
