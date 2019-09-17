@@ -236,7 +236,7 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
                 'endpoint_trusted_cas': ca_info['trusted_cas'],
                 'endpoint_issuer': ca_info['issuer'],
             })
-            epts.update(gocdb.get_goc_info(url, self.goc_service_type))
+            ept.update(gocdb.get_goc_info(url, self.goc_service_type))
             epts[url] = ept
         return {'endpoints': epts}
 
