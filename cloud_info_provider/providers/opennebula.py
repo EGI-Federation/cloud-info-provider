@@ -46,8 +46,10 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
     def get_compute_shares(self, **kwargs):
         shares = self.static.get_compute_shares(prefix=True)
         for vo, share in shares.items():
-            auth = share.get('auth', dict())
+            auth = share.get('auth', None)
             # default group name == vo name
+            if auth is None:
+                auth = dict()
             if 'group' not in auth:
                 auth['group'] = vo
             share['auth'] = auth
