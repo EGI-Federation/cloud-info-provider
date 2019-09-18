@@ -33,7 +33,7 @@ class GOCDBTest(base.TestCase):
             m_requests.assert_called_once_with(
                 'https://goc.egi.eu/gocdbpi/public/',
                 params={'method': 'get_service', 'service_type': 'bar'},
-                verify='/etc/grid-security/certificates')
+                verify=True)
             self.assertEqual({}, r)
 
     def test_request_call_insecure(self):
