@@ -235,9 +235,15 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
 
     def get_compute_endpoints(self, **kwargs):
         epts = dict()
+        ret = {
+            'endpoints': epts,
+        }
+        defaults = self.static.get_compute_endpoint_defaults(prefix=True)
+        ret.update(defaults)
         static_epts = self.static.get_compute_endpoints(**kwargs)
         for url, static_ept in static_epts['endpoints'].items():
-            ept = static_ept.copy()
+            ept = defaults.copy()
+            ept.update(static_ept)
             ca_info = self._get_endpoint_ca_information(url)
             ept.update({
                 'endpoint_trusted_cas': ca_info['trusted_cas'],
@@ -246,7 +252,7 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
             ept.update(gocdb.get_goc_info(url, self.goc_service_type))
             ept.update(self.service_data)
             epts[url] = ept
-        return {'endpoints': epts}
+        return ret
 
     def get_templates(self, **kwargs):
         """Get flavors from rOCCI-server configuration."""
