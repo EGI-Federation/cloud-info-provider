@@ -281,6 +281,32 @@ The provider will represent the resources using the configured providers and
 templates and dump it to standard output. Normally this is run within a
 resource-level BDII so the information is published into the site BDII.
 
+#### CAs
+
+The provider will use your python default CAs for checking and connecting to
+your endpoints and GOCDB, so please make sure those CAs include the IGTF CAs. The
+location of the CAs depending on how you installed the different python packages
+(using deb/rpm packages or `pip`).
+
+For debian-based systems (e.g. ubuntu), use the following:
+```
+cd /usr/local/share/ca-certificates
+for f in /etc/grid-security/certificates/*.pem ; do ln -s $f $(basename $f .pem).crt; done
+update-ca-certificates
+```
+
+For RH-based systems (e.g. CentOS), you can include the IGTF CAs with:
+```
+cd /etc/pki/ca-trust/source/anchors
+ln -s /etc/grid-security/certificates/*.pem .
+update-ca-trust extract
+```
+
+Otherwise, you need to add the IGTF CAs to the internal requests bundle:
+```
+cat /etc/grid-security/certificates/*.pem >> $(python -m requests.certs)
+```
+
 #### Running the provider in a resource-BDII
 
 This is the normal deployment mode for the cloud provider. It should be installed
