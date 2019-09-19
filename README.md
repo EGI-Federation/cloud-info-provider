@@ -289,21 +289,24 @@ location of the CAs depending on how you installed the different python packages
 (using deb/rpm packages or `pip`).
 
 For debian-based systems (e.g. ubuntu), use the following:
-```
+
+```sh
 cd /usr/local/share/ca-certificates
 for f in /etc/grid-security/certificates/*.pem ; do ln -s $f $(basename $f .pem).crt; done
 update-ca-certificates
 ```
 
 For RH-based systems (e.g. CentOS), you can include the IGTF CAs with:
-```
+
+```sh
 cd /etc/pki/ca-trust/source/anchors
 ln -s /etc/grid-security/certificates/*.pem .
 update-ca-trust extract
 ```
 
 Otherwise, you need to add the IGTF CAs to the internal requests bundle:
-```
+
+```sh
 cat /etc/grid-security/certificates/*.pem >> $(python -m requests.certs)
 ```
 
