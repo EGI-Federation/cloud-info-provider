@@ -11,7 +11,7 @@ class CMDB(base.BaseFormatter):
         self.templates = ['compute']
 
     def to_stdout(self, template):
-        template_str = StringIO(template)
+        template_str = StringIO(template.replace("'", "\""))
         try:
             json_data = json.load(template_str)
         except ValueError as e:
