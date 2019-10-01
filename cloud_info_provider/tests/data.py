@@ -10,6 +10,7 @@ class Data(object):
             'site_name': 'SITE_NAME',
             # required by CMDB
             'site_id': 'provider-SITE_NAME',
+            'site_is_public': False,
             # required by GOCDB
             'site_country': 'Spain',
             'site_country_code': 'ES',

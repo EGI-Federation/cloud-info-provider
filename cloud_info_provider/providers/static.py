@@ -86,9 +86,11 @@ class StaticProvider(providers.BaseProvider):
         data = self.yaml.get('site', {'name': None})
         site_info = self._get_fields_and_prefix(
             ('name', 'id',
-             'country', 'country_code', 'roc', 'subgrid', 'giis_url'),
+             'country', 'country_code', 'roc', 'subgrid', 'giis_url',
+             'is_public'),
             'site_',
-            data)
+            data,
+            defaults={'is_public': False})
 
         # Resolve site name from BDII configuration
         if site_info['site_name'] is None:

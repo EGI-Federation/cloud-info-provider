@@ -15,6 +15,7 @@
     shares = attributes['shares']
     provider_id = static_compute_info['site_name']
     service_id = static_compute_info['compute_service_name']
+    is_public = static_compute_info['site_is_public']
 
     from six.moves import urllib
     host_name = urllib.parse.urlparse(static_compute_info['compute_service_name']).hostname
@@ -27,6 +28,7 @@
             ${render_string('country_code', static_compute_info['site_country_code'])}
             ${render_string('roc', static_compute_info['site_roc'])}
             ${render_string('subgrid', static_compute_info['site_subgrid'])}
+            "is_public": ${'true' if is_public else 'false'},
             ${render_string('giis_url', static_compute_info['site_giis_url'], comma=False)}
         }
     },
@@ -35,6 +37,7 @@
         "data": {
             "provider_id": "${provider_id}",
             "id": "${service_id}",
+            "service_is_public": ${'true' if is_public else 'false'},
             ${render_string('hostname', host_name)}
             ${render_string('service_type', goc_service_type)}
             ${render_string('sitename', static_compute_info['site_name'])}

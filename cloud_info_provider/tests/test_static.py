@@ -201,6 +201,7 @@ class StaticProviderTest(base.TestCase):
                           'service_production_level': 'production',
                           'total_cores': 0,
                           'total_ram': 0,
+                          'total_accelerators': 0,
                           'vm_backup_restore': False}, unprefixed)
         prefixed = self.provider.get_compute_endpoint_defaults(prefix=True)
         self.assertEqual(prefixed.pop('compute_foo'), 'bar')
@@ -223,6 +224,7 @@ class StaticProviderTest(base.TestCase):
                           'compute_service_production_level': 'production',
                           'compute_total_cores': 0,
                           'compute_total_ram': 0,
+                          'compute_total_accelerators': 0,
                           'compute_vm_backup_restore': False}, prefixed)
 
     def test_get_storage_endpoint_defaults(self):
