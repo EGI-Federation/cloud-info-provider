@@ -129,19 +129,19 @@
     {
         "type": "image",
         "data": {
-            ${render_string('image_id', _image['id'])}
-            ${render_string('image_name', _image['image_name'])}
-            ${render_string('image_description', _image['image_description'])}
-            ${render_string('image_marketplace_id', _image['image_marketplace_id'])}
-            ${render_string('architecture', _image['architecture'])}
-            ${render_string('type', _image['os_type'])}
-            ${render_string('version', _image['image_os_version'])}
-            ${render_string('distribution', _image['image_os_name'])}
-            "gpu_driver": ${'true' if _image['property_image_gpu_driver'] else 'false'},
-            ${render_string('gpu_driver_version', _image['property_image_gpu_driver'])}
-            "cuda_support": ${'true' if _image['property_image_gpu_cuda'] else 'false'},
-            ${render_string('cuda_version', _image['property_image_gpu_cuda'])}
-            ${render_string('cuDNN_version', _image['property_image_gpu_cudnn'])}
+            ${render_string('image_id', _image.get('id', None))}
+            ${render_string('image_name', _image.get('image_name', None))}
+            ${render_string('image_description', _image.get('image_description', None))}
+            ${render_string('image_marketplace_id', _image.get('image_marketplace_id', None))}
+            ${render_string('architecture', _image.get('architecture', None))}
+            ${render_string('type', _image.get('os_type', None))}
+            ${render_string('version', _image.get('image_os_version', None))}
+            ${render_string('distribution', _image.get('image_os_name', None))}
+            "gpu_driver": ${'true' if _image.get('property_image_gpu_driver', None) else 'false'},
+            ${render_string('gpu_driver_version', _image.get('property_image_gpu_driver', None))}
+            "cuda_support": ${'true' if _image.get('property_image_gpu_cuda', None) else 'false'},
+            ${render_string('cuda_version', _image.get('property_image_gpu_cuda', None))}
+            ${render_string('cuDNN_version', _image.get('property_image_gpu_cudnn', None))}
             "service": "${service_id}",
             ${render_string('tenant_id', project_id)}
             "tenant_name": "${_vo}"
