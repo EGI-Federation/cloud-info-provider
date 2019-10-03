@@ -46,8 +46,10 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
     def get_compute_shares(self, **kwargs):
         shares = self.static.get_compute_shares(prefix=True)
         for vo, share in shares.items():
-            auth = share.get('auth', dict())
+            auth = share.get('auth', None)
             # default group name == vo name
+            if auth is None:
+                auth = dict()
             if 'group' not in auth:
                 auth['group'] = vo
             share['auth'] = auth
@@ -203,14 +205,19 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
 
 
 class OpenNebulaProvider(OpenNebulaBaseProvider):
-    def __init__(self, opts):
-        super(OpenNebulaProvider, self).__init__(opts)
+    def __init__(self, opts, **kwargs):
+        super(OpenNebulaProvider, self).__init__(opts, **kwargs)
 
 
 class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
     goc_service_type = 'eu.egi.cloud.vm-management.occi'
+    service_data = {
+        'compute_api_type': 'OCCI',
+        'compute_middleware': 'rOCCI',
+        'compute_middleware_developer': 'CESNET',
+    }
 
-    def __init__(self, opts):
+    def __init__(self, opts, **kwargs):
         self.rocci_template_dir = opts.rocci_template_dir
         self.rocci_remote_templates = opts.rocci_remote_templates
         if not self.rocci_template_dir and not self.rocci_remote_templates:
@@ -218,7 +225,7 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
                    'via --rocci-template-dir')
             raise exceptions.OpenNebulaProviderException(msg)
         self.ca_info = {}
-        super(OpenNebulaROCCIProvider, self).__init__(opts)
+        super(OpenNebulaROCCIProvider, self).__init__(opts, **kwargs)
 
     def _get_endpoint_ca_information(self, url, **kwargs):
         if url not in self.ca_info:
@@ -228,17 +235,25 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
 
     def get_compute_endpoints(self, **kwargs):
         epts = dict()
+        ret = {
+            'endpoints': epts,
+        }
+        defaults = self.static.get_compute_endpoint_defaults(prefix=True)
+        ret.update(defaults)
         static_epts = self.static.get_compute_endpoints(**kwargs)
         for url, static_ept in static_epts['endpoints'].items():
-            ept = static_ept.copy()
+            ept = defaults.copy()
+            ept.update(static_ept)
             ca_info = self._get_endpoint_ca_information(url)
             ept.update({
                 'endpoint_trusted_cas': ca_info['trusted_cas'],
                 'endpoint_issuer': ca_info['issuer'],
             })
-            epts.update(gocdb.get_goc_info(url, self.goc_service_type))
+            # overwrites it for every iteration but that's ok
+            ret.update(gocdb.get_goc_info(url, self.goc_service_type))
+            ept.update(self.service_data)
             epts[url] = ept
-        return {'endpoints': epts}
+        return ret
 
     def get_templates(self, **kwargs):
         """Get flavors from rOCCI-server configuration."""

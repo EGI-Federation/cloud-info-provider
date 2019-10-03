@@ -17,8 +17,7 @@ def get_dn(x509name):
     return obj_name[start:end]
 
 
-def get_endpoint_ca_information(endpoint_url, insecure=False, cafile=None,
-                                capath='/etc/grid-security/certificates'):
+def get_endpoint_ca_information(endpoint_url, insecure=False):
     '''Return certificate issuer and trusted CAs list of HTTPS endpoint.'''
     ca_info = {
         'issuer': 'UNKNOWN',
@@ -43,8 +42,7 @@ def get_endpoint_ca_information(endpoint_url, insecure=False, cafile=None,
         ctx.set_options(SSL.OP_NO_SSLv2)
         ctx.set_options(SSL.OP_NO_SSLv3)
         ctx.set_verify(verify, lambda conn, cert, errno, depth, ok: ok)
-        if not insecure:
-            ctx.load_verify_locations(cafile=cafile, capath=capath)
+        ctx.set_default_verify_paths()
 
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client.connect((host, port))

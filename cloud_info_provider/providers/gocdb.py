@@ -51,13 +51,10 @@ def _find_url_in_result(svc_url, result):
     return {}
 
 
-def find_in_gocdb(svc_url, svc_type, insecure=False,
-                  capath='/etc/grid-security/certificates'):
+def find_in_gocdb(svc_url, svc_type, insecure=False):
     '''Find service matching URL and service type in GOCDB'''
 
-    verify = capath
-    if insecure:
-        verify = False
+    verify = not insecure
     r = requests.get('https://goc.egi.eu/gocdbpi/public/',
                      params={'method': 'get_service',
                              'service_type': svc_type},
