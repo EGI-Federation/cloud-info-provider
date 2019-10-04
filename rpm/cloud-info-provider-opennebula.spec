@@ -4,7 +4,7 @@
 
 Summary: Cloud Information provider meta-package for OpenNebula
 Name: cloud-info-provider-opennebula
-Version: 0.11.4
+Version: 0.11.5
 Release: 1%{?dist}
 Group: Applications/Internet
 License: Apache Software License 2.0
@@ -23,6 +23,11 @@ Install the cloud-information-provider and the Cloud Middleware dependencies.
 %files
 
 %changelog
+* Fri Oct 04 2019 Enol Fernández <enol.fernandez@egi.eu> 0.11.5
+- Add compatibility with CentOS 7 libraries. (Enol Fernández)
+- Fix GOCDB information for OpenNebula provider. (Enol Fernández)
+- Use system CAs everywhere. (Enol Fernández)
+- Fix OpenNebula provider initialisation. (Enol Fernández)
 * Tue Jul 23 2019 Enol Fernández <enol.fernandez@egi.eu> 0.11.4
 - Add external authentication plugin support. (Enol Fernández)
 * Mon Mar 04 2019 Baptiste Grenier <baptiste.grenier@egi.eu> 0.11.3
