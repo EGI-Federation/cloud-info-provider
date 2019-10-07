@@ -1,4 +1,4 @@
-import cloud_info_provider.providers
+import cloud_info_provider.providers.base
 from cloud_info_provider.tests import base
 
 
@@ -7,7 +7,7 @@ class BaseProviderTest(base.TestCase):
         class Opts(object):
             debug = None
         super(BaseProviderTest, self).setUp()
-        self.provider = cloud_info_provider.providers.BaseProvider(Opts())
+        self.provider = cloud_info_provider.providers.base.BaseProvider(Opts())
 
     def test_provider_get_site_info(self):
         self.assertEqual({}, self.provider.get_site_info())

@@ -4,9 +4,9 @@ import json
 import logging
 
 from cloud_info_provider import exceptions
-from cloud_info_provider import providers
+from cloud_info_provider.providers import base
 from cloud_info_provider.providers import gocdb
-from cloud_info_provider.providers import ssl_utils
+from cloud_info_provider.providers import static
 from cloud_info_provider import utils
 
 from six.moves.urllib.parse import urljoin
@@ -52,7 +52,7 @@ def _rescope(f):
     return inner
 
 
-class OpenStackProvider(providers.BaseProvider):
+class OpenStackProvider(base.BaseProvider):
     service_type = "compute"
     goc_service_type = 'org.openstack.nova'
     service_data = {
@@ -101,21 +101,13 @@ class OpenStackProvider(providers.BaseProvider):
         if opts.insecure:
             requests.packages.urllib3.disable_warnings()
 
-        self.static = providers.static.StaticProvider(opts)
+        self.static = static.StaticProvider(opts)
         self.insecure = opts.insecure
         self.all_images = opts.all_images
 
-        # Retieve information about Keystone endpoint SSL configuration
-        e_cert_info = ssl_utils.get_endpoint_ca_information(opts.os_auth_url,
-                                                            opts.insecure,
-                                                            opts.os_cacert)
-        self.keystone_cert_issuer = e_cert_info['issuer']
-        self.keystone_trusted_cas = e_cert_info['trusted_cas']
         self.os_cacert = opts.os_cacert
         # Select 'public', 'private' or 'all' (default) templates.
         self.select_flavors = opts.select_flavors
-        # GOCDB info
-        self.goc_info = {}
 
     def get_compute_shares(self, **kwargs):
         shares = self.static.get_compute_shares(prefix=True)
@@ -188,6 +180,7 @@ class OpenStackProvider(providers.BaseProvider):
         ret.update(defaults)
         # override default service name
         ret['compute_service_name'] = self.auth_plugin.auth_url
+        ca_info = self._get_endpoint_ca_information(self.auth_plugin.auth_url)
         catalog = self.auth_plugin.get_access(self.session).service_catalog
         epts = catalog.get_endpoints(service_type=self.service_type,
                                      interface="public")
@@ -197,9 +190,6 @@ class OpenStackProvider(providers.BaseProvider):
             e_url = ept.get('url', ept.get('publicURL'))
             # the URL used as id is different if OCCI or nova
             e_id_url = self._get_endpoint_id_url(e_url)
-            # Use keystone SSL information
-            e_issuer = self.keystone_cert_issuer
-            e_cas = self.keystone_trusted_cas
             e_versions = self._get_endpoint_versions(e_id_url)
             e_mw_version = e_versions['compute_middleware_version']
             e_api_version = e_versions['compute_api_version']
@@ -218,8 +208,8 @@ class OpenStackProvider(providers.BaseProvider):
             e.update({
                 'compute_endpoint_url': e_id_url,
                 'compute_endpoint_id': e_id,
-                'endpoint_issuer': e_issuer,
-                'endpoint_trusted_cas': e_cas,
+                'endpoint_trusted_cas': ca_info['trusted_cas'],
+                'endpoint_issuer': ca_info['issuer'],
                 'compute_middleware_version': e_mw_version,
                 'compute_api_type': self.service_data['compute_api_type'],
                 'compute_api_version': e_api_version,

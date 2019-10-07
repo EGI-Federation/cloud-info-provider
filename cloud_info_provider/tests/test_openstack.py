@@ -104,8 +104,12 @@ class OpenStackProviderTest(base.TestCase):
                 self.auth_plugin = mock.MagicMock()
                 self.auth_plugin.auth_url = 'http://foo.example.org:5000/v2'
                 self.static = mock.Mock()
-                self.keystone_cert_issuer = "foo"
-                self.keystone_trusted_cas = []
+                self._ca_info = {
+                    'http://foo.example.org:5000/v2': {
+                        'issuer': 'foo',
+                        'trusted_cas': [],
+                    }
+                }
                 self.insecure = False
                 self.os_cacert = '/etc/ssl/cas'
                 self.os_project_id = None
@@ -657,7 +661,7 @@ class OpenStackProviderTest(base.TestCase):
                     'compute_middleware': 'OpenStack Nova',
                     'compute_middleware_version': 'UNKNOWN',
                     'compute_middleware_developer': 'OpenStack Foundation',
-                    'endpoint_issuer': self.provider.keystone_cert_issuer,
+                    'endpoint_issuer': 'foo',
                     'endpoint_trusted_cas': [],
                     'compute_endpoint_id': '1b7f14c87d8c42ad962f4d3a5fd13a77',
                     'compute_endpoint_url':
@@ -752,8 +756,12 @@ class OoiProviderTest(OpenStackProviderTest):
                 self.auth_plugin = mock.MagicMock()
                 self.auth_plugin.auth_url = 'http://foo.example.org:5000/v2'
                 self.static = mock.Mock()
-                self.keystone_cert_issuer = "foo"
-                self.keystone_trusted_cas = []
+                self._ca_info = {
+                    'http://foo.example.org:5000/v2': {
+                        'issuer': 'foo',
+                        'trusted_cas': [],
+                    }
+                }
                 self.insecure = False
                 self.os_cacert = '/etc/ssl/cas'
                 self.os_project_id = None
@@ -966,7 +974,7 @@ class OoiProviderTest(OpenStackProviderTest):
                     'compute_middleware': 'ooi',
                     'compute_middleware_version': 'UNKNOWN',
                     'compute_middleware_developer': 'CSIC',
-                    'endpoint_issuer': self.provider.keystone_cert_issuer,
+                    'endpoint_issuer': 'foo',
                     'endpoint_trusted_cas': [],
                     'compute_endpoint_id': '03e087c8fb3b495c9a360bcba3abf914',
                     'compute_endpoint_url': 'https://cloud.example.org:8787/'},
