@@ -133,8 +133,8 @@
             ${render_string('image_name', _image.get('image_name', None))}
             ${render_string('image_description', _image.get('image_description', None))}
             ${render_string('image_marketplace_id', _image.get('image_marketplace_id', None))}
-            ${render_string('architecture', _image.get('architecture', None))}
-            ${render_string('type', _image.get('os_type', None))}
+            ${render_string('architecture', _image.get('image_architecture', None))}
+            ${render_string('type', _image.get('image_os_type', None))}
             ${render_string('version', _image.get('image_os_version', None))}
             ${render_string('distribution', _image.get('image_os_name', None))}
             "gpu_driver": ${'true' if _image.get('property_image_gpu_driver', None) else 'false'},

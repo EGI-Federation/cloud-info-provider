@@ -107,8 +107,8 @@ class StaticProvider(providers.BaseProvider):
 
     def get_images(self, **kwargs):
         fields = ('name', 'id', 'native_id', 'description', 'version',
-                  'marketplace_id', 'platform',
-                  'os_family', 'os_name', 'os_version',
+                  'marketplace_id', 'platform', 'architecture',
+                  'os_family', 'os_name', 'os_version', 'os_type',
                   'minimal_cpu', 'recommended_cpu',
                   'minimal_ram', 'recommended_ram',
                   'minimal_accel', 'recommended_accel', 'accel_type',
