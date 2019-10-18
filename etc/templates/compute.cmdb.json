@@ -106,7 +106,8 @@
         "data": {
             ${render_string('tenant_id', project_id, required_type=True)}
             ${render_string('tenant_name', _vo, required_type=True)}
-            ${render_string("service", service_id, required_type=True, comma=False)}
+            ${render_string("service", service_id, required_type=True)}
+            ${render_string("iam_organisation", _share.get('iam_organisation', None), comma=False)}
         }
     },
 % for _flavor_id, _flavor in _share['templates'].items():
