@@ -296,7 +296,13 @@ class OpenStackProvider(base.BaseProvider):
             marketplace_id = image.get('vmcatcher_event_ad_mpuri',
                                        image.get('marketplace'))
 
-            extra_attrs = json.loads(image.get('APPLIANCE_ATTRIBUTES', '{}'))
+            try:
+                extra_attrs = json.loads(image.get('APPLIANCE_ATTRIBUTES',
+                                                   '{}'))
+            except ValueError:
+                logging.warning("Unexpected issue while getting json for '%s'",
+                                image.get('APPLIANCE_ATTRIBUTES', '{}'))
+                extra_attrs = {}
             if 'ad:base_mpuri' in extra_attrs:
                 aux_img['other_info'].append('base_mpuri=%s'
                                              % extra_attrs['ad:base_mpuri'])
