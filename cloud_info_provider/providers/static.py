@@ -5,10 +5,10 @@ import socket
 import yaml
 
 from cloud_info_provider import exceptions
-from cloud_info_provider import providers
+from cloud_info_provider.providers import base
 
 
-class StaticProvider(providers.BaseProvider):
+class StaticProvider(base.BaseProvider):
     def __init__(self, *args, **kwargs):
         super(StaticProvider, self).__init__(*args, **kwargs)
 

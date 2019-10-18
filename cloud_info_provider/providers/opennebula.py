@@ -4,9 +4,9 @@ import json
 import os
 
 from cloud_info_provider import exceptions
-from cloud_info_provider import providers
+from cloud_info_provider.providers import base
 from cloud_info_provider.providers import gocdb
-from cloud_info_provider.providers import ssl_utils
+from cloud_info_provider.providers import static
 from cloud_info_provider import utils
 
 try:
@@ -20,7 +20,7 @@ except ImportError:
     raise exceptions.OpenNebulaProviderException(msg)
 
 
-class OpenNebulaBaseProvider(providers.BaseProvider):
+class OpenNebulaBaseProvider(base.BaseProvider):
     def __init__(self, opts, **kwargs):
         super(OpenNebulaBaseProvider, self).__init__(opts, **kwargs)
 
@@ -39,7 +39,7 @@ class OpenNebulaBaseProvider(providers.BaseProvider):
                    ' env[ON_RPCXML_ENDPOINT]')
             raise exceptions.OpenNebulaProviderException(msg)
 
-        self.static = providers.static.StaticProvider(opts)
+        self.static = static.StaticProvider(opts)
         self.xml_parser = defusedxml.ElementTree
         self.server_proxy = xmlrpclib.ServerProxy(self.on_rpcxml_endpoint)
 
@@ -224,14 +224,7 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
             msg = ('ERROR, You must provide a rocci_template_dir '
                    'via --rocci-template-dir')
             raise exceptions.OpenNebulaProviderException(msg)
-        self.ca_info = {}
         super(OpenNebulaROCCIProvider, self).__init__(opts, **kwargs)
-
-    def _get_endpoint_ca_information(self, url, **kwargs):
-        if url not in self.ca_info:
-            ca_info = ssl_utils.get_endpoint_ca_information(url, **kwargs)
-            self.ca_info[url] = ca_info
-        return self.ca_info[url]
 
     def get_compute_endpoints(self, **kwargs):
         epts = dict()
