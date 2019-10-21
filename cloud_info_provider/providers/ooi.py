@@ -1,13 +1,8 @@
 import re
 
-from cloud_info_provider import exceptions
-from cloud_info_provider.providers.openstack import OpenStackProvider
+import requests
 
-try:
-    import requests
-except ImportError:
-    msg = 'Cannot import requests module.'
-    raise exceptions.OpenStackProviderException(msg)
+from cloud_info_provider.providers.openstack import OpenStackProvider
 
 
 class OoiProvider(OpenStackProvider):
@@ -27,16 +22,11 @@ class OoiProvider(OpenStackProvider):
         e_middleware_version = None
         e_version = None
 
-        if self.insecure:
-            verify = False
-        else:
-            verify = self.os_cacert
-
         request_url = "%s/-/" % endpoint_url
         try:
             r = self.session.get(request_url,
                                  authenticated=True,
-                                 verify=verify)
+                                 verify=not self.insecure)
             if r.status_code == requests.codes.ok:
                 header_server = r.headers['Server']
                 e_middleware_version = re.search(r'ooi/([0-9.]+)',
