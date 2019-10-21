@@ -77,13 +77,6 @@ def get_parser(providers, formatters, auth_refreshers):
         help=('Path to the directory containing the needed templates'))
 
     parser.add_argument(
-        '--site-in-suffix',
-        action='store_true',
-        default=False,
-        help=('Whether to include the site name in the generated DN\'s'
-              'suffix (Use only for execution as a site-BDII provider)'))
-
-    parser.add_argument(
         '--debug',
         action='store_true',
         default=False,
