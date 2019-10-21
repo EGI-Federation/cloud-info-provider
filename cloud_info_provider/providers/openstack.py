@@ -3,42 +3,22 @@ import functools
 import json
 import logging
 
+import glanceclient
+from keystoneauth1.exceptions import http as http_exc
+from keystoneauth1 import loading
+from keystoneauth1.loading import base as loading_base
+from keystoneauth1.loading import session as loading_session
+import novaclient.client
+from novaclient.exceptions import Forbidden
+import requests
+from six.moves.urllib.parse import urljoin
+from six.moves.urllib.parse import urlparse
+
 from cloud_info_provider import exceptions
 from cloud_info_provider.providers import base
 from cloud_info_provider.providers import gocdb
 from cloud_info_provider.providers import static
 from cloud_info_provider import utils
-
-from six.moves.urllib.parse import urljoin
-from six.moves.urllib.parse import urlparse
-
-try:
-    import requests
-except ImportError:
-    msg = 'Cannot import requests module.'
-    raise exceptions.OpenStackProviderException(msg)
-
-try:
-    import glanceclient
-except ImportError:
-    msg = 'Cannot import glanceclient module.'
-    raise exceptions.OpenStackProviderException(msg)
-
-try:
-    from keystoneauth1.exceptions import http as http_exc
-    from keystoneauth1 import loading
-    from keystoneauth1.loading import base as loading_base
-    from keystoneauth1.loading import session as loading_session
-except ImportError:
-    msg = 'Cannot import keystoneauth module.'
-    raise exceptions.OpenStackProviderException(msg)
-
-try:
-    import novaclient.client
-    from novaclient.exceptions import Forbidden
-except ImportError:
-    msg = 'Cannot import novaclient module.'
-    raise exceptions.OpenStackProviderException(msg)
 
 
 # TODO(enolfc): should this be completely inside the provider class?
@@ -97,15 +77,10 @@ class OpenStackProvider(base.BaseProvider):
         self.project_id = None
         self.auth_refresher = auth_refresher
 
-        # Hide urllib3 warnings when allowing unverified connection
-        if opts.insecure:
-            requests.packages.urllib3.disable_warnings()
-
         self.static = static.StaticProvider(opts)
         self.insecure = opts.insecure
         self.all_images = opts.all_images
 
-        self.os_cacert = opts.os_cacert
         # Select 'public', 'private' or 'all' (default) templates.
         self.select_flavors = opts.select_flavors
 
