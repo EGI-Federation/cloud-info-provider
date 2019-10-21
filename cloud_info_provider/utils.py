@@ -1,16 +1,5 @@
 import json
 import os
-import string
-
-import six
-
-
-if six.PY2:
-    maketrans = string.maketrans
-    translate = string.translate
-else:
-    maketrans = str.maketrans
-    translate = str.translate
 
 
 def env(*args, **kwargs):
@@ -23,13 +12,6 @@ def env(*args, **kwargs):
         if value:
             return value
     return kwargs.get('default', '')
-
-
-def get_tag_value(xml, tag):
-    if xml.getElementsByTagName(tag):
-        return xml.getElementsByTagName(tag)[0].firstChild.nodeValue
-    else:
-        return None
 
 
 def pythonize_network_info(network_info):
