@@ -63,8 +63,8 @@ def find_in_gocdb(svc_url, svc_type, insecure=False):
         logger.warning("Something went wrong with GOC %s", r.text)
         return {}
     try:
-        return _find_url_in_result(svc_url,
-                                   defusedxml.ElementTree.fromstring(r.text))
+        goc_xml = defusedxml.ElementTree.fromstring(r.text)
+        return _find_url_in_result(svc_url, goc_xml)
     except ParseError:
         logger.warning('Something went wrong with parsing GOC output')
         return {}
