@@ -2,11 +2,11 @@ import mock
 
 import cloud_info_provider.formatters.base
 
-from cloud_info_provider.tests import test_core
+from cloud_info_provider.tests import base
 from cloud_info_provider.tests import utils
 
 
-class BaseFormatterTest(test_core.BaseTest):
+class BaseFormatterTest(base.BaseTest):
     def test_load_templates(self):
         self.opts.template_dir = 'foobar'
         tpls = ('foo', 'bar')
