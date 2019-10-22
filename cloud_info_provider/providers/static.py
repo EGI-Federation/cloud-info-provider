@@ -60,13 +60,6 @@ class StaticProvider(base.BaseProvider):
 
         return ret
 
-    def _get_suffix(self, site_info):
-        if self.opts.site_in_suffix:
-            return ('GLUE2DomainID=%(site_name)s,o=glue' %
-                    {'site_name': site_info['site_name']})
-        else:
-            return 'o=glue'
-
     def _get_site_info_from_bdii_conf(self):
         try:
             with open(self.opts.glite_site_info_static, 'r') as f:
@@ -89,8 +82,7 @@ class StaticProvider(base.BaseProvider):
         if site_info['site_name'] is None:
             site_info['site_name'] = self._get_site_info_from_bdii_conf()
 
-        site_info['suffix'] = self._get_suffix(site_info)
-
+        site_info['suffix'] = 'o=glue'
         return site_info
 
     def get_images(self, **kwargs):

@@ -33,7 +33,7 @@ def get_auth_refreshers():
     return dict((x.name, x.plugin) for x in mgr)
 
 
-def parse_opts(providers, formatters, auth_refreshers):
+def get_parser(providers, formatters, auth_refreshers):
     parser = argparse.ArgumentParser(
         description='Cloud Information System provider',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -77,13 +77,6 @@ def parse_opts(providers, formatters, auth_refreshers):
         help=('Path to the directory containing the needed templates'))
 
     parser.add_argument(
-        '--site-in-suffix',
-        action='store_true',
-        default=False,
-        help=('Whether to include the site name in the generated DN\'s'
-              'suffix (Use only for execution as a site-BDII provider)'))
-
-    parser.add_argument(
         '--debug',
         action='store_true',
         default=False,
@@ -99,7 +92,7 @@ def parse_opts(providers, formatters, auth_refreshers):
                                           refresher_name)
         refresher.populate_parser(group)
 
-    return parser.parse_args()
+    return parser
 
 
 def main():
@@ -107,7 +100,7 @@ def main():
     formatters = get_formatters()
     auth_refreshers = get_auth_refreshers()
 
-    opts = parse_opts(providers, formatters, auth_refreshers)
+    opts = get_parser(providers, formatters, auth_refreshers).parse_args()
 
     mgr = driver.DriverManager(
         namespace='cip.formatters',

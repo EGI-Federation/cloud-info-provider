@@ -107,22 +107,22 @@ compute:
 
     shares:
         ops:
-            project: ops
-            sla: UNKNOWN
+            # Default SLA is "UNKNOWN"
+            #sla: UNKNOWN
             # Type of network: infiniband, gigabiteethernet...
-            network_info: UNKNOWN
-            membership:
-                - VO:ops
+            # default is UNKNOWN
+            #network_info: UNKNOWN
             # Default network type: none, public, public_only, private, private_only
-            default_network_type: public
+            default_network_type: private
             # Public Network name
             public_network_name: PUBLIC
         fedcloud.egi.eu:
-            project: fedcloud
             sla: https://egi.eu/sla/fedcloud
             # Type of network: infiniband, gigabiteethernet...
             network_info: UNKNOWN
             membership:
+                # If you are not using the default 'VO:name of the VO'
+                # add here the specific roles/VOs allowed, e.g.:
                 - VOMS:/fedcloud.egi.eu/Role=VMOperators
             # Default network type: none, public, public_only, private, private_only
             default_network_type: public
@@ -133,8 +133,6 @@ compute:
             sla: https://egi.eu/sla/training
             # Type of network: infiniband, gigabiteethernet...
             network_info: UNKNOWN
-            membership:
-                - VO:training.egi.eu
             # Default network type: none, public, public_only, private, private_only
             default_network_type: public
             # Public Network name

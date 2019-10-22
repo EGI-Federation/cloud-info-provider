@@ -120,6 +120,24 @@ class OidcRefreshTest(base.TestCase):
                           self.provider)
 
 
+class OidcRefreshVOOptionsTest(base.TestCase):
+    def test_populate_parser(self):
+        """Tests that the right options are added to the argument parser"""
+
+        parser = argparse.ArgumentParser(conflict_handler='resolve')
+        refresher = oidc_vo_refresh.OidcVORefreshToken(None)
+        refresher.populate_parser(parser)
+
+        opts = parser.parse_args(['--oidc-token-endpoint',
+                                  'http://example.org/oidc',
+                                  '--oidc-credentials-path', '/foo',
+                                  '--oidc-scopes', 'foobar'])
+
+        self.assertEqual("http://example.org/oidc", opts.oidc_token_endpoint)
+        self.assertEqual('/foo', opts.oidc_credentials_path)
+        self.assertEqual('foobar', opts.oidc_scopes)
+
+
 class OidcRefreshVOTest(base.TestCase):
     def setUp(self):
         super(OidcRefreshVOTest, self).setUp()

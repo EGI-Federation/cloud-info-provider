@@ -11,25 +11,6 @@ class Data(object):
         }
 
     @property
-    def site_info_full(self):
-        return {
-            'suffix': 'GLUE2DomainID=SITE_NAME,o=glue',
-            'site_name': 'SITE_NAME',
-            'site_url': 'http://site.url.example.org/',
-            'site_ngi': 'NGI_FOO',
-            'site_country': 'ES',
-            'site_longitude': 0.0,
-            'site_latitude': 0.0,
-            'site_general_contact': 'general-support@example.org',
-            'site_sysadmin_contact': 'support@example.org',
-            'site_security_contact': 'security-support@example.org',
-            'site_user_support_contact': 'user-support@example.org',
-            'site_production_level': 'production',
-            'site_bdii_host': 'site.bdii.example.org',
-            'site_bdii_port': 2170,
-        }
-
-    @property
     def storage_endpoints(self):
         return {
             'endpoints': {
@@ -206,9 +187,6 @@ class OpenStackFakes(object):
                 self.is_public = is_public
                 self.disk = disk
                 self.ephemeral = ephemeral
-
-            def get_keys(self):
-                return {}
 
         flavors = (
             {

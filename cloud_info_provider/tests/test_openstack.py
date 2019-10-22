@@ -1,6 +1,8 @@
 import argparse
 
 import mock
+import requests
+from six.moves.urllib.parse import urljoin
 
 from cloud_info_provider.providers import ooi as ooi_provider
 from cloud_info_provider.providers import openstack as os_provider
@@ -8,7 +10,6 @@ from cloud_info_provider.tests import base
 from cloud_info_provider.tests import data
 from cloud_info_provider.tests import utils as utils
 
-from six.moves.urllib.parse import urljoin
 
 FAKES = data.OS_FAKES
 
@@ -22,7 +23,6 @@ class OpenStackProviderOptionsTest(base.TestCase):
         opts = parser.parse_args(['--os-username', 'foo',
                                   '--os-password', 'bar',
                                   '--os-auth-url', 'http://example.org:5000',
-                                  '--os-cacert', 'foobar',
                                   '--insecure',
                                   '--all-images',
                                   '--select-flavors', 'public'])
@@ -30,7 +30,6 @@ class OpenStackProviderOptionsTest(base.TestCase):
         self.assertEqual(opts.os_username, 'foo')
         self.assertEqual(opts.os_password, 'bar')
         self.assertEqual(opts.os_auth_url, 'http://example.org:5000')
-        self.assertEqual(opts.os_cacert, 'foobar')
         self.assertEqual(opts.insecure, True)
         self.assertEqual(opts.all_images, True)
         self.assertEqual(opts.select_flavors, 'public')
@@ -111,7 +110,6 @@ class OpenStackProviderTest(base.TestCase):
                     }
                 }
                 self.insecure = False
-                self.os_cacert = '/etc/ssl/cas'
                 self.os_project_id = None
                 self.select_flavors = 'all'
                 self._rescope_project = mock.Mock()
@@ -763,7 +761,6 @@ class OoiProviderTest(OpenStackProviderTest):
                     }
                 }
                 self.insecure = False
-                self.os_cacert = '/etc/ssl/cas'
                 self.os_project_id = None
                 self.select_flavors = 'all'
                 self._rescope_project = mock.Mock()
@@ -1002,3 +999,49 @@ class OoiProviderTest(OpenStackProviderTest):
 
         self.assertEqual('baz', endpoints.pop('gocfoo'))
         self.assertDictEqual(expected_endpoints, endpoints)
+
+    def test_get_endpoint_versions(self):
+        r = mock.MagicMock()
+        r.status_code = 200
+        r.headers = {"Server": "ooi/1.2.3 OCCI/1.2"}
+        self.provider.session.get.return_value = r
+        expected = {'compute_api_version': '1.2',
+                    'compute_middleware_version': '1.2.3'}
+        self.assertEqual(expected,
+                         self.provider._get_endpoint_versions('foo'))
+        self.provider.session.get.assert_called_once_with(
+            'foo/-/', authenticated=True, verify=not self.provider.insecure)
+
+    def test_get_endpoint_versions_no_header(self):
+        r = mock.MagicMock()
+        r.status_code = 200
+        r.headers = {}
+        self.provider.session.get.return_value = r
+        expected = {'compute_api_version': None,
+                    'compute_middleware_version': None}
+        self.assertEqual(expected,
+                         self.provider._get_endpoint_versions('foo'))
+        self.provider.session.get.assert_called_once_with(
+            'foo/-/', authenticated=True, verify=not self.provider.insecure)
+
+    def test_get_endpoint_versions_request_error(self):
+        get = self.provider.session.get
+        get.side_effect = requests.exceptions.RequestException
+        expected = {'compute_api_version': None,
+                    'compute_middleware_version': None}
+        self.assertEqual(expected,
+                         self.provider._get_endpoint_versions('foo'))
+        self.provider.session.get.assert_called_once_with(
+            'foo/-/', authenticated=True, verify=not self.provider.insecure)
+
+    def test_get_endpoint_versions_error(self):
+        r = mock.MagicMock()
+        r.status_code = 200
+        r.headers = {"Server": "ooa/abc OCCI/1.2"}
+        self.provider.session.get.return_value = r
+        expected = {'compute_api_version': '1.2',
+                    'compute_middleware_version': None}
+        self.assertEqual(expected,
+                         self.provider._get_endpoint_versions('foo'))
+        self.provider.session.get.assert_called_once_with(
+            'foo/-/', authenticated=True, verify=not self.provider.insecure)

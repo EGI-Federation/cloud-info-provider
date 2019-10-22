@@ -23,3 +23,12 @@ class BaseProviderTest(base.TestCase):
 
     def test_provider_get_storage_endpoints(self):
         self.assertEqual({}, self.provider.get_storage_endpoints())
+
+    def test_provider_get_instances(self):
+        self.assertEqual({}, self.provider.get_instances())
+
+    def test_provider_get_compute_shares(self):
+        self.assertEqual({}, self.provider.get_compute_shares())
+
+    def test_provider_get_compute_quotas(self):
+        self.assertEqual({}, self.provider.get_compute_quotas())

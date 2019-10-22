@@ -5,15 +5,15 @@ import cloud_info_provider.collectors.cloud
 import cloud_info_provider.collectors.compute
 import cloud_info_provider.collectors.storage
 
+from cloud_info_provider.tests import base
 from cloud_info_provider.tests import data
-from cloud_info_provider.tests import test_core
 from cloud_info_provider.tests import utils
 
 
 DATA = data.DATA
 
 
-class BaseCollectorTest(test_core.BaseTest):
+class BaseCollectorTest(base.BaseTest):
     @mock.patch.multiple(
         cloud_info_provider.collectors.base.BaseCollector,
         __abstractmethods__=set(),
@@ -63,7 +63,7 @@ class BaseCollectorTest(test_core.BaseTest):
                 self.assertEqual(e, base._get_info_from_providers('method'))
 
 
-class CloudCollectorTest(test_core.BaseTest):
+class CloudCollectorTest(base.BaseTest):
     @mock.patch.object(cloud_info_provider.collectors.cloud.CloudCollector,
                        '_get_info_from_providers')
     def test_fetch(self, m_get_info):
@@ -76,7 +76,7 @@ class CloudCollectorTest(test_core.BaseTest):
         self.assertEqual(cloud.fetch(), DATA.site_info)
 
 
-class StorageCollectorTest(test_core.BaseTest):
+class StorageCollectorTest(base.BaseTest):
     @mock.patch.object(cloud_info_provider.collectors.storage.StorageCollector,
                        '_get_info_from_providers')
     def test_fetch(self, m_get_info):
@@ -111,7 +111,7 @@ class StorageCollectorTest(test_core.BaseTest):
         self.assertEqual({}, storage.fetch())
 
 
-class ComputeCollectorTest(test_core.BaseTest):
+class ComputeCollectorTest(base.BaseTest):
     @mock.patch.object(cloud_info_provider.collectors.compute.ComputeCollector,
                        '_get_info_from_providers')
     def test_fetch(self, m_get_info):

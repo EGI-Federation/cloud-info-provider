@@ -17,7 +17,6 @@ class StaticProviderTest(base.TestCase):
 
         class Opts(object):
             yaml_file = None
-            site_in_suffix = False
             glite_site_info_static = "foo"
             debug = False
 
@@ -284,16 +283,6 @@ class StaticProviderTest(base.TestCase):
         self.assertRaises(exceptions.StaticProviderException,
                           self.provider.get_site_info)
 
-    def test_get_suffix_default(self):
-        site_info = {'site_name': 'SITE_NAME'}
-        self.assertEqual("o=glue", self.provider._get_suffix(site_info))
-
-    def test_get_suffix_site_in_suffix(self):
-        site_info = {'site_name': 'SITE_NAME'}
-        self.provider.opts.site_in_suffix = True
-        self.assertEqual("GLUE2DomainID=SITE_NAME,o=glue",
-                         self.provider._get_suffix(site_info))
-
     def test_get_site_info_no(self):
         data = six.StringIO("SITE_NAME = SITE_NAME")
         expected = DATA.site_info
@@ -325,6 +314,44 @@ class StaticProviderTest(base.TestCase):
                 if field not in img:
                     img[field] = None
         self.assertEqual(expected, self.provider.get_images())
+
+    def test_get_instances(self):
+        # default is just empty
+        self.assertEqual({}, self.provider.get_instances())
+
+    def test_get_shares(self):
+        expected = {
+            "ops": {
+                "default_network_type": "private",
+                'public_network_name': 'PUBLIC',
+            },
+            "fedcloud.egi.eu": {
+                "sla": "https://egi.eu/sla/fedcloud",
+                "membership": ["VOMS:/fedcloud.egi.eu/Role=VMOperators"],
+                "default_network_type": "public",
+                "network_info": "UNKNOWN",
+                'public_network_name': 'PUBLIC',
+            },
+            "training.egi.eu": {
+                "sla": "https://egi.eu/sla/training",
+                "default_network_type": "public",
+                "network_info": "UNKNOWN",
+                'public_network_name': 'PUBLIC',
+            },
+        }
+        for vo, share in expected.items():
+            if 'membership' not in share:
+                share['membership'] = ['VO:%s' % vo]
+            for f in ['sla', 'auth', 'network_info',
+                      'instance_max_accelerators',
+                      'instance_max_cpu',
+                      'instance_max_ram']:
+                if f not in share:
+                    share[f] = None
+        self.assertEqual(expected, self.provider.get_compute_shares())
+
+    def test_get_qoutas(self):
+        self.assertEqual({}, self.provider.get_compute_quotas())
 
     def test_get_images_with_yaml(self):
         yaml = {
