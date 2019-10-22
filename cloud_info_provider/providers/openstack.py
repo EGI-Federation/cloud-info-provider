@@ -319,6 +319,7 @@ class OpenStackProvider(providers.BaseProvider):
             'image_os_family': None,
             'image_os_name': None,
             'image_os_version': None,
+            'image_os_type': None,
             'image_minimal_cpu': None,
             'image_recommended_cpu': None,
             'image_minimal_ram': None,

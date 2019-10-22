@@ -1,5 +1,7 @@
-<%def name="render_string(k, v,comma=True)">
-% if v is None:
+<%def name="render_string(k, v, required_type=False, comma=True)">
+% if v is None and not required_type:
+
+% elif v is None and required_type:
 "${k}": null${',' if comma else ''}
 % elif isinstance(v, (basestring, str, unicode)):
 "${k}": "${v}"${',' if comma else ''}
@@ -41,7 +43,7 @@
             ${render_string('hostname', host_name)}
             ${render_string('service_type', goc_service_type)}
             ${render_string('sitename', static_compute_info['site_name'])}
-            "type": "compute",
+            ${render_string('type', 'compute', required_type=True)}
             % if middleware == "mesos":
             <%
                 service_info = static_compute_info['endpoints'][service_id]
@@ -102,17 +104,18 @@
     {
         "type": "tenant",
         "data": {
-            ${render_string('tenant_id', project_id)}
-            ${render_string('tenant_name', _vo)}
-            "service": "${service_id}"
+            ${render_string('tenant_id', project_id, required_type=True)}
+            ${render_string('tenant_name', _vo, required_type=True)}
+            ${render_string("service", service_id, required_type=True)}
+            ${render_string("iam_organisation", _share.get('iam_organisation', None), comma=False)}
         }
     },
 % for _flavor_id, _flavor in _share['templates'].items():
     {
         "type": "flavor",
         "data": {
-            ${render_string('flavor_id', _flavor_id)}
-            ${render_string('flavor_name', _flavor['flavor_name'])}
+            ${render_string('flavor_id', _flavor_id, required_type=True)}
+            ${render_string('flavor_name', _flavor['flavor_name'], required_type=True)}
             "num_vcpus": ${_flavor.get('template_cpu', 0)},
             "ram": ${_flavor.get('template_memory', 0)},
             "disk": ${_flavor.get('template_disk', 0)},
@@ -120,7 +123,7 @@
             ${render_string('gpu_vendor', _flavor['template_flavor_gpu_vendor'])}
             ${render_string('gpu_model', _flavor['template_flavor_gpu_model'])}
             "service": "${service_id}",
-            ${render_string('tenant_id', project_id)}
+            ${render_string('tenant_id', project_id, required_type=True)}
             "tenant_name": "${_vo}"
         }
     },
@@ -129,12 +132,12 @@
     {
         "type": "image",
         "data": {
-            ${render_string('image_id', _image.get('id', None))}
-            ${render_string('image_name', _image.get('image_name', None))}
+            ${render_string('image_id', _image.get('id', None), required_type=True)}
+            ${render_string('image_name', _image.get('image_name', None), required_type=True)}
             ${render_string('image_description', _image.get('image_description', None))}
             ${render_string('image_marketplace_id', _image.get('image_marketplace_id', None))}
-            ${render_string('architecture', _image.get('architecture', None))}
-            ${render_string('type', _image.get('os_type', None))}
+            ${render_string('architecture', _image.get('image_architecture', None))}
+            ${render_string('type', _image.get('image_os_type', None))}
             ${render_string('version', _image.get('image_os_version', None))}
             ${render_string('distribution', _image.get('image_os_name', None))}
             "gpu_driver": ${'true' if _image.get('property_image_gpu_driver', None) else 'false'},
@@ -143,7 +146,7 @@
             ${render_string('cuda_version', _image.get('property_image_gpu_cuda', None))}
             ${render_string('cuDNN_version', _image.get('property_image_gpu_cudnn', None))}
             "service": "${service_id}",
-            ${render_string('tenant_id', project_id)}
+            ${render_string('tenant_id', project_id, required_type=True)}
             "tenant_name": "${_vo}"
         }
     }${'' if loop.last else ','}

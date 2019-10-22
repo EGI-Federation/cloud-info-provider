@@ -343,6 +343,8 @@ class StaticProviderTest(base.TestCase):
                         'os_family': 'linux',
                         'os_name': 'Cirros',
                         'os_version': 1.0,
+                        'os_type': 'linux',
+                        'architecture': 'amd64',
                     },
                     'os#barid': {
                         'name': 'Bar Image',
@@ -351,7 +353,9 @@ class StaticProviderTest(base.TestCase):
                         'os_family': 'linux',
                         'os_name': 'Cirros',
                         'os_version': 2.0,
+                        'os_type': 'linux',
                         'platform': 'i686',
+                        'architecture': 'i686',
                     },
                 }
             }
@@ -362,8 +366,10 @@ class StaticProviderTest(base.TestCase):
                 'image_name': 'Bar Image',
                 'image_os_family': 'linux',
                 'image_os_name': 'Cirros',
+                'image_os_type': 'linux',
                 'image_os_version': 2.0,
                 'image_platform': 'i686',
+                'image_architecture': 'i686',
                 'image_version': 2.0
             },
             'os#fooid': {
@@ -371,8 +377,10 @@ class StaticProviderTest(base.TestCase):
                 'image_name': 'Foo Image',
                 'image_os_family': 'linux',
                 'image_os_name': 'Cirros',
+                'image_os_type': 'linux',
                 'image_os_version': 1.0,
                 'image_platform': 'amd64',
+                'image_architecture': 'amd64',
                 'image_version': 1.0
             }
         }
