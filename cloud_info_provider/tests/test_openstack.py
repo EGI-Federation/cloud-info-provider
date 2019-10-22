@@ -1011,7 +1011,6 @@ class OoiProviderTest(OpenStackProviderTest):
         self.provider.session.get.assert_called_once_with(
             'foo/-/', authenticated=True, verify=not self.provider.insecure)
 
-
     def test_get_endpoint_versions_error(self):
         r = mock.MagicMock()
         r.status_code = 200
