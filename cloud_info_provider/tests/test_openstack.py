@@ -1,6 +1,8 @@
 import argparse
 
 import mock
+import requests
+from six.moves.urllib.parse import urljoin
 
 from cloud_info_provider.providers import ooi as ooi_provider
 from cloud_info_provider.providers import openstack as os_provider
@@ -8,7 +10,6 @@ from cloud_info_provider.tests import base
 from cloud_info_provider.tests import data
 from cloud_info_provider.tests import utils as utils
 
-from six.moves.urllib.parse import urljoin
 
 FAKES = data.OS_FAKES
 
@@ -1011,12 +1012,34 @@ class OoiProviderTest(OpenStackProviderTest):
         self.provider.session.get.assert_called_once_with(
             'foo/-/', authenticated=True, verify=not self.provider.insecure)
 
+    def test_get_endpoint_versions_no_header(self):
+        r = mock.MagicMock()
+        r.status_code = 200
+        r.headers = {}
+        self.provider.session.get.return_value = r
+        expected = {'compute_api_version': None,
+                    'compute_middleware_version': None}
+        self.assertEqual(expected,
+                         self.provider._get_endpoint_versions('foo'))
+        self.provider.session.get.assert_called_once_with(
+            'foo/-/', authenticated=True, verify=not self.provider.insecure)
+
+    def test_get_endpoint_versions_request_error(self):
+        get = self.provider.session.get
+        get.side_effect = requests.exceptions.RequestException
+        expected = {'compute_api_version': None,
+                    'compute_middleware_version': None}
+        self.assertEqual(expected,
+                         self.provider._get_endpoint_versions('foo'))
+        self.provider.session.get.assert_called_once_with(
+            'foo/-/', authenticated=True, verify=not self.provider.insecure)
+
     def test_get_endpoint_versions_error(self):
         r = mock.MagicMock()
         r.status_code = 200
         r.headers = {"Server": "ooa/abc OCCI/1.2"}
         self.provider.session.get.return_value = r
-        expected = {'compute_api_version': None,
+        expected = {'compute_api_version': '1.2',
                     'compute_middleware_version': None}
         self.assertEqual(expected,
                          self.provider._get_endpoint_versions('foo'))

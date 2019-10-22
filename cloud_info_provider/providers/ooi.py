@@ -14,9 +14,6 @@ class OoiProvider(OpenStackProvider):
         'compute_middleware_developer': 'CSIC',
     }
 
-    def __init__(self, *args, **kwargs):
-        super(OoiProvider, self).__init__(*args, **kwargs)
-
     def _get_endpoint_versions(self, endpoint_url):
         '''Return the API and middleware versions of a compute endpoint.'''
         e_middleware_version = None
@@ -29,11 +26,13 @@ class OoiProvider(OpenStackProvider):
                                  verify=not self.insecure)
             if r.status_code == requests.codes.ok:
                 header_server = r.headers['Server']
-                e_middleware_version = re.search(r'ooi/([0-9.]+)',
-                                                 header_server).group(1)
-                e_version = re.search(r'OCCI/([0-9.]+)',
-                                      header_server).group(1)
-        except IndexError:
+                ooi_version = re.search(r'ooi/([0-9.]+)', header_server)
+                if ooi_version:
+                    e_middleware_version = ooi_version.group(1)
+                occi_version = re.search(r'OCCI/([0-9.]+)', header_server)
+                if occi_version:
+                    e_version = occi_version.group(1)
+        except KeyError:
             pass
         except requests.exceptions.RequestException:
             pass
