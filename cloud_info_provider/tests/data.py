@@ -145,6 +145,8 @@ class Data(object):
                 'image_os_name': 'Cirros',
                 'image_os_version': 1.0,
                 'image_platform': 'amd64',
+                'image_architecture': None,
+                'image_os_type': None,
             },
         }
 

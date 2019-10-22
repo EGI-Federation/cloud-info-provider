@@ -151,6 +151,7 @@ class OpenStackProviderTest(base.TestCase):
                                   "image_os_family",
                                   "image_os_name",
                                   "image_os_version",
+                                  "image_os_type",
                                   "image_platform",
                                   "image_version",
                                   "image_description",
@@ -418,6 +419,7 @@ class OpenStackProviderTest(base.TestCase):
                                   "image_os_family",
                                   "image_os_name",
                                   "image_os_version",
+                                  "image_os_type",
                                   "image_platform",
                                   "image_version"
                               ])
@@ -436,6 +438,7 @@ class OpenStackProviderTest(base.TestCase):
                 'image_os_family': None,
                 'image_os_name': None,
                 'image_os_version': None,
+                'image_os_type': None,
                 'image_platform': 'amd64',
                 'image_version': None,
                 'image_marketplace_id': "%s" % urljoin(self.provider.glance
@@ -472,6 +475,7 @@ class OpenStackProviderTest(base.TestCase):
                 'image_os_family': None,
                 'image_os_name': None,
                 'image_os_version': None,
+                'image_os_type': None,
                 'image_platform': 'amd64',
                 'image_version': None,
                 'image_marketplace_id': 'http://example.org/',
@@ -504,6 +508,7 @@ class OpenStackProviderTest(base.TestCase):
                 'image_os_family': None,
                 'image_os_name': None,
                 'image_os_version': None,
+                'image_os_type': None,
                 'image_platform': 'amd64',
                 'image_version': None,
                 'image_marketplace_id': "%s" % urljoin(self.provider.glance
@@ -739,6 +744,7 @@ class OoiProviderTest(OpenStackProviderTest):
                 'image_os_family': None,
                 'image_os_name': None,
                 'image_os_version': None,
+                'image_os_type': None,
                 'image_platform': 'amd64',
                 'image_version': None,
                 'image_marketplace_id': "%s" % urljoin(self.provider.glance
@@ -775,6 +781,7 @@ class OoiProviderTest(OpenStackProviderTest):
                 'image_os_family': None,
                 'image_os_name': None,
                 'image_os_version': None,
+                'image_os_type': None,
                 'image_platform': 'amd64',
                 'image_version': None,
                 'image_marketplace_id': 'http://example.org/',
@@ -807,6 +814,7 @@ class OoiProviderTest(OpenStackProviderTest):
                 'image_os_family': None,
                 'image_os_name': None,
                 'image_os_version': None,
+                'image_os_type': None,
                 'image_platform': 'amd64',
                 'image_version': None,
                 'image_marketplace_id': "%s" % urljoin(self.provider.glance
