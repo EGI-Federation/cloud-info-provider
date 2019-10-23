@@ -33,7 +33,14 @@ def get_auth_refreshers():
     return dict((x.name, x.plugin) for x in mgr)
 
 
-def get_parser(providers, formatters, auth_refreshers):
+def get_publishers():
+    mgr = extension.ExtensionManager(
+        namespace='cip.publishers',
+    )
+    return dict((x.name, x.plugin) for x in mgr)
+
+
+def get_parser(providers, formatters, auth_refreshers, publishers):
     parser = argparse.ArgumentParser(
         description='Cloud Information System provider',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -72,6 +79,14 @@ def get_parser(providers, formatters, auth_refreshers):
               'of the required values, or when using the static provider. '))
 
     parser.add_argument(
+        '--publisher',
+        metavar='PUBLISHER',
+        choices=publishers,
+        default='stdout',
+        help=('Selects where to publish output to. Allowed values: '
+              '%(choices)s}'))
+
+    parser.add_argument(
         '--template-dir',
         default='/etc/cloud-info-provider/templates',
         help=('Path to the directory containing the needed templates'))
@@ -92,6 +107,11 @@ def get_parser(providers, formatters, auth_refreshers):
                                           refresher_name)
         refresher.populate_parser(group)
 
+    for publisher_name, publisher in publishers.items():
+        group = parser.add_argument_group('%s publisher options' %
+                                          publisher_name)
+        publisher.populate_parser(group)
+
     return parser
 
 
@@ -99,8 +119,12 @@ def main():
     providers = get_providers()
     formatters = get_formatters()
     auth_refreshers = get_auth_refreshers()
+    publishers = get_publishers()
 
-    opts = get_parser(providers, formatters, auth_refreshers).parse_args()
+    opts = get_parser(providers,
+                      formatters,
+                      auth_refreshers,
+                      publishers).parse_args()
 
     mgr = driver.DriverManager(
         namespace='cip.formatters',
@@ -110,7 +134,15 @@ def main():
     auth_refresher = None
     if opts.auth_refresher:
         auth_refresher = auth_refreshers[opts.auth_refresher](opts)
-    mgr.driver.format(opts, providers, auth_refresher)
+
+    publisher = driver.DriverManager(
+        namespace='cip.publishers',
+        name=opts.publisher,
+        invoke_on_load=True,
+        invoke_args=(opts, )
+    )
+    output = mgr.driver.format(opts, providers, auth_refresher)
+    publisher.driver.publish(output)
 
 
 if __name__ == '__main__':
