@@ -5,9 +5,10 @@ Tests for the publishers
 from __future__ import print_function
 
 import argparse
-import base64
 import json
 import mock
+
+import six
 
 from cloud_info_provider.publishers import ams
 from cloud_info_provider.publishers import stdout
@@ -16,12 +17,17 @@ from cloud_info_provider.tests import utils as utils
 
 
 class StdOutPublisherTest(base.TestCase):
-    @mock.patch("__builtin__.print")
-    def test_publish(self, m_print):
+    def test_publish(self):
         publisher = stdout.StdOutPublisher(None)
         output = "foo"
-        publisher.publish(output)
-        m_print.assert_called_with(output)
+        if six.PY2:
+            with mock.patch("__builtin__.print") as m_print:
+                publisher.publish(output)
+                m_print.assert_called_with(output)
+        else:
+            with mock.patch("builtins.print") as m_print:
+                publisher.publish(output)
+                m_print.assert_called_with(output)
 
 
 class AMSPublisherTest(base.TestCase):
@@ -73,12 +79,7 @@ class AMSPublisherTest(base.TestCase):
             m_post.return_value = r
             m_get_token.return_value = "secret"
             publisher.publish(output)
-            data = {
-                "messages": [{
-                    "attributes": {},
-                    "data": base64.b64encode("foo")
-                }]
-            }
+            data = {"messages": [{"attributes": {}, "data": "Zm9v"}]}
             url = ("https://example.com/v1/projects/bar/topics/"
                    "topic:publish?key=secret")
             headers = {"content-type": "application/json"}

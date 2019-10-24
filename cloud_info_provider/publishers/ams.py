@@ -73,9 +73,8 @@ class AMSPublisher(BasePublisher):
                                          token,
                                          self.opts.ams_project,
                                          self.opts.ams_topic))
-        data = {
-            "messages": [{"attributes": {}, "data": base64.b64encode(output)}]
-        }
+        payload = base64.b64encode(output.encode("utf-8")).decode("utf-8")
+        data = {"messages": [{"attributes": {}, "data": payload}]}
         r = requests.post(url,
                           headers={"content-type": "application/json"},
                           data=json.dumps(data))
