@@ -31,6 +31,7 @@
             ${render_string('roc', static_compute_info['site_roc'])}
             ${render_string('subgrid', static_compute_info['site_subgrid'])}
             "is_public": ${'true' if is_public else 'false'},
+            ${render_string('owners', static_compute_info['site_owner_contacts'])}
             ${render_string('giis_url', static_compute_info['site_giis_url'], comma=False)}
         }
     },

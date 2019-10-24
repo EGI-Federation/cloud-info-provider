@@ -87,7 +87,7 @@ class StaticProvider(providers.BaseProvider):
         site_info = self._get_fields_and_prefix(
             ('name', 'id',
              'country', 'country_code', 'roc', 'subgrid', 'giis_url',
-             'is_public'),
+             'is_public', 'owner_contacts'),
             'site_',
             data,
             defaults={'is_public': False})

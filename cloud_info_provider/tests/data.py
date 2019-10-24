@@ -11,6 +11,7 @@ class Data(object):
             # required by CMDB
             'site_id': 'provider-SITE_NAME',
             'site_is_public': False,
+            'site_owner_contacts': None,
             # required by GOCDB
             'site_country': 'Spain',
             'site_country_code': 'ES',
