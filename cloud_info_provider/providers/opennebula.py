@@ -5,7 +5,6 @@ import os
 
 from cloud_info_provider import exceptions
 from cloud_info_provider.providers import base
-from cloud_info_provider.providers import gocdb
 from cloud_info_provider.providers import static
 from cloud_info_provider import utils
 
@@ -243,7 +242,7 @@ class OpenNebulaROCCIProvider(OpenNebulaBaseProvider):
                 'endpoint_issuer': ca_info['issuer'],
             })
             # overwrites it for every iteration but that's ok
-            ret.update(gocdb.get_goc_info(url, self.goc_service_type))
+            ret.update(self.get_goc_info(url))
             ept.update(self.service_data)
             epts[url] = ept
         return ret

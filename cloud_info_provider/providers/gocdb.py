@@ -12,8 +12,6 @@ from xml.etree.ElementTree import ParseError  # nosec
 
 logger = logging.getLogger(__name__)
 
-_goc_info = {}
-
 
 def _are_url_similar(u1, u2):
     '''Compares 2 urls just considering host and path'''
@@ -68,15 +66,3 @@ def find_in_gocdb(svc_url, svc_type, insecure=False):
     except ParseError:
         logger.warning('Something went wrong with parsing GOC output')
         return {}
-
-
-def get_goc_info(svc_url, svc_type, insecure=False):
-    '''Gets information from GOCDB for a given URL and service type
-
-       It calls find_in_gocdb and caches the result between subsequent
-       calls to avoid unnecessary HTTP requests to GOCDB.
-    '''
-
-    if svc_url not in _goc_info:
-        _goc_info[svc_url] = find_in_gocdb(svc_url, svc_type, insecure)
-    return _goc_info[svc_url]
