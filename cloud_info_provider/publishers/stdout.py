@@ -1,3 +1,10 @@
+"""
+StdOut Publisher
+
+Just prints to stdout
+"""
+
+
 from __future__ import print_function
 
 from cloud_info_provider.publishers.base import BasePublisher

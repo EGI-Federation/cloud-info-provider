@@ -1,3 +1,10 @@
+"""
+Argo Messaging System Publisher
+
+Publishes the cloud-info to a topic in the AMS.
+"""
+
+
 import base64
 import json
 import logging

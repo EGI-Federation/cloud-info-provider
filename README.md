@@ -210,6 +210,23 @@ option of cloud-info-provider-service command (allowed values:
 `glue`, `glue21`, `cmdb`) to use a different formatter. Likewise, the default
 location of the templates can be changed using the `--template-dir` option.
 
+#### Publishers
+
+The cloud-info-provider has a pluggable system for producing its output. Two
+if this `publishers` are provided in this repo: `stdout` and `ams`:
+
+* `stdout`: just prints output to the standard output. This is the default
+  publisher and the one to use when the cloud-info-provider is used in a
+  BDII set up
+
+* `ams`: pushes a message to the Argo Messaging System with the parameters
+  specified. It can either authenticate with a token (using `--ams-token`
+  option, or with a certificate and key pair (using `--ams-cert` and
+  `--ams-key` options). The topic to be used for publishing should be in the
+  form: `SITE_<SITE_NAME>_ENDPOINT_<ENDPOINT_ID>`, where `<SITE_NAME>` is
+  the site name in GOCDB and the `<ENDPOINT_ID>` is the id of the endpoint
+  in GOCDB.
+
 #### Providers
 
 Dynamic information is obtained with the middleware providers (OpenStack, ooi,
