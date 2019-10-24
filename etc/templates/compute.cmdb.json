@@ -39,7 +39,7 @@
         "data": {
             "provider_id": "${provider_id}",
             "id": "${service_id}",
-            "service_is_public": ${'true' if is_public else 'false'},
+            "is_public_service": ${'true' if is_public else 'false'},
             ${render_string('hostname', host_name)}
             ${render_string('service_type', goc_service_type)}
             ${render_string('sitename', static_compute_info['site_name'])}
