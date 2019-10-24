@@ -27,7 +27,6 @@ class AMSPublisher(BasePublisher):
             "--ams-host",
             metavar="<host>",
             default="msg.argo.grnet.gr",
-            required=True,
             help="AMS host",
         )
 
@@ -35,7 +34,6 @@ class AMSPublisher(BasePublisher):
         parser.add_argument(
             "--ams-topic",
             metavar="<topic>",
-            required=True,
             help="AMS topic"
         )
 
@@ -43,7 +41,6 @@ class AMSPublisher(BasePublisher):
             "--ams-project",
             metavar="<project>",
             default="egi_cloud_info",
-            required=True,
             help="AMS project",
         )
 
