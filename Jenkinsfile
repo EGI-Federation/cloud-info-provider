@@ -83,11 +83,10 @@ pipeline {
                     steps {
                         checkout scm
                         echo 'Within build on Ubuntu18.04'
-                        sh 'sudo apt-get update && sudo apt-get install -y devscripts debhelper python-all-dev python-pbr python-setuptools'
-                        sh 'debuild --no-tgz-check clean binary'
+                        sh 'debuild --no-tgz-check -- clean binary'
                         sh 'cp ../*.deb debs/'
                         dir("${WORKSPACE}/debs/cloud-info-provider-deep-openstack") {
-                            sh 'debuild --no-tgz-check clean binary'
+                            sh 'debuild --no-tgz-check -- clean binary'
                         }
                     }
                     post {
