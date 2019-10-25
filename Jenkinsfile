@@ -102,7 +102,7 @@ pipeline {
                         checkout scm
                         echo 'Within build on CentOS7'
                         sh 'sudo yum --enablerepo=extras install -y epel-release && sudo yum clean all && sudo yum makecache fast'
-                        sh 'sudo yum install -y rpm-build centos-release-openstack-newton python-pbr python-setuptools'
+                        sh 'sudo yum install -y rpm-build centos-release-openstack-queens python-pbr'
                         sh 'python setup.py sdist'
                         sh 'mkdir ~/rpmbuild'
                         sh "echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros"
@@ -111,7 +111,6 @@ pipeline {
                         sh 'cp rpm/cloud-info-provider*.spec ~/rpmbuild/SPECS/'
                         sh 'rpmbuild --define "_pbr_version $(python setup.py --version)" -ba ~/rpmbuild/SPECS/cloud-info-provider.spec'
                         sh 'rpmbuild --define "_pbr_version $(python setup.py --version)" -ba ~/rpmbuild/SPECS/cloud-info-provider-openstack.spec'
-                        //sh 'rpmbuild --define "_pbr_version $(python setup.py --version)" -ba ~/rpmbuild/SPECS/cloud-info-provider-opennebula.spec'
                         sh 'cp ~/rpmbuild/SRPMS/*.rpm ~/rpmbuild/RPMS/noarch/*.rpm ${WORKSPACE}/rpm/'
                     }
                     post {
