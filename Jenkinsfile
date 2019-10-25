@@ -76,22 +76,19 @@ pipeline {
                 }
             }
             parallel {
-                stage('Build on Ubuntu16.04') {
+                stage('Build on Ubuntu18.04') {
                     agent {
-                        label 'bubuntu16'
+                        label 'bubuntu18'
                     }
                     steps {
                         checkout scm
-                        echo 'Within build on Ubuntu16.04'
+                        echo 'Within build on Ubuntu18.04'
                         sh 'sudo apt-get update && sudo apt-get install -y devscripts debhelper python-all-dev python-pbr python-setuptools'
                         sh 'debuild --no-tgz-check clean binary'
                         sh 'cp ../*.deb debs/'
-                        dir("${WORKSPACE}/debs/cloud-info-provider-openstack") {
+                        dir("${WORKSPACE}/debs/cloud-info-provider-deep-openstack") {
                             sh 'debuild --no-tgz-check clean binary'
                         }
-                        //dir("${WORKSPACE}/debs/cloud-info-provider-opennebula") {
-                        //    sh 'debuild --no-tgz-check clean binary'
-                        //}
                     }
                     post {
                         success {
