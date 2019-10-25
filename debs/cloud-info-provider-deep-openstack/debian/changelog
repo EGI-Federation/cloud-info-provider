@@ -1,4 +1,4 @@
-python-cloud-info-provider-deep (0.10.5) xenial; urgency=medium
+python-cloud-info-provider-deep-openstack (0.10.5) xenial; urgency=medium
 
   [ Pablo Orviz ]
   * DPD-331 Fetch information from Mesos clusters
@@ -21,7 +21,7 @@ python-cloud-info-provider-deep (0.10.5) xenial; urgency=medium
 
  -- Pablo Orviz <orviz@ifca.unican.es>  Mon, 25 Oct 2019 10:49:33 +0100
 
-python-cloud-info-provider-deep (0.10.4) xenial; urgency=medium
+python-cloud-info-provider-deep-openstack (0.10.4) xenial; urgency=medium
 
   [ Pablo Orviz ]
   * Adds support for publishing Infiniband information on OpenStack setups.
