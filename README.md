@@ -213,7 +213,7 @@ location of the templates can be changed using the `--template-dir` option.
 #### Publishers
 
 The cloud-info-provider has a pluggable system for producing its output. Two
-if this `publishers` are provided in this repo: `stdout` and `ams`:
+of these `publishers` are provided in this repo: `stdout` and `ams`:
 
 * `stdout`: just prints output to the standard output. This is the default
   publisher and the one to use when the cloud-info-provider is used in a
