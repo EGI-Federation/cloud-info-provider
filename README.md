@@ -217,7 +217,7 @@ of these `publishers` are provided in this repo: `stdout` and `ams`:
 
 * `stdout`: just prints output to the standard output. This is the default
   publisher and the one to use when the cloud-info-provider is used in a
-  BDII set up
+  BDII set up.
 
 * `ams`: pushes a message to the Argo Messaging System with the parameters
   specified. It can either authenticate with a token (using `--ams-token`
