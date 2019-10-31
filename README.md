@@ -292,6 +292,63 @@ Extra configuration can be provided with:
 * `--rocci-remote-templates` If set, resource template definitions will be
   retrieved via OCA, not from a local directory.
 
+###### Upgrading to 0.11.x
+
+Version 0.11.0 introduce a new configuration format for the cloud-info-provider,
+now VOs need to be explicitly declared in your configuration in order to be published,
+you will need a `shares` section on your `yaml` configuration like this:
+
+```
+compute:
+  # any other existing compute sections should be kept as before
+  # and add the shares with an entry per VO
+  # there is no need to specify values for those entries as
+  # defaults are safe for OpenNebula
+  shares:
+    ops:
+    dteam:
+    fedcloud.egi.eu:
+    vo.access.egi.eu:
+    # ...
+```
+
+###### Publishing to BDII and AMS
+
+OpenNebula providers upgrading to 0.11.5 should publish information both to
+BDII and AMS. For that you can take advantage of your existing provider at
+`/var/lib/bdii/gip/provider/` that is called periodically and add an invocation
+publishing to AMS as follows:
+
+```
+$ cat /var/lib/bdii/gip/provider/cloud-info-provider
+#!/bin/bash
+
+# your existing cloud-info-provider invocation
+# do not change this one
+cloud-info-provider-service  --yaml-file /etc/cloud-info-provider/bdii.yaml \
+                             --on-auth <user>:<secret> \
+                             --on-rpcxml-endpoint http://<your opennebula endpoint>:2633/RPC2 \
+		                     --rocci-remote-templates --middleware opennebularocci
+
+# and add now the AMS publishing, same options but adding a few more
+cloud-info-provider-service  --yaml-file /etc/cloud-info-provider/bdii.yaml \
+                             --on-auth <user>:<secret> \
+                             --on-rpcxml-endpoint http://<your opennebula endpoint>:2633/RPC2 \
+		                     --rocci-remote-templates --middleware opennebularocci \
+                             --format glue21 --publisher ams \
+                             --ams-topic SITE_<SITE-NAME>_ENDPOINT_<ENDPOINT ID>G0 \
+                             --ams-cert /etc/grid-security/hostcert-bdii.pem \
+                             --ams-key /etc/grid-security/hostkey-bdii.pem >> /var/log/cloud-info.log 2>&1
+```
+
+Publishing to AMS requires access to your OCCI endpoint certificate (permission
+should be granted to user ldap). The certificate/key pair is used to
+authenticate to AMS. The `SITE-NAME` is your site name in GOCDB, the
+ `<ENDPOINT_ID>` is the id at GOCDB of your OCCI endpoint, you can obtain that
+id by checking the URL of your endpoint, e.g. for
+`https://goc.egi.eu/portal/index.php?Page_Type=Service&id=9420`, the
+`ENDPOINT_ID` is `9420`.
+
 ### Running the provider
 
 The provider will represent the resources using the configured providers and
