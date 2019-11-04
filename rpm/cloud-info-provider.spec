@@ -57,95 +57,23 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/cloud-info-provider/
 
 %changelog
-* Mon Mar 04 2019 Baptiste Grenier <baptiste.grenier@egi.eu> 0.11.3
-- Add templates for CMDB (Pablo Orviz)
-- Fix handling of network info (#151). (Baptiste Grenier)
-* Thu Jan 31 2019 Enol Fernández <enol.fernandez@egi.eu> 0.11.2
-- Version bump (Enol Fernandez)
-* Tue Jan 29 2019 Baptiste Grenier <baptiste.grenier@egi.eu> 0.11.1
-- Fixes #140: SSL utils fail when URL does not contain port. (Enol Fernandez)
-* Sun Jan 27 2019 Baptiste Grenier <baptiste.grenier@egi.eu> 0.11.0
-- Split OpenStack and OOI providers. (Enol Fernandez)
-- Fix os_tpl identifier for OpenNebula with rOCCI. (Boris Parak)
-- Clarify usage of project ID in configuration file. (Pablo Orviz)
-- Review and update output to implement latest GLUE2.1 updates. (Enol Fernandez, Baptiste Grenier)
-- Extract information from the GOCDB. (Enol Fernandez)
-- Add debug switch. (Enol Fernandez)
-- Clean up documentation. (Enol Fernandez)
-- Use stevedore module to load code extensions. (Pablo Orviz)
-- Document release management. (Baptiste Grenier)
-* Wed Jan 09 2019 Enol Fernández <enol.fernandez@egi.eu> 0.10.3
-- Updated dependencies
-* Thu Nov 8 2018 Pablo Orviz <orviz@ifca.unican.es> 0.10.4
-- Add support for Infiniband in OpenStack (Pablo Orviz)
-* Mon Oct 15 2018 Baptiste Grenier <baptiste.grenier@egi.eu> 0.10.2
-- Version bump (Baptiste Grenier)
-* Mon Oct 01 2018 Baptiste Grenier <baptiste.grenier@egi.eu> 0.10.0
-- Integrate badges from shields.io and coveralls.io. (Alvaro Lopez)
-- Improve and cleanup configuration files. (Enol Fernandez)
-- Import a Jenkinsfile to handle SQA on Jenkins at IFCA. (Pablo Orviz)
-- Fix utf-8 output for OpenNebula. (Ruben Diez)
-- Introduce CMF-specific metapackages to deploy required dependencies. (Baptiste Grenier)
-- Allow filtering private flavors. (Baptiste Grenier)
-- Improve community health following discussions with Bruce Becker and al. (Baptiste Grenier)
-- Use travis to lint, test, build and upload pacakges. (Baptiste Grenier)
-- Integrate with zenodo. (Bruce Becker)
-* Mon Apr 30 2018 Baptiste Grenier <baptiste.grenier@egi.eu> 0.9.1
-- OCCI is optional, do not fail if no OCCI endpoint is present (Enol Fernandez)
-- Update organization name in documentation (Baptiste Grenier)
-* Fri Mar 30 2018 Baptiste Grenier <baptiste.grenier@egi.eu> 0.9.0
-- Use keystoneauth and v3 API, deprecate v2.0 API (Alvaro Lopez)
-- Fix entry updates for ApplicationEnvironment (Boris Parak)
-- Update package building and documentation (Baptiste Grenier)
-* Tue Oct 03 2017 Baptiste Grenier <baptiste.grenier@egi.eu> 0.8.4
-- Add support for rOCCI-server v2 (Boris Parak)
-* Tue Jul 04 2017 Baptiste Grenier <baptiste.grenier@egi.eu> 0.8.3
-- defusedxml is required only for OpenNebula provider (Baptiste Grenier)
-* Tue Jul 04 2017 Baptiste Grenier <baptiste.grenier@egi.eu> 0.8.2
-- Fix bandit usage to search for security issues when using tox (Baptiste Grenier)
-- Optionally use the version entry from vmcatcher as image_version (OS provider) (Andre Gemuend)
-- Use defusedxml to parse XML and fix bandit warnings (ON provider) (Baptiste Grenier)
-- Fix deep hash lookup (ON provider) (Boris Parak)
-- Misc documentation and packages building fixes (Baptiste Grenier)
-* Wed Jun 07 2017 Baptiste Grenier <baptiste.grenier@egi.eu> 0.8.1
-- Support for containerized Travis-CI
-- Document RPM and Deb creation
-- Fix deb creation on Xenial
-* Mon May 29 2017 Baptiste Grenier <baptiste.grenier@egi.eu> 0.8.0
-- Require a endpoint_url to be set for compute endpoints
-- Updated OpenNebula provider
-- Add disk size as OtherInfo of Resource templates
-- Usage of a single template for storage info
-* Sun Jan 01 2017 Alvaro Lopez Garcia <aloga@ifca.unican.es> 0.7.0
-- Use templating engine.
-- Bugfixes.
-* Wed Aug 03 2016 Baptiste Grenier <baptiste.grenier@egi.eu>
-- Use Mako for templates.
-- Rename python packages and packages.
-* Mon Jul 18 2016 Alvaro Lopez Garcia <aloga@ifca.unican.es>
-- Add Python 3 support (#27).
-- Add support for new 'ooi' ID generation.
-- Style improvements.
-* Wed Feb 4 2015 Enol Fernandez <enol.fernandez@egi.eu> - 0.5-{%release}
-- Fixed issue when storage is not defined (#13).
-- Allow to define a image and resource template schema in OpenStack(#15).
-- Add option to include the site name in the DN's suffix.
-- Changed bdii dependency to Recommends.
-- Added python-novaclient to Recommends.
-* Wed Oct 01 2014 Enol Fernandez <enol.fernandez@egi.eu> - 0.4
-- Incorporate changes from Alvaro Lopez.
-- Enhance the published schema by adding a service name.
-- Packaging improvements.
-* Mon Aug 18 2014 Salvatore Pinto - 0.3
-- Fixed OpenNebula provider (thanks to Boris Parak)
-* Fri Jul 25 2014 Salvatore Pinto -0.2
-- Added rpm packaging and bin wrapper
-- Added possibility to setup options via YAML
-- Added retrieval of Site name from BDII configuration
-- Moved production_level to service and endpoint objects
-- Changed basic tree for cloud services to GLUE2GroupID=cloud
-- Added OpenNebula and OpenNebulaROCCI drivers
-- Small changes to OpenStack driver (Marketplace information from glancepush, rewritten template, possibility to filter images without marketplace ID)
-- Removed support for Tenant ID (instead of Tenant name) for retro-compatibility with older versions of novaclient libraries
-* Wed May 28 2014 Alvaro Lopez Garcia - 0.1
-- First release
+* Fri Oct 25 2019 Pablo Orviz <orviz@ifca.unican.es> 0.10.5
+- DPD-331 Fetch information from Mesos clusters
+- DPD-333 Re-structure the code to allow choice of formatters
+- DPD-382 Make the usage of project ID more clear in code and configuration files
+- DPD-545 OpenStack flavor & image information in CMDBv1 format
+- DPD-546 Multitenancy support in CMDBv1: images and flavors
+- DPD-548 Support for Mesos provider
+- DPD-561 Add CMDBv1 formatter
+- DPD-564 Support for Marathon provider
+- DPD-571 Validate produced CMDBv1 JSON
+- DPD-573 CMDBv1 JSON should be produced as a list of objects
+- DPD-612 Support Chronos data from static config
+- DPD-613 Test publication in CMDB of CIP Mesos data
+- DPD-669 Attribute to feature public and private providers (and services)
+- DPD-670 Wrong string types in resultant CMDB JSON record
+- DPD-673 Image record changes
+- DPD-674 Restructure tenant records to rely on IAM organisation
+- DPD-699 Generate service IDs in CMDB records as the service endpoint
+* Mon Mar 25 2019 Pablo Orviz <orviz@ifca.unican.es> 0.10.4
+- Adds support for publishing Infiniband information on OpenStack setups

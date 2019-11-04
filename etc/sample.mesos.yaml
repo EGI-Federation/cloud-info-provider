@@ -1,0 +1,22 @@
+site:
+    # Your site name, as in GODCB (if omitted or set to None, this value is
+    # retreived from /etc/glite-info-static/site/site.cfg )
+    # name: SITE_NAME
+
+compute:
+    # Total number of cores available
+    # total_cores: 0
+    # Total RAM available (GB)
+    # total_ram: 0
+    # Total number of GPU accelerators
+    # total_accelerators: 0 
+
+    endpoints:
+        defaults:
+            # If Marathon or Chronos, it points to the 
+            # parent Mesos endpoint
+            # service_parent_id: https://example.org/mesos
+            
+            # local_volumes_host_base_path: /tmp
+            # persistent_storage_drivers: []
+            # load_balancer_ips: []

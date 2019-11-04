@@ -244,15 +244,25 @@ class OpenStackProvider(providers.BaseProvider):
     def get_templates(self, **kwargs):
         """Return templates/flavors selected according to --select-flavors"""
         flavors = {}
-        defaults = {'template_platform': 'amd64',
-                    'template_network': 'private'}
+        defaults = {
+            'template_platform': 'amd64',
+            'template_network': 'private',
+            'template_memory': 0,
+            'template_ephemeral': 0,
+            'template_disk': 0,
+            'template_cpu': 0,
+            'template_infiniband': False,
+            'template_flavor_gpu_number': 0,
+            'template_flavor_gpu_vendor': None,
+            'template_flavor_gpu_model': None,
+        }
         defaults.update(self.static.get_template_defaults(prefix=True))
         tpl_sch = defaults.get('template_schema', 'resource')
         URI = 'http://schemas.openstack.org/template/'
         add_all = self.select_flavors == 'all'
         # properties
         property_keys = [_opt for _opt in vars(self.opts)
-                         if _opt.startswith('property_')
+                         if _opt.startswith('property_flavor_')
                          and not _opt.endswith('_value')]
         for flavor in self.nova.flavors.list(detailed=True, is_public=None):
             add_pub = self.select_flavors == 'public' and flavor.is_public
@@ -274,17 +284,20 @@ class OpenStackProvider(providers.BaseProvider):
             for k in property_keys:
                 opts_k = vars(self.opts)[k]
                 v = flavor.get_keys().get(opts_k)
-                property_id = re.search('property_(\w+)', k).group(1)
-                # if '_value' suffix provided, validate it
-                try:
-                    opts_v = vars(self.opts)['_'.join([k, 'value'])]
-                except KeyError:
-                    opts_v = False
-                if opts_v:
-                    d_properties['template_%s' % property_id] = v == opts_v
-                else:
-                    d_properties['template_%s' % property_id] = v
+                if v:
+                    property_id = re.search('property_(\w+)', k).group(1)
+                    # if '_value' suffix provided, validate it
+                    try:
+                        opts_v = vars(self.opts)['_'.join([k, 'value'])]
+                    except KeyError:
+                        opts_v = False
+                    if opts_v:
+                        d_properties['template_%s' % property_id] = v == opts_v
+                    else:
+                        d_properties['template_%s' % property_id] = v
             aux.update(d_properties)
+            # name
+            aux.update({'flavor_name': flavor.name})
 
             flavors[flavor.id] = aux
         return flavors
@@ -306,6 +319,7 @@ class OpenStackProvider(providers.BaseProvider):
             'image_os_family': None,
             'image_os_name': None,
             'image_os_version': None,
+            'image_os_type': None,
             'image_minimal_cpu': None,
             'image_recommended_cpu': None,
             'image_minimal_ram': None,
@@ -320,17 +334,31 @@ class OpenStackProvider(providers.BaseProvider):
             'image_context_format': None,
             'image_software': [],
             'other_info': [],
+            'architecture': None,
+            'os_distro': None,
         }
         defaults = self.static.get_image_defaults(prefix=True)
         img_sch = defaults.get('image_schema', 'os')
         URI = 'http://schemas.openstack.org/template/'
 
         for image in self.glance.images.list(detailed=True):
+            img_id = image.get("id")
+
             aux_img = copy.deepcopy(template)
             aux_img.update(defaults)
             aux_img.update(image)
 
-            img_id = image.get("id")
+            # properties
+            property_keys = [_opt for _opt in vars(self.opts)
+                             if _opt.startswith('property_image_')]
+            d_properties = {}
+            for k in property_keys:
+                opts_k = vars(self.opts)[k]
+                v = image.get(opts_k)
+                d_properties[k] = v
+            aux_img.update(d_properties)
+
+            # EGI AppDB stuff
             image_descr = image.get('vmcatcher_event_dc_description',
                                     image.get('vmcatcher_event_dc_title'))
             marketplace_id = image.get('vmcatcher_event_ad_mpuri',
@@ -523,33 +551,44 @@ class OpenStackProvider(providers.BaseProvider):
         # If 'property-<property>-value' is provided, the capability will only
         # be published when the given value matches the one in the flavor
         parser.add_argument(
-            '--property-infiniband',
+            '--property-flavor-infiniband',
             metavar='PROPERTY_KEY',
             default='infiniband',
             help=('Flavor\'s property key for Infiniband support.'))
         parser.add_argument(
-            '--property-infiniband-value',
+            '--property-flavor-infiniband-value',
             metavar='PROPERTY_VALUE',
             default='true',
             help=('When Infiniband is supported, this option specifies the '
                   'value to match.'))
         parser.add_argument(
-            '--property-gpu-number',
+            '--property-flavor-gpu-number',
             metavar='PROPERTY_KEY',
             default='gpu_number',
             help=('Flavor\'s property key pointing to number of GPUs.'))
         parser.add_argument(
-            '--property-gpu-vendor',
+            '--property-flavor-gpu-vendor',
             metavar='PROPERTY_KEY',
             default='gpu_vendor',
             help=('Flavor\'s property key pointing to the GPU vendor.'))
         parser.add_argument(
-            '--property-gpu-model',
+            '--property-flavor-gpu-model',
             metavar='PROPERTY_KEY',
             default='gpu_model',
             help=('Flavor\'s property key pointing to the GPU model.'))
         parser.add_argument(
-            '--property-gpu-driver',
+            '--property-image-gpu-driver',
             metavar='PROPERTY_KEY',
             default='gpu_driver',
-            help=('Flavor\'s property key pointing to the GPU driver version'))
+            help=('Image\'s property key to specify the GPU driver version'))
+        parser.add_argument(
+            '--property-image-gpu-cuda',
+            metavar='PROPERTY_KEY',
+            default='gpu_cuda',
+            help=('Image\'s property key to specify the CUDA toolkit version'))
+        parser.add_argument(
+            '--property-image-gpu-cudnn',
+            metavar='PROPERTY_KEY',
+            default='gpu_cudnn',
+            help=('Image\'s property key to specify the cuDNN library '
+                  'version'))

@@ -34,3 +34,11 @@ class StaticProviderException(CloudInfoException):
 
 class OpenNebulaProviderException(CloudInfoException):
     pass
+
+
+class MesosProviderException(CloudInfoException):
+    pass
+
+
+class CMDBFormatterException(CloudInfoException):
+    pass

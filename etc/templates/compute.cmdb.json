@@ -1,30 +1,155 @@
+<%def name="render_string(k, v, required_type=False, comma=True)">
+% if v is None and not required_type:
+
+% elif v is None and required_type:
+"${k}": null${',' if comma else ''}
+% elif isinstance(v, (basestring, str, unicode)):
+"${k}": "${v}"${',' if comma else ''}
+% else:
+"${k}": ${v}${',' if comma else ''}
+% endif
+</%def>
+[
 <%
+    middleware = attributes['middleware']
+    goc_service_type = attributes['dynamic_provider'].goc_service_type
     static_compute_info = attributes['static_compute_info']
     shares = attributes['shares']
-    images = {image_id: image for vo, share in shares.items() for image_id, image in share['images'].items()}
+    provider_id = static_compute_info['site_name']
+    service_id = static_compute_info['compute_service_name']
+    is_public = static_compute_info['site_is_public']
+
+    from six.moves import urllib
+    host_name = urllib.parse.urlparse(static_compute_info['compute_service_name']).hostname
 %>\
-{"images": [
-% for image_id, image in images.items():
+    {
+        "type": "provider",
+        "data": {
+            ${render_string('name', static_compute_info['site_name'])}
+            ${render_string('country', static_compute_info['site_country'])}
+            ${render_string('country_code', static_compute_info['site_country_code'])}
+            ${render_string('roc', static_compute_info['site_roc'])}
+            ${render_string('subgrid', static_compute_info['site_subgrid'])}
+            "is_public": ${'true' if is_public else 'false'},
+            ${render_string('giis_url', static_compute_info['site_giis_url'], comma=False)}
+        }
+    },
+    {
+        "type": "service",
+        "data": {
+            "provider_id": "${provider_id}",
+            "id": "${service_id}",
+            "service_is_public": ${'true' if is_public else 'false'},
+            ${render_string('hostname', host_name)}
+            ${render_string('service_type', goc_service_type)}
+            ${render_string('sitename', static_compute_info['site_name'])}
+            ${render_string('type', 'compute', required_type=True)}
+            % if middleware == "mesos":
+            <%
+                service_info = static_compute_info['endpoints'][service_id]
+                framework_type = None
+                if 'master/gpus_total' in service_info.keys():
+                    framework_type = 'mesos'
+                    has_gpu = service_info['master/gpus_total']
+                elif 'marathon_config' in service_info.keys():
+                    framework_type = 'marathon'
+                    has_gpu = 'gpu_resources' in service_info['marathon_config']['features']
+                    has_secrets = 'secrets' in service_info['marathon_config']['features']
+                else:
+                    has_gpu = service_info['compute_total_accelerators']
+                gpu_info = service_info.get('compute_accelerators', {})
+            %>
+            ${render_string('service_parent_id', static_compute_info.get('compute_service_parent_id', None))}
+            ${render_string('endpoint', service_info['framework_url'])}
+            "properties": {
+                "gpu_support": ${'true' if has_gpu else 'false'},
+                % if has_gpu:
+                ${render_string('gpu_model', gpu_info.get('model', None))}
+                ${render_string('gpu_vendor', gpu_info.get('vendor', None))}
+                ${render_string('gpu_driver_version', gpu_info.get('driver_version', None))}
+                ${render_string('gpu_cuda_version', gpu_info.get('cuda_version', None))}
+                ${render_string('gpu_cuDNN_version', gpu_info.get('cudnn_version', None))}
+                % endif
+                % if framework_type == 'marathon':
+                "secrets_support": ${'true' if has_secrets else 'false'},
+                ${render_string('master_zk', service_info['marathon_config']['master'])}
+                ${render_string('hostname', service_info['marathon_config']['hostname'])}
+                ${render_string('mesos_leader_ui_url', service_info['marathon_config']['mesos_leader_ui_url'])}
+                % endif
+                % if framework_type == 'mesos':
+                "num_gpus": ${service_info.get('master/gpus_total', 0)},
+                "num_gpus_used": ${service_info.get('master/gpus_used', 0)},
+                "num_cpus": ${service_info.get('master/cpus_total', 0)},
+                "num_cpus_used": ${service_info.get('master/cpus_used', 0)},
+                "mem_total": ${service_info.get('master/mem_total', 0)},
+                "mem_used": ${service_info.get('master/mem_used', 0)}
+                % else:
+                ${render_string('local_volumes_host_base_path', static_compute_info.get('compute_local_volumes_host_base_path', None))}
+                ${render_string('persistent_storage_drivers', static_compute_info.get('compute_persistent_storage_drivers', None))}
+                ${render_string('load_balancer_ips', static_compute_info.get('compute_load_balancer_ips', None))}
+                "num_gpus": ${service_info.get('compute_total_accelerators', 0)},
+                "num_cpus": ${service_info.get('compute_total_cores', 0)},
+                "mem_total": ${service_info.get('compute_total_ram', 0)}
+                % endif
+            }
+            % else:
+            ${render_string('endpoint', service_id, comma=False)}
+            % endif
+        }
+    }${',' if shares else ''}
+% for _vo, _share in shares.items():
 <%
-    if image['image_description'] is None:
-        image['image_description'] = ('%(image_name)s version '
-            '%(image_version)s on '
-            '%(image_os_family)s %(image_os_name)s '
-            '%(image_os_version)s '
-            '%(image_platform)s' % image)
-%>\
-        {
-            "image_id": "${image['id']}",
-            "image_name": "${image['image_name']}",
-            "image_description": "${image['image_description']}",
-            "image_marketplace_id": "${image['image_marketplace_id']}",
-            "architecture": "${image['architecture']}",
-            "image_os": "${image['image_os_name']}",
-            "distribution": "${image['os_distro']}",
-            "version": "${image['image_os_version']}",
-            "type": "${image['os_distro']}",
-            "gpu_driver": "NA",
-            "cuda_support": "NA"
-        }${'' if loop.last else ','}
+    project_id = _share['auth']['project_id']
+%>
+    {
+        "type": "tenant",
+        "data": {
+            ${render_string('tenant_id', project_id, required_type=True)}
+            ${render_string('tenant_name', _vo, required_type=True)}
+            ${render_string("service", service_id, required_type=True)}
+            ${render_string("iam_organisation", _share.get('iam_organisation', None), comma=False)}
+        }
+    },
+% for _flavor_id, _flavor in _share['templates'].items():
+    {
+        "type": "flavor",
+        "data": {
+            ${render_string('flavor_id', _flavor_id, required_type=True)}
+            ${render_string('flavor_name', _flavor['flavor_name'], required_type=True)}
+            "num_vcpus": ${_flavor.get('template_cpu', 0)},
+            "ram": ${_flavor.get('template_memory', 0)},
+            "disk": ${_flavor.get('template_disk', 0)},
+            "num_gpus": ${_flavor.get('template_flavor_gpu_number', 0)},
+            ${render_string('gpu_vendor', _flavor['template_flavor_gpu_vendor'])}
+            ${render_string('gpu_model', _flavor['template_flavor_gpu_model'])}
+            "service": "${service_id}",
+            ${render_string('tenant_id', project_id, required_type=True)}
+            "tenant_name": "${_vo}"
+        }
+    },
 % endfor
-]}
+% for _image_id, _image in _share['images'].items():
+    {
+        "type": "image",
+        "data": {
+            ${render_string('image_id', _image.get('id', None), required_type=True)}
+            ${render_string('image_name', _image.get('image_name', None), required_type=True)}
+            ${render_string('image_description', _image.get('image_description', None))}
+            ${render_string('image_marketplace_id', _image.get('image_marketplace_id', None))}
+            ${render_string('architecture', _image.get('image_architecture', None))}
+            ${render_string('type', _image.get('image_os_type', None))}
+            ${render_string('version', _image.get('image_os_version', None))}
+            ${render_string('distribution', _image.get('image_os_name', None))}
+            "gpu_driver": ${'true' if _image.get('property_image_gpu_driver', None) else 'false'},
+            ${render_string('gpu_driver_version', _image.get('property_image_gpu_driver', None))}
+            "cuda_support": ${'true' if _image.get('property_image_gpu_cuda', None) else 'false'},
+            ${render_string('cuda_version', _image.get('property_image_gpu_cuda', None))}
+            ${render_string('cuDNN_version', _image.get('property_image_gpu_cudnn', None))}
+            "service": "${service_id}",
+            ${render_string('tenant_id', project_id, required_type=True)}
+            "tenant_name": "${_vo}"
+        }
+    }${'' if loop.last else ','}
+% endfor
+% endfor
+]

@@ -51,23 +51,28 @@ def _find_url_in_result(svc_url, result):
     return {}
 
 
-def find_in_gocdb(svc_url, svc_type, insecure=False,
-                  capath='/etc/grid-security/certificates'):
-    '''Find service matching URL and service type in GOCDB'''
-
+def get_from_gocdb(insecure=False,
+                   capath='/etc/grid-security/certificates',
+                   **params):
     verify = capath
     if insecure:
         verify = False
     r = requests.get('https://goc.egi.eu/gocdbpi/public/',
-                     params={'method': 'get_service',
-                             'service_type': svc_type},
+                     params=params,
                      verify=verify)
     if r.status_code != 200:
         logger.warning("Something went wrong with GOC %s", r.text)
         return {}
+    return r.text
+
+
+def get_goc_service(svc_url, svc_type, insecure=False):
+    r = get_from_gocdb(insecure=insecure,
+                       method='get_service',
+                       service_type=svc_type)
     try:
         return _find_url_in_result(svc_url,
-                                   defusedxml.ElementTree.fromstring(r.text))
+                                   defusedxml.ElementTree.fromstring(r))
     except ParseError:
         logger.warning('Something went wrong with parsing GOC output')
         return {}
@@ -76,10 +81,30 @@ def find_in_gocdb(svc_url, svc_type, insecure=False,
 def get_goc_info(svc_url, svc_type, insecure=False):
     '''Gets information from GOCDB for a given URL and service type
 
-       It calls find_in_gocdb and caches the result between subsequent
+       It calls get_goc_service and caches the result between subsequent
        calls to avoid unnecessary HTTP requests to GOCDB.
     '''
-
     if svc_url not in _goc_info:
-        _goc_info[svc_url] = find_in_gocdb(svc_url, svc_type, insecure)
+        _goc_info[svc_url] = get_goc_service(svc_url, svc_type, insecure)
     return _goc_info[svc_url]
+
+
+def get_goc_site_info(site_id):
+    required_fields = [
+        'country',
+        'country_code',
+        'roc',
+        'giis_url',
+        'subgrid'
+    ]
+    try:
+        r = get_from_gocdb(insecure=True,
+                           method='get_site_list',
+                           sitename=site_id)
+        xml = defusedxml.ElementTree.fromstring(r)
+        d = dict(xml.getchildren()[0].items())
+        d_lower = {k.lower(): v for k, v in d.items()}
+        return {
+            'site_' + k: v for k, v in d_lower.items() if k in required_fields}
+    except Exception:
+        return {}

@@ -6,6 +6,7 @@ import yaml
 
 from cloud_info_provider import exceptions
 from cloud_info_provider import providers
+from cloud_info_provider import utils
 
 
 class StaticProvider(providers.BaseProvider):
@@ -83,7 +84,13 @@ class StaticProvider(providers.BaseProvider):
 
     def get_site_info(self, **kwargs):
         data = self.yaml.get('site', {'name': None})
-        site_info = self._get_fields_and_prefix(('name', ), 'site_', data)
+        site_info = self._get_fields_and_prefix(
+            ('name', 'id',
+             'country', 'country_code', 'roc', 'subgrid', 'giis_url',
+             'is_public'),
+            'site_',
+            data,
+            defaults={'is_public': False})
 
         # Resolve site name from BDII configuration
         if site_info['site_name'] is None:
@@ -91,12 +98,17 @@ class StaticProvider(providers.BaseProvider):
 
         site_info['suffix'] = self._get_suffix(site_info)
 
+        # Extra info from GOCDB
+        info_gocdb = providers.gocdb.get_goc_site_info(site_info['site_name'])
+        site_info.update(utils.get_defined_values(
+            info_gocdb, ignore_empty_string=True))
+
         return site_info
 
     def get_images(self, **kwargs):
         fields = ('name', 'id', 'native_id', 'description', 'version',
-                  'marketplace_id', 'platform',
-                  'os_family', 'os_name', 'os_version',
+                  'marketplace_id', 'platform', 'architecture',
+                  'os_family', 'os_name', 'os_version', 'os_type',
                   'minimal_cpu', 'recommended_cpu',
                   'minimal_ram', 'recommended_ram',
                   'minimal_accel', 'recommended_accel', 'accel_type',
@@ -132,7 +144,7 @@ class StaticProvider(providers.BaseProvider):
         fields = ('instance_max_cpu', 'instance_max_ram',
                   'instance_max_accelerators',
                   'auth', 'sla', 'network_info', 'default_network_type',
-                  'public_network_name', 'membership')
+                  'public_network_name', 'membership', 'iam_organisation')
         shares = self._get_what('compute',
                                 'shares',
                                 None,
@@ -157,30 +169,32 @@ class StaticProvider(providers.BaseProvider):
                                 prefix='compute_')
         return quotas['quotas']
 
-    def get_compute_endpoints(self, **kwargs):
-        global_fields = ('service_production_level', 'total_ram',
-                         'total_cores', 'capabilities',
-                         'hypervisor', 'hypervisor_version',
-                         'virtual_disk_formats',
-                         'max_dedicated_ram', 'min_dedicated_ram',
-                         'max_accelerators', 'min_accelerators',
-                         'total_accelerators', 'accelerators_virt_type',
-                         'network_virt_type', 'cpu_virt_type',
-                         'failover', 'live_migration', 'vm_backup_restore',
-                         'service_name')
-        endpoint_fields = ('production_level', 'api_type', 'api_version',
-                           'api_endpoint_technology', 'api_authn_method',
-                           'endpoint_url',
-                           'middleware', 'middleware_developer',
-                           'middleware_version',
-                           'occi_api_version',
-                           'occi_middleware_version')
+    def get_compute_endpoints(self, global_f=None, endp_f=None, **kwargs):
+        global_fields = global_f or ('service_production_level', 'total_ram',
+                                     'total_cores', 'capabilities',
+                                     'hypervisor', 'hypervisor_version',
+                                     'virtual_disk_formats',
+                                     'max_dedicated_ram', 'min_dedicated_ram',
+                                     'max_accelerators', 'min_accelerators',
+                                     'total_accelerators',
+                                     'accelerators_virt_type',
+                                     'network_virt_type', 'cpu_virt_type',
+                                     'failover', 'live_migration',
+                                     'vm_backup_restore',
+                                     'service_name')
+        endpoint_fields = endp_f or ('production_level', 'api_type',
+                                     'api_version',
+                                     'api_endpoint_technology',
+                                     'api_authn_method',
+                                     'endpoint_url',
+                                     'middleware', 'middleware_developer',
+                                     'middleware_version',
+                                     'occi_api_version',
+                                     'occi_middleware_version')
         endpoints = self._get_what('compute',
                                    'endpoints',
                                    global_fields,
                                    endpoint_fields)
-        if endpoints and not endpoints.get('compute_service_name'):
-            endpoints['compute_service_name'] = socket.getfqdn()
         return endpoints
 
     def get_storage_endpoints(self, **kwargs):
@@ -191,7 +205,6 @@ class StaticProvider(providers.BaseProvider):
         endpoint_fields = ('production_level', 'api_type', 'api_version',
                            'api_endpoint_technology',
                            'api_authn_method')
-
         endpoints = self._get_what('storage',
                                    'endpoints',
                                    global_fields,
@@ -260,6 +273,7 @@ class StaticProvider(providers.BaseProvider):
             'failover': False,
             'live_migration': False,
             'vm_backup_restore': False,
+            'total_accelerators': 0,
         }
         return self._populate_default_values(
             self._get_defaults_from_yaml('compute',

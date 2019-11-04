@@ -65,8 +65,11 @@ class OpenStackProviderTest(base.TestCase):
                 self._rescope_project = mock.Mock()
                 self.all_images = False
                 self.opts = mock.Mock()
-                self.opts.property_infiniband = 'infiniband'
-                self.opts.property_infiniband_value = 'true'
+                self.opts.property_flavor_infiniband = 'infiniband'
+                self.opts.property_flavor_infiniband_value = 'true'
+                self.opts.property_flavor_gpu_number = 0
+                self.opts.property_flavor_gpu_vendor = None
+                self.opts.property_flavor_gpu_model = None
 
         self.provider = FakeProvider(None)
 
@@ -99,6 +102,7 @@ class OpenStackProviderTest(base.TestCase):
         url = 'http://schemas.openstack.org/template/resource'
         for f in FAKES.flavors:
             expected_templates[f.id] = {
+                'flavor_name': f.name,
                 'template_memory': f.ram,
                 'template_cpu': f.vcpus,
                 'template_id': '%s#%s' % (url, f.id),
@@ -108,6 +112,9 @@ class OpenStackProviderTest(base.TestCase):
                 'template_disk': f.disk,
                 'template_ephemeral': f.ephemeral,
                 'template_infiniband': False,
+                'template_flavor_gpu_number': 0,
+                'template_flavor_gpu_vendor': None,
+                'template_flavor_gpu_model': None,
             }
         with utils.nested(
                 mock.patch.object(self.provider.static,
@@ -144,6 +151,7 @@ class OpenStackProviderTest(base.TestCase):
                                   "image_os_family",
                                   "image_os_name",
                                   "image_os_version",
+                                  "image_os_type",
                                   "image_platform",
                                   "image_version",
                                   "image_description",
@@ -155,6 +163,7 @@ class OpenStackProviderTest(base.TestCase):
         url = 'http://schemas.openstack.org/template/resource'
         for f in FAKES.flavors:
             expected_templates[f.id] = {
+                'flavor_name': f.name,
                 'template_memory': f.ram,
                 'template_cpu': f.vcpus,
                 'template_id': '%s#%s' % (url, f.id),
@@ -164,6 +173,9 @@ class OpenStackProviderTest(base.TestCase):
                 'template_disk': f.disk,
                 'template_ephemeral': f.ephemeral,
                 'template_infiniband': False,
+                'template_flavor_gpu_number': 0,
+                'template_flavor_gpu_vendor': None,
+                'template_flavor_gpu_model': None,
             }
 
         with utils.nested(
@@ -212,6 +224,7 @@ class OpenStackProviderTest(base.TestCase):
         url = 'http://schemas.openstack.org/template/resource'
         for f in FAKES.flavors:
             expected_templates[f.id] = {
+                'flavor_name': f.name,
                 'template_memory': f.ram,
                 'template_cpu': f.vcpus,
                 'template_id': '%s#%s' % (url, f.id),
@@ -221,6 +234,9 @@ class OpenStackProviderTest(base.TestCase):
                 'template_disk': f.disk,
                 'template_ephemeral': f.ephemeral,
                 'template_infiniband': False,
+                'template_flavor_gpu_number': 0,
+                'template_flavor_gpu_vendor': None,
+                'template_flavor_gpu_model': None,
             }
 
         self.provider.select_flavors = 'all'
@@ -276,6 +292,7 @@ class OpenStackProviderTest(base.TestCase):
                 continue
 
             expected_templates[f.id] = {
+                'flavor_name': f.name,
                 'template_memory': f.ram,
                 'template_cpu': f.vcpus,
                 'template_id': '%s#%s' % (url, f.id),
@@ -285,6 +302,9 @@ class OpenStackProviderTest(base.TestCase):
                 'template_disk': f.disk,
                 'template_ephemeral': f.ephemeral,
                 'template_infiniband': False,
+                'template_flavor_gpu_number': 0,
+                'template_flavor_gpu_vendor': None,
+                'template_flavor_gpu_model': None,
             }
 
         self.provider.select_flavors = 'public'
@@ -340,6 +360,7 @@ class OpenStackProviderTest(base.TestCase):
                 continue
 
             expected_templates[f.id] = {
+                'flavor_name': f.name,
                 'template_memory': f.ram,
                 'template_cpu': f.vcpus,
                 'template_id': '%s#%s' % (url, f.id),
@@ -349,6 +370,9 @@ class OpenStackProviderTest(base.TestCase):
                 'template_disk': f.disk,
                 'template_ephemeral': f.ephemeral,
                 'template_infiniband': False,
+                'template_flavor_gpu_number': 0,
+                'template_flavor_gpu_vendor': None,
+                'template_flavor_gpu_model': None,
             }
 
         self.provider.select_flavors = 'private'
@@ -395,6 +419,7 @@ class OpenStackProviderTest(base.TestCase):
                                   "image_os_family",
                                   "image_os_name",
                                   "image_os_version",
+                                  "image_os_type",
                                   "image_platform",
                                   "image_version"
                               ])
@@ -413,13 +438,14 @@ class OpenStackProviderTest(base.TestCase):
                 'image_os_family': None,
                 'image_os_name': None,
                 'image_os_version': None,
+                'image_os_type': None,
                 'image_platform': 'amd64',
                 'image_version': None,
                 'image_marketplace_id': "%s" % urljoin(self.provider.glance
                                                        .http_client
                                                        .get_endpoint(),
                                                        'v2/bar id/file'),
-                'image_id': 'http://schemas.openstack.org/template/os#bar_id',
+                'image_id': 'http://schemas.openstack.org/template/os#bar id',
                 'image_native_id': 'bar id',
                 'image_accel_type': None,
                 'image_access_info': 'none',
@@ -435,6 +461,8 @@ class OpenStackProviderTest(base.TestCase):
                 'image_traffic_out': [],
                 'image_context_format': None,
                 'other_info': [],
+                'architecture': None,
+                'os_distro': None,
             },
             'foo.id': {
                 'name': 'fooimage',
@@ -447,6 +475,7 @@ class OpenStackProviderTest(base.TestCase):
                 'image_os_family': None,
                 'image_os_name': None,
                 'image_os_version': None,
+                'image_os_type': None,
                 'image_platform': 'amd64',
                 'image_version': None,
                 'image_marketplace_id': 'http://example.org/',
@@ -467,6 +496,8 @@ class OpenStackProviderTest(base.TestCase):
                 'image_context_format': None,
                 'other_info': ['base_mpuri=foobar'],
                 'APPLIANCE_ATTRIBUTES': '{"ad:base_mpuri": "foobar"}',
+                'architecture': None,
+                'os_distro': None,
             },
             'baz id': {
                 'name': 'bazimage',
@@ -477,13 +508,14 @@ class OpenStackProviderTest(base.TestCase):
                 'image_os_family': None,
                 'image_os_name': None,
                 'image_os_version': None,
+                'image_os_type': None,
                 'image_platform': 'amd64',
                 'image_version': None,
                 'image_marketplace_id': "%s" % urljoin(self.provider.glance
                                                        .http_client
                                                        .get_endpoint(),
                                                        'v2/baz id/file'),
-                'image_id': 'http://schemas.openstack.org/template/os#baz_id',
+                'image_id': 'http://schemas.openstack.org/template/os#baz id',
                 'image_native_id': 'baz id',
                 'docker_id': 'sha1:xxxxxxxxxxxxxxxxxxxxxxxxxx',
                 'docker_tag': 'latest',
@@ -502,6 +534,8 @@ class OpenStackProviderTest(base.TestCase):
                 'image_traffic_out': [],
                 'image_context_format': None,
                 'other_info': [],
+                'architecture': None,
+                'os_distro': None,
             }
         }
 
@@ -512,6 +546,7 @@ class OpenStackProviderTest(base.TestCase):
             m_get_image_defaults.return_value = {}
             m_images_list.return_value = FAKES.images
 
+            self.provider.all_images = True
             images = self.provider.get_images(**{'auth': {'project_id': None}})
             self.assertTrue(m_get_image_defaults.called)
 
@@ -682,8 +717,8 @@ class OoiProviderTest(OpenStackProviderTest):
                 self._rescope_project = mock.Mock()
                 self.all_images = False
                 self.opts = mock.Mock()
-                self.opts.property_infiniband = 'infiniband'
-                self.opts.property_infiniband_value = 'true'
+                self.opts.property_flavor_infiniband = 'infiniband'
+                self.opts.property_flavor_infiniband_value = 'true'
 
         self.provider = FakeProvider(None)
 
@@ -709,6 +744,7 @@ class OoiProviderTest(OpenStackProviderTest):
                 'image_os_family': None,
                 'image_os_name': None,
                 'image_os_version': None,
+                'image_os_type': None,
                 'image_platform': 'amd64',
                 'image_version': None,
                 'image_marketplace_id': "%s" % urljoin(self.provider.glance
@@ -731,6 +767,8 @@ class OoiProviderTest(OpenStackProviderTest):
                 'image_traffic_out': [],
                 'image_context_format': None,
                 'other_info': [],
+                'architecture': None,
+                'os_distro': None,
             },
             'foo.id': {
                 'name': 'fooimage',
@@ -743,6 +781,7 @@ class OoiProviderTest(OpenStackProviderTest):
                 'image_os_family': None,
                 'image_os_name': None,
                 'image_os_version': None,
+                'image_os_type': None,
                 'image_platform': 'amd64',
                 'image_version': None,
                 'image_marketplace_id': 'http://example.org/',
@@ -763,6 +802,8 @@ class OoiProviderTest(OpenStackProviderTest):
                 'image_context_format': None,
                 'other_info': ['base_mpuri=foobar'],
                 'APPLIANCE_ATTRIBUTES': '{"ad:base_mpuri": "foobar"}',
+                'architecture': None,
+                'os_distro': None,
             },
             'baz id': {
                 'name': 'bazimage',
@@ -773,6 +814,7 @@ class OoiProviderTest(OpenStackProviderTest):
                 'image_os_family': None,
                 'image_os_name': None,
                 'image_os_version': None,
+                'image_os_type': None,
                 'image_platform': 'amd64',
                 'image_version': None,
                 'image_marketplace_id': "%s" % urljoin(self.provider.glance
@@ -798,6 +840,8 @@ class OoiProviderTest(OpenStackProviderTest):
                 'image_traffic_out': [],
                 'image_context_format': None,
                 'other_info': [],
+                'architecture': None,
+                'os_distro': None,
             }
         }
 

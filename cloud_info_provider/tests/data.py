@@ -8,6 +8,16 @@ class Data(object):
         return {
             'suffix': 'o=glue',
             'site_name': 'SITE_NAME',
+            # required by CMDB
+            'site_id': 'provider-SITE_NAME',
+            'site_is_public': False,
+            # required by GOCDB
+            'site_country': 'Spain',
+            'site_country_code': 'ES',
+            'site_roc': 'NGI_FOO',
+            'site_subgrid': 'SUBGRID',
+            'site_giis_url': ('ldap://site.bdii.example.org:2170/'
+                              'mds-vo-name=SITE_NAME,o=grid'),
         }
 
     @property
@@ -75,7 +85,7 @@ class Data(object):
             'compute_total_cores': 0,
             'compute_total_ram': 0,
             'compute_service_production_level': 'production',
-            'compute_service_name': 'example.org',
+            'compute_service_name': None,
             'endpoints': {
                 'https://cloud-service01.example.org:8787': {
                     'compute_endpoint_url':
@@ -135,6 +145,8 @@ class Data(object):
                 'image_os_name': 'Cirros',
                 'image_os_version': 1.0,
                 'image_platform': 'amd64',
+                'image_architecture': None,
+                'image_os_type': None,
             },
         }
 
