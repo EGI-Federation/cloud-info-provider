@@ -626,7 +626,7 @@ class OpenStackProviderTest(base.TestCase):
         with utils.nested(
                 mock.patch.object(self.provider.static,
                                   'get_compute_endpoint_defaults'),
-                mock.patch('cloud_info_provider.providers.gocdb.get_goc_info'),
+                mock.patch.object(self.provider, 'get_goc_info'),
         ) as (m_get_endpoint_defaults, m_get_goc_info):
             m_get_endpoint_defaults.return_value = {
                 'compute_occi_api_version': '11.11',
@@ -641,7 +641,6 @@ class OpenStackProviderTest(base.TestCase):
             self.assertTrue(m_get_endpoint_defaults.called)
             m_get_goc_info.assert_called_with(
                 'http://foo.example.org:5000/v2',
-                'org.openstack.nova',
                 False)
         self.assertEqual('baz', endpoints.pop('gocfoo'))
         for k, v in expected_endpoints['endpoints'].items():
@@ -671,7 +670,7 @@ class OpenStackProviderTest(base.TestCase):
         with utils.nested(
                 mock.patch.object(self.provider.static,
                                   'get_compute_endpoint_defaults'),
-                mock.patch('cloud_info_provider.providers.gocdb.get_goc_info'),
+                mock.patch.object(self.provider, 'get_goc_info'),
         ) as (m_get_endpoint_defaults, m_get_goc_info):
             m_get_endpoint_defaults.return_value = {}
             m_get_goc_info.return_value = {'gocfoo': 'baz'}
@@ -683,7 +682,6 @@ class OpenStackProviderTest(base.TestCase):
             self.assertTrue(m_get_endpoint_defaults.called)
             m_get_goc_info.assert_called_with(
                 'http://foo.example.org:5000/v2',
-                'org.openstack.nova',
                 False)
 
         self.assertEqual('baz', endpoints.pop('gocfoo'))
@@ -940,7 +938,7 @@ class OoiProviderTest(OpenStackProviderTest):
         with utils.nested(
                 mock.patch.object(self.provider.static,
                                   'get_compute_endpoint_defaults'),
-                mock.patch('cloud_info_provider.providers.gocdb.get_goc_info'),
+                mock.patch.object(self.provider, 'get_goc_info'),
         ) as (m_get_endpoint_defaults, m_get_goc_info):
             m_get_endpoint_defaults.return_value = {
                 'compute_occi_api_version': '11.11',
@@ -955,7 +953,6 @@ class OoiProviderTest(OpenStackProviderTest):
             self.assertTrue(m_get_endpoint_defaults.called)
             m_get_goc_info.assert_called_with(
                 'https://cloud.example.org:8787/',
-                'eu.egi.cloud.vm-management.occi',
                 False)
 
         self.assertEqual('baz', endpoints.pop('gocfoo'))
@@ -982,7 +979,7 @@ class OoiProviderTest(OpenStackProviderTest):
         with utils.nested(
                 mock.patch.object(self.provider.static,
                                   'get_compute_endpoint_defaults'),
-                mock.patch('cloud_info_provider.providers.gocdb.get_goc_info'),
+                mock.patch.object(self.provider, 'get_goc_info'),
         ) as (m_get_endpoint_defaults, m_get_goc_info):
             m_get_endpoint_defaults.return_value = {}
             m_get_goc_info.return_value = {'gocfoo': 'baz'}
@@ -994,7 +991,6 @@ class OoiProviderTest(OpenStackProviderTest):
             self.assertTrue(m_get_endpoint_defaults.called)
             m_get_goc_info.assert_called_with(
                 'https://cloud.example.org:8787/',
-                'eu.egi.cloud.vm-management.occi',
                 False)
 
         self.assertEqual('baz', endpoints.pop('gocfoo'))

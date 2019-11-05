@@ -16,7 +16,6 @@ from six.moves.urllib.parse import urlparse
 
 from cloud_info_provider import exceptions
 from cloud_info_provider.providers import base
-from cloud_info_provider.providers import gocdb
 from cloud_info_provider.providers import static
 from cloud_info_provider import utils
 
@@ -190,8 +189,7 @@ class OpenStackProvider(base.BaseProvider):
                 'compute_api_version': e_api_version,
             })
             # overwrites goc info for all endpoints but that's ok
-            ret.update(gocdb.get_goc_info(e_id_url, self.goc_service_type,
-                                          self.insecure))
+            ret.update(self.get_goc_info(e_id_url, self.insecure))
             e.update(self._get_extra_endpoint_info(e_url))
             ret['endpoints'][e_id_url] = e
         return ret

@@ -1,5 +1,6 @@
 import logging
 
+from cloud_info_provider.providers import gocdb
 from cloud_info_provider.providers import ssl_utils
 
 
@@ -8,12 +9,26 @@ class BaseProvider(object):
         self.opts = opts
         self.setup_logging()
         self._ca_info = {}
+        self._goc_info = {}
+        self._last_goc_url = ""
 
     def _get_endpoint_ca_information(self, url, **kwargs):
         if url not in self._ca_info:
             ca_info = ssl_utils.get_endpoint_ca_information(url, **kwargs)
             self._ca_info[url] = ca_info
         return self._ca_info[url]
+
+    def get_goc_info(self, url=None, insecure=False):
+        if not hasattr(self, "goc_service_type"):
+            return {}
+        if not url:
+            url = self._last_goc_url
+        if url not in self._goc_info:
+            self._goc_info[url] = gocdb.find_in_gocdb(url,
+                                                      self.goc_service_type,
+                                                      insecure)
+        self._last_goc_url = url
+        return self._goc_info[url]
 
     def get_site_info(self, **kwargs):
         return {}

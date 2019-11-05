@@ -43,10 +43,12 @@ class BaseFormatter(object):
             return mako.exceptions.text_error_template().render()
 
     def format(self, opts, providers, auth_refreshers):
+        output = []
         available_collectors = self._load_collectors(opts, providers,
                                                      auth_refreshers)
         self._load_templates(opts.template_dir)
         for tpl in self.templates:
             info = available_collectors[tpl].fetch()
             if info:
-                print(self._format_template(tpl, info).encode('utf-8'))
+                output.append(self._format_template(tpl, info))
+        return '\n'.join(output)

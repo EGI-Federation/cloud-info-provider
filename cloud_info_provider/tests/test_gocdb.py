@@ -95,14 +95,3 @@ class GOCDBTest(base.TestCase):
                 expected,
                 gocdb.find_in_gocdb("https://keystone.ifca.es:5000/v2.0",
                                     "bar"))
-
-    def test_get_goc_info(self):
-        with mock.patch(
-            'cloud_info_provider.providers.gocdb.find_in_gocdb'
-        ) as m_goc_find:
-            m_goc_find.return_value = {'foo': 'bar'}
-            gocdb.get_goc_info('baz', 'abc')
-            gocdb.get_goc_info('baz', 'abc')
-            m_goc_find.assert_called_once_with(
-                'baz', 'abc', False)
-            self.assertEqual({'baz': {'foo': 'bar'}}, gocdb._goc_info)
