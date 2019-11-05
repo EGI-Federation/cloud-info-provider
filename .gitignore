@@ -15,6 +15,7 @@ etc/test.conf
 *.rpm
 .coverage
 coverage.xml
+cover/
 debhelper-build-stamp
 **/debian/files
 *.substvars
