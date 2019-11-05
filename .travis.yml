@@ -5,7 +5,7 @@ services:
 language: python
 python:
   - "2.7"
-  - "3.4"
+  - "3.6"
 env:
   - OS_NAME=centos OS_VERSION=7
   - OS_NAME=ubuntu OS_VERSION=trusty
@@ -25,16 +25,14 @@ script:
   # First syntax, linting and pre-test stages
   - mdl -s relaxed README.md
   - rpmlint rpm/
-  - tox -e pep8,bandit
   # Then unit tests
   - |
     if [  $TRAVIS_PYTHON_VERSION = '2.7' ]; then
       tox -e py27
-    elif [  $TRAVIS_PYTHON_VERSION = '3.4' ]; then
-      tox -e py34
+    elif [  $TRAVIS_PYTHON_VERSION = '3.6' ]; then
+      # linting included with python3 only
+      tox -e py36,lint
     fi
-  # with test coverage
-  - tox -e cover,cobertura
   # Extract build version
   - VERSION=$(python setup.py --version)
   # Create a source tarball
