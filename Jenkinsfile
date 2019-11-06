@@ -2,7 +2,9 @@
 
 pipeline {
     agent {
-        label 'python'
+        dockerfile {
+            filename 'Dockerfile.build'
+        }
     }
 
     stages {
