@@ -8,11 +8,12 @@ from stevedore import extension
 def get_providers():
     def _handle_exception(*args):
         mgr, entry_point, exception = args
-        logging.getLogger('stevedore.extension').error((
-            "Cannot load '%s': %s") % (entry_point, exception))
+        logging.getLogger("stevedore.extension").error(
+            ("Cannot load '%s': %s") % (entry_point, exception)
+        )
 
     mgr = extension.ExtensionManager(
-        namespace='cip.providers',
+        namespace="cip.providers",
         on_load_failure_callback=_handle_exception,
         propagate_map_exceptions=True,
     )
@@ -20,96 +21,97 @@ def get_providers():
 
 
 def get_formatters():
-    mgr = extension.ExtensionManager(
-        namespace='cip.formatters',
-    )
+    mgr = extension.ExtensionManager(namespace="cip.formatters")
     return [x.name for x in mgr]
 
 
 def get_auth_refreshers():
-    mgr = extension.ExtensionManager(
-        namespace='cip.auth_refreshers',
-    )
+    mgr = extension.ExtensionManager(namespace="cip.auth_refreshers")
     return dict((x.name, x.plugin) for x in mgr)
 
 
 def get_publishers():
-    mgr = extension.ExtensionManager(
-        namespace='cip.publishers',
-    )
+    mgr = extension.ExtensionManager(namespace="cip.publishers")
     return dict((x.name, x.plugin) for x in mgr)
 
 
 def get_parser(providers, formatters, auth_refreshers, publishers):
     parser = argparse.ArgumentParser(
-        description='Cloud Information System provider',
+        description="Cloud Information System provider",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-        fromfile_prefix_chars='@',
+        fromfile_prefix_chars="@",
         conflict_handler="resolve",
     )
 
     parser.add_argument(
-        '--middleware',
-        metavar='MIDDLEWARE',
+        "--middleware",
+        metavar="MIDDLEWARE",
         choices=providers,
-        default='static',
-        help=('Middleware used. Only the following middlewares are '
-              'supported: {%(choices)s}'))
+        default="static",
+        help=(
+            "Middleware used. Only the following middlewares are "
+            "supported: {%(choices)s}"
+        ),
+    )
 
     parser.add_argument(
-        '--format',
-        metavar='FORMAT',
+        "--format",
+        metavar="FORMAT",
         choices=formatters,
-        default='glue',
-        help=('Selects the output format. Allowed values: {%(choices)s}'))
+        default="glue",
+        help=("Selects the output format. Allowed values: {%(choices)s}"),
+    )
 
     parser.add_argument(
-        '--auth-refresher',
-        metavar='REFRESHER',
+        "--auth-refresher",
+        metavar="REFRESHER",
         choices=auth_refreshers,
-        help=('Selects the token refresher. Allowed values: {%(choices)s}'))
+        help=("Selects the token refresher. Allowed values: {%(choices)s}"),
+    )
 
     parser.add_argument(
-        '--yaml-file',
-        default='/etc/cloud-info-provider/static.yaml',
-        help=('Path to the YAML file containing configuration static values. '
-              'This file will be used to populate the information '
-              'to the static provider. These values will be used whenever '
-              'a dynamic provider is used and it is not able to produce any '
-              'of the required values, or when using the static provider. '))
+        "--yaml-file",
+        default="/etc/cloud-info-provider/static.yaml",
+        help=(
+            "Path to the YAML file containing configuration static values. "
+            "This file will be used to populate the information "
+            "to the static provider. These values will be used whenever "
+            "a dynamic provider is used and it is not able to produce any "
+            "of the required values, or when using the static provider. "
+        ),
+    )
 
     parser.add_argument(
-        '--publisher',
-        metavar='PUBLISHER',
+        "--publisher",
+        metavar="PUBLISHER",
         choices=publishers,
-        default='stdout',
-        help=('Selects where to publish output to. Allowed values: '
-              '%(choices)s}'))
+        default="stdout",
+        help=("Selects where to publish output to. Allowed values: " "%(choices)s}"),
+    )
 
     parser.add_argument(
-        '--template-dir',
-        default='/etc/cloud-info-provider/templates',
-        help=('Path to the directory containing the needed templates'))
+        "--template-dir",
+        default="/etc/cloud-info-provider/templates",
+        help=("Path to the directory containing the needed templates"),
+    )
 
     parser.add_argument(
-        '--debug',
-        action='store_true',
+        "--debug",
+        action="store_true",
         default=False,
-        help='Provide extra logging information')
+        help="Provide extra logging information",
+    )
 
     for provider_name, provider in providers.items():
-        group = parser.add_argument_group('%s provider options' %
-                                          provider_name)
+        group = parser.add_argument_group("%s provider options" % provider_name)
         provider.populate_parser(group)
 
     for refresher_name, refresher in auth_refreshers.items():
-        group = parser.add_argument_group('%s auth refresher options' %
-                                          refresher_name)
+        group = parser.add_argument_group("%s auth refresher options" % refresher_name)
         refresher.populate_parser(group)
 
     for publisher_name, publisher in publishers.items():
-        group = parser.add_argument_group('%s publisher options' %
-                                          publisher_name)
+        group = parser.add_argument_group("%s publisher options" % publisher_name)
         publisher.populate_parser(group)
 
     return parser
@@ -121,29 +123,24 @@ def main():
     auth_refreshers = get_auth_refreshers()
     publishers = get_publishers()
 
-    opts = get_parser(providers,
-                      formatters,
-                      auth_refreshers,
-                      publishers).parse_args()
+    opts = get_parser(providers, formatters, auth_refreshers, publishers).parse_args()
 
     mgr = driver.DriverManager(
-        namespace='cip.formatters',
-        name=opts.format,
-        invoke_on_load=True,
+        namespace="cip.formatters", name=opts.format, invoke_on_load=True
     )
     auth_refresher = None
     if opts.auth_refresher:
         auth_refresher = auth_refreshers[opts.auth_refresher](opts)
 
     publisher = driver.DriverManager(
-        namespace='cip.publishers',
+        namespace="cip.publishers",
         name=opts.publisher,
         invoke_on_load=True,
-        invoke_args=(opts, )
+        invoke_args=(opts,),
     )
     output = mgr.driver.format(opts, providers, auth_refresher)
     publisher.driver.publish(output)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

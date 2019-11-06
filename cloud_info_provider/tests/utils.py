@@ -17,7 +17,7 @@ def get_variables_from_template(template, ignored_fields=[]):
 
     # Look for variables names like
     # ${static_compute_info['compute_service_production_level']}
-    regexp = re.compile('\${[^\[]+\[\'(.+?)\'\]}')
+    regexp = re.compile("\${[^\[]+\['(.+?)'\]}")
     l = set(regexp.findall(content))
     for k in itertools.chain(IGNORED_FIELDS, ignored_fields):
         if k in l:
@@ -28,6 +28,7 @@ def get_variables_from_template(template, ignored_fields=[]):
 if six.PY2:
     nested = contextlib.nested
 else:
+
     @contextlib.contextmanager
     def nested(*contexts):
         with contextlib.ExitStack() as stack:
