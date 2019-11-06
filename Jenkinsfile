@@ -9,9 +9,9 @@ pipeline {
         stage('Style Analysis') {
             steps {
                 checkout scm
-                echo 'Running flake8..'
+                echo 'Running linters..'
                 timeout(time: 5, unit: 'MINUTES') {
-                    sh 'tox -e pep8'
+                    sh 'tox -e lint'
                     echo 'Parsing pep8 logs..'
                     step([$class: 'WarningsPublisher',
                         parserConfigurations: [[
