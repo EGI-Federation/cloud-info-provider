@@ -1,22 +1,22 @@
 {
   "license": "Apache-2.0",
-  "description": "<ul><li>Add compatibility with CentOS 7 libraries. (Enol Fernández)</li><li>Fix GOCDB information for OpenNebula provider. (Enol Fernández)</li><li>Use system CAs everywhere. (Enol Fernández)</li><li>Fix OpenNebula provider initialisation. (Enol Fernández)</li></ul>",
+  "description": "<ul><li>Refactor SSL checks (#175). (Enol Fernández)</li><li>Refactor SSL checks (#175). (Enol Fernández)</li><li>Code Clean-up (#177). (Enol Fernández)</li><li>Import stdout (default one) and ams publishers (#178). (Enol Fernández)</li></ul>",
   "language": "eng",
-  "title": "EGI-Foundation/cloud-info-provider: 0.11.5",
-  "keywords": ["bdii", "grid", "information", "cloud", "EGI"],
+  "title": "EGI-Foundation/cloud-info-provider: 0.12.0",
+  "keywords": ["bdii", "grid", "information", "cloud", "EGI", "ams"],
   "grants": [
     {
       "id": "10.13039/501100000780::777536"
     }
   ],
   "upload_type": "software",
-  "version": "0.11.5",
+  "version": "0.12.0",
   "communities": [
     {
       "identifier": "egi-foundation"
     }
   ],
-  "publication_date": "2019-10-04",
+  "publication_date": "2019-11-06",
   "creators": [
     {
       "orcid": "0000-0002-5686-3193",
