@@ -6,7 +6,7 @@
 
 Summary: Information provider for Cloud Compute and Cloud Storage services for BDII
 Name: cloud-info-provider
-Version: 0.11.5
+Version: 0.12.0
 Release: 1%{?dist}
 Group: Applications/Internet
 License: Apache Software License 2.0
@@ -57,6 +57,11 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/cloud-info-provider/
 
 %changelog
+* Wed Nov 06 2019 Baptiste Grenier <baptiste.grenier@egi.eu> 0.12.0
+- Refactor SSL checks (#175). (Enol Fernández)
+- Do not fail if JSON cannot be decoded (#176). (Enol Fernández)
+- Code Clean-up (#177). (Enol Fernández)
+- Import stdout (default one) and ams publishers (#178). (Enol Fernández)
 * Fri Oct 04 2019 Enol Fernández <enol.fernandez@egi.eu> 0.11.5
 - Add compatibility with CentOS 7 libraries. (Enol Fernández)
 - Fix GOCDB information for OpenNebula provider. (Enol Fernández)

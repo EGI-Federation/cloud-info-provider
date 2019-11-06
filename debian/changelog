@@ -1,3 +1,13 @@
+python-cloud-info-provider (0.12.0-1) xenial; urgency=medium
+
+  [ Enol Fernández ]
+  * Refactor SSL checks (#175).
+  * Do not fail if JSON cannot be decoded (#176).
+  * Code Clean-up (#177).
+  * Import stdout (default one) and ams publishers (#178).
+
+ -- Baptiste Grenier <baptiste.grenier@egi.eu>  Wed, 06 Nov 2019 09:38:10 +0100
+
 python-cloud-info-provider (0.11.5-1) xenial; urgency=medium
 
   [ Enol Fernández ]

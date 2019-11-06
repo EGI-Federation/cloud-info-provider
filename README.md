@@ -314,7 +314,7 @@ compute:
 
 ###### Publishing to BDII and AMS
 
-OpenNebula providers upgrading to 0.11.5 should publish information both to
+OpenNebula providers upgrading to 0.12.0 should publish information both to
 BDII and AMS. For that you can take advantage of your existing provider at
 `/var/lib/bdii/gip/provider/` that is called periodically and add an invocation
 publishing to AMS as follows:
