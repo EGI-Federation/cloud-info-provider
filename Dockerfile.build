@@ -1,0 +1,13 @@
+FROM indigodatacloud/ci-images:base-u18
+
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y git \
+                                                  python3.6 \
+                                                  python-tox \
+    && rm -rf /var/lib/apt/lists/*
+
+# Standard SSH port
+EXPOSE 22
+
+# Default command
+CMD ["/usr/sbin/sshd", "-D"]
