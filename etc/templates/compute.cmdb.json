@@ -25,14 +25,14 @@
     {
         "type": "provider",
         "data": {
-            ${render_string('name', static_compute_info['site_name'])}
             ${render_string('country', static_compute_info['site_country'])}
             ${render_string('country_code', static_compute_info['site_country_code'])}
             ${render_string('roc', static_compute_info['site_roc'])}
             ${render_string('subgrid', static_compute_info['site_subgrid'])}
             "is_public": ${'true' if is_public else 'false'},
             ${render_string('owners', static_compute_info['site_owner_contacts'])}
-            ${render_string('giis_url', static_compute_info['site_giis_url'], comma=False)}
+            ${render_string('giis_url', static_compute_info['site_giis_url'])}
+            ${render_string('name', static_compute_info['site_name'], required_type=True, comma=False)}
         }
     },
     {
@@ -44,7 +44,6 @@
             ${render_string('hostname', host_name)}
             ${render_string('service_type', goc_service_type)}
             ${render_string('sitename', static_compute_info['site_name'])}
-            ${render_string('type', 'compute', required_type=True)}
             % if middleware == "mesos":
             <%
                 service_info = static_compute_info['endpoints'][service_id]
@@ -94,8 +93,9 @@
                 % endif
             }
             % else:
-            ${render_string('endpoint', service_id, comma=False)}
+            ${render_string('endpoint', service_id)}
             % endif
+            ${render_string('type', 'compute', required_type=True, comma=False)}
         }
     }${',' if shares else ''}
 % for _vo, _share in shares.items():
@@ -107,8 +107,8 @@
         "data": {
             ${render_string('tenant_id', project_id, required_type=True)}
             ${render_string('tenant_name', _vo, required_type=True)}
-            ${render_string("service", service_id, required_type=True)}
-            ${render_string("iam_organisation", _share.get('iam_organisation', None), comma=False)}
+            ${render_string("iam_organisation", _share.get('iam_organisation', None))}
+            ${render_string("service", service_id, required_type=True, comma=False)}
         }
     },
 % for _flavor_id, _flavor in _share['templates'].items():
@@ -124,8 +124,8 @@
             ${render_string('gpu_vendor', _flavor['template_flavor_gpu_vendor'])}
             ${render_string('gpu_model', _flavor['template_flavor_gpu_model'])}
             "service": "${service_id}",
-            ${render_string('tenant_id', project_id, required_type=True)}
-            "tenant_name": "${_vo}"
+            "tenant_name": "${_vo}",
+            ${render_string('tenant_id', project_id, required_type=True, comma=False)}
         }
     },
 % endfor
@@ -147,8 +147,8 @@
             ${render_string('cuda_version', _image.get('property_image_gpu_cuda', None))}
             ${render_string('cuDNN_version', _image.get('property_image_gpu_cudnn', None))}
             "service": "${service_id}",
-            ${render_string('tenant_id', project_id, required_type=True)}
-            "tenant_name": "${_vo}"
+            "tenant_name": "${_vo}",
+            ${render_string('tenant_id', project_id, required_type=True, comma=False)}
         }
     }${'' if loop.last else ','}
 % endfor
