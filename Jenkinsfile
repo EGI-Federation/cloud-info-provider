@@ -76,22 +76,18 @@ pipeline {
                 }
             }
             parallel {
-                stage('Build on Ubuntu16.04') {
+                stage('Build on Ubuntu18.04') {
                     agent {
-                        label 'bubuntu16'
+                        label 'bubuntu18'
                     }
                     steps {
                         checkout scm
-                        echo 'Within build on Ubuntu16.04'
-                        sh 'sudo apt-get update && sudo apt-get install -y devscripts debhelper python-all-dev python-pbr python-setuptools'
-                        sh 'debuild --no-tgz-check clean binary'
+                        echo 'Within build on Ubuntu18.04'
+                        sh 'debuild --no-tgz-check -- clean binary'
                         sh 'cp ../*.deb debs/'
-                        dir("${WORKSPACE}/debs/cloud-info-provider-openstack") {
-                            sh 'debuild --no-tgz-check clean binary'
+                        dir("${WORKSPACE}/debs/cloud-info-provider-deep-openstack") {
+                            sh 'debuild --no-tgz-check -- clean binary'
                         }
-                        //dir("${WORKSPACE}/debs/cloud-info-provider-opennebula") {
-                        //    sh 'debuild --no-tgz-check clean binary'
-                        //}
                     }
                     post {
                         success {
@@ -106,7 +102,7 @@ pipeline {
                         checkout scm
                         echo 'Within build on CentOS7'
                         sh 'sudo yum --enablerepo=extras install -y epel-release && sudo yum clean all && sudo yum makecache fast'
-                        sh 'sudo yum install -y rpm-build centos-release-openstack-newton python-pbr python-setuptools'
+                        sh 'sudo yum install -y rpm-build centos-release-openstack-queens python-pbr'
                         sh 'python setup.py sdist'
                         sh 'mkdir ~/rpmbuild'
                         sh "echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros"
@@ -115,7 +111,6 @@ pipeline {
                         sh 'cp rpm/cloud-info-provider*.spec ~/rpmbuild/SPECS/'
                         sh 'rpmbuild --define "_pbr_version $(python setup.py --version)" -ba ~/rpmbuild/SPECS/cloud-info-provider.spec'
                         sh 'rpmbuild --define "_pbr_version $(python setup.py --version)" -ba ~/rpmbuild/SPECS/cloud-info-provider-openstack.spec'
-                        //sh 'rpmbuild --define "_pbr_version $(python setup.py --version)" -ba ~/rpmbuild/SPECS/cloud-info-provider-opennebula.spec'
                         sh 'cp ~/rpmbuild/SRPMS/*.rpm ~/rpmbuild/RPMS/noarch/*.rpm ${WORKSPACE}/rpm/'
                     }
                     post {
