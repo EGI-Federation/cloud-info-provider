@@ -181,7 +181,9 @@ class StaticProvider(providers.BaseProvider):
                                      'network_virt_type', 'cpu_virt_type',
                                      'failover', 'live_migration',
                                      'vm_backup_restore',
-                                     'service_name')
+                                     'service_name',
+                                     'public_ip_assignable',
+                                     'private_network_enabled')
         endpoint_fields = endp_f or ('production_level', 'api_type',
                                      'api_version',
                                      'api_endpoint_technology',
