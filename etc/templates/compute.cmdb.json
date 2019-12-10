@@ -24,6 +24,7 @@
 %>\
     {
         "type": "provider",
+        ${render_string('owners', static_compute_info['site_owner_contacts_iam'])}
         "data": {
             ${render_string('country', static_compute_info['site_country'])}
             ${render_string('country_code', static_compute_info['site_country_code'])}

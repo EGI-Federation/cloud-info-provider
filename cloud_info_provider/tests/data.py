@@ -12,6 +12,7 @@ class Data(object):
             'site_id': 'provider-SITE_NAME',
             'site_is_public': False,
             'site_owner_contacts': None,
+            'site_owner_contacts_iam': None,
             # required by GOCDB
             'site_country': 'Spain',
             'site_country_code': 'ES',
