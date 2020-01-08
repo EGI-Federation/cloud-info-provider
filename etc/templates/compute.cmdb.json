@@ -92,10 +92,12 @@
                 "num_cpus": ${service_info.get('compute_total_cores', 0)},
                 "mem_total": ${service_info.get('compute_total_ram', 0)}
                 % endif
-            }
+            },
             % else:
             ${render_string('endpoint', service_id)}
             % endif
+            "public_ip_assignable": ${'true' if static_compute_info.get('compute_public_ip_assignable', None) else 'false'},
+            "private_network_enabled": ${'true' if static_compute_info.get('compute_private_network_enabled', None) else 'false'},
             ${render_string('type', 'compute', required_type=True, comma=False)}
         }
     }${',' if shares else ''}

@@ -92,7 +92,10 @@ compute:
     # live_migration: false
     # Backup and restoration of VMs
     # vm_backup_restore: false
-
+    # Indicates whether Public IPv4 addresses s can be assigned to VMs 
+    # in the given site in a way supported by the INDIGO PaaS orchestration stack
+    # public_ip_assignable: false
+    # private_network_enabled: false
     # Default values for quotas
     # quotas:
     #   defaults:
