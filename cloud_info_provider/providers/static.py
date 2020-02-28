@@ -144,7 +144,8 @@ class StaticProvider(providers.BaseProvider):
         fields = ('instance_max_cpu', 'instance_max_ram',
                   'instance_max_accelerators',
                   'auth', 'sla', 'network_info', 'default_network_type',
-                  'public_network_name', 'membership', 'iam_organisation')
+                  'public_network_name', 'membership', 'iam_organisation',
+                  'private_network_name', 'private_network_cidr')
         shares = self._get_what('compute',
                                 'shares',
                                 None,

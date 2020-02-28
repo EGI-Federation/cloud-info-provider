@@ -111,6 +111,9 @@
             ${render_string('tenant_id', project_id, required_type=True)}
             ${render_string('tenant_name', _vo, required_type=True)}
             ${render_string("iam_organisation", _share.get('iam_organisation', None))}
+            ${render_string("public_network_name", _share.get('public_network_name', None))}
+            ${render_string("private_network_name", _share.get('private_network_name', None))}
+            ${render_string("private_network_cidr", _share.get('private_network_cidr', None))}
             ${render_string("service", service_id, required_type=True, comma=False)}
         }
     },
