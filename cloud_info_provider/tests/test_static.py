@@ -278,6 +278,7 @@ class StaticProviderTest(base.TestCase):
             'compute_virtual_disk_formats': None,
             'compute_public_ip_assignable': None,
             'compute_private_network_enabled': None,
+            'compute_iam_enabled': None,
         })
         # with mock.patch('socket.getfqdn') as m_fqdn:
         #     m_fqdn.return_value = 'example.org'
