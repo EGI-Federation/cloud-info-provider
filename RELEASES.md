@@ -7,6 +7,37 @@ Main documentation for the product is maintained [upstream](https://github.com/E
 
 __Note that these features may not be available or merged upstream.__
 
+## cloud-info-provider-deep-0.10.6
+
+In a nutshell:
+ - (OpenStack provider) Network parameters for enabling hybrid deployments through the Orchestrator and CMDB
+ - (all providers) New parameter for CMDB provider entity: `owner_iam_list` and `is_public`
+ - (all providers) New parameters for CMDB service entity: `iam_enabled` and `is_public_service`
+ - (OpenStack provider) Fixes applied to avoid _deactivated_ images to be published and allow _shared_ images to be published as default.
+ 
+### OpenStack network parameters for hybrid cloud deployments through Orchestrator/CMDB
+
+Check also [Openstack sample](etc/sample.openstack.yaml)
+
+The following parameters have been added to the CIP static file
+ - For CMDB service:
+   - `compute:public_ip_assignable`: whether the OpenStack provider allows to assign public IPs (false/true)(default: false)
+ - For CMDB tenant:
+   - `compute:shares:<tenant>:public_network_name`: name of the public network associated to the tenant (id)(no default value)
+   - `compute:shares:<tenant>:private_network_name`: name of the private network associated to the tenant (id)(no default value)
+   - `compute:shares:<tenant>:private_network_cidr`: pattern to be used to define the CIDR of the private network (CIDR address)(no default value)
+
+### New parameters for CMDB (static configuration)
+
+Check also [Openstack sample](etc/sample.openstack.yaml) and [Mesos sample](etc/sample.mesos.yaml)
+
+ - Provider entity:
+   - `site:owner_contacts_iam`: IAM IDs for the cloud site owners (placed outside the `data` record) (list)(no default value)
+   - `site:is_public`: whether the provider is public or private (default: false)
+ - Service entity:
+   - `compute:iam_enabled`: whether IAM identity provider is enabled at the service (true/false)(default: false)
+   - `compute:is_public_service`: whether the service is public or private (false/true)(default: false)
+
 ## cloud-info-provider-deep-0.10.5
 
 In a nutshell: 
