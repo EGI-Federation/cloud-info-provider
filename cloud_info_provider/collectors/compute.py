@@ -23,6 +23,9 @@ class ComputeCollector(base.BaseCollector):
             kwargs = share.copy()
             kwargs.update({'vo': vo})
 
+            share.update(self._get_info_from_providers('get_compute_share',
+                                                       **kwargs))
+
             endpoints = self._get_info_from_providers('get_compute_endpoints',
                                                       **kwargs)
             if not endpoints.get('endpoints'):
