@@ -23,9 +23,6 @@ class ComputeCollector(base.BaseCollector):
             kwargs = share.copy()
             kwargs.update({'vo': vo})
 
-            share.update(self._get_info_from_providers('get_compute_share',
-                                                       **kwargs))
-
             endpoints = self._get_info_from_providers('get_compute_endpoints',
                                                       **kwargs)
             if not endpoints.get('endpoints'):
@@ -34,6 +31,10 @@ class ComputeCollector(base.BaseCollector):
             # Collect static information for endpoints
             static_compute_info = dict(endpoints, **site_info)
             static_compute_info.pop('endpoints')
+
+            # Add any extra information for share
+            share.update(self._get_info_from_providers('get_compute_share',
+                                                       **kwargs))
 
             # Collect dynamic information
             images = self._get_info_from_providers('get_images',
