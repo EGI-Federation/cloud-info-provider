@@ -1,0 +1,11 @@
+{
+    "data":{
+        "service_type": "eu.egi.cloud.storage-management.oneprovider",
+        "endpoint":"57b88d0c069bd23c6f5799908b490de5",
+        "provider_id":"RECAS-BARI",
+        "sitename":"RECAS-BARI",
+        "hostname":"oneprovider-beta-2.cloud.ba.infn.it",
+        "type":"storage"
+    },
+    "type":"service"
+}
