@@ -1,6 +1,6 @@
 # DEEP-Hybrid-DataCloud Cloud Information provider
 
-[![Build Status](https://jenkins.indigo-datacloud.eu:8080/buildStatus/icon?job=Pipeline-as-code/cloud-info-provider-deep/DEEP)](https://jenkins.indigo-datacloud.eu:8080/job/Pipeline-as-code/job/cloud-info-provider-deep/job/DEEP/)
+[![Build Status](https://jenkins.indigo-datacloud.eu/buildStatus/icon?job=Pipeline-as-code/cloud-info-provider-deep/DEEP)](https://jenkins.indigo-datacloud.eu/job/Pipeline-as-code/job/cloud-info-provider-deep/job/DEEP/)
 
 This repository contains the new features contributed by the
 DEEP-Hybrid-DataCloud project to the
