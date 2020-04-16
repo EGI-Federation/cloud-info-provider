@@ -2,6 +2,12 @@ site:
     # Your site name, as in GODCB (if omitted or set to None, this value is
     # retreived from /etc/glite-info-static/site/site.cfg )
     # name: SITE_NAME
+    # [for CMDB]
+    # IAM IDs for the cloud site owners
+    # owner_contacts_iam:
+    #   - ID-1
+    # Whether the provider is public or private
+    # is_public: false
 
 compute:
     # Configure here the VOs supported at your installation
@@ -35,6 +41,10 @@ compute:
         #     default_network_type: public
         #     # Public Network name
         #     public_network_name: PUBLIC
+        #     # Private Network name
+        #     private_network_name: PRIVATE
+        #     # Pattern to define the CIDR of the private network
+        #     private_network_cidr: CIDR_ADDR
         #     network_info: UNKNOWN
         #     membership:
         #         - VOMS:/fedcloud.egi.eu/Role=VMOperators
@@ -92,10 +102,6 @@ compute:
     # live_migration: false
     # Backup and restoration of VMs
     # vm_backup_restore: false
-    # Indicates whether Public IPv4 addresses s can be assigned to VMs 
-    # in the given site in a way supported by the INDIGO PaaS orchestration stack
-    # public_ip_assignable: false
-    # private_network_enabled: false
     # Default values for quotas
     # quotas:
     #   defaults:
@@ -115,3 +121,11 @@ compute:
     # images:
     #     defaults:
     #         platform: amd64
+    # [for CMDB]
+    # Indicates whether Public IPv4 addresses s can be assigned to VMs 
+    # in the given site in a way supported by the INDIGO PaaS orchestration stack
+    # public_ip_assignable: false
+    # Whether IAM identity provider is enabled at the service
+    # iam_enabled: false
+    # Whether the service is public or private
+    # is_public_service: false

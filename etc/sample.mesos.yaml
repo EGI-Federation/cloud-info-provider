@@ -2,6 +2,12 @@ site:
     # Your site name, as in GODCB (if omitted or set to None, this value is
     # retreived from /etc/glite-info-static/site/site.cfg )
     # name: SITE_NAME
+    # [for CMDB]
+    # IAM IDs for the cloud site owners
+    # owner_contacts_iam:
+    #   - ID-1
+    # Whether the provider is public or private
+    # is_public: false
 
 compute:
     # Total number of cores available
@@ -20,3 +26,8 @@ compute:
             # local_volumes_host_base_path: /tmp
             # persistent_storage_drivers: []
             # load_balancer_ips: []
+            
+    # Whether IAM identity provider is enabled at the service
+    # iam_enabled: false
+    # Whether the service is public or private
+    # is_public_service: false

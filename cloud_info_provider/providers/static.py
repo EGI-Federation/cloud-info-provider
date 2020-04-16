@@ -184,7 +184,6 @@ class StaticProvider(providers.BaseProvider):
                                      'vm_backup_restore',
                                      'service_name',
                                      'public_ip_assignable',
-                                     'private_network_enabled',
                                      'iam_enabled')
         endpoint_fields = endp_f or ('production_level', 'api_type',
                                      'api_version',
