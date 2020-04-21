@@ -132,6 +132,7 @@
             ${render_string('gpu_model', _flavor['template_flavor_gpu_model'])}
             "service": "${service_id}",
             "tenant_name": "${_vo}",
+            "infiniband_support": ${'true' if _flavor.get('template_flavor_infiniband', None) else 'false'},
             ${render_string('tenant_id', project_id, required_type=True, comma=False)}
         }
     },
