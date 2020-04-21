@@ -10,6 +10,7 @@
             "provider_id": "${srv_data['site_name']}",
             "sitename": "${srv_data['site_name']}",
             "hostname": "${srv_id}",
+            "iam_enabled": ${'true' if srv_data.get('storage_iam_enabled', None) else 'false'},
             "type":"storage"
 		},
         "type": "service"

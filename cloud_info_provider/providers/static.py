@@ -204,7 +204,7 @@ class StaticProvider(providers.BaseProvider):
         global_fields = ('service_production_level', 'total_storage',
                          'capabilities', 'middleware',
                          'middleware_version', 'middleware_developer',
-                         'service_name')
+                         'service_name', 'iam_enabled')
         endpoint_fields = ('production_level', 'api_type', 'api_version',
                            'api_endpoint_technology',
                            'api_authn_method')

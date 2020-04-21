@@ -65,19 +65,19 @@ class OnedataProvider(providers.BaseProvider):
                 "Oneprovider endpoints"))
         defaults_endpoint.update(defaults)
 
-        d_endpoints = {}
+        d_endp = {}
         for oneprov_domain, oneprov_data in endp_data.items():
-            d_endpoints[oneprov_domain] = {}
+            d_endp[oneprov_domain] = {}
             try:
                 oneprov_id = d_onezone[oneprov_domain]['id']
             except KeyError:
                 continue
-            d_endpoints[oneprov_domain]['onedata_id'] = oneprov_id
-            d_endpoints[oneprov_domain]['goc_service_type'] = self.goc_service_type
+            d_endp[oneprov_domain]['onedata_id'] = oneprov_id
+            d_endp[oneprov_domain]['goc_service_type'] = self.goc_service_type
             aux = oneprov_data.copy()
             aux.update(defaults_endpoint)
-            d_endpoints[oneprov_domain].update(aux)
-        return {'endpoints': d_endpoints}
+            d_endp[oneprov_domain].update(aux)
+        return {'endpoints': d_endp}
 
     @staticmethod
     def populate_parser(parser):
