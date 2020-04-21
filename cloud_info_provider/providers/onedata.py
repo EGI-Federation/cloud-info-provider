@@ -73,6 +73,7 @@ class OnedataProvider(providers.BaseProvider):
             except KeyError:
                 continue
             d_endpoints[oneprov_domain]['onedata_id'] = oneprov_id
+            d_endpoints[oneprov_domain]['goc_service_type'] = self.goc_service_type
             aux = oneprov_data.copy()
             aux.update(defaults_endpoint)
             d_endpoints[oneprov_domain].update(aux)
