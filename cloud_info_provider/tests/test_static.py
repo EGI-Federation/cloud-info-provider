@@ -264,6 +264,9 @@ class StaticProviderTest(base.TestCase):
 
     def test_get_storage_endpoints(self):
         expected = DATA.storage_endpoints
+        expected.update({
+            'storage_iam_enabled': None,
+        })
         with mock.patch('socket.getfqdn') as m_fqdn:
             m_fqdn.return_value = 'example.org'
             self.assertEqual(expected, self.provider.get_storage_endpoints())
