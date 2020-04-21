@@ -54,9 +54,6 @@ class OnedataProvider(providers.BaseProvider):
 
     def get_storage_endpoints(self, **kwargs):
         d_onezone = self.get_oneproviders_from_onezone()
-        ret = {
-            'endpoints': {},
-        }
 
         defaults = self.static.get_storage_endpoint_defaults(prefix=True)
         defaults_endpoint = self.static.get_storage_endpoints()
@@ -72,14 +69,13 @@ class OnedataProvider(providers.BaseProvider):
         for oneprov_domain, oneprov_data in endp_data.items():
             d_endpoints[oneprov_domain] = {}
             try:
-                oneprov_id = d_onezone[oneprov_domain]
+                oneprov_id = d_onezone[oneprov_domain]['id']
             except KeyError:
-                print("No match found in Onezone providers list")
                 continue
             d_endpoints[oneprov_domain]['onedata_id'] = oneprov_id
             aux = oneprov_data.copy()
             aux.update(defaults_endpoint)
-            d_endpoints[oneprov_domain] = aux
+            d_endpoints[oneprov_domain].update(aux)
         return {'endpoints': d_endpoints}
 
     @staticmethod
