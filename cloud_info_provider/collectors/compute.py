@@ -16,8 +16,11 @@ class ComputeCollector(base.BaseCollector):
         # XXX Here it uses the "default" project from the CLI parameters
         site_info = self._get_info_from_providers('get_site_info')
 
-        # Get shares / projects and related images and templates
-        shares = self._get_info_from_providers('get_compute_shares')
+        try:
+            # Get shares / projects and related images and templates
+            shares = self._get_info_from_providers('get_compute_shares')
+        except Exception:
+            return info
 
         if shares:
             for share in shares.values():
