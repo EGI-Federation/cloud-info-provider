@@ -19,9 +19,12 @@
     service_id = static_compute_info['compute_service_name']
     is_public = static_compute_info['site_is_public']
     iam_enabled = static_compute_info['compute_iam_enabled']
-
+	
     from six.moves import urllib
-    host_name = urllib.parse.urlparse(static_compute_info['compute_service_name']).hostname
+    urlparse_obj = urllib.parse.urlparse(service_id)
+    host_name = service_id
+    if urlparse_obj.scheme:
+    	host_name = urlparse_obj.hostname
 %>\
     {
         "type": "provider",
