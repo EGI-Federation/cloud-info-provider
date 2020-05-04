@@ -1,0 +1,19 @@
+[
+<%
+	endpoints = attributes['endpoints']['endpoints']
+%>\
+% for srv_id, srv_data in endpoints.items():
+    {
+    	"data":{
+            "service_type": "${srv_data['goc_service_type']}",
+            "endpoint": "${srv_data['onedata_id']}",
+            "provider_id": "${srv_data['site_name']}",
+            "sitename": "${srv_data['site_name']}",
+            "hostname": "${srv_id}",
+            "iam_enabled": ${'true' if srv_data.get('storage_iam_enabled', None) else 'false'},
+            "type":"storage"
+		},
+        "type": "service"
+	}${'' if loop.last else ','}
+% endfor
+]

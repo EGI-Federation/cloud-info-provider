@@ -40,5 +40,9 @@ class MesosProviderException(CloudInfoException):
     pass
 
 
+class OnedataProviderException(CloudInfoException):
+    pass
+
+
 class CMDBFormatterException(CloudInfoException):
     pass

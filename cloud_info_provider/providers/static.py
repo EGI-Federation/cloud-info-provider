@@ -87,7 +87,7 @@ class StaticProvider(providers.BaseProvider):
         site_info = self._get_fields_and_prefix(
             ('name', 'id',
              'country', 'country_code', 'roc', 'subgrid', 'giis_url',
-             'is_public'),
+             'is_public', 'owner_contacts', 'owner_contacts_iam'),
             'site_',
             data,
             defaults={'is_public': False})
@@ -144,7 +144,8 @@ class StaticProvider(providers.BaseProvider):
         fields = ('instance_max_cpu', 'instance_max_ram',
                   'instance_max_accelerators',
                   'auth', 'sla', 'network_info', 'default_network_type',
-                  'public_network_name', 'membership', 'iam_organisation')
+                  'public_network_name', 'membership', 'iam_organisation',
+                  'private_network_name', 'private_network_cidr')
         shares = self._get_what('compute',
                                 'shares',
                                 None,
@@ -181,7 +182,9 @@ class StaticProvider(providers.BaseProvider):
                                      'network_virt_type', 'cpu_virt_type',
                                      'failover', 'live_migration',
                                      'vm_backup_restore',
-                                     'service_name')
+                                     'service_name',
+                                     'public_ip_assignable',
+                                     'iam_enabled')
         endpoint_fields = endp_f or ('production_level', 'api_type',
                                      'api_version',
                                      'api_endpoint_technology',
@@ -201,7 +204,7 @@ class StaticProvider(providers.BaseProvider):
         global_fields = ('service_production_level', 'total_storage',
                          'capabilities', 'middleware',
                          'middleware_version', 'middleware_developer',
-                         'service_name')
+                         'service_name', 'iam_enabled')
         endpoint_fields = ('production_level', 'api_type', 'api_version',
                            'api_endpoint_technology',
                            'api_authn_method')
