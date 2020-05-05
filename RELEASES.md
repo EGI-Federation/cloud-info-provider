@@ -10,10 +10,15 @@ __Note that these features may not be available or merged upstream.__
 ## cloud-info-provider-deep-0.10.6
 
 In a nutshell:
+ - Support for new providers in CMDB format: Amazon EC2 and Onedata
  - (OpenStack provider) Network parameters for enabling hybrid deployments through the Orchestrator and CMDB
  - (all providers) New parameter for CMDB provider entity: `owner_iam_list` and `is_public`
  - (all providers) New parameters for CMDB service entity: `iam_enabled` and `is_public_service`
  - (OpenStack provider) Fixes applied to avoid _deactivated_ images to be published and allow _shared_ images to be published as default.
+
+### Support for new providers in CMDB format: Amazon EC2 and Onedata
+- Onedata: provides CMDB records for the Oneproviders listed in a given Onezone endpoint. Each Oneprovider needs a specific static configuration file, containing the endpoint name. This name will be then matched by CIP with the list provided by the Onezone endpoint, this latter provided at runtime.
+- Amazon EC2: eventually developed as a [plugin](https://github.com/indigo-dc/cip-plugin-aws-provider), thus it is not in the CIP codebase. The provider gathers image and flavor-related data and outputs it as CMDB format. Currently supported operating systems for the images are Ubuntu, CentOS and Windows.
  
 ### OpenStack network parameters for hybrid cloud deployments through Orchestrator/CMDB
 
