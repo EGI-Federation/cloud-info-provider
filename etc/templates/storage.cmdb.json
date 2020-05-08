@@ -1,7 +1,34 @@
+<%def name="render_string(k, v, required_type=False, comma=True)">
+% if v is None and not required_type:
+
+% elif v is None and required_type:
+"${k}": null${',' if comma else ''}
+% elif isinstance(v, (basestring, str, unicode)):
+"${k}": "${v}"${',' if comma else ''}
+% else:
+"${k}": ${v}${',' if comma else ''}
+% endif
+</%def>
 [
 <%
-	endpoints = attributes['endpoints']['endpoints']
+    static_storage_info = attributes['static_storage_info']
+    is_public = static_storage_info['site_is_public']
+    endpoints = attributes['endpoints']['endpoints']
 %>\
+    {
+        "type": "provider",
+        ${render_string('owners', static_storage_info['site_owner_contacts_iam'])}
+        "data": {
+            ${render_string('country', static_storage_info['site_country'])}
+            ${render_string('country_code', static_storage_info['site_country_code'])}
+            ${render_string('roc', static_storage_info['site_roc'])}
+            ${render_string('subgrid', static_storage_info['site_subgrid'])}
+            "is_public": ${'true' if is_public else 'false'},
+            ${render_string('owners', static_storage_info['site_owner_contacts'])}
+            ${render_string('giis_url', static_storage_info['site_giis_url'])}
+            ${render_string('name', static_storage_info['site_name'], required_type=True, comma=False)}
+        }
+    },
 % for srv_id, srv_data in endpoints.items():
     {
     	"data":{
