@@ -343,7 +343,8 @@ class OpenStackProvider(providers.BaseProvider):
         img_sch = defaults.get('image_schema', 'os')
         URI = 'http://schemas.openstack.org/template/'
 
-        for image in self.glance.images.list(detailed=True):
+        for image in self.glance.images.list(detailed=True,
+                                             filters={'status': 'active'}):
             img_id = image.get("id")
 
             aux_img = copy.deepcopy(template)
