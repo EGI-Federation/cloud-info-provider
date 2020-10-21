@@ -36,7 +36,7 @@ def _find_url_in_result(svc_url, result):
     '''
 
     svc_url = urlparse(svc_url)
-    for svc in result.getchildren():
+    for svc in result:
         try:
             url = urlparse(svc.find('URL').text)
         except AttributeError:
