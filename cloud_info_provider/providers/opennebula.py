@@ -68,7 +68,7 @@ class OpenNebulaBaseProvider(base.BaseProvider):
             raise exceptions.OpenNebulaProviderException(msg)
 
         objects = {}
-        for obj in doc.getchildren():
+        for obj in doc:
             objects[self._get_xml_string(obj, 'ID')] = \
                 self._recurse_dict(obj)[1]
         return objects
