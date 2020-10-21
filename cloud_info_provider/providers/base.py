@@ -45,6 +45,9 @@ class BaseProvider(object):
     def get_compute_shares(self, **kwargs):
         return {}
 
+    def get_compute_share(self, **kwargs):
+        return {}
+
     def get_compute_quotas(self, **kwargs):
         return {}
 

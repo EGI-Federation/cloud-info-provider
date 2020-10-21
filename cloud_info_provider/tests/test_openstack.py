@@ -141,6 +141,13 @@ class OpenStackProviderTest(base.TestCase):
             self.assertEqual('foobar', shares['vo1']['project'])
             self.assertTrue(m_get_compute_shares.called)
 
+    def test_get_share(self):
+        self.auth_plugin = mock.Mock()
+        share = self.provider.get_compute_share(
+            **{'auth': {'project_id': None}})
+        self.assertIn('project_name', share)
+        self.assertIn('project_domain_name', share)
+
     def test_get_templates_with_defaults(self):
         expected_templates = {}
         url = 'http://schemas.openstack.org/template/resource'

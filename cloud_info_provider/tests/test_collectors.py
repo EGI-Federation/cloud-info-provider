@@ -120,6 +120,7 @@ class ComputeCollectorTest(base.BaseTest):
             data_mapping = {
                 'get_site_info': DATA.site_info,
                 'get_compute_shares': DATA.compute_shares,
+                'get_compute_share': {},
                 'get_compute_endpoints': DATA.compute_endpoints,
                 'get_images': DATA.compute_images,
                 'get_templates': DATA.compute_templates,

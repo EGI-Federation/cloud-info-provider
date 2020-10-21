@@ -32,6 +32,10 @@ class ComputeCollector(base.BaseCollector):
             static_compute_info = dict(endpoints, **site_info)
             static_compute_info.pop('endpoints')
 
+            # Add any extra information for share
+            share.update(self._get_info_from_providers('get_compute_share',
+                                                       **kwargs))
+
             # Collect dynamic information
             images = self._get_info_from_providers('get_images',
                                                    **kwargs)

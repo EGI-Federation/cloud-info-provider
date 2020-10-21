@@ -145,6 +145,14 @@ class OpenStackProvider(base.BaseProvider):
         }
 
     @_rescope
+    def get_compute_share(self, **kwargs):
+        access = self.auth_plugin.get_access(self.session)
+        return {
+            'project_name': access.project_name,
+            'project_domain_name': access.project_domain_name,
+        }
+
+    @_rescope
     def get_compute_endpoints(self, **kwargs):
         ret = {
             'endpoints': {},
