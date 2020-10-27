@@ -182,9 +182,9 @@ class StaticProvider(providers.BaseProvider):
                                      'network_virt_type', 'cpu_virt_type',
                                      'failover', 'live_migration',
                                      'vm_backup_restore',
-                                     'service_name',
+                                     'service_name', 'region',
                                      'public_ip_assignable',
-                                     'iam_enabled')
+                                     'iam_enabled', 'idp_protocol')
         endpoint_fields = endp_f or ('production_level', 'api_type',
                                      'api_version',
                                      'api_endpoint_technology',
@@ -204,7 +204,7 @@ class StaticProvider(providers.BaseProvider):
         global_fields = ('service_production_level', 'total_storage',
                          'capabilities', 'middleware',
                          'middleware_version', 'middleware_developer',
-                         'service_name', 'iam_enabled')
+                         'service_name', 'iam_enabled', 'idp_protocol')
         endpoint_fields = ('production_level', 'api_type', 'api_version',
                            'api_endpoint_technology',
                            'api_authn_method')
@@ -277,6 +277,8 @@ class StaticProvider(providers.BaseProvider):
             'live_migration': False,
             'vm_backup_restore': False,
             'total_accelerators': 0,
+            'region': '',
+            'idp_protocol': 'oidc'
         }
         return self._populate_default_values(
             self._get_defaults_from_yaml('compute',

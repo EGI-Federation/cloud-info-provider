@@ -46,7 +46,7 @@ except ImportError:
 def _rescope(f):
     @functools.wraps(f)
     def inner(self, auth=None, **kwargs):
-        self._rescope_project(auth['project_id'])
+        self._rescope_project(auth['project_id'], auth.get('region_name'))
         return f(self, **kwargs)
     return inner
 
@@ -135,7 +135,7 @@ class OpenStackProvider(providers.BaseProvider):
             share['project'] = share.get('auth', {}).get('project_id')
         return shares
 
-    def _rescope_project(self, project_id):
+    def _rescope_project(self, project_id, region_name=None):
         '''Switch to new OS project whenever there is a change.
 
            It updates every OpenStack client used in case of new project.
@@ -144,6 +144,7 @@ class OpenStackProvider(providers.BaseProvider):
             self.opts.os_project_id = project_id
             # make sure that it also works for v2voms
             self.opts.os_tenant_id = project_id
+            self.opts.os_region_name = region_name
             self.auth_plugin = loading.load_auth_from_argparse_arguments(
                 self.opts
             )
@@ -157,8 +158,8 @@ class OpenStackProvider(providers.BaseProvider):
                 msg = "Could not authorize user in project '%s'" % project_id
                 raise exceptions.OpenStackProviderException(msg)
             # make sure the clients know about the change
-            self.nova = novaclient.client.Client(2, session=self.session)
-            self.glance = glanceclient.Client('2', session=self.session)
+            self.nova = novaclient.client.Client(2, session=self.session, region_name=region_name)
+            self.glance = glanceclient.Client('2', session=self.session, region_name=region_name)
 
     @staticmethod
     def _get_endpoint_versions(endpoint_url):
@@ -199,7 +200,7 @@ class OpenStackProvider(providers.BaseProvider):
         ret['compute_service_name'] = self.auth_plugin.auth_url
         catalog = self.auth_plugin.get_access(self.session).service_catalog
         epts = catalog.get_endpoints(service_type=self.service_type,
-                                     interface="public")
+                                     interface="public", region_name = defaults.get('compute_region'))
         for ept in epts.get(self.service_type, []):
             e_id = ept['id']
             # URL is in different places depending of Keystone version
@@ -238,6 +239,7 @@ class OpenStackProvider(providers.BaseProvider):
                                           self.insecure))
             e.update(self._get_extra_endpoint_info(e_url))
             ret['endpoints'][e_id_url] = e
+
         return ret
 
     @_rescope
@@ -414,7 +416,7 @@ class OpenStackProvider(providers.BaseProvider):
             ret = instance_template.copy()
             ret.update({
                 'instance_name': instance.name,
-                'instance_image_id': instance.image['id'],
+                'instance_image_id': instance.image['id'] if 'id' in instance.image else '',
                 'instance_template_id': instance.flavor['id'],
                 'instance_status': instance.status,
             })
