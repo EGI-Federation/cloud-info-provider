@@ -26,6 +26,8 @@ class BaseFormatter(object):
 
     def _load_templates(self, template_dir):
         self.templates_files = {}
+        if not template_dir:
+            template_dir = os.path.join(os.path.dirname(__file__), 'templates')
         for tpl in self.templates:
             template_file = os.path.join(
                 template_dir,

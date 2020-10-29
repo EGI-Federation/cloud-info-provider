@@ -36,8 +36,7 @@ class CoreOptionsTest(base.TestCase):
         self.assertEqual(opts.format, 'glue')
         self.assertEqual(opts.auth_refresher, None)
         self.assertEqual(opts.publisher, 'stdout')
-        self.assertEqual(opts.template_dir,
-                         '/etc/cloud-info-provider/templates')
+        self.assertEqual(opts.template_dir, None)
         self.assertEqual(opts.yaml_file,
                          '/etc/cloud-info-provider/static.yaml')
         self.assertEqual(opts.debug, False)
