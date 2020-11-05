@@ -4,20 +4,16 @@ import json
 import logging
 
 import glanceclient
-from keystoneauth1.exceptions import http as http_exc
+import novaclient.client
+import requests
+from cloud_info_provider import exceptions, utils
+from cloud_info_provider.providers import base, static
 from keystoneauth1 import loading
+from keystoneauth1.exceptions import http as http_exc
 from keystoneauth1.loading import base as loading_base
 from keystoneauth1.loading import session as loading_session
-import novaclient.client
 from novaclient.exceptions import Forbidden
-import requests
-from six.moves.urllib.parse import urljoin
-from six.moves.urllib.parse import urlparse
-
-from cloud_info_provider import exceptions
-from cloud_info_provider.providers import base
-from cloud_info_provider.providers import static
-from cloud_info_provider import utils
+from six.moves.urllib.parse import urljoin, urlparse
 
 
 # TODO(enolfc): should this be completely inside the provider class?

@@ -1,12 +1,10 @@
 import argparse
-import mock
 
 import defusedxml.ElementTree
-
+import mock
 from cloud_info_provider import exceptions
 from cloud_info_provider.providers import opennebula
-from cloud_info_provider.tests import base
-from cloud_info_provider.tests import data
+from cloud_info_provider.tests import base, data
 
 FAKES = data.ONE_FAKES
 
@@ -92,6 +90,7 @@ class OpenNebulaBaseProviderTest(base.TestCase):
         super(OpenNebulaBaseProviderTest, self).__init__(*args, **kwargs)
         self.provider_class = opennebula.OpenNebulaBaseProvider
         self.maxDiff = None
+        # pylint disable=no-member
         self.expected_images = FAKES.opennebula_base_provider_expected_images
 
     def setUp(self):
@@ -157,6 +156,7 @@ class OpenNebulaROCCIProviderTest(OpenNebulaBaseProviderTest):
     def __init__(self, *args, **kwargs):
         super(OpenNebulaROCCIProviderTest, self).__init__(*args, **kwargs)
         self.provider_class = opennebula.OpenNebulaROCCIProvider
+        # pylint disable=no-member
         self.expected_images = FAKES.opennebula_rocci_provider_expected_images
         self.expected_templates = \
             FAKES.opennebula_rocci_provider_expected_templates

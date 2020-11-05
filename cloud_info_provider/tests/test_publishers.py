@@ -6,12 +6,10 @@ from __future__ import print_function
 
 import argparse
 import json
+
 import mock
-
 import six
-
-from cloud_info_provider.publishers import ams
-from cloud_info_provider.publishers import stdout
+from cloud_info_provider.publishers import ams, stdout
 from cloud_info_provider.tests import base
 from cloud_info_provider.tests import utils as utils
 

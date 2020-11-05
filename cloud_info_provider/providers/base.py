@@ -1,7 +1,6 @@
 import logging
 
-from cloud_info_provider.providers import gocdb
-from cloud_info_provider.providers import ssl_utils
+from cloud_info_provider.providers import gocdb, ssl_utils
 
 
 class BaseProvider(object):
@@ -24,6 +23,7 @@ class BaseProvider(object):
         if not url:
             url = self._last_goc_url
         if url not in self._goc_info:
+            # pylint: disable=no-member
             self._goc_info[url] = gocdb.find_in_gocdb(url,
                                                       self.goc_service_type,
                                                       insecure)

@@ -1,9 +1,6 @@
-import mock
-
 import cloud_info_provider.formatters.base
-
-from cloud_info_provider.tests import base
-from cloud_info_provider.tests import utils
+import mock
+from cloud_info_provider.tests import base, utils
 
 
 class BaseFormatterTest(base.BaseTest):

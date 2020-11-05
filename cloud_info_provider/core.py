@@ -1,8 +1,7 @@
 import argparse
 import logging
 
-from stevedore import driver
-from stevedore import extension
+from stevedore import driver, extension
 
 
 def get_providers():

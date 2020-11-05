@@ -1,10 +1,9 @@
 import abc
 import os
-import six
 
 import mako.exceptions
 import mako.template
-
+import six
 from stevedore import extension
 
 

@@ -1,6 +1,5 @@
-import mock
-
 import cloud_info_provider.providers.base
+import mock
 from cloud_info_provider.tests import base
 
 

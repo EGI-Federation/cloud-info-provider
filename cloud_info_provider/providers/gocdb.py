@@ -2,13 +2,11 @@
 Simple utilities for getting information fro GOCDB about the endpoints
 '''
 import logging
-
+from xml.etree.ElementTree import ParseError  # nosec
 
 import defusedxml.ElementTree
 import requests
 from six.moves.urllib.parse import urlparse
-from xml.etree.ElementTree import ParseError  # nosec
-
 
 logger = logging.getLogger(__name__)
 

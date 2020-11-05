@@ -10,7 +10,6 @@ import json
 import logging
 
 import requests
-
 from cloud_info_provider.publishers.base import BasePublisher
 
 

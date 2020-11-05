@@ -17,15 +17,16 @@ def get_variables_from_template(template, ignored_fields=[]):
 
     # Look for variables names like
     # ${static_compute_info['compute_service_production_level']}
-    regexp = re.compile('\${[^\[]+\[\'(.+?)\'\]}')
-    l = set(regexp.findall(content))
+    regexp = re.compile(r'\${[^\[]+\[\'(.+?)\'\]}')
+    matches = set(regexp.findall(content))
     for k in itertools.chain(IGNORED_FIELDS, ignored_fields):
-        if k in l:
-            l.remove(k)
-    return list(l)
+        if k in matches:
+            matches.remove(k)
+    return list(matches)
 
 
 if six.PY2:
+    # pylint disable=no-member
     nested = contextlib.nested
 else:
     @contextlib.contextmanager

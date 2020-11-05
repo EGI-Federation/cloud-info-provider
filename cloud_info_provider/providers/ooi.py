@@ -1,7 +1,6 @@
 import re
 
 import requests
-
 from cloud_info_provider.providers.openstack import OpenStackProvider
 
 
@@ -24,7 +23,7 @@ class OoiProvider(OpenStackProvider):
             r = self.session.get(request_url,
                                  authenticated=True,
                                  verify=not self.insecure)
-            if r.status_code == requests.codes.ok:
+            if r.status_code == requests.codes['ok']:
                 header_server = r.headers['Server']
                 ooi_version = re.search(r'ooi/([0-9.]+)', header_server)
                 if ooi_version:

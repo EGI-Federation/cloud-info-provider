@@ -3,15 +3,14 @@ import copy
 import json
 import os
 
-from cloud_info_provider import exceptions
-from cloud_info_provider.providers import base
-from cloud_info_provider.providers import static
-from cloud_info_provider import utils
+from cloud_info_provider import exceptions, utils
+from cloud_info_provider.providers import base, static
 
 try:
     import defusedxml.ElementTree
     from defusedxml import xmlrpc
     from six.moves import xmlrpc_client as xmlrpclib  # nosec
+
     # Protect the XMLRPC parser from various XML-based threats
     xmlrpc.monkey_patch()
 except ImportError:

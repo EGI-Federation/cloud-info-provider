@@ -1,7 +1,5 @@
 import requests
-
-from cloud_info_provider import auth_refreshers
-from cloud_info_provider import exceptions
+from cloud_info_provider import auth_refreshers, exceptions
 
 
 class OidcRefreshToken(auth_refreshers.BaseRefresher):
@@ -25,7 +23,7 @@ class OidcRefreshToken(auth_refreshers.BaseRefresher):
                               auth=(client_id,
                                     client_secret),
                               data=refresh_data)
-            if r.status_code != requests.codes.ok:
+            if r.status_code != requests.codes['ok']:
                 msg = "Unable to get token, request returned %s" % r.text
                 raise exceptions.RefresherException(msg)
             return r.json()["access_token"]
