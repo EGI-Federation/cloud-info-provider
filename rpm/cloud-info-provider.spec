@@ -46,6 +46,8 @@ information, but custom format can be created.
 %install
 rm -rf $RPM_BUILD_ROOT
 python setup.py install --root $RPM_BUILD_ROOT
+mkdir -p $RPM_BUILD_ROOT/etc/cloud-info-provider
+install -m 644 etc/* $RPM_BUILD_ROOT/etc/cloud-info-provider
 
 %clean
 rm -rf $RPM_BUILD_ROOT

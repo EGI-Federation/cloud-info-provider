@@ -88,8 +88,9 @@ def get_parser(providers, formatters, auth_refreshers, publishers):
 
     parser.add_argument(
         '--template-dir',
-        default='/etc/cloud-info-provider/templates',
-        help=('Path to the directory containing the needed templates'))
+        default=None,
+        help=('Path to the directory overriding the default templates. '
+              'If not specified, use the default templates.'))
 
     parser.add_argument(
         '--debug',
