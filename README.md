@@ -309,7 +309,7 @@ now VOs need to be explicitly declared in your configuration in order to be
 published, you will need a `shares` section on your `yaml` configuration like
 this:
 
-```
+```yaml
 compute:
   # any other existing compute sections should be kept as before
   # and add the shares with an entry per VO

@@ -26,7 +26,7 @@ def get_variables_from_template(template, ignored_fields=[]):
 
 
 if six.PY2:
-    # pylint disable=no-member
+    # pylint: disable=no-member
     nested = contextlib.nested
 else:
     @contextlib.contextmanager

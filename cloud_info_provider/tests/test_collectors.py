@@ -42,7 +42,7 @@ class BaseCollectorTest(base.BaseTest):
             ),
         )
 
-        # pylint disable=abstract-class-instantiated
+        # pylint: disable=abstract-class-instantiated
         base = cloud_info_provider.collectors.base.BaseCollector(
             self.opts,
             self.providers,
