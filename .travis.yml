@@ -27,7 +27,7 @@ script:
   # First syntax, linting and pre-test stages
   - mdl -s relaxed README.md
   - rpmlint rpm/
-  - tox -e pep8,bandit
+  - tox -e bandit
   # Then unit tests
   - |
     if [  $TRAVIS_PYTHON_VERSION = '2.7' ]; then
