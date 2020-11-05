@@ -330,7 +330,7 @@ and AMS. For that you can take advantage of your existing provider at
 `/var/lib/bdii/gip/provider/` that is called periodically and add an invocation
 publishing to AMS as follows:
 
-```
+```shell
 $ cat /var/lib/bdii/gip/provider/cloud-info-provider
 #!/bin/bash
 
@@ -339,13 +339,13 @@ $ cat /var/lib/bdii/gip/provider/cloud-info-provider
 cloud-info-provider-service  --yaml-file /etc/cloud-info-provider/bdii.yaml \
                              --on-auth <user>:<secret> \
                              --on-rpcxml-endpoint http://<your opennebula endpoint>:2633/RPC2 \
-		                     --rocci-remote-templates --middleware opennebularocci
+                             --rocci-remote-templates --middleware opennebularocci
 
 # and add now the AMS publishing, same options but adding a few more
 cloud-info-provider-service  --yaml-file /etc/cloud-info-provider/bdii.yaml \
                              --on-auth <user>:<secret> \
                              --on-rpcxml-endpoint http://<your opennebula endpoint>:2633/RPC2 \
-		                     --rocci-remote-templates --middleware opennebularocci \
+                             --rocci-remote-templates --middleware opennebularocci \
                              --format glue21 --publisher ams \
                              --ams-topic SITE_<SITE-NAME>_ENDPOINT_<ENDPOINT ID>G0 \
                              --ams-cert /etc/grid-security/hostcert-bdii.pem \
@@ -479,11 +479,7 @@ up this machine is avaiable in the EGI.eu wiki at
 [How to publish site information](https://wiki.egi.eu/wiki/MAN01_How_to_publish_Site_Information).
 
 Add your cloud-info-provider to your site-BDII by adding a new URL that looks
-like this:
-
-```
-ldap://<cloud-info-provider-hostname>:2170/GLUE2GroupID=cloud,o=glue
-```
+like this: `ldap://<cloud-info-provider-hostname>:2170/GLUE2GroupID=cloud,o=glue`
 
 ### GLUE 2.1 Schema
 

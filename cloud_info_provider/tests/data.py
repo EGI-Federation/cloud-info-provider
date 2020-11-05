@@ -295,6 +295,13 @@ class OpenNebulaFakes(object):
         with open(os.path.join(sdir, 'one.documentpool.xml'), 'r') as f:
             self.documentpool = f.read()
 
+        self.opennebula_base_provider_expected_images = {}
+        self.opennebula_rocci_provider_expected_images = {}
+        self.opennebula_rocci_provider_expected_templates = {}
+        self.opennebula_rocci_provider_expected_templates_remote = {}
+        self.indigo_on_provider_expected_images = {}
+        self.indigo_on_provider_expected_templates = {}
+
         files_attrs = [
             ("opennebula_base_provider_images.json",
              "opennebula_base_provider_expected_images"),
