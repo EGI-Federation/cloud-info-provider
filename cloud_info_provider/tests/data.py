@@ -1,4 +1,5 @@
 import os.path
+
 import yaml
 
 
@@ -294,31 +295,32 @@ class OpenNebulaFakes(object):
         with open(os.path.join(sdir, 'one.documentpool.xml'), 'r') as f:
             self.documentpool = f.read()
 
-        with open(os.path.join(
-            sdir, 'opennebula_base_provider_images.json'), 'r') as f:
-            self.opennebula_base_provider_expected_images = yaml.safe_load(f)
+        self.opennebula_base_provider_expected_images = {}
+        self.opennebula_rocci_provider_expected_images = {}
+        self.opennebula_rocci_provider_expected_templates = {}
+        self.opennebula_rocci_provider_expected_templates_remote = {}
+        self.indigo_on_provider_expected_images = {}
+        self.indigo_on_provider_expected_templates = {}
 
-        with open(os.path.join(
-            sdir, 'opennebula_rocci_provider_images.json'), 'r') as f:
-            self.opennebula_rocci_provider_expected_images = yaml.safe_load(f)
+        files_attrs = [
+            ("opennebula_base_provider_images.json",
+             "opennebula_base_provider_expected_images"),
+            ("opennebula_rocci_provider_images.json",
+             "opennebula_rocci_provider_expected_images"),
+            ("opennebula_rocci_provider_templates.json",
+             "opennebula_rocci_provider_expected_templates"),
+            ("opennebula_rocci_provider_templates_remote.json",
+             "opennebula_rocci_provider_expected_templates_remote"),
+            ("indigo_on_provider_images.json",
+             "indigo_on_provider_expected_images"),
+            ("indigo_on_provider_templates.json",
+             "indigo_on_provider_expected_templates"),
+        ]
 
-        with open(os.path.join(
-            sdir, 'opennebula_rocci_provider_templates.json'), 'r') as f:
-            self.opennebula_rocci_provider_expected_templates = \
-                yaml.safe_load(f)
+        for fname, attr_name in files_attrs:
+            with open(os.path.join(sdir, fname), 'r') as f:
+                data = yaml.safe_load(f)
+                setattr(self, attr_name, data)
 
-        jsonf = os.path.join(
-            sdir, 'opennebula_rocci_provider_templates_remote.json')
-        with open(jsonf, 'r') as f:
-            self.opennebula_rocci_provider_expected_templates_remote = \
-                yaml.safe_load(f)
-
-        with open(os.path.join(
-            sdir, 'indigo_on_provider_images.json'), 'r') as f:
-            self.indigo_on_provider_expected_images = yaml.safe_load(f)
-
-        with open(os.path.join(
-            sdir, 'indigo_on_provider_templates.json'), 'r') as f:
-            self.indigo_on_provider_expected_templates = yaml.safe_load(f)
 
 ONE_FAKES = OpenNebulaFakes()

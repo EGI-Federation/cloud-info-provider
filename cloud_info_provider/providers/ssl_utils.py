@@ -1,9 +1,8 @@
 import logging
 import socket
 
-from six.moves.urllib.parse import urlparse
-
 from OpenSSL import SSL
+from six.moves.urllib.parse import urlparse
 
 logger = logging.getLogger(__name__)
 

@@ -2,14 +2,11 @@ import argparse
 
 import mock
 import requests
-from six.moves.urllib.parse import urljoin
-
 from cloud_info_provider.providers import ooi as ooi_provider
 from cloud_info_provider.providers import openstack as os_provider
-from cloud_info_provider.tests import base
-from cloud_info_provider.tests import data
+from cloud_info_provider.tests import base, data
 from cloud_info_provider.tests import utils as utils
-
+from six.moves.urllib.parse import urljoin
 
 FAKES = data.OS_FAKES
 

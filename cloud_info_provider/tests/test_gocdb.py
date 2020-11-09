@@ -1,8 +1,6 @@
 import mock
-
 from cloud_info_provider.providers import gocdb
 from cloud_info_provider.tests import base
-
 
 sample_goc_response = '''<?xml version="1.0" encoding="UTF-8"?>
 <results>

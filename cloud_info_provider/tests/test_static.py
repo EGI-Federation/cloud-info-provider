@@ -2,11 +2,9 @@ import os.path
 
 import mock
 import six
-
 from cloud_info_provider import exceptions
 from cloud_info_provider.providers import static as static_provider
-from cloud_info_provider.tests import base
-from cloud_info_provider.tests import data
+from cloud_info_provider.tests import base, data
 
 DATA = data.DATA
 

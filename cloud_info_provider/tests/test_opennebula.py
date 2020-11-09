@@ -1,12 +1,10 @@
 import argparse
-import mock
 
 import defusedxml.ElementTree
-
+import mock
 from cloud_info_provider import exceptions
 from cloud_info_provider.providers import opennebula
-from cloud_info_provider.tests import base
-from cloud_info_provider.tests import data
+from cloud_info_provider.tests import base, data
 
 FAKES = data.ONE_FAKES
 

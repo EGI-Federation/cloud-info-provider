@@ -5,19 +5,21 @@ services:
 language: python
 python:
   - "2.7"
-  - "3.5"
+  - "3.7"
 env:
   - OS_NAME=centos OS_VERSION=7
   - OS_NAME=ubuntu OS_VERSION=trusty
   - OS_NAME=ubuntu OS_VERSION=xenial
 before_install:
   - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - sudo add-apt-repository "deb [arch=amd64]
+    https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
   - sudo apt-get update
   - sudo apt-get install -y docker-ce
   - docker --version
 install:
-  - wget http://archive.ubuntu.com/ubuntu/pool/universe/r/rpmlint/rpmlint_1.7-1_all.deb
+  - wget
+    http://archive.ubuntu.com/ubuntu/pool/universe/r/rpmlint/rpmlint_1.7-1_all.deb
   - sudo apt-get install -y ./rpmlint_1.7-1_all.deb lintian
   - gem install mdl
   - pip install tox
@@ -25,13 +27,13 @@ script:
   # First syntax, linting and pre-test stages
   - mdl -s relaxed README.md
   - rpmlint rpm/
-  - tox -e pep8,bandit
+  - tox -e bandit
   # Then unit tests
   - |
     if [  $TRAVIS_PYTHON_VERSION = '2.7' ]; then
       tox -e py27
-    elif [  $TRAVIS_PYTHON_VERSION = '3.5' ]; then
-      tox -e py35
+    elif [  $TRAVIS_PYTHON_VERSION = '3.7' ]; then
+      tox -e py37
     fi
   # with test coverage
   - tox -e cover,cobertura
@@ -40,7 +42,8 @@ script:
   # Create a source tarball
   - python setup.py sdist
   # Now, start the build container
-  - docker run --name build_container -d -ti -v $PWD:/src -w /src $OS_NAME:$OS_VERSION /bin/sh -c 'while true ; do sleep 1000 ; done'
+  - docker run --name build_container -d -ti -v $PWD:/src -w /src
+    $OS_NAME:$OS_VERSION /bin/sh -c 'while true ; do sleep 1000 ; done'
   - |
     if [ $OS_NAME = 'centos' ]; then
       # Install prerequisites for the build
@@ -81,8 +84,10 @@ script:
       lintian $OS_NAME-$OS_VERSION/*.deb
     fi
   # Now, start the test containers
-  - docker run --name openstack_container -d -ti -v $PWD:/src -w /src $OS_NAME:$OS_VERSION /bin/sh -c 'while true ; do sleep 1000 ; done'
-  - docker run --name opennebula_container -d -ti -v $PWD:/src -w /src $OS_NAME:$OS_VERSION /bin/sh -c 'while true ; do sleep 1000 ; done'
+  - docker run --name openstack_container -d -ti -v $PWD:/src -w /src
+    $OS_NAME:$OS_VERSION /bin/sh -c 'while true ; do sleep 1000 ; done'
+  - docker run --name opennebula_container -d -ti -v $PWD:/src -w /src
+    $OS_NAME:$OS_VERSION /bin/sh -c 'while true ; do sleep 1000 ; done'
   - |
     if [ $OS_NAME = 'centos' ]; then
       # and install packages in dedicated clean containers

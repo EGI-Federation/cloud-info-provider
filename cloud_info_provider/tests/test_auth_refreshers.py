@@ -6,9 +6,7 @@ import argparse
 
 import mock
 import requests
-
-from cloud_info_provider.auth_refreshers import oidc_refresh
-from cloud_info_provider.auth_refreshers import oidc_vo_refresh
+from cloud_info_provider.auth_refreshers import oidc_refresh, oidc_vo_refresh
 from cloud_info_provider.exceptions import RefresherException
 from cloud_info_provider.tests import base
 

@@ -3,7 +3,6 @@ import re
 import socket
 
 import yaml
-
 from cloud_info_provider import exceptions
 from cloud_info_provider.providers import base
 

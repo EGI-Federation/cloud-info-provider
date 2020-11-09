@@ -10,7 +10,7 @@ Version: 0.12.0
 Release: 1%{?dist}
 Group: Applications/Internet
 License: Apache Software License 2.0
-URL: https://github.com/EGI-Federation/cloud-info-provider
+URL: https://github.com/EGI-Foundation/cloud-info-provider
 Source: cloud_info_provider-%{version}.tar.gz
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
