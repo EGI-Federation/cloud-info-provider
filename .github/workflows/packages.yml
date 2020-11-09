@@ -1,9 +1,12 @@
 name: Build packages
 
-on: push
+on:
+  pull-request:
+  push:
 
 jobs:
   sdist:
+    name: build python sdist
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -23,6 +26,7 @@ jobs:
         path: dist/*tar.gz
 
   centos7:
+    name: build centos 7 rpms
     needs: sdist
     runs-on: ubuntu-latest
     container: centos:7
@@ -53,6 +57,7 @@ jobs:
         path: RPMS/noarch/*.rpm
 
   ubuntu:
+    name: build debs
     needs: sdist
     runs-on: ubuntu-latest
     container: ubuntu:xenial
@@ -82,6 +87,7 @@ jobs:
         path: "**/*.deb"
 
   centos7-install-openstack:
+    name: install centos 7 rpms (openstack)
     needs: centos7
     runs-on: ubuntu-latest
     container: centos:7
@@ -95,6 +101,7 @@ jobs:
        yum localinstall -y cloud-info-provider-openstack-*.rpm cloud-info-provider-[^o]*.rpm
 
   centos7-install-opennebula:
+    name: install centos 7 rpms (opennebula)
     needs: centos7
     runs-on: ubuntu-latest
     container: centos:7
@@ -108,6 +115,7 @@ jobs:
         yum localinstall -y cloud-info-provider-opennebula-*.rpm cloud-info-provider-[^o]*.rpm
 
   ubuntu-install-openstack:
+    name: install debs (openstack)
     needs: ubuntu
     runs-on: ubuntu-latest
     container: ubuntu:xenial
@@ -121,6 +129,7 @@ jobs:
         apt-get install -y ./python-cloud-info-provider_*.deb ./cloud_info_provider-*/debs/python-cloud-info-provider-openstack_*.deb
 
   ubuntu-install-opennebula:
+    name: install debs (opennebula)
     needs: ubuntu
     runs-on: ubuntu-latest
     container: ubuntu:xenial

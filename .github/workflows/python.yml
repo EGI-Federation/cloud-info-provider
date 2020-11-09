@@ -1,9 +1,10 @@
 name: Python testing
 
-on: push
+on: pull-request
 
 jobs:
-  build:
+  test:
+    name: test python code
     runs-on: ubuntu-latest
     strategy:
       matrix:

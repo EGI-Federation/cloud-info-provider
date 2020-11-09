@@ -19,27 +19,26 @@ class OpenNebulaBaseProviderOptionsTest(base.TestCase):
         parser = argparse.ArgumentParser()
         self.provider.populate_parser(parser)
 
-        opts = parser.parse_args(['--on-auth', 'foo',
-                                  '--on-rpcxml-endpoint', 'bar',
-                                  '--all-images'])
+        opts = parser.parse_args(
+            ["--on-auth", "foo", "--on-rpcxml-endpoint", "bar", "--all-images"]
+        )
 
-        self.assertEqual(opts.on_auth, 'foo')
-        self.assertEqual(opts.on_rpcxml_endpoint, 'bar')
+        self.assertEqual(opts.on_auth, "foo")
+        self.assertEqual(opts.on_rpcxml_endpoint, "bar")
         self.assertTrue(opts.all_images)
 
     def test_options(self):
         class Opts(object):
-            on_auth = 'foo'
-            on_rpcxml_endpoint = 'bar'
+            on_auth = "foo"
+            on_rpcxml_endpoint = "bar"
             all_images = True
             debug = True
 
         # Check that the required opts are there
-        for opt in ('on_auth', 'on_rpcxml_endpoint'):
+        for opt in ("on_auth", "on_rpcxml_endpoint"):
             o = Opts()
             setattr(o, opt, None)
-            self.assertRaises(exceptions.OpenNebulaProviderException,
-                              self.provider, o)
+            self.assertRaises(exceptions.OpenNebulaProviderException, self.provider, o)
 
 
 class OpenNebulaProviderOptionsTest(OpenNebulaBaseProviderOptionsTest):
@@ -58,31 +57,37 @@ class OpenNebulaROCCIProviderOptionsTest(OpenNebulaBaseProviderOptionsTest):
         parser = argparse.ArgumentParser()
         self.provider.populate_parser(parser)
 
-        opts = parser.parse_args(['--on-auth', 'foo',
-                                  '--on-rpcxml-endpoint', 'bar',
-                                  '--rocci-template-dir', 'test',
-                                  '--all-images'])
+        opts = parser.parse_args(
+            [
+                "--on-auth",
+                "foo",
+                "--on-rpcxml-endpoint",
+                "bar",
+                "--rocci-template-dir",
+                "test",
+                "--all-images",
+            ]
+        )
 
-        self.assertEqual(opts.on_auth, 'foo')
-        self.assertEqual(opts.on_rpcxml_endpoint, 'bar')
-        self.assertEqual(opts.rocci_template_dir, 'test')
+        self.assertEqual(opts.on_auth, "foo")
+        self.assertEqual(opts.on_rpcxml_endpoint, "bar")
+        self.assertEqual(opts.rocci_template_dir, "test")
         self.assertTrue(opts.all_images)
 
     def test_options(self):
         class Opts(object):
-            on_auth = 'foo'
-            on_rpcxml_endpoint = 'bar'
-            rocci_template_dir = 'test'
+            on_auth = "foo"
+            on_rpcxml_endpoint = "bar"
+            rocci_template_dir = "test"
             rocci_remote_templates = False
             all_images = False
             debug = True
 
         # Check that the required opts are there
-        for opt in ('on_auth', 'on_rpcxml_endpoint', 'rocci_template_dir'):
+        for opt in ("on_auth", "on_rpcxml_endpoint", "rocci_template_dir"):
             o = Opts()
             setattr(o, opt, None)
-            self.assertRaises(exceptions.OpenNebulaProviderException,
-                              self.provider, o)
+            self.assertRaises(exceptions.OpenNebulaProviderException, self.provider, o)
 
 
 class OpenNebulaBaseProviderTest(base.TestCase):
@@ -108,38 +113,39 @@ class OpenNebulaBaseProviderTest(base.TestCase):
                 self.xml_parser = defusedxml.ElementTree
                 self.server_proxy = mock.Mock()
                 self.server_proxy.one.templatepool.info.return_value = (
-                    'OK', FAKES.templatepool)
+                    "OK",
+                    FAKES.templatepool,
+                )
 
         class Opts(object):
-            on_auth = 'oneadmin:opennebula'
-            on_rpcxml_endpoint = 'http://localhost:2633/RPC2'
+            on_auth = "oneadmin:opennebula"
+            on_rpcxml_endpoint = "http://localhost:2633/RPC2"
             all_images = True
 
         self.provider = FakeProvider(Opts())
 
     def test_get_shares_project(self):
-        static_shares = {
-            "vo1": {},
-            "vo2": {"auth": {"group": "foo"}}
-        }
+        static_shares = {"vo1": {}, "vo2": {"auth": {"group": "foo"}}}
         self.provider.static.get_compute_shares.return_value = static_shares
         expected_shares = {
             "vo1": {"project": "vo1", "auth": {"group": "vo1"}},
-            "vo2": {"project": "foo", "auth": {"group": "foo"}}
+            "vo2": {"project": "foo", "auth": {"group": "foo"}},
         }
-        self.assertDictEqual(expected_shares,
-                             self.provider.get_compute_shares())
+        self.assertDictEqual(expected_shares, self.provider.get_compute_shares())
 
     def test_get_images(self):
-        self.assertDictEqual(
-            self.expected_images, self.provider.get_images())
+        self.assertDictEqual(self.expected_images, self.provider.get_images())
 
     def test_get_marketplace_images(self):
         self.provider.all_images = False
-        marketplace_images = {k: v for k, v in self.expected_images.items()
-                              if v.get('image_marketplace_id')}
-        self.assertItemsEqual(marketplace_images.keys(),
-                              self.provider.get_images().keys())
+        marketplace_images = {
+            k: v
+            for k, v in self.expected_images.items()
+            if v.get("image_marketplace_id")
+        }
+        self.assertItemsEqual(
+            marketplace_images.keys(), self.provider.get_images().keys()
+        )
 
     def test_get_templates(self):
         self.assertDictEqual({}, self.provider.get_templates())
@@ -156,10 +162,10 @@ class OpenNebulaROCCIProviderTest(OpenNebulaBaseProviderTest):
         super(OpenNebulaROCCIProviderTest, self).__init__(*args, **kwargs)
         self.provider_class = opennebula.OpenNebulaROCCIProvider
         self.expected_images = FAKES.opennebula_rocci_provider_expected_images
-        self.expected_templates = \
-            FAKES.opennebula_rocci_provider_expected_templates
-        self.expected_templates_remote = \
+        self.expected_templates = FAKES.opennebula_rocci_provider_expected_templates
+        self.expected_templates_remote = (
             FAKES.opennebula_rocci_provider_expected_templates_remote
+        )
 
     def setUp(self):
         super(OpenNebulaROCCIProviderTest, self).setUp()
@@ -179,23 +185,29 @@ class OpenNebulaROCCIProviderTest(OpenNebulaBaseProviderTest):
                 self.static.get_template_defaults.return_value = {}
                 self.server_proxy = mock.Mock()
                 self.server_proxy.one.templatepool.info.return_value = (
-                    'OK', FAKES.templatepool)
+                    "OK",
+                    FAKES.templatepool,
+                )
                 self.server_proxy.one.imagepool.info.return_value = (
-                    'OK', FAKES.imagepool)
+                    "OK",
+                    FAKES.imagepool,
+                )
                 self.server_proxy.one.documentpool.info.return_value = (
-                    'OK', FAKES.documentpool)
+                    "OK",
+                    FAKES.documentpool,
+                )
 
         class Opts(object):
-            on_auth = 'foo'
-            on_rpcxml_endpoint = 'bar'
+            on_auth = "foo"
+            on_rpcxml_endpoint = "bar"
             rocci_template_dir = FAKES.rocci_dir
             rocci_remote_templates = False
             all_images = True
 
         class OptsRemote(object):
-            on_auth = 'foo'
-            on_rpcxml_endpoint = 'bar'
-            rocci_template_dir = ''
+            on_auth = "foo"
+            on_rpcxml_endpoint = "bar"
+            rocci_template_dir = ""
             rocci_remote_templates = True
             all_images = True
 
@@ -203,11 +215,9 @@ class OpenNebulaROCCIProviderTest(OpenNebulaBaseProviderTest):
         self.provider_remote = FakeProvider(OptsRemote())
 
     def test_get_templates(self):
-        self.assertDictEqual(
-            self.expected_templates,
-            self.provider.get_templates())
+        self.assertDictEqual(self.expected_templates, self.provider.get_templates())
 
     def test_get_templates_remote(self):
         self.assertDictEqual(
-            self.expected_templates_remote,
-            self.provider_remote.get_templates())
+            self.expected_templates_remote, self.provider_remote.get_templates()
+        )
