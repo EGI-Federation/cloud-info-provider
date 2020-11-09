@@ -7,6 +7,7 @@ class BaseProviderTest(base.TestCase):
     def setUp(self):
         class Opts(object):
             debug = None
+
         super(BaseProviderTest, self).setUp()
         self.provider = cloud_info_provider.providers.base.BaseProvider(Opts())
 
@@ -35,20 +36,19 @@ class BaseProviderTest(base.TestCase):
         self.assertEqual({}, self.provider.get_compute_quotas())
 
     def test_get_goc_info_no_svc(self):
-        self.assertEqual({}, self.provider.get_goc_info('baz'))
+        self.assertEqual({}, self.provider.get_goc_info("baz"))
 
     def test_get_goc_info(self):
-        self.provider.goc_service_type = 'svc'
+        self.provider.goc_service_type = "svc"
         with mock.patch(
-            'cloud_info_provider.providers.gocdb.find_in_gocdb'
+            "cloud_info_provider.providers.gocdb.find_in_gocdb"
         ) as m_goc_find:
-            m_goc_find.return_value = {'foo': 'bar'}
-            self.provider.get_goc_info('baz')
-            info = self.provider.get_goc_info('baz')
-            self.assertEqual({'baz': {'foo': 'bar'}}, self.provider._goc_info)
-            self.assertEqual({'foo': 'bar'}, info)
-            self.assertEqual('baz', self.provider._last_goc_url)
+            m_goc_find.return_value = {"foo": "bar"}
+            self.provider.get_goc_info("baz")
+            info = self.provider.get_goc_info("baz")
+            self.assertEqual({"baz": {"foo": "bar"}}, self.provider._goc_info)
+            self.assertEqual({"foo": "bar"}, info)
+            self.assertEqual("baz", self.provider._last_goc_url)
             info = self.provider.get_goc_info()
-            m_goc_find.assert_called_once_with(
-                'baz', 'svc', False)
-            self.assertEqual({'foo': 'bar'}, info)
+            m_goc_find.assert_called_once_with("baz", "svc", False)
+            self.assertEqual({"foo": "bar"}, info)
