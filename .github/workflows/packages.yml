@@ -1,8 +1,8 @@
 name: Build packages
 
 on:
-  pull-request:
   push:
+  pull_request:
 
 jobs:
   sdist:
