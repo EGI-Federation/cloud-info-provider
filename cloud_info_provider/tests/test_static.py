@@ -356,7 +356,7 @@ class StaticProviderTest(base.TestCase):
         yaml = {
             "compute": {
                 "images": {
-                    "defaults": {"platform": "amd64",},
+                    "defaults": {"platform": "amd64"},
                     "os#fooid": {
                         "name": "Foo Image",
                         "version": 1.0,
