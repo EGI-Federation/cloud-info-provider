@@ -81,6 +81,8 @@ jobs:
         debuild --no-tgz-check clean binary
         cd ../../debs/cloud-info-provider-opennebula
         debuild --no-tgz-check clean binary
+        cd ../..
+        ls -lR 
     - name: Upload debs
       uses: actions/upload-artifact@v2
       with:
@@ -92,16 +94,16 @@ jobs:
     name: Upload Release Asset
     runs-on: ubuntu-latest
     steps:
-#      - name: Create Release
-#        id: create_release
-#        uses: actions/create-release@v1
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        with:
-#          tag_name: ${{ github.ref }}
-#          release_name: Release ${{ github.ref }}
-#          draft: false
-#          prerelease: false
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
       - uses: actions/download-artifact@v2
         with:
           name: debs
@@ -111,13 +113,64 @@ jobs:
       - name: Upload base rpm 
         run: |
           ls -Ra
-#      - name: Upload base rpm 
-#        id: upload-release-asset
-#        uses: actions/upload-release-asset@v1
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        with:
-#          upload_url: ${{ steps.create_release.outputs.upload_url }}
-#          asset_path: ./my-artifact.zip
-#          asset_name: my-artifact.zip
-#          asset_content_type: application/zip
+      - name: Upload base rpm 
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./cloud-info-provider-${{ github.ref }}-1.el7.noarch.rpm
+          asset_name: cloud-info-provider-${{ github.ref }}-1.el7.noarch.rpm
+          asset_content_type: application/zip
+      - name: Upload opennebula rpm 
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./cloud-info-provider-opennebula-${{ github.ref }}-1.el7.noarch.rpm
+          asset_name: cloud-info-provider-opennebula-${{ github.ref }}-1.el7.noarch.rpm
+          asset_content_type: application/zip
+      - name: Upload openstack rpm 
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./cloud-info-provider-openstack-${{ github.ref }}-1.el7.noarch.rpm
+          asset_name: cloud-info-provider-openstack-${{ github.ref }}-1.el7.noarch.rpm
+          asset_content_type: application/zip
+      - name: Upload base deb 
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./python-cloud-info-provider_${{ github.ref }}-1_all.deb
+          asset_name: python-cloud-info-provider_${{ github.ref }}-1_all.deb
+          asset_content_type: application/zip
+      - name: Upload opennebula deb 
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./python-cloud-info-provider-opennebula_${{ github.ref }}-1_all.deb
+          asset_name: python-cloud-info-provider-opennebula_${{ github.ref }}-1_all.deb
+          asset_content_type: application/zip
+      - name: Upload openstack deb 
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./python-cloud-info-provider-openstack_${{ github.ref }}-1_all.deb
+          asset_name: python-cloud-info-provider-openstack_${{ github.ref }}-1_all.deb
+          asset_content_type: application/zip
+
