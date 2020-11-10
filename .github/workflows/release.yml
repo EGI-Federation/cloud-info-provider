@@ -82,7 +82,7 @@ jobs:
         cd ../../debs/cloud-info-provider-opennebula
         debuild --no-tgz-check clean binary
         cd ../..
-        ls -lR 
+        ls -lR
     - name: Upload debs
       uses: actions/upload-artifact@v2
       with:
@@ -95,7 +95,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Create Release
-        id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -110,11 +109,10 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: rpms
-      - name: Upload base rpm 
+      - name: Upload base rpm
         run: |
           ls -Ra
-      - name: Upload base rpm 
-        id: upload-release-asset
+      - name: Upload base rpm
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -123,8 +121,7 @@ jobs:
           asset_path: ./cloud-info-provider-${{ github.ref }}-1.el7.noarch.rpm
           asset_name: cloud-info-provider-${{ github.ref }}-1.el7.noarch.rpm
           asset_content_type: application/zip
-      - name: Upload opennebula rpm 
-        id: upload-release-asset
+      - name: Upload opennebula rpm
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -133,8 +130,7 @@ jobs:
           asset_path: ./cloud-info-provider-opennebula-${{ github.ref }}-1.el7.noarch.rpm
           asset_name: cloud-info-provider-opennebula-${{ github.ref }}-1.el7.noarch.rpm
           asset_content_type: application/zip
-      - name: Upload openstack rpm 
-        id: upload-release-asset
+      - name: Upload openstack rpm
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -143,8 +139,7 @@ jobs:
           asset_path: ./cloud-info-provider-openstack-${{ github.ref }}-1.el7.noarch.rpm
           asset_name: cloud-info-provider-openstack-${{ github.ref }}-1.el7.noarch.rpm
           asset_content_type: application/zip
-      - name: Upload base deb 
-        id: upload-release-asset
+      - name: Upload base deb
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -153,8 +148,7 @@ jobs:
           asset_path: ./python-cloud-info-provider_${{ github.ref }}-1_all.deb
           asset_name: python-cloud-info-provider_${{ github.ref }}-1_all.deb
           asset_content_type: application/zip
-      - name: Upload opennebula deb 
-        id: upload-release-asset
+      - name: Upload opennebula deb
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -163,8 +157,7 @@ jobs:
           asset_path: ./python-cloud-info-provider-opennebula_${{ github.ref }}-1_all.deb
           asset_name: python-cloud-info-provider-opennebula_${{ github.ref }}-1_all.deb
           asset_content_type: application/zip
-      - name: Upload openstack deb 
-        id: upload-release-asset
+      - name: Upload openstack deb
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
