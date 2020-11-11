@@ -69,7 +69,7 @@ git commit -am 'Prepare release 0.9.0'
 gh pr create
 # After PR merging
 git tag -m 0.9.0 0.9.0
-git push
+git push --tags
 ```
 
 ## Updating the entry on the AppDB
