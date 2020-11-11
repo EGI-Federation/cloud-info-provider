@@ -41,8 +41,8 @@ done
 ## .zenodo.json
 ## Requires pandoc!
 zenodo_changes=$(sed -e "/^## \[$new_release\]$/,/^##/!d;//d;/^$/d" CHANGELOG | \
-	         pandoc --from gfm --to html | \
-	         tr -s "\n" " ")
+                 pandoc --from gfm --to html | \
+                 tr -s "\n" " ")
 
 jq ".version = \"$new_release\" | \
     .title = \"EGI-Foundation/cloud-info-provider: $new_release\" | \
