@@ -15,3 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update list of requirements for CentOS7 RPM building (#183) (Pablo Orviz)
 
 ## [0.12.0]
+
+- Refactor SSL checks (#175). (Enol Fernández)
+- Do not fail if JSON cannot be decoded (#176). (Enol Fernández)
+- Code Clean-up (#177). (Enol Fernández)
+- Import stdout (default one) and ams publishers (#178). (Enol Fernández)
+- Multiple output plugin are now available (stdout for standard output and ams
+  for Argo Messaging System). OpenNebula sites have to ensure that they
+  publish both to BDII and AMS an update of the configuration and parameters
+  is required (see README.md)
