@@ -7,32 +7,31 @@ be built using Travis and attached to the tag.
 
 Steps:
 
-- Open an issue to track the release process
-- Checking changes since latest tag (using browser or CLI)
-- Agreeing release version
-- Preparing changelog
-  - Provide main changes, with related author(s)
-    - Document changes impacting deployment/configuration/usage
-- Updating AUTHORS as needed
-- Updating zenodo.json as needed
-  - Bump version, description, authors and path to tree (at bottom)
-- Merging a PR for updating build files to bump release version and changelog
-- Creating a Tag in GitHub
-  - Release title == Tag version, in a [semver](https://semver.org/) form like
+1. Open an issue to track the release process
+1. Checking changes since latest tag (using browser or CLI)
+1. Agreeing release version
+1. Preparing changelog
+   - Provide main changes, with related author(s)
+     - Document changes impacting deployment/configuration/usage
+1. Updating AUTHORS as needed
+1. Updating zenodo.json as needed
+   - Bump version, description, authors and path to tree (at bottom)
+1. Merging a PR for updating build files to bump release version and changelog
+1. Creating a Tag in GitHub
+   - Release title == Tag version, in a [semver](https://semver.org/) form like
     0.42.0
-  - Description is the changelog added to the build files
-- Publishing release to
+   - Description is the changelog added to the build files
+1. Publishing release to
   [EGI AppDB](https://appdb.egi.eu/store/software/cloud.info.provider/releases)
-- Presenting release to [EGI UMD Release Team](https://wiki.egi.eu/wiki/URT)
+1. Presenting release to [EGI UMD Release Team](https://wiki.egi.eu/wiki/URT)
 
 ### Doing it from the Command Line Interface
 
 ```console
-# Using hub feature: https://hub.github.com/
-# git must be an alias to hub
+# Using github cli https://cli.github.com/
 
 # Create a new issue
-git create -m 'Release a new pacakge version'
+gh issue create -t "Release new package version"
 # Synchronize fork with upstream
 git fetch upstream
 git rebase upstream/master master
