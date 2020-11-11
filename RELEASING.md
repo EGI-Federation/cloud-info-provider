@@ -12,14 +12,13 @@ Steps:
 1. Agreeing release version
 1. Preparing changelog
    - Provide main changes, with related author(s)
-     - Document changes impacting deployment/configuration/usage
+   - Document changes impacting deployment/configuration/usage
 1. Updating AUTHORS as needed
-1. Updating zenodo.json as needed
-   - Bump version, description, authors and path to tree (at bottom)
+1. Updating rpm specs, debian changelogs and zenodo.json as needed
+   - Bump version, description, authors and path to tree
 1. Merging a PR for updating build files to bump release version and changelog
-1. Creating a Tag in GitHub
-   - Release title == Tag version, in a [semver](https://semver.org/) form like
-    0.42.0
+1. Create a tag in GitHub
+   - Tag should follew [semver](https://semver.org/) form like 0.42.0
    - Description is the changelog added to the build files
 1. Publishing release to
   [EGI AppDB](https://appdb.egi.eu/store/software/cloud.info.provider/releases)
@@ -29,6 +28,8 @@ Steps:
 
 ```console
 # Using github cli https://cli.github.com/
+# And hub feature: https://hub.github.com/
+# git must be an alias to hub
 
 # Create a new issue
 gh issue create -t "Release new package version"
@@ -45,7 +46,10 @@ git compare EGI-Foundation 0.8.3..master
 git log --abbrev-commit 0.8.3..master
 # Prepare a PR to prepare version (0.9.0 here)
 git checkout -b prepare-0.9.0
-# Prepare a complete changelog and add it to the issue as reference
+# Prepare the changelog and add it as a new entry to CHANGELOG
+vim CHANGELOG
+# propagate CHANGELOG to package descriptions
+./bump_release.sh
 # Take care to changes in dependencies and configuration
 # Depending on the changes update relevant packages
 # Debian: debian/changelog: add an entry at the top
@@ -56,19 +60,16 @@ git checkout -b prepare-0.9.0
 # RHEL: rpm/cloud-info-provider.spec
 # RHEL: rpm/cloud-info-provider-opennebula.spec
 # RHEL: rpm/cloud-info-provider-openstack.spec
+# Update Zenodo configuration if needed
 # Update AUTHORS file if needed
 vim AUTHORS
-# Update Zenodo configuration
-# Description, title, version, publication_date, creators
-vim .zenodo.json
 # Commit changes
 git commit -am 'Prepare release 0.9.0'
-# Push new branch to fork
-git push --set-upstream origin prepare-0.9.0
 # Create pull request
-git pull-request
+gh pr create
 # After PR merging
-git release create -m 0.9.0 0.9.0
+git tag -m 0.9.0 0.9.0
+git push
 ```
 
 ## Updating the entry on the AppDB
