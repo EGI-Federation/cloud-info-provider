@@ -2,7 +2,7 @@
 
 # Prepares new release
 
-set -uexo pipefail
+set -ueo pipefail
 
 new_release=$(grep "^## \[[0-9]" CHANGELOG | head -1 | sed -e "s/## \[\(.*\)\]/\1/")
 
@@ -43,5 +43,6 @@ zenodo_changes=$(sed -e "/^## \[$new_release\]$/,/^##/!d;//d;/^$/d" CHANGELOG | 
 jq ".version = \"$new_release\" | \
     .title = \"EGI-Foundation/cloud-info-provider: $new_release\" | \
     .related_identifiers[0].identifier = \"https://github.com/EGI-Foundation/cloud-info-provider/tree/$new_release\" | \
+    .publication_date = \"$(date '+%Y-%m-%d')\" | \
     .description = \"<ul>$zenodo_changes</ul>\"" < .zenodo.json > .zenodo.json.new
 mv .zenodo.json.new .zenodo.json
