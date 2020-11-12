@@ -20,7 +20,6 @@ done
 rm -f "$rpm_changes"
 
 ## Deb packages
-
 for deb in debian/ debs/cloud-info-provider-opennebula/debian/ debs/cloud-info-provider-openstack/debian/ ; do
     deb_changes=$(mktemp)
     pkg=$(head -1 "$deb/changelog" | cut -f1 -d" ")
