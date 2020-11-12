@@ -8,20 +8,20 @@ be built using Travis and attached to the tag.
 Steps:
 
 1. Open an issue to track the release process
-1. Checking changes since latest tag (using browser or CLI)
-1. Agreeing release version
-1. Preparing changelog
+1. Check changes since latest tag (using browser or CLI)
+1. Agree release version
+1. Prepare changelog
    - Provide main changes, with related author(s)
    - Document changes impacting deployment/configuration/usage
-1. Updating AUTHORS as needed
-1. Updating rpm specs, debian changelogs and zenodo.json as needed
+1. Update AUTHORS as needed
+1. Update rpm specs, debian changelogs and zenodo.json as needed
    - Bump version, description, authors and path to tree
-1. Merging a PR for updating build files to bump release version and changelog
+1. Merge a PR for updating build files to bump release version and changelog
 1. Create a tag in GitHub
    - Tag should follow [semver](https://semver.org/) like 0.42.0
-1. Publishing release to
+1. Publish release to
   [EGI AppDB](https://appdb.egi.eu/store/software/cloud.info.provider/releases)
-1. Presenting release to [EGI UMD Release Team](https://wiki.egi.eu/wiki/URT)
+1. Present release to [EGI UMD Release Team](https://wiki.egi.eu/wiki/URT)
 
 ### Doing it from the Command Line Interface
 
