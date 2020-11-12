@@ -18,8 +18,7 @@ Steps:
    - Bump version, description, authors and path to tree
 1. Merging a PR for updating build files to bump release version and changelog
 1. Create a tag in GitHub
-   - Tag should follew [semver](https://semver.org/) form like 0.42.0
-   - Description is the changelog added to the build files
+   - Tag should follow [semver](https://semver.org/) like 0.42.0
 1. Publishing release to
   [EGI AppDB](https://appdb.egi.eu/store/software/cloud.info.provider/releases)
 1. Presenting release to [EGI UMD Release Team](https://wiki.egi.eu/wiki/URT)
