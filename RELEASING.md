@@ -26,7 +26,7 @@ Steps:
 ### Doing it from the Command Line Interface
 
 ```console
-# Using github cli https://cli.github.com/
+# Using GitHub CLI https://cli.github.com/
 # And hub feature: https://hub.github.com/
 # git must be an alias to hub
 
