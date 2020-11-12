@@ -1,8 +1,12 @@
 #!/bin/sh
 
 # Prepares new release
+# Requires pandoc to be available in PATH to do some md to html conversion
 
 set -ue
+
+pandoc -v > /dev/null 2>&1 || \
+    (echo "This script requires pandoc to be available"; exit 1)
 
 new_release=$(grep "^## \[[0-9]" CHANGELOG | head -1 | sed -e "s/## \[\(.*\)\]/\1/")
 
