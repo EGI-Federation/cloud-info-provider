@@ -14,7 +14,7 @@ Steps:
    - Provide main changes, with related author(s)
    - Document changes impacting deployment/configuration/usage
 1. Update AUTHORS as needed
-1. Update rpm specs, debian changelogs and zenodo.json as needed
+1. Update rpm specs, debian changelogs and .zenodo.json as needed
    - Bump version, description, authors and path to tree
 1. Merge a PR for updating build files to bump release version and changelog
 1. Create a tag in GitHub
