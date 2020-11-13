@@ -14,11 +14,10 @@ Steps:
    - Provide main changes, with related author(s)
    - Document changes impacting deployment/configuration/usage
 1. Update AUTHORS as needed
-1. Update rpm specs, debian changelogs and .zenodo.json as needed
-   - Bump version, description, authors and path to tree
-1. Merge a PR for updating build files to bump release version and changelog
-1. Create a tag in GitHub
-   - Tag should follow [semver](https://semver.org/) like 0.42.0
+1. Merge a PR for updating CHANGELOG and any other needed
+   changes for the release
+   - Version should follow [semver](https://semver.org/) like 0.42.0
+1. Push a `release` event to GitHub
 1. Publish release to
   [EGI AppDB](https://appdb.egi.eu/store/software/cloud.info.provider/releases)
 1. Present release to [EGI UMD Release Team](https://wiki.egi.eu/wiki/URT)
@@ -47,15 +46,12 @@ git log --abbrev-commit 0.8.3..master
 git checkout -b prepare-0.9.0
 # Prepare the changelog and add it as a new entry to CHANGELOG
 vim CHANGELOG
-# propagate CHANGELOG to package descriptions
-./bump_release.sh
 # Take care to changes in dependencies and configuration
 # Depending on the changes update relevant packages
-# Debian: debian/changelog: add an entry at the top
 # Debian: dependencies in debian/control files
 # Debian: debs/cloud-info-provider-opennebula/debian/changelog
 # Debian: debs/cloud-info-provider-openstack/debian/changelog
-# RHEL: bump version and dependencies at the top, add entry at the bottom
+# RHEL: chande dependencies at the top
 # RHEL: rpm/cloud-info-provider.spec
 # RHEL: rpm/cloud-info-provider-opennebula.spec
 # RHEL: rpm/cloud-info-provider-openstack.spec
@@ -67,8 +63,12 @@ git commit -am 'Prepare release 0.9.0'
 # Create pull request
 gh pr create
 # After PR merging
-git tag -m 0.9.0 0.9.0
-git push --tags
+curl \
+    -X POST \
+    -H "Accept: application/vnd.github.v3+json" \
+    -H "Authorization: token $GITHUB_TOKEN" \
+    https://api.github.com/repos/EGI-Foundation/cloud-info-provider/dispatches \
+    -d '{"event_type":"release"}'
 ```
 
 ## Updating the entry on the AppDB
