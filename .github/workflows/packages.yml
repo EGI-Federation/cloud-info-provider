@@ -1,8 +1,6 @@
-name: Create packages and release
+name: Create packages and test installation
 
 on:
-  release:
-    types: [published]
   pull_request:
 
 jobs:
@@ -159,73 +157,3 @@ jobs:
       run: |
         apt-get update
         apt-get install -y ./python-cloud-info-provider_*.deb ./python-cloud-info-provider-opennebula_*.deb
-
-  release:
-    needs: [sdist, ubuntu, centos7]
-    name: Upload Release Asset
-    runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'release' }}
-    steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: debs
-      - uses: actions/download-artifact@v2
-        with:
-          name: rpms
-      - name: Upload base rpm
-        run: |
-          ls -Ra
-      - name: Upload base rpm
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.upload_url }}
-          asset_path: ./cloud-info-provider-${{ needs.sdist.outputs.version }}-1.el7.noarch.rpm
-          asset_name: cloud-info-provider-${{ needs.sdist.outputs.version }}-1.el7.noarch.rpm
-          asset_content_type: application/octet-stream
-      - name: Upload opennebula rpm
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.upload_url }}
-          asset_path: ./cloud-info-provider-opennebula-${{ needs.sdist.outputs.version }}-1.el7.noarch.rpm
-          asset_name: cloud-info-provider-opennebula-${{ needs.sdist.outputs.version }}-1.el7.noarch.rpm
-          asset_content_type: application/octet-stream
-      - name: Upload openstack rpm
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.upload_url }}
-          asset_path: ./cloud-info-provider-openstack-${{ needs.sdist.outputs.version }}-1.el7.noarch.rpm
-          asset_name: cloud-info-provider-openstack-${{ needs.sdist.outputs.version }}-1.el7.noarch.rpm
-          asset_content_type: application/octet-stream
-      - name: Upload base deb
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.upload_url }}
-          asset_path: ./python-cloud-info-provider_${{ needs.sdist.outputs.version }}-1_all.deb
-          asset_name: python-cloud-info-provider_${{ needs.sdist.outputs.version }}-1_all.deb
-          asset_content_type: application/vnd.debian.binary-package
-      - name: Upload opennebula deb
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.upload_url }}
-          asset_path: ./python-cloud-info-provider-opennebula_${{ needs.sdist.outputs.version }}-1_all.deb
-          asset_name: python-cloud-info-provider-opennebula_${{ needs.sdist.outputs.version }}-1_all.deb
-          asset_content_type: application/vnd.debian.binary-package
-      - name: Upload openstack deb
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.upload_url }}
-          asset_path: ./python-cloud-info-provider-openstack_${{ needs.sdist.outputs.version }}-1_all.deb
-          asset_name: python-cloud-info-provider-openstack_${{ needs.sdist.outputs.version }}-1_all.deb
-          asset_content_type: application/vnd.debian.binary-package
