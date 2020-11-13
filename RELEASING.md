@@ -51,7 +51,7 @@ vim CHANGELOG
 # Debian: dependencies in debian/control files
 # Debian: debs/cloud-info-provider-opennebula/debian/changelog
 # Debian: debs/cloud-info-provider-openstack/debian/changelog
-# RHEL: chande dependencies at the top
+# RHEL: change dependencies at the top
 # RHEL: rpm/cloud-info-provider.spec
 # RHEL: rpm/cloud-info-provider-opennebula.spec
 # RHEL: rpm/cloud-info-provider-openstack.spec
