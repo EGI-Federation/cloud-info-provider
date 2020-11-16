@@ -18,6 +18,10 @@ Steps:
    changes for the release
    - Version should follow [semver](https://semver.org/) like 0.42.0
 1. Push a `release` event to GitHub
+   - Requires a valid personal token that can be obtained as described
+     [here](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token)
+
+Optionally:
 1. Publish release to
   [EGI AppDB](https://appdb.egi.eu/store/software/cloud.info.provider/releases)
 1. Present release to [EGI UMD Release Team](https://wiki.egi.eu/wiki/URT)
