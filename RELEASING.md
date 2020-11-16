@@ -20,10 +20,6 @@ Steps:
 1. Push a `release` event to GitHub
    - Requires a valid personal token that can be obtained as described
      [here](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token)
-
-Optionally:
-1. Publish release to
-  [EGI AppDB](https://appdb.egi.eu/store/software/cloud.info.provider/releases)
 1. Present release to [EGI UMD Release Team](https://wiki.egi.eu/wiki/URT)
 
 ### Doing it from the Command Line Interface
@@ -75,16 +71,6 @@ curl \
     -d '{"event_type":"release"}'
 ```
 
-## Updating the entry on the AppDB
-
-- Sign in to
-  [project page in AppDB](https://appdb.egi.eu/store/software/cloud.info.provider/releases/)
-- Create a new update (or a new release if appropriate)
-  - Document description, release notes and changelog (same as the one used on
-    GitHub) as needed.
-  - Upload files/packages downloaded from the GitHub release
-  - Publish release
-
 ## Submitting the package to EGI Cloud Middleware Distribution (CMD)
 
 To distribute the `cloud-info-provider` as part of
@@ -98,5 +84,5 @@ it's required to follow the
   - Type of issue: Middleware
   - Assign to support unit: `EGI Software Provisioning Support`
   - Version number
-  - Link to release notes (GitHub and AppDB release pages)
+  - Link to release notes (GitHub release pages)
   - List of packages to release in CMD
