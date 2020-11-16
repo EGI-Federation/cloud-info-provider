@@ -7,32 +7,30 @@ be built using Travis and attached to the tag.
 
 Steps:
 
-- Open an issue to track the release process
-- Checking changes since latest tag (using browser or CLI)
-- Agreeing release version
-- Preparing changelog
-  - Provide main changes, with related author(s)
-    - Document changes impacting deployment/configuration/usage
-- Updating AUTHORS as needed
-- Updating zenodo.json as needed
-  - Bump version, description, authors and path to tree (at bottom)
-- Merging a PR for updating build files to bump release version and changelog
-- Creating a Tag in GitHub
-  - Release title == Tag version, in a [semver](https://semver.org/) form like
-    0.42.0
-  - Description is the changelog added to the build files
-- Publishing release to
-  [EGI AppDB](https://appdb.egi.eu/store/software/cloud.info.provider/releases)
-- Presenting release to [EGI UMD Release Team](https://wiki.egi.eu/wiki/URT)
+1. Open an issue to track the release process
+1. Check changes since latest tag (using browser or CLI)
+1. Agree release version
+1. Prepare changelog
+   - Provide main changes, with related author(s)
+   - Document changes impacting deployment/configuration/usage
+1. Update AUTHORS as needed
+1. Merge a PR for updating CHANGELOG and any other needed
+   changes for the release
+   - Version should follow [semver](https://semver.org/) like 0.42.0
+1. Push a `release` event to GitHub
+   - Requires a valid personal token that can be obtained as described
+     [here](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token)
+1. Present release to [EGI UMD Release Team](https://wiki.egi.eu/wiki/URT)
 
 ### Doing it from the Command Line Interface
 
 ```console
-# Using hub feature: https://hub.github.com/
+# Using GitHub CLI https://cli.github.com/
+# And hub feature: https://hub.github.com/
 # git must be an alias to hub
 
 # Create a new issue
-git create -m 'Release a new pacakge version'
+gh issue create -t "Release new package version"
 # Synchronize fork with upstream
 git fetch upstream
 git rebase upstream/master master
@@ -46,41 +44,32 @@ git compare EGI-Foundation 0.8.3..master
 git log --abbrev-commit 0.8.3..master
 # Prepare a PR to prepare version (0.9.0 here)
 git checkout -b prepare-0.9.0
-# Prepare a complete changelog and add it to the issue as reference
+# Prepare the changelog and add it as a new entry to CHANGELOG
+vim CHANGELOG
 # Take care to changes in dependencies and configuration
 # Depending on the changes update relevant packages
-# Debian: debian/changelog: add an entry at the top
 # Debian: dependencies in debian/control files
 # Debian: debs/cloud-info-provider-opennebula/debian/changelog
 # Debian: debs/cloud-info-provider-openstack/debian/changelog
-# RHEL: bump version and dependencies at the top, add entry at the bottom
+# RHEL: change dependencies at the top
 # RHEL: rpm/cloud-info-provider.spec
 # RHEL: rpm/cloud-info-provider-opennebula.spec
 # RHEL: rpm/cloud-info-provider-openstack.spec
+# Update Zenodo configuration if needed
 # Update AUTHORS file if needed
 vim AUTHORS
-# Update Zenodo configuration
-# Description, title, version, publication_date, creators
-vim .zenodo.json
 # Commit changes
 git commit -am 'Prepare release 0.9.0'
-# Push new branch to fork
-git push --set-upstream origin prepare-0.9.0
 # Create pull request
-git pull-request
+gh pr create
 # After PR merging
-git release create -m 0.9.0 0.9.0
+curl \
+    -X POST \
+    -H "Accept: application/vnd.github.v3+json" \
+    -H "Authorization: token $GITHUB_TOKEN" \
+    https://api.github.com/repos/EGI-Foundation/cloud-info-provider/dispatches \
+    -d '{"event_type":"release"}'
 ```
-
-## Updating the entry on the AppDB
-
-- Sign in to
-  [project page in AppDB](https://appdb.egi.eu/store/software/cloud.info.provider/releases/)
-- Create a new update (or a new release if appropriate)
-  - Document description, release notes and changelog (same as the one used on
-    GitHub) as needed.
-  - Upload files/packages downloaded from the GitHub release
-  - Publish release
 
 ## Submitting the package to EGI Cloud Middleware Distribution (CMD)
 
@@ -95,5 +84,5 @@ it's required to follow the
   - Type of issue: Middleware
   - Assign to support unit: `EGI Software Provisioning Support`
   - Version number
-  - Link to release notes (GitHub and AppDB release pages)
+  - Link to release notes (GitHub release pages)
   - List of packages to release in CMD

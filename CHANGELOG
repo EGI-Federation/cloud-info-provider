@@ -1,0 +1,26 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+- Migrate from travis to GitHub Actions (#195, #198) (Enol Fernández)
+- Reformatted code with black (#196) (Enol Fernández)
+- Move templates inside the module (#194) (Enol Fernández)
+- Publish project name and project domain name (#190) (Enol Fernández)
+- Improve py3 compatibility (#189, #192) (Enol Fernández)
+- Add EOSC-hub funding acknowledgement as requested by project (#188) (Enol Fernández)
+- Update list of requirements for CentOS7 RPM building (#183) (Pablo Orviz)
+
+## [0.12.0]
+
+- Refactor SSL checks (#175). (Enol Fernández)
+- Do not fail if JSON cannot be decoded (#176). (Enol Fernández)
+- Code Clean-up (#177). (Enol Fernández)
+- Import stdout (default one) and ams publishers (#178). (Enol Fernández)
+- Multiple output plugin are now available (stdout for standard output and ams
+  for Argo Messaging System). OpenNebula sites have to ensure that they
+  publish both to BDII and AMS an update of the configuration and parameters
+  is required (see README.md)
