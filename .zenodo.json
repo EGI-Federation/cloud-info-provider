@@ -1,22 +1,29 @@
 {
   "license": "Apache-2.0",
-  "description": "<ul><li>Refactor SSL checks (#175). (Enol Fernández)</li><li>Refactor SSL checks (#175). (Enol Fernández)</li><li>Code Clean-up (#177). (Enol Fernández)</li><li>Import stdout (default one) and ams publishers (#178). (Enol Fernández)</li></ul>",
+  "description": "<ul> <li>Migrate from travis to GitHub Actions (#195, #198) (Enol Fernández)</li> <li>Reformatted code with black (#196) (Enol Fernández)</li> <li>Move templates inside the module (#194) (Enol Fernández)</li> <li>Publish project name and project domain name (#190) (Enol Fernández)</li> <li>Improve py3 compatibility (#189, #192) (Enol Fernández)</li> <li>Add EOSC-hub funding acknowledgement as requested by project (#188) (Enol Fernández)</li> <li>Update list of requirements for CentOS7 RPM building (#183) (Pablo Orviz)</li> </ul> ",
   "language": "eng",
-  "title": "EGI-Foundation/cloud-info-provider: 0.12.0",
-  "keywords": ["bdii", "grid", "information", "cloud", "EGI", "ams"],
+  "title": "EGI-Foundation/cloud-info-provider: 0.12.1",
+  "keywords": [
+    "bdii",
+    "grid",
+    "information",
+    "cloud",
+    "EGI",
+    "ams"
+  ],
   "grants": [
     {
       "id": "10.13039/501100000780::777536"
     }
   ],
   "upload_type": "software",
-  "version": "0.12.0",
+  "version": "0.12.1",
   "communities": [
     {
       "identifier": "egi-foundation"
     }
   ],
-  "publication_date": "2019-11-06",
+  "publication_date": "2020-11-17",
   "creators": [
     {
       "orcid": "0000-0002-5686-3193",
@@ -31,7 +38,7 @@
     {
       "orcid": "0000-0002-5152-5902",
       "affiliation": "EGI-Foundation",
-      "name": "Enol Fern\u00e1ndez"
+      "name": "Enol Fernández"
     },
     {
       "affiliation": "CESNET",
@@ -47,8 +54,8 @@
       "name": "Pablo Orviz"
     },
     {
-      "affiliation": "Forschungszentrum J\u00fclich GmbH",
-      "name": "Bj\u00f6rn Hagemeier"
+      "affiliation": "Forschungszentrum Jülich GmbH",
+      "name": "Björn Hagemeier"
     },
     {
       "name": "Ruben Diaz"
@@ -59,14 +66,14 @@
     },
     {
       "affiliation": "adimobile",
-      "name": "Carlos Gimeno Y\u00e1\u00f1ez"
+      "name": "Carlos Gimeno Yáñez"
     }
   ],
   "access_right": "open",
   "related_identifiers": [
     {
       "scheme": "url",
-      "identifier": "https://github.com/EGI-Foundation/cloud-info-provider/tree/0.11.5",
+      "identifier": "https://github.com/EGI-Foundation/cloud-info-provider/tree/0.12.1",
       "relation": "isSupplementTo"
     },
     {
