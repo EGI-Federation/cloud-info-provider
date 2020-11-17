@@ -70,9 +70,9 @@ curl \
     -H "Authorization: token $GITHUB_TOKEN" \
     https://api.github.com/repos/EGI-Foundation/cloud-info-provider/dispatches \
     -d '{"event_type":"release"}'
-```
 # Merge PR
 gh pr merge --squash <pr number>
+```
 
 ## Submitting the package to EGI Cloud Middleware Distribution (CMD)
 
