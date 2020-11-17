@@ -20,6 +20,7 @@ Steps:
 1. Push a `release` event to GitHub
    - Requires a valid personal token that can be obtained as described
      [here](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token)
+1. Merge PR created by the event
 1. Present release to [EGI UMD Release Team](https://wiki.egi.eu/wiki/URT)
 
 ### Doing it from the Command Line Interface
@@ -70,6 +71,8 @@ curl \
     https://api.github.com/repos/EGI-Foundation/cloud-info-provider/dispatches \
     -d '{"event_type":"release"}'
 ```
+# Merge PR
+gh pr merge --squash <pr number>
 
 ## Submitting the package to EGI Cloud Middleware Distribution (CMD)
 
