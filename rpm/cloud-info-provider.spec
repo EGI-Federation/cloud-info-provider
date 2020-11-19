@@ -67,6 +67,14 @@ rm -rf $RPM_BUILD_ROOT
 - Improve py3 compatibility (#189, #192) (Enol Fernández)
 - Add EOSC-hub funding acknowledgement as requested by project (#188) (Enol Fernández)
 - Update list of requirements for CentOS7 RPM building (#183) (Pablo Orviz)
+* Thu Nov 19 2020 egibot <egibot@egi.eu> 0.12.1
+- Migrate from travis to GitHub Actions (#195, #198) (Enol Fernández)
+- Reformatted code with black (#196) (Enol Fernández)
+- Move templates inside the module (#194) (Enol Fernández)
+- Publish project name and project domain name (#190) (Enol Fernández)
+- Improve py3 compatibility (#189, #192) (Enol Fernández)
+- Add EOSC-hub funding acknowledgement as requested by project (#188) (Enol Fernández)
+- Update list of requirements for CentOS7 RPM building (#183) (Pablo Orviz)
 * Wed Nov 06 2019 Baptiste Grenier <baptiste.grenier@egi.eu> 0.12.0
 - Refactor SSL checks (#175). (Enol Fernández)
 - Do not fail if JSON cannot be decoded (#176). (Enol Fernández)

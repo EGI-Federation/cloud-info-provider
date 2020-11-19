@@ -8,6 +8,18 @@ python-cloud-info-provider-opennebula (0.12.1-1) xenial; urgency=medium
  * Add EOSC-hub funding acknowledgement as requested by project (#188) (Enol Fernández)
  * Update list of requirements for CentOS7 RPM building (#183) (Pablo Orviz)
 
+ -- egibot <egibot@egi.eu> Thu, 19 Nov 2020 09:50:33 +0000
+
+python-cloud-info-provider-opennebula (0.12.1-1) xenial; urgency=medium
+
+ * Migrate from travis to GitHub Actions (#195, #198) (Enol Fernández)
+ * Reformatted code with black (#196) (Enol Fernández)
+ * Move templates inside the module (#194) (Enol Fernández)
+ * Publish project name and project domain name (#190) (Enol Fernández)
+ * Improve py3 compatibility (#189, #192) (Enol Fernández)
+ * Add EOSC-hub funding acknowledgement as requested by project (#188) (Enol Fernández)
+ * Update list of requirements for CentOS7 RPM building (#183) (Pablo Orviz)
+
  -- egibot <egibot@egi.eu> Thu, 19 Nov 2020 09:41:30 +0000
 
 python-cloud-info-provider-opennebula (0.12.0-1) xenial; urgency=medium
