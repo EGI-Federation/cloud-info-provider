@@ -1,4 +1,5 @@
 import abc
+import logging
 import os
 
 import mako.exceptions
@@ -42,7 +43,8 @@ class BaseFormatter(object):
         try:
             return tpl.render(attributes=info)
         except Exception:
-            return mako.exceptions.text_error_template().render()
+            logging.error(mako.exceptions.text_error_template().render())
+            raise
 
     def format(self, opts, providers, auth_refreshers):
         output = []
