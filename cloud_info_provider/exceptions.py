@@ -1,11 +1,10 @@
 import logging
 
-
 logger = logging.getLogger(__name__)
 
 
 class CloudInfoException(Exception):
-    msg_fmt = 'An unknown exception occurred.'
+    msg_fmt = "An unknown exception occurred."
 
     def __init__(self, message=None, **kwargs):
         self.kwargs = kwargs
@@ -16,9 +15,9 @@ class CloudInfoException(Exception):
             except Exception:
                 # kwargs doesn't match a variable in the message
                 # log the issue and the kwargs
-                logger.exception('Exception in string format operation')
+                logger.exception("Exception in string format operation")
                 for name, value in kwargs.items():
-                    logger.error('%s: %s' % (name, value))
+                    logger.error("%s: %s" % (name, value))
                 raise
 
         super(CloudInfoException, self).__init__(message)
@@ -45,4 +44,8 @@ class OnedataProviderException(CloudInfoException):
 
 
 class CMDBFormatterException(CloudInfoException):
+    pass
+
+
+class RefresherException(CloudInfoException):
     pass

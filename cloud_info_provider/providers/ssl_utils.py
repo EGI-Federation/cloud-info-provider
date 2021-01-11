@@ -1,15 +1,14 @@
 import logging
 import socket
 
-from six.moves.urllib.parse import urlparse
-
 from OpenSSL import SSL
+from six.moves.urllib.parse import urlparse
 
 logger = logging.getLogger(__name__)
 
 
 def get_dn(x509name):
-    '''Return the DN of an X509Name object.'''
+    """Return the DN of an X509Name object."""
     # str(X509Name) is something like <X509Name object 'DN'>
     obj_name = str(x509name)
     start = obj_name.find("'") + 1
@@ -17,13 +16,9 @@ def get_dn(x509name):
     return obj_name[start:end]
 
 
-def get_endpoint_ca_information(endpoint_url, insecure=False, cafile=None,
-                                capath='/etc/grid-security/certificates'):
-    '''Return certificate issuer and trusted CAs list of HTTPS endpoint.'''
-    ca_info = {
-        'issuer': 'UNKNOWN',
-        'trusted_cas': ['UNKNOWN']
-    }
+def get_endpoint_ca_information(endpoint_url, insecure=False):
+    """Return certificate issuer and trusted CAs list of HTTPS endpoint."""
+    ca_info = {"issuer": "UNKNOWN", "trusted_cas": ["UNKNOWN"]}
 
     verify = SSL.VERIFY_NONE if insecure else SSL.VERIFY_PEER
 
@@ -31,7 +26,7 @@ def get_endpoint_ca_information(endpoint_url, insecure=False, cafile=None,
     host = urlparse(endpoint_url).hostname
     port = urlparse(endpoint_url).port
 
-    if scheme != 'https':
+    if scheme != "https":
         return ca_info
 
     # use default port for https
@@ -43,15 +38,14 @@ def get_endpoint_ca_information(endpoint_url, insecure=False, cafile=None,
         ctx.set_options(SSL.OP_NO_SSLv2)
         ctx.set_options(SSL.OP_NO_SSLv3)
         ctx.set_verify(verify, lambda conn, cert, errno, depth, ok: ok)
-        if not insecure:
-            ctx.load_verify_locations(cafile=cafile, capath=capath)
+        ctx.set_default_verify_paths()
 
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client.connect((host, port))
 
         client_ssl = SSL.Connection(ctx, client)
         client_ssl.set_connect_state()
-        client_ssl.set_tlsext_host_name(host)
+        client_ssl.set_tlsext_host_name(host.encode("utf-8"))
         client_ssl.do_handshake()
 
         cert = client_ssl.get_peer_certificate()
@@ -63,9 +57,9 @@ def get_endpoint_ca_information(endpoint_url, insecure=False, cafile=None,
         client_ssl.shutdown()
         client_ssl.close()
 
-        ca_info['issuer'] = issuer
-        ca_info['trusted_cas'] = trusted_cas
+        ca_info["issuer"] = issuer
+        ca_info["trusted_cas"] = trusted_cas
     except SSL.Error as e:
-        logger.warning('Issue when getting CA info from endpoint: %s', e)
+        logger.warning("Issue when getting CA info from endpoint: %s", e)
 
     return ca_info

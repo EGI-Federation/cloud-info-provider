@@ -1,3 +1,40 @@
+python-cloud-info-provider-opennebula (0.12.1-1) xenial; urgency=medium
+
+ * Migrate from travis to GitHub Actions (#195, #198) (Enol Fernández)
+ * Reformatted code with black (#196) (Enol Fernández)
+ * Move templates inside the module (#194) (Enol Fernández)
+ * Publish project name and project domain name (#190) (Enol Fernández)
+ * Improve py3 compatibility (#189, #192) (Enol Fernández)
+ * Add EOSC-hub funding acknowledgement as requested by project (#188) (Enol Fernández)
+ * Update list of requirements for CentOS7 RPM building (#183) (Pablo Orviz)
+
+ -- egibot <egibot@egi.eu> Thu, 19 Nov 2020 09:41:30 +0000
+
+python-cloud-info-provider-opennebula (0.12.0-1) xenial; urgency=medium
+
+  [ Enol Fernández ]
+  * Refactor SSL checks (#175).
+  * Code Clean-up (#177).
+
+ -- Baptiste Grenier <baptiste.grenier@egi.eu>  Wed, 06 Nov 2019 09:38:10 +0100
+
+python-cloud-info-provider-opennebula (0.11.5-1) xenial; urgency=medium
+
+  [ Enol Fernández ]
+  * Add compatibility with CentOS 7 libraries.
+  * Fix GOCDB information for OpenNebula provider.
+  * Use system CAs everywhere.
+  * Fix OpenNebula provider initialisation.
+
+ -- Enol Fernández <enol.fernandez@egi.eu>  Thu, 04 Oct 2019 09:03:10 +0100
+
+python-cloud-info-provider-opennebula (0.11.4-1) xenial; urgency=medium
+
+  [ Enol Fernández ]
+  * Add external authentication plugin support.
+
+ -- Enol Fernández <enol.fernandez@egi.eu>  Tue, 23 Jul 2019 09:27:33 +0100
+
 python-cloud-info-provider-opennebula (0.11.3-1) xenial; urgency=medium
 
   [ Baptiste Grenier ]

@@ -1,0 +1,95 @@
+python-cloud-info-provider-openstack (0.12.1-1) xenial; urgency=medium
+
+ * Migrate from travis to GitHub Actions (#195, #198) (Enol Fernández)
+ * Reformatted code with black (#196) (Enol Fernández)
+ * Move templates inside the module (#194) (Enol Fernández)
+ * Publish project name and project domain name (#190) (Enol Fernández)
+ * Improve py3 compatibility (#189, #192) (Enol Fernández)
+ * Add EOSC-hub funding acknowledgement as requested by project (#188) (Enol Fernández)
+ * Update list of requirements for CentOS7 RPM building (#183) (Pablo Orviz)
+
+ -- egibot <egibot@egi.eu> Thu, 19 Nov 2020 09:41:30 +0000
+
+python-cloud-info-provider-openstack (0.12.0-1) xenial; urgency=medium
+
+  [ Enol Fernández ]
+  * Refactor SSL checks (#175).
+  * Code Clean-up (#177).
+
+ -- Baptiste Grenier <baptiste.grenier@egi.eu>  Wed, 06 Nov 2019 09:38:10 +0100
+
+python-cloud-info-provider-openstack (0.11.5-1) xenial; urgency=medium
+
+  [ Enol Fernández ]
+  * Add compatibility with CentOS 7 libraries.
+  * Use system CAs everywhere.
+
+ -- Enol Fernández <enol.fernandez@egi.eu>  Thu, 04 Oct 2019 09:03:10 +0100
+
+python-cloud-info-provider-openstack (0.11.4-1) xenial; urgency=medium
+
+  [ Pablo Orviz ]
+  * Pythonize only for Ruby dict-like strings.
+  * Fix: use is_public=None to fetch both public and private flavors..
+
+  [ Enol Fernández ]
+  * Fix get instances for volume-based instances.
+  * Add external authentication plugin support.
+  * Add OpenID Connect refresh plugin.
+
+ -- Enol Fernández <enol.fernandez@egi.eu>  Tue, 23 Jul 2019 09:27:33 +0100
+
+python-cloud-info-provider-openstack (0.11.3-1) xenial; urgency=medium
+
+  [ Baptiste Grenier ]
+  * Fix handling of network info (#151).
+
+ -- Baptiste Grenier <baptiste.grenier@egi.eu>  Mon, 04 Mar 2019 17:57:33 +0100
+
+python-cloud-info-provider-openstack (0.11.2-1) xenial; urgency=medium
+
+  [ Enol Fernández ]
+  * Bump version.
+
+ -- Enol Fernández <enol.fernandez@egi.eu>  Thu, 31 Jan 2019 09:59:33 +0100
+
+python-cloud-info-provider-openstack (0.11.1-1) xenial; urgency=medium
+
+  [ Baptiste Grenier ]
+  * Bump version.
+
+ -- Baptiste Grenier <baptiste.grenier@egi.eu>  Tue, 29 Jan 2019 17:34:33 +0100
+
+python-cloud-info-provider-openstack (0.11.0-1) xenial; urgency=medium
+
+  * Split OpenStack and OOI providers. (Enol Fernandez)
+  * Review and update output to implement latest GLUE2.1 updates. (Enol Fernandez, Baptiste Grenier)
+
+ -- Baptiste Grenier <baptiste.grenier@egi.eu>  Sun, 27 Jan 2019 19:34:33 +0100
+
+python-cloud-info-provider-openstack (0.10.3-1) xenial; urgency=medium
+
+  * Update description.
+
+ -- Enol Fernández <enol.fernandez@egi.eu>  Wed, 09 Jan 2019 13:45:33 +0100
+
+python-cloud-info-provider-openstack (0.10.2-1) xenial; urgency=medium
+
+  [ Baptiste Grenier ]
+  * Bump version.
+
+ -- Baptiste Grenier <baptiste.grenier@egi.eu>  Mon, 15 Oct 2018 21:55:03 +0200
+
+python-cloud-info-provider-openstack (0.10.0-1) xenial; urgency=medium
+
+  [ Baptiste Grenier ]
+  * Bump version.
+
+ -- Baptiste Grenier <baptiste.grenier@egi.eu>  Mon, 01 Oct 2018 19:21:03 +0200
+
+python-cloud-info-provider-openstack (0.9.1-1) xenial; urgency=medium
+
+  [ Baptiste Grenier ]
+  * First release, numbering aligned to cloud-info-provider package
+
+ -- Baptiste Grenier <baptiste.grenier@egi.eu>  Thu, 21 Jun 2018 10:42:42 +0200

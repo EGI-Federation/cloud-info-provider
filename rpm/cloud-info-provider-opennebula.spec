@@ -4,7 +4,7 @@
 
 Summary: Cloud Information provider meta-package for OpenNebula
 Name: cloud-info-provider-opennebula
-Version: %{_pbr_version}
+Version: 0.12.1
 Release: 1%{?dist}
 Group: Applications/Internet
 License: Apache Software License 2.0
@@ -23,6 +23,24 @@ Install the cloud-information-provider and the Cloud Middleware dependencies.
 %files
 
 %changelog
+* Thu Nov 19 2020 egibot <egibot@egi.eu> 0.12.1
+- Migrate from travis to GitHub Actions (#195, #198) (Enol Fernández)
+- Reformatted code with black (#196) (Enol Fernández)
+- Move templates inside the module (#194) (Enol Fernández)
+- Publish project name and project domain name (#190) (Enol Fernández)
+- Improve py3 compatibility (#189, #192) (Enol Fernández)
+- Add EOSC-hub funding acknowledgement as requested by project (#188) (Enol Fernández)
+- Update list of requirements for CentOS7 RPM building (#183) (Pablo Orviz)
+* Wed Nov 06 2019 Baptiste Grenier <baptiste.grenier@egi.eu> 0.12.0
+- Refactor SSL checks (#175). (Enol Fernández)
+- Code Clean-up (#177). (Enol Fernández)
+* Fri Oct 04 2019 Enol Fernández <enol.fernandez@egi.eu> 0.11.5
+- Add compatibility with CentOS 7 libraries. (Enol Fernández)
+- Fix GOCDB information for OpenNebula provider. (Enol Fernández)
+- Use system CAs everywhere. (Enol Fernández)
+- Fix OpenNebula provider initialisation. (Enol Fernández)
+* Tue Jul 23 2019 Enol Fernández <enol.fernandez@egi.eu> 0.11.4
+- Add external authentication plugin support. (Enol Fernández)
 * Mon Mar 04 2019 Baptiste Grenier <baptiste.grenier@egi.eu> 0.11.3
 - Fix handling of network info (#151). (Baptiste Grenier)
 * Thu Jan 31 2019 Enol Fernández <enol.fernandez@egi.eu> 0.11.2

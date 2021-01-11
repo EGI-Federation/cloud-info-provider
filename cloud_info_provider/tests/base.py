@@ -18,7 +18,7 @@ import os
 import fixtures
 import testtools
 
-_TRUE_VALUES = ('True', 'true', '1', 'yes')
+_TRUE_VALUES = ("True", "true", "1", "yes")
 
 
 class TestCase(testtools.TestCase):
@@ -29,7 +29,7 @@ class TestCase(testtools.TestCase):
         """Run before each test method to initialize test environment."""
 
         super(TestCase, self).setUp()
-        test_timeout = os.environ.get('OS_TEST_TIMEOUT', 0)
+        test_timeout = os.environ.get("OS_TEST_TIMEOUT", 0)
         try:
             test_timeout = int(test_timeout)
         except ValueError:
@@ -38,11 +38,39 @@ class TestCase(testtools.TestCase):
         if test_timeout > 0:
             self.useFixture(fixtures.Timeout(test_timeout, gentle=True))
 
-        if os.environ.get('OS_STDOUT_CAPTURE') in _TRUE_VALUES:
-            stdout = self.useFixture(fixtures.StringStream('stdout')).stream
-            self.useFixture(fixtures.MonkeyPatch('sys.stdout', stdout))
-        if os.environ.get('OS_STDERR_CAPTURE') in _TRUE_VALUES:
-            stderr = self.useFixture(fixtures.StringStream('stderr')).stream
-            self.useFixture(fixtures.MonkeyPatch('sys.stderr', stderr))
+        if os.environ.get("OS_STDOUT_CAPTURE") in _TRUE_VALUES:
+            stdout = self.useFixture(fixtures.StringStream("stdout")).stream
+            self.useFixture(fixtures.MonkeyPatch("sys.stdout", stdout))
+        if os.environ.get("OS_STDERR_CAPTURE") in _TRUE_VALUES:
+            stderr = self.useFixture(fixtures.StringStream("stderr")).stream
+            self.useFixture(fixtures.MonkeyPatch("sys.stderr", stderr))
 
         self.log_fixture = self.useFixture(fixtures.FakeLogger())
+
+
+class FakeBDIIOpts(object):
+    middleware = "foo middleware"
+    format = ""
+    yaml_file = None
+    template_dir = ""
+    template_extension = ""
+
+
+class FakeProvider(object):
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def method(self):
+        pass
+
+
+class BaseTest(TestCase):
+    def setUp(self):
+        super(BaseTest, self).setUp()
+
+        self.providers = {"static": FakeProvider, "foo middleware": FakeProvider}
+
+        self.opts = FakeBDIIOpts()
+        cwd = os.path.dirname(__file__)
+        template_dir = os.path.join(cwd, "..", "..", "etc", "templates")
+        self.opts.template_dir = template_dir

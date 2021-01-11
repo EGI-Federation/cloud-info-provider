@@ -228,7 +228,7 @@ GLUE2EndpointTrustedCA: ${trusted_ca}
       share_max_accelerators = static_compute_info['compute_max_accelerators']
 
     quotas = share['quotas']
-    if quotas.has_key('instances'):
+    if 'instances' in quotas:
         share_max_vm = quotas['instances']
     else:
         share_max_vm = False
@@ -277,6 +277,14 @@ GLUE2CloudComputingSharePublicNetworkName: ${share['public_network_name']}
 GLUE2CloudComputingShareMaxVM: ${share_max_vm}
 % endif
 GLUE2CloudComputingShareProjectID: ${share['project']}
+## Include the project name and project domain name for those
+## clients relying on them
+% if share['project_name']:
+GLUE2EntityOtherInfo: project_name=${share['project_name']}
+% endif
+% if share['project_domain_name']:
+GLUE2EntityOtherInfo: project_domain_name=${share['project_domain_name']}
+% endif
 
 ## Iterate over all the endpoints of the share to display corresponding:
 ## images, templates and AccessPolicies

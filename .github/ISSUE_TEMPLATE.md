@@ -12,7 +12,7 @@ Dealing with issues:
 
 # Short Description of the issue
 
-<!-- 
+<!--
 Please provide a plain-language description of what you would like to report.
 By using simple, concise language, you can help the maintainers understand the
 issue and context, and thereby help them prioritise it.
@@ -30,14 +30,14 @@ Provide details of the environment you used when this error occurred
 
 ## Steps to reproduce
 
-<!-- 
+<!--
 If this is a runtime or other error, please describe what you did to generate the
 error
 -->
 
 ## Logs, stacktrace, or other symptoms
 
-<!-- 
+<!--
 If you have logs or other supporting information like the stack trace from python,
 etc, paste it here.
 Use markdown formatting to put output in code blocks

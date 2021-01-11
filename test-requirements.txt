@@ -16,3 +16,5 @@ python-keystoneclient
 python-novaclient
 python-glanceclient
 keystoneauth1
+defusedxml
+pyrsistent<=0.16.0
