@@ -3,7 +3,7 @@
 
 % elif v is None and required_type:
 "${k}": null${',' if comma else ''}
-% elif isinstance(v, (basestring, str, unicode)):
+% elif isinstance(v, (str,)):
 "${k}": "${v}"${',' if comma else ''}
 % else:
 "${k}": ${v}${',' if comma else ''}
