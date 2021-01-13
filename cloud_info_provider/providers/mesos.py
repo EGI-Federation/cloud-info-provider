@@ -1,11 +1,10 @@
 import requests
 
-from cloud_info_provider import exceptions
-from cloud_info_provider import providers
-from cloud_info_provider import utils
+from cloud_info_provider import exceptions, utils
+from cloud_info_provider.providers import base, static
 
 
-class MesosProvider(providers.BaseProvider):
+class MesosProvider(base.BaseProvider):
     service_type = "compute"
     goc_service_type = None
 
@@ -36,7 +35,7 @@ class MesosProvider(providers.BaseProvider):
             self.api_endpoints = ['v2/info', 'v2/leader']
         self.goc_service_type = 'eu.indigo-datacloud.%s' % opts.mesos_framework
 
-        self.static = providers.static.StaticProvider(opts)
+        self.static = static.StaticProvider(opts)
 
         self.headers = {}
         if opts.oidc_token:

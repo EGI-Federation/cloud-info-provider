@@ -1,11 +1,10 @@
 import requests
 
-from cloud_info_provider import exceptions
-from cloud_info_provider import providers
-from cloud_info_provider import utils
+from cloud_info_provider import exceptions, utils
+from cloud_info_provider.providers import base, static
 
 
-class OnedataProvider(providers.BaseProvider):
+class OnedataProvider(base.BaseProvider):
     service_type = "storage"
     goc_service_type = None
 
@@ -21,7 +20,7 @@ class OnedataProvider(providers.BaseProvider):
         self.onezone_api_url = opts.onezone_api_url
         self.goc_service_type = 'eu.egi.cloud.storage-management.oneprovider'
 
-        self.static = providers.static.StaticProvider(opts)
+        self.static = static.StaticProvider(opts)
 
         self.headers = {}
         if opts.oidc_token:
