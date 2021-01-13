@@ -8,8 +8,8 @@ class MesosProvider(base.BaseProvider):
     service_type = "compute"
     goc_service_type = None
 
-    def __init__(self, opts):
-        super(MesosProvider, self).__init__(opts)
+    def __init__(self, opts, **kwargs):
+        super(MesosProvider, self).__init__(opts, **kwargs)
 
         if not opts.mesos_endpoint:
             msg = ('You must provide a Mesos, Marathon or Chronos API '

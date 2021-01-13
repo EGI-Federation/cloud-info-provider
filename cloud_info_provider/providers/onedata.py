@@ -8,8 +8,8 @@ class OnedataProvider(base.BaseProvider):
     service_type = "storage"
     goc_service_type = None
 
-    def __init__(self, opts):
-        super(OnedataProvider, self).__init__(opts)
+    def __init__(self, opts, **kwargs):
+        super(OnedataProvider, self).__init__(opts, **kwargs)
 
         if not opts.onezone_api_url:
             msg = ('You must provide a OneData API '
