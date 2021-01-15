@@ -47,13 +47,15 @@
         "data": {
             "provider_id": "${provider_id}",
             "id": "${service_id}",
-            "region": "${region}",
             "oidc_auth_enabled": ${'true' if oidc_auth_enabled else 'false'},
             "idp_protocol": "${idp_protocol}",
             "is_public_service": ${'true' if is_public else 'false'},
             ${render_string('hostname', host_name)}
             ${render_string('service_type', goc_service_type)}
             ${render_string('sitename', static_compute_info['site_name'])}
+            % if middleware == "openstack":
+            "region": "${region}",
+            % endif
             % if middleware == "mesos":
             <%
                 service_info = static_compute_info['endpoints'][service_id]
