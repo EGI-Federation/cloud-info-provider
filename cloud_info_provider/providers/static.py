@@ -194,8 +194,8 @@ class StaticProvider(base.BaseProvider):
         quotas = self._get_what("compute", "quotas", None, fields, prefix="compute_")
         return quotas["quotas"]
 
-    def get_compute_endpoints(self, **kwargs):
-        global_fields = (
+    def get_compute_endpoints(self, global_fields=(), endpoint_fields=(), **kwargs):
+        global_fields = global_fields or (
             "service_production_level",
             "total_ram",
             "total_cores",
@@ -220,7 +220,7 @@ class StaticProvider(base.BaseProvider):
             "iam_enabled",
             "idp_protocol",
         )
-        endpoint_fields = (
+        endpoint_fields = endpoint_fields or (
             "production_level",
             "api_type",
             "api_version",
@@ -332,7 +332,8 @@ class StaticProvider(base.BaseProvider):
             "live_migration": False,
             "vm_backup_restore": False,
             "total_accelerators": 0,
-            "region": "",
+            "accelerators": {},
+            "iam_enabled": False,
             "idp_protocol": "oidc",
         }
         return self._populate_default_values(

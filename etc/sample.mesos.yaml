@@ -1,33 +1,59 @@
 site:
-    # Your site name, as in GODCB (if omitted or set to None, this value is
-    # retreived from /etc/glite-info-static/site/site.cfg )
+    ## Your site name, as in GODCB (if omitted or set to None, this value is
+    ## retreived from /etc/glite-info-static/site/site.cfg )
     # name: SITE_NAME
-    # [for CMDB]
-    # IAM IDs for the cloud site owners
+    ## IAM IDs for the cloud site owners
     # owner_contacts_iam:
     #   - ID-1
-    # Whether the provider is public or private
+    ## Whether the provider is public or private
     # is_public: false
 
 compute:
-    # Total number of cores available
+    ## Total number of cores available
     # total_cores: 0
-    # Total RAM available (GB)
+    ## Total RAM available (GB)
     # total_ram: 0
-    # Total number of GPU accelerators
-    # total_accelerators: 0 
-
+    ## Total number of GPU accelerators
+    # total_accelerators: 0
+    ## Additional information about accelerators shall be placed within
+    ## 'accelerators'. The following attributes are currently supported (note
+    ## that they accept any string):
+    # accelerators:
+    #   vendor: nvidia
+    #   model: 1080TI
+    #   driver_version: x.y.z
+    #   cuda_version: x.y.z
+    #   cuDNN_version: x.y.z
     endpoints:
         defaults:
-            # If Marathon or Chronos, it points to the 
-            # parent Mesos endpoint
+            ## If Marathon or Chronos, it points to the parent Mesos endpoint
             # service_parent_id: https://example.org/mesos
-            
+						## Default ppath for volumes
             # local_volumes_host_base_path: /tmp
+            ## Supported Storage drivers
             # persistent_storage_drivers: []
+            ## Set of IPs pointing to the load balancer
             # load_balancer_ips: []
-            
-    # Whether IAM identity provider is enabled at the service
+				## Values within the service definition have priority over the same ones
+        ## in 'compute' and 'compute:endpoints:defaults'. For instance the
+        ## following definition:
+        ##
+        # https://mesos.cloud.ifca.es/marathon:
+        #   service_parent_id: https://mesos.cloud.ifca.es/mesos
+        #   accelerators:
+        #     vendor: nvidia
+        #     model: TITANXSND
+        ##
+        ## sets:
+        ##   - 'service_parent_id': 'https://mesos.cloud.ifca.es/mesos'
+        ##     (overrides'https://example.org/mesos')
+        ##   - 'accelerators:vendor': 'nvidia'
+        ##   - 'accelerators:model': 'TITANXSND' (overrides '1080TI')
+        ##   - 'accelerators:driver_version': 'null' (overrides 'x.y.z')
+        ##   - 'accelerators:cuda_version': 'null' (overrides 'x.y.z')
+        ##   - 'accelerators:cuDNN_version': 'null' (overrides 'x.y.z')
+
+    ## Whether IAM identity provider is enabled at the service
     # iam_enabled: false
-    # Whether the service is public or private
+    ## Whether the service is public or private
     # is_public_service: false
