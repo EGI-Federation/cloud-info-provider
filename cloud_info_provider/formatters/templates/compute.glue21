@@ -23,13 +23,22 @@
     suspended_instances = {instance_id: instance for instance_id, instance in instances.items() if instance['instance_status'] == 'SUSPENDED'}
     halted_instances = {instance_id: instance for instance_id, instance in instances.items() if instance['instance_status'] == 'SHUTOFF'}
 
+    # We may not have any template!
     templates_cpu = [tpl['template_cpu'] for vo, share in shares.items() for tpl_id, tpl in share['templates'].items()]
-    template_max_cpu = max(templates_cpu)
-    template_min_cpu = min(templates_cpu)
+    if templates_cpu:
+        template_max_cpu = max(templates_cpu)
+        template_min_cpu = min(templates_cpu)
+    else:
+        template_max_cpu = 0
+        template_min_cpu = 0
 
     templates_memory = [tpl['template_memory'] for vo, share in shares.items() for tpl_id, tpl in share['templates'].items()]
-    template_max_memory = max(templates_memory)
-    template_min_memory = min(templates_memory)
+    if templates_memory:
+        template_max_memory = max(templates_memory)
+        template_min_memory = min(templates_memory)
+    else:
+        template_max_memory = 0
+        template_min_memory = 0
 %>\
 ##
 ## Cloud Computing Service - GLUE2CloudComputingService
@@ -213,10 +222,16 @@ GLUE2EndpointTrustedCA: ${trusted_ca}
     share_halted_instances = {instance_id: instance for instance_id, instance in share_instances.items() if instance['instance_status'] == 'SHUTOFF'}
 
     share_templates_cpu = [tpl['template_cpu'] for tpl_id, tpl in share['templates'].items()]
-    share_template_max_cpu = max(share_templates_cpu)
+    if share_templates_cpu:
+        share_template_max_cpu = max(share_templates_cpu)
+    else:
+        share_template_max_cpu = 0
 
     share_templates_memory = [tpl['template_memory'] for tpl_id, tpl in share['templates'].items()]
-    share_template_max_memory = max(share_templates_memory)
+    if share_templates_memory:
+        share_template_max_memory = max(share_templates_memory)
+    else:
+        share_template_max_memory = 0
 
     endpoints = share['endpoints']['endpoints']
     images = share['images']

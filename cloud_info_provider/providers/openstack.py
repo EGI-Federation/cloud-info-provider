@@ -224,6 +224,8 @@ class OpenStackProvider(base.BaseProvider):
                 }
             )
             flavors[flavor.id] = aux
+        if not flavors:
+            logging.warning("No flavors found!?")
         return flavors
 
     @_rescope
