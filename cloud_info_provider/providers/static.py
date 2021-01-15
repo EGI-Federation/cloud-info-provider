@@ -217,7 +217,7 @@ class StaticProvider(base.BaseProvider):
             "service_name",
             "region",
             "public_ip_assignable",
-            "iam_enabled",
+            "oidc_auth_enabled",
             "idp_protocol",
         )
         endpoint_fields = endpoint_fields or (
@@ -249,7 +249,7 @@ class StaticProvider(base.BaseProvider):
             "middleware_version",
             "middleware_developer",
             "service_name",
-            "iam_enabled",
+            "oidc_auth_enabled",
             "idp_protocol",
         )
         endpoint_fields = (
@@ -333,7 +333,7 @@ class StaticProvider(base.BaseProvider):
             "vm_backup_restore": False,
             "total_accelerators": 0,
             "accelerators": {},
-            "iam_enabled": False,
+            "oidc_auth_enabled": False,
             "idp_protocol": "oidc",
         }
         return self._populate_default_values(
