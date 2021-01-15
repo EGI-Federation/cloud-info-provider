@@ -164,7 +164,6 @@ class StaticProvider(base.BaseProvider):
             "default_network_type",
             "public_network_name",
             "membership",
-            "iam_organisation",
             "private_network_name",
             "private_network_cidr"
         )
