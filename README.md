@@ -210,6 +210,10 @@ compute:
       #    - VO:ops
 ```
 
+Multi-tenancy is not supported for some providers, e.g. Mesos. In such cases,
+`shares` are not used, only single-tenant deployments are considered, and API
+requests are only authorized via OAuth.
+
 #### Templates
 
 By default the cloud-info-provider generates a LDIF (GLUE Schema) using the
@@ -227,6 +231,7 @@ these `publishers` are provided in this repo: `stdout` and `ams`:
 - `stdout`: just prints output to the standard output. This is the default
   publisher and the one to use when the cloud-info-provider is used in a BDII
   set up.
+    - `json_stdout`: prints JSON-indented records to the standard output.
 
 - `ams`: pushes a message to the Argo Messaging System with the parameters
   specified. It can either authenticate with a token (using `--ams-token`
@@ -237,9 +242,9 @@ these `publishers` are provided in this repo: `stdout` and `ams`:
 
 #### Providers
 
-Dynamic information is obtained with the middleware providers (OpenStack, ooi,
-and OpenNebula via rOCCI supported currently). Use the `--middleware` option for
-specifying the provider to use (see the command help for exact names).
+Dynamic information is obtained with the middleware providers (e.g. OpenStack,
+ooi, OpenNebula via rOCCI). Use the `--middleware` option for specifying the
+provider to use (see the command help for exact names).
 cloud-info-provider will fallback to static information defined in the YAML file
 if a dynamic provider is not able to return any information.
 
@@ -279,6 +284,23 @@ Other extra options for the providers (defaults should be ok):
 - `--all-images` If set, include information about all images (including
   snapshots), otherwise only publish images with cloudkeeper metadata, ignoring
   the others.
+
+###### Support for specialized hardware (GPU & InfiniBand) through properties
+
+The `openstack` provider is able to gather additional GPU and InfiniBand
+information made available through flavor's and image's metadata. To this end,
+this provider allows passing CLI options (`--property-*`) to match the metadata
+keys. As an example, the option `--property-flavor-gpu-vendor gpu:vendor` will
+seek for `gpu-vendor` key in the flavor definition (properties field), while
+`--property-image-gpu-driver gpu:driver:version` will fetch the value
+associated with the `gpu:driver:version` key in the list of images obtained.
+
+For the InfiniBand case, there is an additional option
+(`--property-flavor-infiniband-value`) that also checks the value obtained from
+the metadata. Only if they match, InfiniBand is considered as supported.
+
+Use the `--help` option for the whole list of available GPU and InfiniBand
+properties.
 
 ##### OpenNebula
 
@@ -359,6 +381,20 @@ authenticate to AMS. The `SITE-NAME` is your site name in GOCDB, the
 by checking the URL of your endpoint, e.g. for
 `https://goc.egi.eu/portal/index.php?Page_Type=Service&id=9420`, the
 `ENDPOINT_ID` is `9420`.
+
+##### Mesos
+
+The `mesos` provider retrieves information about Mesos, Marathon and Chronos
+frameworks. Only one framework at a time can be provided in a single execution
+through the `--mesos-framework` argument. A Bearer authentication token can be
+used to authenticate with the Mesos endpoint.
+
+##### Onedata
+
+The `onedata` provider gathers information related to a OneProvider instance.
+In order to do that, it makes a request to the associated OneZone API, which
+requires an OIDC X-Auth token authentication.
+onedata provider options:
 
 ### Running the provider
 
