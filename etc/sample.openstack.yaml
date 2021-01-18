@@ -9,6 +9,8 @@ site:
   # is_public: false
 
 compute:
+  # OpenStack region
+  region: RegionOne
   ## Indicates whether public IPv4 addresses can be assigned to VMs in the
   ## given site
   # public_ip_assignable: false
