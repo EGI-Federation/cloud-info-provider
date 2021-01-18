@@ -90,11 +90,11 @@ class OnedataProvider(base.BaseProvider):
         parser.add_argument(
             '--oidc-x-auth-token',
             metavar='<x-auth-token>',
-            default=utils.env('IAM_ACCESS_TOKEN'),
+            default=utils.env('ACCESS_BEARER_TOKEN'),
             dest='oidc_token',
             help=('Specify OIDC X-Auth token to use when '
                   'authenticating with the API. Defaults '
-                  'to env[IAM_ACCESS_TOKEN]'))
+                  'to env[ACCESS_BEARER_TOKEN]'))
         parser.add_argument(
             '--oidc-idp-prefix',
             metavar='<idp-prefix>',

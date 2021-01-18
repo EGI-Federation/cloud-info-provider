@@ -132,11 +132,11 @@ class MesosProvider(base.BaseProvider):
         parser.add_argument(
             "--oidc-auth-bearer-token",
             metavar="<bearer-token>",
-            default=utils.env("IAM_ACCESS_TOKEN"),
+            default=utils.env("ACCESS_BEARER_TOKEN"),
             dest="oidc_token",
             help=(
                 "Specify OIDC bearer token to use when "
                 "authenticating with the API. Defaults "
-                "to env[IAM_ACCESS_TOKEN]"
+                "to env[ACCESS_BEARER_TOKEN]"
             ),
         )
