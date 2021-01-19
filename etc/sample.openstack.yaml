@@ -41,20 +41,20 @@ compute:
 
     ## A second VO
     # fedcloud.egi.eu:
-    #     auth:
-    #       project_id: xxxx
-    #     sla: https://egi.eu/sla/fedcloud
-    #     ## Default network type: none, public, public_only, private, private_only
-    #     default_network_type: public
-    #     ## Public Network name
-    #     public_network_name: PUBLIC
-    #     ## Private Network name
-    #     private_network_name: PRIVATE
-    #     ## Pattern to define the CIDR of the private network
-    #     private_network_cidr: CIDR_ADDR
-    #     network_info: UNKNOWN
-    #     membership:
-    #       - VOMS:/fedcloud.egi.eu/Role=VMOperators
+    #   auth:
+    #     project_id: xxxx
+    #   sla: https://egi.eu/sla/fedcloud
+    #   ## Default network type: none, public, public_only, private, private_only
+    #   default_network_type: public
+    #   ## Public Network name
+    #   public_network_name: PUBLIC
+    #   ## Private Network name
+    #   private_network_name: PRIVATE
+    #   ## Pattern to define the CIDR of the private network
+    #   private_network_cidr: CIDR_ADDR
+    #   network_info: UNKNOWN
+    #   membership:
+    #     - VOMS:/fedcloud.egi.eu/Role=VMOperators
 
   ## Extra information on your OpenStack endpoints
   ## (optional)
