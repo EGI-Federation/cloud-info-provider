@@ -73,19 +73,11 @@ class StaticProvider(base.BaseProvider):
                 "accessible and readable" % self.opts.glite_site_info_static
             )
 
-    def get_site_info(self, **kwargs):
+    def get_site_info(self, fields=(), **kwargs):
         data = self.yaml.get("site", {"name": None})
-        fields = (
+        fields = fields or (
             "name",
-            "id",
-            "country",
-            "country_code",
-            "roc",
-            "subgrid",
-            "giis_url",
             "is_public",
-            "owner_contacts",
-            "owner_contacts_iam"
         )
         site_info = self._get_fields_and_prefix(
             fields,
