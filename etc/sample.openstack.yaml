@@ -83,16 +83,6 @@ compute:
   ## can be configured at a share level
   # max_accelerators: 0
   # min_accelerators: 0
-  ## Specific information about accelerators shall be placed within
-  ## 'accelerators' attribute. The following attributes are currently
-  ## supported (note that they accept any string):
-  # accelerators:
-  #   vendor: nvidia
-  #   model: 1080TI
-  #   driver_version: x.y.z
-  #   cuda_version: x.y.z
-  #   cuDNN_version: x.y.z
-
   ## Uncomment to configure Network virtualization type
   ## Can be: none, vswitch, ebtables, vlan, firewall
   # network_virt_type: UNKNOWN
