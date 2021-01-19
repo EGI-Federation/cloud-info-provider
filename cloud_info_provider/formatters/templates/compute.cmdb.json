@@ -54,6 +54,7 @@
             ${render_string('sitename', static_compute_info['site_name'])}
             % if middleware == "openstack":
             "region": "${region}",
+            "public_ip_assignable": ${'true' if static_compute_info.get('compute_public_ip_assignable', None) else 'false'},
             "supported_idps": [
             % for _name, _data in federation.items():
             <%
@@ -119,7 +120,6 @@
             % else:
             ${render_string('endpoint', service_id)}
             % endif
-            "public_ip_assignable": ${'true' if static_compute_info.get('compute_public_ip_assignable', None) else 'false'},
             ${render_string('type', 'compute', required_type=True, comma=False)}
         }
     }${',' if shares else ''}
