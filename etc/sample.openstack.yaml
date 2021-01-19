@@ -37,8 +37,11 @@ compute:
       default_network_type: public
       ## Public Network name
       public_network_name: PUBLIC
-
       ## Other optional information follows:
+      ## Private Network name
+      # private_network_name: PRIVATE
+      ## Pattern to define the CIDR of the private network
+      # private_network_cidr: CIDR_ADDR
       ## link to the SLA document
       # sla: UNKNOWN
       ## Type of network: infiniband, gigabiteethernet...
