@@ -20,7 +20,6 @@
     is_public = static_compute_info['site_is_public']
     region = static_compute_info['compute_region']
     oidc_auth_enabled = static_compute_info['compute_oidc_auth_enabled']
-    idp_protocol = static_compute_info['compute_idp_protocol']
     federation = static_compute_info['compute_federation']
 
     from six.moves import urllib
@@ -49,7 +48,6 @@
             "provider_id": "${provider_id}",
             "id": "${service_id}",
             "oidc_auth_enabled": ${'true' if oidc_auth_enabled else 'false'},
-            "idp_protocol": "${idp_protocol}",
             "is_public_service": ${'true' if is_public else 'false'},
             ${render_string('hostname', host_name)}
             ${render_string('service_type', goc_service_type)}
