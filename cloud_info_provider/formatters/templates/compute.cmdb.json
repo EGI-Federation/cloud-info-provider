@@ -21,6 +21,7 @@
     region = static_compute_info['compute_region']
     oidc_auth_enabled = static_compute_info['compute_oidc_auth_enabled']
     idp_protocol = static_compute_info['compute_idp_protocol']
+    federation = static_compute_info['compute_federation']
 
     from six.moves import urllib
     urlparse_obj = urllib.parse.urlparse(service_id)
@@ -55,6 +56,19 @@
             ${render_string('sitename', static_compute_info['site_name'])}
             % if middleware == "openstack":
             "region": "${region}",
+            "supported_idps": [
+            % for _name, _data in federation.items():
+            <%
+                _issuer = _data['issuer']
+                _protocol = _data['protocol']
+            %>
+            {
+                ${render_string("name", _name, required_type=True)}
+                ${render_string("issuer", _issuer, required_type=True)}
+                ${render_string("protocol", _protocol, required_type=True, comma=False)}
+            }${'' if loop.last else ','}
+            % endfor
+            ]
             % endif
             % if middleware == "mesos":
             <%

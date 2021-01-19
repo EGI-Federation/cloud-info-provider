@@ -210,6 +210,7 @@ class StaticProvider(base.BaseProvider):
             "public_ip_assignable",
             "oidc_auth_enabled",
             "idp_protocol",
+            "federation",
         )
         endpoint_fields = endpoint_fields or (
             "production_level",
@@ -326,6 +327,7 @@ class StaticProvider(base.BaseProvider):
             "accelerators": {},
             "oidc_auth_enabled": False,
             "idp_protocol": "oidc",
+            "federation": {},
         }
         return self._populate_default_values(
             self._get_defaults_from_yaml("compute", "endpoints", prefix=prefix),

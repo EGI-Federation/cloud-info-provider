@@ -13,6 +13,14 @@ compute:
   # public_ip_assignable: false
   ## Whether OIDC is enabled at the service
   # oidc_auth_enabled: false
+  ## Federation info
+  # federation:
+  #   ## Name of the identity provider (accepts multiple entries)
+  #   egi.eu:
+  #     ## Issuer (endpoint)
+  #     issuer: https://aai-dev.egi.eu/oidc/
+  #     ## Federation protocol
+  #     protocol: oidc
   ## Whether the service is public or private. The default value is the same
   ## as 'site:is_public' parameter
   # is_public_service: false
