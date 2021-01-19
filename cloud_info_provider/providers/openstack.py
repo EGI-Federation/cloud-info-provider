@@ -503,6 +503,14 @@ class OpenStackProvider(base.BaseProvider):
         )
 
         parser.add_argument(
+            "--os-region",
+            metavar="<region>",
+            default=utils.env("OS_REGION", default=None),
+            help="In multi-region environments, specify the region "
+            "to use. Defaults to env[OS_REGION].",
+        )
+
+        parser.add_argument(
             "--os-cacert",
             metavar="<ca-certificate>",
             default=utils.env("OS_CACERT", default=requests.certs.where()),
