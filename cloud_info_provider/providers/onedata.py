@@ -27,6 +27,21 @@ class OnedataProvider(base.BaseProvider):
             self.headers["X-Auth-Token"] = "%s: %s" % (opts.oidc_idp_prefix,
                                                        opts.oidc_token)
 
+    def get_site_info(self, **kwargs):
+        _fields = (
+            "name",
+            "is_public",
+            "id",
+            "country",
+            "country_code",
+            "roc",
+            "subgrid",
+            "giis_url",
+            "owner_contacts",
+            "owner_contacts_iam",
+        )
+        return self.static.get_site_info(fields=_fields)
+
     def get_oneproviders_from_onezone(self):
         def _do_request(url):
             r = requests.get(url, headers=self.headers)

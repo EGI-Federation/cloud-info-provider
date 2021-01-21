@@ -39,6 +39,21 @@ class AwsProvider(base.BaseProvider):
         self.all_amis_from = opts.all_amis_from
         self.static = static.StaticProvider(opts)
 
+    def get_site_info(self, **kwargs):
+        _fields = (
+            "name",
+            "is_public",
+            "id",
+            "country",
+            "country_code",
+            "roc",
+            "subgrid",
+            "giis_url",
+            "owner_contacts",
+            "owner_contacts_iam",
+        )
+        return self.static.get_site_info(fields=_fields)
+
     def _normalize_image_values(self, d_images):
         normalized_values = {
             # image_os_type
