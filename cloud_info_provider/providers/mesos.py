@@ -41,25 +41,20 @@ class MesosProvider(base.BaseProvider):
         if opts.oidc_token:
             self.headers["Authorization"] = "Bearer %s" % opts.oidc_token
 
-    def get_site_info(self, **kwargs)
+    def get_site_info(self, **kwargs):
         _fields = (
             "name",
+            "is_public",
             "id",
             "country",
             "country_code",
             "roc",
             "subgrid",
             "giis_url",
-            "is_public",
             "owner_contacts",
             "owner_contacts_iam",
         )
-        static_info = self.static.get_compute_endpoints(
-            fields=_fields)
-
-    def get_compute_shares(self, **kwargs):
-        shares = self.static.get_compute_shares(prefix=True)
-        return shares
+        return self.static.get_site_info(fields=_fields)
 
     def get_compute_endpoints(self, **kwargs):
         def _update(old, new):
