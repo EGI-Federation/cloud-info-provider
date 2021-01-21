@@ -6,8 +6,10 @@ defusedxml
 requests
 pyOpenSSL
 stevedore
-# For OpenStack
-#python-keystoneclient
-#python-novaclient
-#python-glanceclient
-#keystoneauth1
+## For OpenStack
+# python-keystoneclient
+# python-novaclient
+# python-glanceclient
+# keystoneauth1
+## For AWS provider
+# boto3

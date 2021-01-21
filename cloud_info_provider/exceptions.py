@@ -49,3 +49,7 @@ class CMDBFormatterException(CloudInfoException):
 
 class RefresherException(CloudInfoException):
     pass
+
+
+class AwsProviderException(CloudInfoException):
+    pass
