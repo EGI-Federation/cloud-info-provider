@@ -35,10 +35,10 @@ compute:
         project_id: xxxxx
       ## Default network type: none, public, public_only, private, private_only
       default_network_type: public
-      ## Public Network name
+      ## Name of the public network associated with the tenant
       public_network_name: PUBLIC
       ## Other optional information follows:
-      ## Private Network name
+      ## Name of the private network associated with the tenant
       # private_network_name: PRIVATE
       ## Pattern to define the CIDR of the private network
       # private_network_cidr: CIDR_ADDR
