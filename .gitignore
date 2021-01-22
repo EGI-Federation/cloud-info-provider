@@ -21,4 +21,3 @@ debhelper-build-stamp
 debian/python-cloud-info-provider/
 debs/cloud-info-provider-opennebula/debian/python-cloud-info-provider-opennebula/
 debs/cloud-info-provider-openstack/debian/python-cloud-info-provider-openstack/
-RELEASING.md
