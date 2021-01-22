@@ -1,71 +1,47 @@
 #!/usr/bin/groovy
 
-@Library(['github.com/indigo-dc/jenkins-pipeline-library@1.3.5']) _
-
 pipeline {
     agent {
         label 'python'
     }
 
     stages {
-        stage('Code fetching') {
+        stage('Style Analysis') {
             steps {
                 checkout scm
-            }
-        }
-
-        stage('Style analysis') {
-            steps {
-                ToxEnvRun('pep8')
-            }
-            post {
-                always {
-                    WarningsReport('Pep8')
+                echo 'Running flake8..'
+                timeout(time: 5, unit: 'MINUTES') {
+                    sh 'tox -e pep8'
+                    echo 'Parsing pep8 logs..'
+                    step([$class: 'WarningsPublisher',
+                        parserConfigurations: [[
+                            parserName: 'Pep8', pattern: '.tox/pep8/log/*.log'
+                        ]], unstableTotalAll: '0', usePreviousBuildAsReference: true
+                    ])
                 }
             }
         }
 
-        stage('Unit testing coverage') {
-            steps {
-                ToxEnvRun('cover')
-                ToxEnvRun('cobertura')
-            }
-            post {
-                success {
-                    HTMLReport('cover', 'index.html', 'coverage.py report')
-                    CoberturaReport('**/coverage.xml')
-                }
-            }
-        }
-
-        stage('Metrics gathering') {
-            agent {
-                label 'sloc'
-            }
+        stage('Unit tests') {
             steps {
                 checkout scm
-                SLOCRun()
-            }
-            post {
-                success {
-                    SLOCPublish()
-                }
-            }
-        }
+                echo 'Computing unit testing coverage..'
+                sh 'tox -e cover'
 
-        stage('Security scanner') {
-            steps {
-                ToxEnvRun('bandit-report')
-                script {
-                    if (currentBuild.result == 'FAILURE') {
-                        currentBuild.result = 'UNSTABLE'
-                    }
-                }
-            }
-            post {
-                always {
-                    HTMLReport("/tmp/bandit", 'index.html', 'Bandit report')
-                }
+                echo 'Generating Cobertura report..'
+                sh 'tox -e cobertura'
+                cobertura autoUpdateHealth: false,
+                          autoUpdateStability: false,
+                          coberturaReportFile: '**/coverage.xml',
+                          conditionalCoverageTargets: '70, 0, 0',
+                          failUnhealthy: false,
+                          failUnstable: false,
+                          lineCoverageTargets: '80, 0, 0',
+                          maxNumberOfBuilds: 0,
+                          methodCoverageTargets: '80, 0, 0',
+                          onlyStable: false,
+                          sourceEncoding: 'ASCII',
+                          zoomCoverageChart: false
             }
         }
 
@@ -73,6 +49,7 @@ pipeline {
             when {
                 anyOf {
                     buildingTag()
+                    branch 'master'
                 }
             }
             parallel {
@@ -83,10 +60,13 @@ pipeline {
                     steps {
                         checkout scm
                         echo 'Within build on Ubuntu18.04'
-                        sh 'debuild --no-tgz-check -- clean binary'
-                        sh 'cp ../*.deb debs/'
-                        dir("${WORKSPACE}/debs/cloud-info-provider-deep-openstack") {
-                            sh 'debuild --no-tgz-check -- clean binary'
+                            sh 'sudo apt-get update && sudo apt-get install -y devscripts debhelper python-all-dev python-pbr python-setuptools'
+                            sh 'debuild --no-tgz-check clean binary'
+                        dir("${WORKSPACE}/debs/cloud-info-provider-openstack") {
+                            sh 'debuild --no-tgz-check clean binary'
+                        }
+                        dir("${WORKSPACE}/debs/cloud-info-provider-opennebula") {
+                            sh 'debuild --no-tgz-check clean binary'
                         }
                     }
                     post {
@@ -101,16 +81,16 @@ pipeline {
                     steps {
                         checkout scm
                         echo 'Within build on CentOS7'
-                        sh 'sudo yum --enablerepo=extras install -y epel-release && sudo yum clean all && sudo yum makecache fast'
-                        sh 'sudo yum install -y rpm-build centos-release-openstack-queens python-pbr'
+                        sh 'sudo yum install -y centos-release-openstack-queens python-pbr'
                         sh 'python setup.py sdist'
                         sh 'mkdir ~/rpmbuild'
                         sh "echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros"
                         sh 'mkdir -p ~/rpmbuild/{SOURCES,SPECS}'
                         sh 'cp dist/cloud_info_provider*.tar.gz ~/rpmbuild/SOURCES/'
                         sh 'cp rpm/cloud-info-provider*.spec ~/rpmbuild/SPECS/'
-                        sh 'rpmbuild --define "_pbr_version $(python setup.py --version)" -ba ~/rpmbuild/SPECS/cloud-info-provider.spec'
-                        sh 'rpmbuild --define "_pbr_version $(python setup.py --version)" -ba ~/rpmbuild/SPECS/cloud-info-provider-openstack.spec'
+                        sh 'rpmbuild -ba ~/rpmbuild/SPECS/cloud-info-provider.spec'
+                        sh 'rpmbuild -ba ~/rpmbuild/SPECS/cloud-info-provider-openstack.spec'
+                        sh 'rpmbuild -ba ~/rpmbuild/SPECS/cloud-info-provider-opennebula.spec'
                         sh 'cp ~/rpmbuild/SRPMS/*.rpm ~/rpmbuild/RPMS/noarch/*.rpm ${WORKSPACE}/rpm/'
                     }
                     post {
