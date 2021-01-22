@@ -20,7 +20,7 @@ class ComputeCollector(base.BaseCollector):
             # Get shares / projects and related images and templates
             shares = self._get_info_from_providers("get_compute_shares")
         except Exception:
-            return info
+            shares = {}
 
         if shares:
             for vo, share in shares.items():
