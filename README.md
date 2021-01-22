@@ -285,7 +285,8 @@ Other extra options for the providers (defaults should be ok):
   snapshots), otherwise only publish images with cloudkeeper metadata, ignoring
   the others.
 
-###### Support for specialized hardware (GPU & InfiniBand) through properties
+###### Support for specialized hardware (GPU & InfiniBand) through OpenStack properties
+*CMDB only*
 
 The `openstack` provider is able to gather additional GPU and InfiniBand
 information made available through flavor's and image's metadata. To this end,
@@ -383,6 +384,7 @@ by checking the URL of your endpoint, e.g. for
 `ENDPOINT_ID` is `9420`.
 
 ##### Mesos
+*CMDB only*
 
 The `mesos` provider retrieves information about Mesos, Marathon and Chronos
 frameworks. Only one framework at a time can be provided in a single execution
@@ -390,11 +392,20 @@ through the `--mesos-framework` argument. A Bearer authentication token can be
 used to authenticate with the Mesos endpoint.
 
 ##### Onedata
+*CMDB only*
 
 The `onedata` provider gathers information related to a OneProvider instance.
 In order to do that, it makes a request to the associated OneZone API, which
 requires an OIDC X-Auth token authentication.
 onedata provider options:
+
+##### Amazon EC2
+*CMDB only*
+
+The `aws` provider gathers image and flavor-related data from a given Amazon
+EC2 region. Currently supported operating systems for the images are Ubuntu,
+CentOS and Windows.
+
 
 ### Running the provider
 
