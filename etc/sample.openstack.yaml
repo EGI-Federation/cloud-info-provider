@@ -14,7 +14,7 @@ compute:
   ## Whether OIDC is enabled at the service
   # oidc_auth_enabled: false
   ## Federation info
-  # federation:
+  # supported_idps:
   #   ## Name of the identity provider (accepts multiple entries)
   #   egi.eu:
   #     ## Issuer (endpoint)
