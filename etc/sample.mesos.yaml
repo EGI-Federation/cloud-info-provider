@@ -1,3 +1,4 @@
+---
 site:
   ## Your site name, as in GODCB (if omitted or set to None, this value is
   ## retreived from /etc/glite-info-static/site/site.cfg )
@@ -45,7 +46,7 @@ compute:
     defaults:
       ## If Marathon or Chronos, it points to the parent Mesos endpoint
       # service_parent_id: https://example.org/mesos
-    	## Default path for volumes
+      ## Default path for volumes
       # local_volumes_host_base_path: /tmp
       ## Supported Storage drivers
       # persistent_storage_drivers: []

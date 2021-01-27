@@ -1,5 +1,4 @@
 import requests
-
 from cloud_info_provider import exceptions, utils
 from cloud_info_provider.providers import base, static
 
@@ -12,9 +11,11 @@ class OnedataProvider(base.BaseProvider):
         super(OnedataProvider, self).__init__(opts, **kwargs)
 
         if not opts.onezone_api_url:
-            msg = ("You must provide a OneData API "
-                   "endpoint via --onedata-endpoint (alternatively using "
-                   "the environment variable ONEZONE_API_URL)")
+            msg = (
+                "You must provide a OneData API endpoint via "
+                "--onedata-endpoint (alternatively using the "
+                "environment variable ONEZONE_API_URL)"
+            )
             raise exceptions.OnedataProviderException(msg)
 
         self.onezone_api_url = opts.onezone_api_url
@@ -24,8 +25,10 @@ class OnedataProvider(base.BaseProvider):
 
         self.headers = {}
         if opts.oidc_token:
-            self.headers["X-Auth-Token"] = "%s: %s" % (opts.oidc_idp_prefix,
-                                                       opts.oidc_token)
+            self.headers["X-Auth-Token"] = "%s: %s" % (
+                opts.oidc_idp_prefix,
+                opts.oidc_token,
+            )
 
     def get_site_info(self, **kwargs):
         _fields = (
@@ -45,11 +48,12 @@ class OnedataProvider(base.BaseProvider):
     def get_oneproviders_from_onezone(self):
         def _do_request(url):
             r = requests.get(url, headers=self.headers)
-            if r.status_code == requests.codes.ok:
+            if r.status_code == requests.codes["ok"]:
                 return r.json()
             else:
                 msg = "Request failed: %s" % r.content
                 raise exceptions.OnedataProviderException(msg)
+
         _url = "/".join([self.onezone_api_url, "onezone/providers"])
         try:
             oneprov_ids = _do_request(_url)["providers"]
@@ -62,8 +66,9 @@ class OnedataProvider(base.BaseProvider):
                 _domain = _do_request(_oneprov_url)["domain"]
                 d[_domain] = {"id": oneprov_id}
             except KeyError:
-                raise exceptions.OnedataProviderException((
-                    "Cannot get Oneprovider domains from Onezone"))
+                raise exceptions.OnedataProviderException(
+                    ("Cannot get Oneprovider domains from Onezone")
+                )
         return d
 
     def get_storage_endpoints(self, **kwargs):
@@ -74,9 +79,9 @@ class OnedataProvider(base.BaseProvider):
         try:
             endp_data = defaults_endpoint.pop("endpoints")
         except KeyError:
-            raise exceptions.OnedataProviderException((
-                "Static configuration file does not contain"
-                "Oneprovider endpoints"))
+            raise exceptions.OnedataProviderException(
+                ("Static configuration file does not contain Oneprovider endpoints")
+            )
         defaults_endpoint.update(defaults)
 
         d_endp = {}
@@ -120,8 +125,5 @@ class OnedataProvider(base.BaseProvider):
             "--oidc-idp-prefix",
             metavar="<idp-prefix>",
             dest="oidc_idp_prefix",
-            help=(
-                "Specify OIDC X-Auth IdP prefix for the "
-                "X-Auth token"
-            ),
+            help=("Specify OIDC X-Auth IdP prefix for the X-Auth token"),
         )

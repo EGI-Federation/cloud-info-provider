@@ -75,15 +75,10 @@ class StaticProvider(base.BaseProvider):
 
     def get_site_info(self, fields=(), **kwargs):
         data = self.yaml.get("site", {"name": None})
-        fields = fields or (
-            "name",
-            "is_public",
-        )
+        fields = fields or ("name", "is_public",)
         site_info = self._get_fields_and_prefix(
-            fields,
-            "site_",
-            data,
-            defaults={"is_public": False})
+            fields, "site_", data, defaults={"is_public": False}
+        )
 
         # Resolve site name from BDII configuration
         if site_info["site_name"] is None:
@@ -157,7 +152,7 @@ class StaticProvider(base.BaseProvider):
             "public_network_name",
             "membership",
             "private_network_name",
-            "private_network_cidr"
+            "private_network_cidr",
         )
         shares = self._get_what("compute", "shares", None, fields, prefix="")
         for vo, share in shares["shares"].items():

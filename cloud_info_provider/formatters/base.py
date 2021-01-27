@@ -55,7 +55,8 @@ class BaseFormatter(object):
             info = _collector.fetch()
             if info:
                 extra_info = {
-                    'middleware': opts.middleware,
-                    'dynamic_provider': _collector.dynamic_provider}
+                    "middleware": opts.middleware,
+                    "dynamic_provider": _collector.dynamic_provider,
+                }
                 output.append(self._format_template(tpl, info, extra_info))
         return "\n".join(output)

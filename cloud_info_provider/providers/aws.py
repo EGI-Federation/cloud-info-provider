@@ -1,10 +1,10 @@
 import copy
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
 import re
+from datetime import datetime
 
 from cloud_info_provider import exceptions, utils
 from cloud_info_provider.providers import base, static
+from dateutil.relativedelta import relativedelta
 
 try:
     import boto3
@@ -21,19 +21,20 @@ class AwsProvider(base.BaseProvider):
         super(AwsProvider, self).__init__(opts)
 
         if not opts.aws_region_code:
-            msg = ("You must provide a AWS Region")
+            msg = "You must provide a AWS Region"
             raise exceptions.AwsProviderException(msg)
 
         self.aws_region_code = opts.aws_region_code
         options = {"region_name": self.aws_region_code}
         if opts.aws_access_key and opts.aws_secret_key:
-            options.update({
-                "aws_access_key_id": opts.aws_access_key,
-                "aws_secret_access_key": opts.aws_secret_key})
+            options.update(
+                {
+                    "aws_access_key_id": opts.aws_access_key,
+                    "aws_secret_access_key": opts.aws_secret_key,
+                }
+            )
 
-        self.aws_client = boto3.client(
-            "ec2",
-            **options)
+        self.aws_client = boto3.client("ec2", **options)
 
         self.goc_service_type = "com.amazonaws.ec2"
         self.all_amis_from = opts.all_amis_from
@@ -61,7 +62,7 @@ class AwsProvider(base.BaseProvider):
             "Windows": "windows",
             "Windows with SQL Server Standard": "windows",
             # image_architecture
-            "i386": "i686"
+            "i386": "i686",
         }
         d = {}
         for k, v in d_images.items():
@@ -77,12 +78,12 @@ class AwsProvider(base.BaseProvider):
         os_regexp = {
             "centos": r"CentOS Linux ([0-9]) .+",
             "ubuntu": r"ubuntu/images/[\w-].+/ubuntu-\w+-([0-9]{2}\.[0-9]{2})",
-            "windows": r"Windows_Server-([0-9]{4})-"
+            "windows": r"Windows_Server-([0-9]{4})-",
         }
         try:
             version = re.search(os_regexp[distro], image_name).groups()[0]
         except KeyError:
-            msg = "Distribution \"%s\" not supported." % distro
+            msg = 'Distribution "%s" not supported.' % distro
             raise exceptions.AwsProviderException(msg)
         except IndexError:
             version = None
@@ -90,13 +91,11 @@ class AwsProvider(base.BaseProvider):
 
     def _filter_amis_by_creation_date(self, amis):
         l_amis = []
-        all_amis_from_datetime = datetime.strptime(
-            self.all_amis_from,
-            "%Y-%m-%d")
+        all_amis_from_datetime = datetime.strptime(self.all_amis_from, "%Y-%m-%d")
         for ami in amis:
             creation_datetime = datetime.strptime(
-                ami["CreationDate"],
-                "%Y-%m-%dT%H:%M:%S.%fZ")
+                ami["CreationDate"], "%Y-%m-%dT%H:%M:%S.%fZ"
+            )
             if creation_datetime > all_amis_from_datetime:
                 l_amis.append(ami)
         return l_amis
@@ -138,48 +137,32 @@ class AwsProvider(base.BaseProvider):
         # FIXME(orviz) Use filters from file
         _filters = {
             "ubuntu": [
-                {"Name": "architecture",
-                    "Values": ["x86_64"]},
-                {"Name": "state",
-                    "Values": ["available"]},
-                {"Name": "root-device-type",
-                    "Values": ["ebs"]},
-                {"Name": "is-public",
-                    "Values": ["true"]},
-                {"Name": "name",
-                    "Values": ["ubuntu/images/*"]},
-                {"Name": "owner-id",
-                    "Values": ["099720109477"]}
+                {"Name": "architecture", "Values": ["x86_64"]},
+                {"Name": "state", "Values": ["available"]},
+                {"Name": "root-device-type", "Values": ["ebs"]},
+                {"Name": "is-public", "Values": ["true"]},
+                {"Name": "name", "Values": ["ubuntu/images/*"]},
+                {"Name": "owner-id", "Values": ["099720109477"]},
             ],
             "centos": [
-                {"Name": "architecture",
-                    "Values": ["x86_64"]},
-                {"Name": "state",
-                    "Values": ["available"]},
-                {"Name": "root-device-type",
-                    "Values": ["ebs"]},
-                {"Name": "is-public",
-                    "Values": ["true"]},
-                {"Name": "product-code",
-                    "Values": ["aw0evgkw8e5c1q413zgy5pjce"]},
-                {"Name": "owner-id",
-                    "Values": ["679593333241"]}
+                {"Name": "architecture", "Values": ["x86_64"]},
+                {"Name": "state", "Values": ["available"]},
+                {"Name": "root-device-type", "Values": ["ebs"]},
+                {"Name": "is-public", "Values": ["true"]},
+                {"Name": "product-code", "Values": ["aw0evgkw8e5c1q413zgy5pjce"]},
+                {"Name": "owner-id", "Values": ["679593333241"]},
             ],
             "windows": [
-                {"Name": "platform",
-                    "Values": ["windows"]},
-                {"Name": "owner-id",
-                    "Values": ["801119661308"]},
-                {"Name": "name",
-                    "Values": ["Windows_Server*English*Standard*"]}
-            ]
+                {"Name": "platform", "Values": ["windows"]},
+                {"Name": "owner-id", "Values": ["801119661308"]},
+                {"Name": "name", "Values": ["Windows_Server*English*Standard*"]},
+            ],
         }
         for _distro, _filter in _filters.items():
             image_data = self.aws_client.describe_images(
-                ExecutableUsers=["all"],
-                Filters=_filter)
-            _images = self._filter_amis_by_creation_date(
-                image_data["Images"])
+                ExecutableUsers=["all"], Filters=_filter
+            )
+            _images = self._filter_amis_by_creation_date(image_data["Images"])
             for image in _images:
                 img_id = image.get("ImageId")
 
@@ -187,18 +170,18 @@ class AwsProvider(base.BaseProvider):
                 aux_img.update(defaults)
                 aux_img.update(image)
 
-                _image_os_version = self._get_distro_version(
-                    image.get("Name"),
-                    _distro)
-                aux_img.update({
-                    "id": image.get("ImageId"),
-                    "image_name": image.get("Name"),
-                    "image_architecture": image.get("Architecture"),
-                    "image_os_type": image.get("PlatformDetails"),
-                    "image_os_name": _distro,
-                    "image_os_version": _image_os_version,
-                    "image_marketplace_id": image.get("ImageLocation"),
-                })
+                _image_os_version = self._get_distro_version(image.get("Name"), _distro)
+                aux_img.update(
+                    {
+                        "id": image.get("ImageId"),
+                        "image_name": image.get("Name"),
+                        "image_architecture": image.get("Architecture"),
+                        "image_os_type": image.get("PlatformDetails"),
+                        "image_os_name": _distro,
+                        "image_os_version": _image_os_version,
+                        "image_marketplace_id": image.get("ImageLocation"),
+                    }
+                )
                 images[img_id] = self._normalize_image_values(aux_img)
 
         return images
@@ -220,10 +203,8 @@ class AwsProvider(base.BaseProvider):
         defaults.update(self.static.get_template_defaults(prefix=True))
 
         _filters = [
-            {"Name": "bare-metal",
-                "Values": ["false"]},
-            {"Name": "current-generation",
-                "Values": ["true"]},
+            {"Name": "bare-metal", "Values": ["false"]},
+            {"Name": "current-generation", "Values": ["true"]},
         ]
 
         _flavors = self.aws_client.describe_instance_types(Filters=_filters)
@@ -235,12 +216,16 @@ class AwsProvider(base.BaseProvider):
             storage_info = flavor.get("InstanceStorageInfo")
             if None in (vcpu_info, mem_info, storage_info):
                 continue
-            aux.update({"flavor_id": flavor_id,
-                        "flavor_name": flavor_id,
-                        "tenant_id": flavor_id,
-                        "template_memory": mem_info.get("SizeInMiB"),
-                        "template_disk": storage_info.get("TotalSizeInGB"),
-                        "template_cpu": vcpu_info.get("DefaultVCpus")})
+            aux.update(
+                {
+                    "flavor_id": flavor_id,
+                    "flavor_name": flavor_id,
+                    "tenant_id": flavor_id,
+                    "template_memory": mem_info.get("SizeInMiB"),
+                    "template_disk": storage_info.get("TotalSizeInGB"),
+                    "template_cpu": vcpu_info.get("DefaultVCpus"),
+                }
+            )
             flavors[flavor_id] = aux
         return flavors
 
@@ -248,7 +233,8 @@ class AwsProvider(base.BaseProvider):
         endp = [
             region["Endpoint"]
             for region in self.aws_client.describe_regions()["Regions"]
-            if region["RegionName"] == self.aws_region_code][0]
+            if region["RegionName"] == self.aws_region_code
+        ][0]
         return {"compute_service_name": endp}
 
     @staticmethod
@@ -257,10 +243,7 @@ class AwsProvider(base.BaseProvider):
             "--aws-region",
             default=utils.env("AWS_DEFAULT_REGION"),
             dest="aws_region_code",
-            help=(
-                "Specify AWS Region Code "
-                "(e.g. us-east-2, ap-south-1, eu-west-3))"
-            ),
+            help=("Specify AWS Region Code (e.g. us-east-2, ap-south-1, eu-west-3))"),
         )
         parser.add_argument(
             "--aws-access-key",
@@ -272,16 +255,12 @@ class AwsProvider(base.BaseProvider):
             "--aws-secret-key",
             default=utils.env("AWS_SECRET_ACCESS_KEY"),
             dest="aws_secret_key",
-            help=(
-                "Specify AWS Secret Access Key for "
-                "the provided AWS Access Key ID"
-            ),
+            help=("Specify AWS Secret Access Key for the provided AWS Access Key ID"),
         )
         parser.add_argument(
             "--all-amis-from",
             metavar="DATE",
-            default=(
-                datetime.now() - relativedelta(years=1)).strftime("%Y-%m-%d"),
+            default=(datetime.now() - relativedelta(years=1)).strftime("%Y-%m-%d"),
             dest="all_amis_from",
             help=(
                 "Starting date from which the creation date "
