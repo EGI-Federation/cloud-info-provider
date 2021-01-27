@@ -26,7 +26,7 @@ class GOCDBTest(base.TestCase):
     def test_request_call(self):
         with mock.patch("requests.get") as m_requests:
             m_requests.return_value = mock.MagicMock()
-            r = gocdb.get_from_gocdb(method="get_service", service_type="bar")
+            r = gocdb.find_in_gocdb("foo", "bar")
             m_requests.assert_called_once_with(
                 "https://goc.egi.eu/gocdbpi/public/",
                 params={"method": "get_service", "service_type": "bar"},
@@ -37,10 +37,7 @@ class GOCDBTest(base.TestCase):
     def test_request_call_insecure(self):
         with mock.patch("requests.get") as m_requests:
             m_requests.return_value = mock.MagicMock()
-            r = gocdb.get_from_gocdb(
-                method="get_service",
-                service_type="bar",
-                insecure=True)
+            r = gocdb.find_in_gocdb("foo", "bar", insecure=True)
             m_requests.assert_called_once_with(
                 "https://goc.egi.eu/gocdbpi/public/",
                 params={"method": "get_service", "service_type": "bar"},
@@ -53,8 +50,7 @@ class GOCDBTest(base.TestCase):
             r = mock.MagicMock()
             r.status_code = 404
             m_requests.return_value = r
-            self.assertEqual({}, gocdb.get_from_gocdb(method="get_service",
-                                                      service_type="bar"))
+            self.assertEqual({}, gocdb.find_in_gocdb("foo", "bar"))
 
     def test_goc_empty(self):
         with mock.patch("requests.get") as m_requests:
@@ -62,10 +58,7 @@ class GOCDBTest(base.TestCase):
             r.status_code = 200
             r.text = '<?xml version="1.0" encoding="UTF-8"?>' "<results/>"
             m_requests.return_value = r
-            self.assertEqual(('<?xml version="1.0" encoding="UTF-8"?>'
-                              '<results/>'),
-                             gocdb.get_from_gocdb(method="get_service",
-                                                  service_type="bar"))
+            self.assertEqual({}, gocdb.find_in_gocdb("foo", "bar"))
 
     def test_goc_not_found(self):
         with mock.patch("requests.get") as m_requests:
@@ -73,9 +66,7 @@ class GOCDBTest(base.TestCase):
             r.status_code = 200
             r.text = sample_goc_response
             m_requests.return_value = r
-            self.assertEqual(sample_goc_response,
-                             gocdb.get_from_gocdb(method="get_service",
-                                                  service_type="bar"))
+            self.assertEqual({}, gocdb.find_in_gocdb("foo", "bar"))
 
     def test_goc_found_same_path(self):
         with mock.patch("requests.get") as m_requests:
