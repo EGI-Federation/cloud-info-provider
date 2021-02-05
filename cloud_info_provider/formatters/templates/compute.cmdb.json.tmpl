@@ -20,7 +20,7 @@
     is_public = static_compute_info['site_is_public']
     region = static_compute_info['compute_region']
     oidc_auth_enabled = static_compute_info['compute_oidc_auth_enabled']
-    supported_idps = static_compute_info['compute_supported_idps']
+    supported_idps = static_compute_info['compute_supported_idps'] or {}
 
     from six.moves import urllib
     urlparse_obj = urllib.parse.urlparse(service_id)
