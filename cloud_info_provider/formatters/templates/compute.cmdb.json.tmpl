@@ -18,7 +18,6 @@
     provider_id = static_compute_info['site_name']
     service_id = static_compute_info['compute_service_name']
     is_public = static_compute_info['site_is_public']
-    region = static_compute_info['compute_region']
     oidc_auth_enabled = static_compute_info['compute_oidc_auth_enabled']
     supported_idps = static_compute_info['compute_supported_idps'] or {}
 
@@ -51,7 +50,7 @@
             ${render_string('service_type', goc_service_type)}
             ${render_string('sitename', static_compute_info['site_name'])}
             % if middleware == "openstack":
-            "region": "${region}",
+            ${render_string('region', static_compute_info['compute_region'])}
             "public_ip_assignable": ${'true' if static_compute_info.get('compute_public_ip_assignable', None) else 'false'},
             "supported_idps": [
             % for _name, _data in supported_idps.items():
