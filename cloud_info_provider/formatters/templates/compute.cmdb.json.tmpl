@@ -50,7 +50,7 @@
             ${render_string('service_type', goc_service_type)}
             ${render_string('sitename', static_compute_info['site_name'])}
             % if middleware == "openstack":
-            ${render_string('region', static_compute_info['compute_region'])}
+            ${render_string('region', static_compute_info['compute_region'], required_type=True)}
             "public_ip_assignable": ${'true' if static_compute_info.get('compute_public_ip_assignable', None) else 'false'},
             "supported_idps": [
             % for _name, _data in supported_idps.items():
