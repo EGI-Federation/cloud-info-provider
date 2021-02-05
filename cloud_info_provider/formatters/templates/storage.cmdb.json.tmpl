@@ -14,6 +14,7 @@
     static_storage_info = attributes['static_storage_info']
     is_public = static_storage_info['site_is_public']
     endpoints = attributes['endpoints']['endpoints']
+    oidc_auth_enabled = static_storage_info['storage_oidc_auth_enabled']
 %>\
     {
         "type": "provider",
@@ -35,6 +36,7 @@
             "provider_id": "${srv_data['site_name']}",
             "sitename": "${srv_data['site_name']}",
             "hostname": "${srv_id}",
+            "oidc_auth_enabled": ${'true' if oidc_auth_enabled else 'false'},
             "iam_enabled": ${'true' if srv_data.get('storage_iam_enabled', None) else 'false'},
             "type":"storage"
 		},
