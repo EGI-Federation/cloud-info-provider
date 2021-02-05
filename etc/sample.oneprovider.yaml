@@ -10,8 +10,6 @@ site:
   # is_public: false
 
 compute:
-  ## The protocol in use by the IdP
-  # idp_protocol: oidc
   ## Whether OIDC is enabled at the service
   # oidc_auth_enabled: false
   ## Whether the service is public or private. The default value is the same
