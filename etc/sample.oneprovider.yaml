@@ -3,9 +3,6 @@ site:
   ## Your site name, as in GODCB (if omitted or set to None, this value is
   ## retreived from /etc/glite-info-static/site/site.cfg )
   # name: SITE_NAME
-  ## IAM IDs for the cloud site owners
-  # owner_contacts_iam:
-  #   - ID-1
   ## Whether the provider is public or private cloud (default -> false)
   # is_public: false
 

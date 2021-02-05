@@ -17,14 +17,12 @@
 %>\
     {
         "type": "provider",
-        ${render_string('owners', static_storage_info['site_owner_contacts_iam'])}
         "data": {
             ${render_string('country', static_storage_info['site_country'])}
             ${render_string('country_code', static_storage_info['site_country_code'])}
             ${render_string('roc', static_storage_info['site_roc'])}
             ${render_string('subgrid', static_storage_info['site_subgrid'])}
             "is_public": ${'true' if is_public else 'false'},
-            ${render_string('owners', static_storage_info['site_owner_contacts'])}
             ${render_string('giis_url', static_storage_info['site_giis_url'])}
             ${render_string('name', static_storage_info['site_name'], required_type=True, comma=False)}
         }

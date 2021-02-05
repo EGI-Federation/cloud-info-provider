@@ -54,8 +54,6 @@ class MesosProvider(base.BaseProvider):
             "roc",
             "subgrid",
             "giis_url",
-            "owner_contacts",
-            "owner_contacts_iam",
         )
         return self.static.get_site_info(fields=_fields)
 

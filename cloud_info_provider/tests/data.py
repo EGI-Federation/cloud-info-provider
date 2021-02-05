@@ -12,8 +12,6 @@ class Data(object):
             # required by CMDB
             "site_id": "provider-SITE_NAME",
             "site_is_public": False,
-            "site_owner_contacts": None,
-            "site_owner_contacts_iam": None,
         }
 
     @property

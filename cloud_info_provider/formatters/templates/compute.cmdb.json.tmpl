@@ -30,14 +30,12 @@
 %>\
     {
         "type": "provider",
-        ${render_string('owners', static_compute_info.get('site_owner_contacts_iam', None))}
         "data": {
             ${render_string('country', static_compute_info.get('site_country', None))}
             ${render_string('country_code', static_compute_info.get('site_country_code', None))}
             ${render_string('roc', static_compute_info.get('site_roc', None))}
             ${render_string('subgrid', static_compute_info.get('site_subgrid', None))}
             "is_public": ${'true' if is_public else 'false'},
-            ${render_string('owners', static_compute_info.get('site_owner_contacts', None))}
             ${render_string('giis_url', static_compute_info.get('site_giis_url', None))}
             ${render_string('name', static_compute_info['site_name'], required_type=True, comma=False)}
         }
