@@ -2,6 +2,7 @@ import copy
 import functools
 import json
 import logging
+import re
 
 import glanceclient
 import novaclient.client
@@ -22,7 +23,8 @@ def _rescope(f):
     def inner(self, **kwargs):
         auth = kwargs.get("auth")
         vo = kwargs.get("vo")
-        self._rescope_project(auth["project_id"], vo)
+        region_name = auth.get("region_name", None)
+        self._rescope_project(auth["project_id"], vo, region_name)
         return f(self, **kwargs)
 
     return inner
@@ -86,7 +88,7 @@ class OpenStackProvider(base.BaseProvider):
             share["project"] = share.get("auth", {}).get("project_id")
         return shares
 
-    def _rescope_project(self, project_id, vo):
+    def _rescope_project(self, project_id, vo, region_name=None):
         """Switch to new OS project whenever there is a change.
 
         It updates every OpenStack client used in case of new project.
@@ -96,6 +98,7 @@ class OpenStackProvider(base.BaseProvider):
         self.opts.os_project_id = project_id
         # make sure that it also works for v2voms
         self.opts.os_tenant_id = project_id
+        self.opts.os_region_name = region_name
         if self.auth_refresher:
             self.auth_refresher.refresh(self, project_id=project_id, vo=vo)
         self.auth_plugin = loading.load_auth_from_argparse_arguments(self.opts)
@@ -109,8 +112,12 @@ class OpenStackProvider(base.BaseProvider):
             msg = "Could not authorize user in project '%s'" % project_id
             raise exceptions.OpenStackProviderException(msg)
         # make sure the clients know about the change
-        self.nova = novaclient.client.Client(2, session=self.session)
-        self.glance = glanceclient.Client("2", session=self.session)
+        self.nova = novaclient.client.Client(
+            2, session=self.session, region_name=region_name
+        )
+        self.glance = glanceclient.Client(
+            "2", session=self.session, region_name=region_name
+        )
 
     @staticmethod
     def _get_endpoint_versions(endpoint_url):
@@ -159,7 +166,11 @@ class OpenStackProvider(base.BaseProvider):
         ret["compute_service_name"] = self.auth_plugin.auth_url
         ca_info = self._get_endpoint_ca_information(self.auth_plugin.auth_url)
         catalog = self.auth_plugin.get_access(self.session).service_catalog
-        epts = catalog.get_endpoints(service_type=self.service_type, interface="public")
+        epts = catalog.get_endpoints(
+            service_type=self.service_type,
+            interface="public",
+            region_name=defaults.get("compute_region"),
+        )
         for ept in epts.get(self.service_type, []):
             e_id = ept["id"]
             # URL is in different places depending of Keystone version
@@ -198,13 +209,30 @@ class OpenStackProvider(base.BaseProvider):
 
     @_rescope
     def get_templates(self, **kwargs):
-        """Return templates/flavors selected accroding to --select-flavors"""
+        """Return templates/flavors selected according to --select-flavors"""
         flavors = {}
-        defaults = {"template_platform": "amd64", "template_network": "private"}
+        defaults = {
+            "template_platform": "amd64",
+            "template_network": "private",
+            "template_memory": 0,
+            "template_ephemeral": 0,
+            "template_disk": 0,
+            "template_cpu": 0,
+            "template_infiniband": False,
+            "template_flavor_gpu_number": 0,
+            "template_flavor_gpu_vendor": None,
+            "template_flavor_gpu_model": None,
+        }
         defaults.update(self.static.get_template_defaults(prefix=True))
         tpl_sch = defaults.get("template_schema", "resource")
         URI = "http://schemas.openstack.org/template/"
         add_all = self.select_flavors == "all"
+        # properties
+        property_keys = [
+            _opt
+            for _opt in vars(self.opts)
+            if _opt.startswith("property_flavor_") and not _opt.endswith("_value")
+        ]
         for flavor in self.nova.flavors.list(detailed=True, is_public=None):
             add_pub = self.select_flavors == "public" and flavor.is_public
             add_priv = self.select_flavors == "private" and not flavor.is_public
@@ -223,6 +251,27 @@ class OpenStackProvider(base.BaseProvider):
                     "template_cpu": flavor.vcpus,
                 }
             )
+
+            # properties
+            d_properties = {}
+            for k in property_keys:
+                opts_k = vars(self.opts)[k]
+                v = flavor.get_keys().get(opts_k)
+                if v:
+                    property_id = re.search(r"property_(\w+)", k).group(1)
+                    # if "_value" suffix provided, validate it
+                    try:
+                        opts_v = vars(self.opts)["_".join([k, "value"])]
+                    except KeyError:
+                        opts_v = False
+                    if opts_v:
+                        d_properties["template_%s" % property_id] = v == opts_v
+                    else:
+                        d_properties["template_%s" % property_id] = v
+            aux.update(d_properties)
+            # name
+            aux.update({"flavor_name": flavor.name})
+
             flavors[flavor.id] = aux
         if not flavors:
             logging.warning("No flavors found!?")
@@ -259,12 +308,17 @@ class OpenStackProvider(base.BaseProvider):
             "image_context_format": None,
             "image_software": [],
             "other_info": [],
+            "architecture": None,
+            "os_distro": None,
+            "image_os_type": None,
         }
         defaults = self.static.get_image_defaults(prefix=True)
         img_sch = defaults.get("image_schema", "os")
         URI = "http://schemas.openstack.org/template/"
 
-        for image in self.glance.images.list(detailed=True):
+        for image in self.glance.images.list(
+            detailed=True, filters={"status": "active"}
+        ):
             aux_img = copy.deepcopy(template)
             aux_img.update(defaults)
             aux_img.update(image)
@@ -321,6 +375,19 @@ class OpenStackProvider(base.BaseProvider):
                     "image_marketplace_id": marketplace_id,
                 }
             )
+
+            # Image properties
+            property_keys = [
+                _opt for _opt in vars(self.opts) if _opt.startswith("property_image_")
+            ]
+
+            d_properties = {}
+            for k in property_keys:
+                opts_k = vars(self.opts)[k]
+                v = image.get(opts_k)
+                d_properties[k] = v
+            aux_img.update(d_properties)
+
             images[img_id] = aux_img
         return images
 
@@ -456,6 +523,14 @@ class OpenStackProvider(base.BaseProvider):
         )
 
         parser.add_argument(
+            "--os-region",
+            metavar="<region>",
+            default=utils.env("OS_REGION", default=None),
+            help="In multi-region environments, specify the region "
+            "to use. Defaults to env[OS_REGION].",
+        )
+
+        parser.add_argument(
             "--os-cacert",
             metavar="<ca-certificate>",
             default=utils.env("OS_CACERT", default=requests.certs.where()),
@@ -501,4 +576,59 @@ class OpenStackProvider(base.BaseProvider):
                 "snapshots), otherwise only publish images with cloudkeeper "
                 "metadata, ignoring the others."
             ),
+        )
+
+        # PROPERTIES
+        # If "property-<property>-value" is provided, the capability will only
+        # be published when the given value matches the one in the flavor
+        parser.add_argument(
+            "--property-flavor-infiniband",
+            metavar="PROPERTY_KEY",
+            default="infiniband",
+            help='Flavor"s property key for Infiniband support.',
+        )
+        parser.add_argument(
+            "--property-flavor-infiniband-value",
+            metavar="PROPERTY_VALUE",
+            default="true",
+            help=(
+                "When Infiniband is supported, this option specifies the "
+                "value to match."
+            ),
+        )
+        parser.add_argument(
+            "--property-flavor-gpu-number",
+            metavar="PROPERTY_KEY",
+            default="gpu_number",
+            help='Flavor"s property key pointing to number of GPUs.',
+        )
+        parser.add_argument(
+            "--property-flavor-gpu-vendor",
+            metavar="PROPERTY_KEY",
+            default="gpu_vendor",
+            help='Flavor"s property key pointing to the GPU vendor.',
+        )
+        parser.add_argument(
+            "--property-flavor-gpu-model",
+            metavar="PROPERTY_KEY",
+            default="gpu_model",
+            help='Flavor"s property key pointing to the GPU model.',
+        )
+        parser.add_argument(
+            "--property-image-gpu-driver",
+            metavar="PROPERTY_KEY",
+            default="gpu_driver",
+            help='Image"s property key to specify the GPU driver version',
+        )
+        parser.add_argument(
+            "--property-image-gpu-cuda",
+            metavar="PROPERTY_KEY",
+            default="gpu_cuda",
+            help='Image"s property key to specify the CUDA toolkit version',
+        )
+        parser.add_argument(
+            "--property-image-gpu-cudnn",
+            metavar="PROPERTY_KEY",
+            default="gpu_cudnn",
+            help='Image"s property key to specify the cuDNN library version',
         )

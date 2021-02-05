@@ -9,6 +9,9 @@ class Data(object):
         return {
             "suffix": "o=glue",
             "site_name": "SITE_NAME",
+            # required by CMDB
+            "site_id": "provider-SITE_NAME",
+            "site_is_public": False,
         }
 
     @property
@@ -116,6 +119,8 @@ class Data(object):
                 "image_os_name": "Cirros",
                 "image_os_version": 1.0,
                 "image_platform": "amd64",
+                "image_architecture": None,
+                "image_os_type": None,
             },
         }
 

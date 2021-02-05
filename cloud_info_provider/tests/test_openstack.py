@@ -114,6 +114,12 @@ class OpenStackProviderTest(base.TestCase):
                 self.select_flavors = "all"
                 self._rescope_project = mock.Mock()
                 self.all_images = False
+                self.opts = mock.Mock()
+                self.opts.property_flavor_infiniband = "infiniband"
+                self.opts.property_flavor_infiniband_value = "true"
+                self.opts.property_flavor_gpu_number = 0
+                self.opts.property_flavor_gpu_vendor = None
+                self.opts.property_flavor_gpu_model = None
 
         self.provider = FakeProvider(None)
 
@@ -157,6 +163,11 @@ class OpenStackProviderTest(base.TestCase):
                 "template_network": "private",
                 "template_disk": f.disk,
                 "template_ephemeral": f.ephemeral,
+                "flavor_name": f.name,
+                "template_infiniband": False,
+                "template_flavor_gpu_number": 0,
+                "template_flavor_gpu_vendor": None,
+                "template_flavor_gpu_model": None,
             }
         with utils.nested(
             mock.patch.object(self.provider.static, "get_template_defaults"),
@@ -212,6 +223,11 @@ class OpenStackProviderTest(base.TestCase):
                 "template_network": "private",
                 "template_disk": f.disk,
                 "template_ephemeral": f.ephemeral,
+                "flavor_name": f.name,
+                "template_infiniband": False,
+                "template_flavor_gpu_number": 0,
+                "template_flavor_gpu_vendor": None,
+                "template_flavor_gpu_model": None,
             }
 
         with utils.nested(
@@ -266,6 +282,11 @@ class OpenStackProviderTest(base.TestCase):
                 "template_network": "private",
                 "template_disk": f.disk,
                 "template_ephemeral": f.ephemeral,
+                "flavor_name": f.name,
+                "template_infiniband": False,
+                "template_flavor_gpu_number": 0,
+                "template_flavor_gpu_vendor": None,
+                "template_flavor_gpu_model": None,
             }
 
         self.provider.select_flavors = "all"
@@ -327,6 +348,11 @@ class OpenStackProviderTest(base.TestCase):
                 "template_network": "private",
                 "template_disk": f.disk,
                 "template_ephemeral": f.ephemeral,
+                "flavor_name": f.name,
+                "template_infiniband": False,
+                "template_flavor_gpu_number": 0,
+                "template_flavor_gpu_vendor": None,
+                "template_flavor_gpu_model": None,
             }
 
         self.provider.select_flavors = "public"
@@ -388,6 +414,11 @@ class OpenStackProviderTest(base.TestCase):
                 "template_network": "private",
                 "template_disk": f.disk,
                 "template_ephemeral": f.ephemeral,
+                "flavor_name": f.name,
+                "template_infiniband": False,
+                "template_flavor_gpu_number": 0,
+                "template_flavor_gpu_vendor": None,
+                "template_flavor_gpu_model": None,
             }
 
         self.provider.select_flavors = "private"
@@ -472,6 +503,9 @@ class OpenStackProviderTest(base.TestCase):
                 "image_traffic_out": [],
                 "image_context_format": None,
                 "other_info": [],
+                "architecture": None,
+                "os_distro": None,
+                "image_os_type": None,
             },
             "foo.id": {
                 "name": "fooimage",
@@ -504,6 +538,9 @@ class OpenStackProviderTest(base.TestCase):
                 "image_context_format": None,
                 "other_info": ["base_mpuri=foobar"],
                 "APPLIANCE_ATTRIBUTES": '{"ad:base_mpuri": "foobar"}',
+                "architecture": None,
+                "os_distro": None,
+                "image_os_type": None,
             },
             "baz id": {
                 "name": "bazimage",
@@ -539,6 +576,9 @@ class OpenStackProviderTest(base.TestCase):
                 "image_traffic_out": [],
                 "image_context_format": None,
                 "other_info": [],
+                "architecture": None,
+                "os_distro": None,
+                "image_os_type": None,
             },
         }
 
@@ -582,6 +622,7 @@ class OpenStackProviderTest(base.TestCase):
                 "template_disk",
                 "template_ephemeral",
                 "template_id",
+                "template_infiniband",
             ],
         )
 
@@ -753,6 +794,9 @@ class OoiProviderTest(OpenStackProviderTest):
                 self.select_flavors = "all"
                 self._rescope_project = mock.Mock()
                 self.all_images = False
+                self.opts = mock.Mock()
+                self.opts.property_flavor_infiniband = "infiniband"
+                self.opts.property_flavor_infiniband_value = "true"
 
         self.provider = FakeProvider(None)
 
@@ -800,6 +844,9 @@ class OoiProviderTest(OpenStackProviderTest):
                 "image_traffic_out": [],
                 "image_context_format": None,
                 "other_info": [],
+                "architecture": None,
+                "os_distro": None,
+                "image_os_type": None,
             },
             "foo.id": {
                 "name": "fooimage",
@@ -832,6 +879,9 @@ class OoiProviderTest(OpenStackProviderTest):
                 "image_context_format": None,
                 "other_info": ["base_mpuri=foobar"],
                 "APPLIANCE_ATTRIBUTES": '{"ad:base_mpuri": "foobar"}',
+                "architecture": None,
+                "os_distro": None,
+                "image_os_type": None,
             },
             "baz id": {
                 "name": "bazimage",
@@ -867,6 +917,9 @@ class OoiProviderTest(OpenStackProviderTest):
                 "image_traffic_out": [],
                 "image_context_format": None,
                 "other_info": [],
+                "architecture": None,
+                "os_distro": None,
+                "image_os_type": None,
             },
         }
 
@@ -910,6 +963,7 @@ class OoiProviderTest(OpenStackProviderTest):
                 "template_disk",
                 "template_ephemeral",
                 "template_id",
+                "template_infiniband",
             ],
         )
 

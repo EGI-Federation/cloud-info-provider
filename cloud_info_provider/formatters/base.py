@@ -51,7 +51,12 @@ class BaseFormatter(object):
         available_collectors = self._load_collectors(opts, providers, auth_refreshers)
         self._load_templates(opts.template_dir)
         for tpl in self.templates:
-            info = available_collectors[tpl].fetch()
+            _collector = available_collectors[tpl]
+            info = _collector.fetch()
             if info:
-                output.append(self._format_template(tpl, info))
+                extra_info = {
+                    "middleware": opts.middleware,
+                    "dynamic_provider": _collector.dynamic_provider,
+                }
+                output.append(self._format_template(tpl, info, extra_info))
         return "\n".join(output)

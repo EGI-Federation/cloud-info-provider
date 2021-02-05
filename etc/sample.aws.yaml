@@ -3,40 +3,30 @@ site:
   ## retrieved from /etc/glite-info-static/site/site.cfg )
   # name: SITE_NAME
   ## Whether the provider is public or private cloud (default -> false)
-  # is_public: false
+  # is_public: true
 
 compute:
-  # OpenStack region
-  region: RegionOne
   ## Indicates whether public IPv4 addresses can be assigned to VMs in the
   ## given site
-  # public_ip_assignable: false
+  # public_ip_assignable: true
   ## Whether OIDC is enabled at the service
   # oidc_auth_enabled: false
-  ## Federation info
-  # supported_idps:
-  #   ## Name of the identity provider (accepts multiple entries)
-  #   egi.eu:
-  #     ## Issuer (endpoint)
-  #     issuer: https://aai-dev.egi.eu/oidc/
-  #     ## Federation protocol
-  #     protocol: oidc
   ## Whether the service is public or private. The default value is the same
   ## as 'site:is_public' parameter
-  # is_public_service: false
+  # is_public_service: true
 
   ## Configure here the VOs supported at your installation
   shares:
     ## Name of the VO
-    ops:
+    us-east-1:
       ## Authentication for the VO into OpenStack
       auth:
         ## the project id in OpenStack
         project_id: xxxxx
       ## Default network type: none, public, public_only, private, private_only
-      default_network_type: public
+      # default_network_type: public
       ## Name of the public network associated with the tenant
-      public_network_name: PUBLIC
+      # public_network_name: PUBLIC
       ## Other optional information follows:
       ## Name of the private network associated with the tenant
       # private_network_name: PRIVATE
@@ -50,31 +40,16 @@ compute:
       # membership:
       #   - VO:ops
 
-    ## A second VO
-    # fedcloud.egi.eu:
-    #   auth:
-    #     project_id: xxxx
-    #   sla: https://egi.eu/sla/fedcloud
-    #   ## Default network type: none, public, public_only, private, private_only
-    #   default_network_type: public
-    #   ## Public Network name
-    #   public_network_name: PUBLIC
-    #   ## Private Network name
-    #   private_network_name: PRIVATE
-    #   ## Pattern to define the CIDR of the private network
-    #   private_network_cidr: CIDR_ADDR
-    #   network_info: UNKNOWN
-    #   membership:
-    #     - VOMS:/fedcloud.egi.eu/Role=VMOperators
-
   ## Extra information on your OpenStack endpoints
   ## (optional)
   endpoints:
     defaults:
-      # middleware_version: Liberty
+      # middleware_version: ec2
       # api_endpoint_technology: webservice
-      # api_authn_method: oidc
+      # api_authn_method: secret_key
       # production_level: production
+
+    https://ec2.us-east-1.amazonaws.com:
 
   ## Available resources, uncomment and set as needed
   ## Below default values are used

@@ -180,6 +180,7 @@ class StaticProviderTest(base.TestCase):
                 "service_production_level": "production",
                 "total_cores": 0,
                 "total_ram": 0,
+                "total_accelerators": 0,
                 "vm_backup_restore": False,
             },
             unprefixed,
@@ -207,6 +208,7 @@ class StaticProviderTest(base.TestCase):
                 "compute_service_production_level": "production",
                 "compute_total_cores": 0,
                 "compute_total_ram": 0,
+                "compute_total_accelerators": 0,
                 "compute_vm_backup_restore": False,
             },
             prefixed,
@@ -263,6 +265,8 @@ class StaticProviderTest(base.TestCase):
                 "compute_network_virt_type": None,
                 "compute_cpu_virt_type": None,
                 "compute_virtual_disk_formats": None,
+                "compute_public_ip_assignable": None,
+                "compute_oidc_auth_enabled": None,
             }
         )
         with mock.patch("socket.getfqdn") as m_fqdn:
@@ -364,6 +368,8 @@ class StaticProviderTest(base.TestCase):
                         "os_family": "linux",
                         "os_name": "Cirros",
                         "os_version": 1.0,
+                        "os_type": "linux",
+                        "architecture": "amd64",
                     },
                     "os#barid": {
                         "name": "Bar Image",
@@ -373,6 +379,8 @@ class StaticProviderTest(base.TestCase):
                         "os_name": "Cirros",
                         "os_version": 2.0,
                         "platform": "i686",
+                        "os_type": "linux",
+                        "architecture": "i686",
                     },
                 }
             }
@@ -386,6 +394,8 @@ class StaticProviderTest(base.TestCase):
                 "image_os_version": 2.0,
                 "image_platform": "i686",
                 "image_version": 2.0,
+                "image_os_type": "linux",
+                "image_architecture": "i686",
             },
             "os#fooid": {
                 "image_marketplace_id": "http://example.org/foo",
@@ -395,6 +405,8 @@ class StaticProviderTest(base.TestCase):
                 "image_os_version": 1.0,
                 "image_platform": "amd64",
                 "image_version": 1.0,
+                "image_os_type": "linux",
+                "image_architecture": "amd64",
             },
         }
         for img in expected.values():
