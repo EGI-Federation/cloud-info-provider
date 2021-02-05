@@ -37,7 +37,6 @@
             "sitename": "${srv_data['site_name']}",
             "hostname": "${srv_id}",
             "oidc_auth_enabled": ${'true' if oidc_auth_enabled else 'false'},
-            "iam_enabled": ${'true' if srv_data.get('storage_iam_enabled', None) else 'false'},
             "type":"storage"
 		},
         "type": "service"
