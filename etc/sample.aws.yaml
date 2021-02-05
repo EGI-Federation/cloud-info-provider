@@ -46,10 +46,10 @@ compute:
     defaults:
       # middleware_version: ec2
       # api_endpoint_technology: webservice
+      # api_authn_method: secret_key
       # production_level: production
 
     https://ec2.us-east-1.amazonaws.com:
-      # api_authn_method: secret_key
 
   ## Available resources, uncomment and set as needed
   ## Below default values are used
