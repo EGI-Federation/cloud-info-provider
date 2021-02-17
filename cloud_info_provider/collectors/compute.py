@@ -41,7 +41,7 @@ class ComputeCollector(base.BaseCollector):
             "templates": templates,
             "instances": instances,
             "endpoints": endpoints,
-            "quotas": quotas
+            "quotas": quotas,
         }
 
     def fetch(self):

@@ -103,7 +103,8 @@ def get_parser(providers, formatters, auth_refreshers, publishers):
         default=False,
         help=(
             "Ignore errors when getting information about a given share. "
-            "Use with care!"),
+            "Use with care!"
+        ),
     )
 
     parser.add_argument(
@@ -112,7 +113,6 @@ def get_parser(providers, formatters, auth_refreshers, publishers):
         default=False,
         help="Provide extra logging information",
     )
-
 
     for provider_name, provider in providers.items():
         group = parser.add_argument_group("%s provider options" % provider_name)
