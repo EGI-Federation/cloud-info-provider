@@ -2,6 +2,7 @@ import cloud_info_provider.collectors.base
 import cloud_info_provider.collectors.cloud
 import cloud_info_provider.collectors.compute
 import cloud_info_provider.collectors.storage
+from cloud_info_provider.exceptions import CloudInfoException
 import mock
 from cloud_info_provider.tests import base, data, utils
 
@@ -161,3 +162,41 @@ class ComputeCollectorTest(base.BaseTest):
         )
         self.assertFalse(compute.fetch())
         self.assertEqual({}, compute.fetch())
+
+    @mock.patch.object(
+        cloud_info_provider.collectors.compute.ComputeCollector,
+        "_get_info_from_providers",
+    )
+    def test_fetch_error_ignored(self, m_get_info):
+        m_get_info.side_effect = (
+            DATA.site_info,
+            DATA.compute_shares,
+            CloudInfoException(),
+            CloudInfoException(),
+            DATA.site_info,
+            DATA.compute_shares,
+            CloudInfoException(),
+            CloudInfoException(),
+        )
+        self.opts.ignore_share_errors = True
+        compute = cloud_info_provider.collectors.compute.ComputeCollector(
+            self.opts, self.providers, None
+        )
+        self.assertFalse(compute.fetch())
+        self.assertEqual({}, compute.fetch())
+
+    @mock.patch.object(
+        cloud_info_provider.collectors.compute.ComputeCollector,
+        "_get_info_from_providers",
+    )
+    def test_fetch_error(self, m_get_info):
+        m_get_info.side_effect = (
+            DATA.site_info,
+            DATA.compute_shares,
+            CloudInfoException(),
+        )
+        self.opts.ignore_share_errors = False
+        compute = cloud_info_provider.collectors.compute.ComputeCollector(
+            self.opts, self.providers, None
+        )
+        self.assertRaises(CloudInfoException, compute.fetch)
