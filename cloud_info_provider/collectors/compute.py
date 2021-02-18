@@ -66,8 +66,12 @@ class ComputeCollector(base.BaseCollector):
         endpoints = {
             endpoint_id: endpoint
             for share_id, share in shares.items()
-            for endpoint_id, endpoint in share["endpoints"].items()
+            for endpoint_id, endpoint in share.get("endpoints", {}).items()
         }
+
+        # Keep existing behaviour
+        if not endpoints:
+            return {}
 
         # XXX Avoid redoing what was done in the previous shares loop
         static_compute_info = dict(endpoints, **site_info)
