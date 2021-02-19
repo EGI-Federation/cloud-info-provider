@@ -2,8 +2,8 @@ import cloud_info_provider.collectors.base
 import cloud_info_provider.collectors.cloud
 import cloud_info_provider.collectors.compute
 import cloud_info_provider.collectors.storage
-from cloud_info_provider.exceptions import CloudInfoException
 import mock
+from cloud_info_provider.exceptions import CloudInfoException
 from cloud_info_provider.tests import base, data, utils
 
 DATA = data.DATA
