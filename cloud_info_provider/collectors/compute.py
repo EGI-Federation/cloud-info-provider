@@ -1,7 +1,10 @@
 import itertools
+import logging
 
 from cloud_info_provider.collectors import base
 from cloud_info_provider.exceptions import CloudInfoException
+
+logger = logging.getLogger(__name__)
 
 
 class ComputeCollector(base.BaseCollector):
@@ -61,6 +64,9 @@ class ComputeCollector(base.BaseCollector):
             except CloudInfoException as exc:
                 if not self.opts.ignore_share_errors:
                     raise exc
+                logger.warning(
+                    "Ignored exception while getting share info for %s: %s", vo, exc
+                )
 
         # XXX Avoid creating a new list
         endpoints = {
