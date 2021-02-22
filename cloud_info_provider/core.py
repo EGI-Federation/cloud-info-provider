@@ -98,6 +98,16 @@ def get_parser(providers, formatters, auth_refreshers, publishers):
     )
 
     parser.add_argument(
+        "--ignore-share-errors",
+        action="store_true",
+        default=False,
+        help=(
+            "Ignore errors when getting information about a given share. "
+            "Use with care!"
+        ),
+    )
+
+    parser.add_argument(
         "--debug",
         action="store_true",
         default=False,
