@@ -49,7 +49,7 @@ def _find_url_in_result(svc_url, result):
     return {}
 
 
-def find_in_gocdb(svc_url, svc_type, insecure=False):
+def find_in_gocdb(svc_url, svc_type, insecure=False, timeout=None):
     """Find service matching URL and service type in GOCDB"""
 
     verify = not insecure
@@ -57,6 +57,7 @@ def find_in_gocdb(svc_url, svc_type, insecure=False):
         "https://goc.egi.eu/gocdbpi/public/",
         params={"method": "get_service", "service_type": svc_type},
         verify=verify,
+        timeout=timeout,
     )
     if r.status_code != 200:
         logger.warning("Something went wrong with GOC %s", r.text)
