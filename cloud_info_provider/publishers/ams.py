@@ -55,7 +55,9 @@ class AMSPublisher(BasePublisher):
             self.opts.ams_host
         )
 
-        r = requests.get(url, cert=(self.opts.ams_cert, self.opts.ams_key))
+        r = requests.get(
+            url, cert=(self.opts.ams_cert, self.opts.ams_key), timeout=self.opts.timeout
+        )
         return r.json()["token"]
 
     def publish(self, output):
@@ -66,7 +68,10 @@ class AMSPublisher(BasePublisher):
         payload = base64.b64encode(output.encode("utf-8")).decode("utf-8")
         data = {"messages": [{"attributes": {}, "data": payload}]}
         r = requests.post(
-            url, headers={"content-type": "application/json"}, data=json.dumps(data)
+            url,
+            headers={"content-type": "application/json"},
+            data=json.dumps(data),
+            timeout=self.opts.timeout,
         )
         r.raise_for_status()
         logging.info(
