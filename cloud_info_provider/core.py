@@ -108,11 +108,11 @@ def get_parser(providers, formatters, auth_refreshers, publishers):
     )
 
     parser.add_argument(
-            "--timeout",
-            default=600,
-            metavar="<seconds>",
-            help="Set request timeout (in seconds).",
-        )
+        "--timeout",
+        default=600,
+        metavar="<seconds>",
+        help="Set request timeout (in seconds).",
+    )
 
     parser.add_argument(
         "--debug",
