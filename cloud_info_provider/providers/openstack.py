@@ -479,13 +479,6 @@ class OpenStackProvider(base.BaseProvider):
         )
 
         parser.add_argument(
-            "--timeout",
-            default=600,
-            metavar="<seconds>",
-            help="Set request timeout (in seconds).",
-        )
-
-        parser.add_argument(
             "--select-flavors",
             default="all",
             choices=["all", "public", "private"],
