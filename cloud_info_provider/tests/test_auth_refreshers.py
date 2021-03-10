@@ -85,6 +85,7 @@ class OidcRefreshTest(base.TestCase):
                 "refresh_token": "baz",
                 "scope": "foobar",
             },
+            timeout=self.refresher.opts.timeout,
         )
 
     @mock.patch("requests.post")
@@ -196,4 +197,5 @@ class OidcRefreshVOTest(base.TestCase):
                 "refresh_token": "baz",
                 "scope": "foobar",
             },
+            timeout=self.refresher.opts.timeout,
         )

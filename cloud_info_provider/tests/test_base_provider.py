@@ -7,6 +7,7 @@ class BaseProviderTest(base.TestCase):
     def setUp(self):
         class Opts(object):
             debug = None
+            timeout = 1234
 
         super(BaseProviderTest, self).setUp()
         self.provider = cloud_info_provider.providers.base.BaseProvider(Opts())
@@ -50,5 +51,5 @@ class BaseProviderTest(base.TestCase):
             self.assertEqual({"foo": "bar"}, info)
             self.assertEqual("baz", self.provider._last_goc_url)
             info = self.provider.get_goc_info()
-            m_goc_find.assert_called_once_with("baz", "svc", False)
+            m_goc_find.assert_called_once_with("baz", "svc", False, 1234)
             self.assertEqual({"foo": "bar"}, info)
