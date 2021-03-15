@@ -61,8 +61,10 @@ class AMSPublisherTest(base.TestCase):
             ams_token = None
             ams_cert = "foo"
             ams_key = "bar"
+            timeout = 1234
 
-        publisher = ams.AMSPublisher(Opts())
+        opts = Opts()
+        publisher = ams.AMSPublisher(opts)
         with mock.patch("requests.get") as m_get:
             r = mock.MagicMock()
             r.json.return_value = {"token": "secret"}
@@ -72,7 +74,7 @@ class AMSPublisherTest(base.TestCase):
                 "https://example.com:8443/v1/service-types/ams/hosts/"
                 "example.com:authx509"
             )
-            m_get.assert_called_with(url, cert=("foo", "bar"))
+            m_get.assert_called_with(url, cert=("foo", "bar"), timeout=opts.timeout)
             self.assertEqual("secret", token)
 
     def test_publish(self):
@@ -80,8 +82,10 @@ class AMSPublisherTest(base.TestCase):
             ams_host = "example.com"
             ams_topic = "topic"
             ams_project = "bar"
+            timeout = 1234
 
-        publisher = ams.AMSPublisher(Opts())
+        opts = Opts()
+        publisher = ams.AMSPublisher(opts)
         output = "foo"
         with utils.nested(
             mock.patch("requests.post"), mock.patch.object(publisher, "_get_ams_token")
@@ -95,4 +99,6 @@ class AMSPublisherTest(base.TestCase):
                 "https://example.com/v1/projects/bar/topics/" "topic:publish?key=secret"
             )
             headers = {"content-type": "application/json"}
-            m_post.assert_called_with(url, headers=headers, data=json.dumps(data))
+            m_post.assert_called_with(
+                url, headers=headers, data=json.dumps(data), timeout=opts.timeout
+            )

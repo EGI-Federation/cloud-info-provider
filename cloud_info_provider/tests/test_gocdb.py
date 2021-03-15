@@ -31,6 +31,7 @@ class GOCDBTest(base.TestCase):
                 "https://goc.egi.eu/gocdbpi/public/",
                 params={"method": "get_service", "service_type": "bar"},
                 verify=True,
+                timeout=None,
             )
             self.assertEqual({}, r)
 
@@ -42,6 +43,19 @@ class GOCDBTest(base.TestCase):
                 "https://goc.egi.eu/gocdbpi/public/",
                 params={"method": "get_service", "service_type": "bar"},
                 verify=False,
+                timeout=None,
+            )
+            self.assertEqual({}, r)
+
+    def test_request_call_timeout(self):
+        with mock.patch("requests.get") as m_requests:
+            m_requests.return_value = mock.MagicMock()
+            r = gocdb.find_in_gocdb("foo", "bar", timeout=1234)
+            m_requests.assert_called_once_with(
+                "https://goc.egi.eu/gocdbpi/public/",
+                params={"method": "get_service", "service_type": "bar"},
+                verify=True,
+                timeout=1234,
             )
             self.assertEqual({}, r)
 

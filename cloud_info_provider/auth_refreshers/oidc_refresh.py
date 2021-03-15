@@ -22,7 +22,10 @@ class OidcRefreshToken(auth_refreshers.BaseRefresher):
         }
         try:
             r = requests.post(
-                token_endpoint, auth=(client_id, client_secret), data=refresh_data
+                token_endpoint,
+                auth=(client_id, client_secret),
+                data=refresh_data,
+                timeout=self.opts.timeout,
             )
             if r.status_code != requests.codes["ok"]:
                 msg = "Unable to get token, request returned %s" % r.text

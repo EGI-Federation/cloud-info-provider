@@ -26,7 +26,9 @@ class BaseProvider(object):
             url = self._last_goc_url
         if url not in self._goc_info:
             # pylint: disable=no-member
-            self._goc_info[url] = gocdb.find_in_gocdb(url, service_type, insecure)
+            self._goc_info[url] = gocdb.find_in_gocdb(
+                url, service_type, insecure, self.opts.timeout
+            )
         self._last_goc_url = url
         return self._goc_info[url]
 
