@@ -16,7 +16,7 @@
     timestamp = datetime.now().isoformat()
     validity = 3600
 
-    all_endpoints = {url: endpoint for vo, share in shares.items() for url, endpoint in share['endpoints']['endpoints'].items()}
+    all_endpoints = {url: endpoint for vo, share in shares.items() for url, endpoint in share.get('endpoints', {}).get('endpoints', {}).items()}
 
     instances = {instance_id: instance for vo, share in shares.items() for instance_id, instance in share['instances'].items()}
     running_instances = {instance_id: instance for instance_id, instance in instances.items() if instance['instance_status'] == 'ACTIVE'}
@@ -233,7 +233,7 @@ GLUE2EndpointTrustedCA: ${trusted_ca}
     else:
         share_template_max_memory = 0
 
-    endpoints = share['endpoints']['endpoints']
+    endpoints = share.get('endpoints', {}).get('endpoints', {})
     images = share['images']
     templates = share['templates']
 

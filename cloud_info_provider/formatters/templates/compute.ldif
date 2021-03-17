@@ -1,7 +1,7 @@
 <%
     static_compute_info = attributes['static_compute_info']
     shares = attributes['shares']
-    all_endpoints = {url: endpoint for vo, share in shares.items() for url, endpoint in share['endpoints']['endpoints'].items()}
+    all_endpoints = {url: endpoint for vo, share in shares.items() for url, endpoint in share.get('endpoints', {}).get('endpoints', {}).items()}
     # Collect template and images from all shares using nest dict comprehension
     # http://stackoverflow.com/questions/20446526/nested-dictionary-comprehension-in-python
     templates = {template_id: template for vo, share in shares.items() for template_id, template in share['templates'].items()}
