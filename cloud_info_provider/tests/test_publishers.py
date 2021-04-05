@@ -55,50 +55,56 @@ class AMSPublisherTest(base.TestCase):
         self.assertEqual("baz", opts.ams_cert)
         self.assertEqual("secret", opts.ams_key)
 
-    def test_get_token(self):
+    def test_get_ams_cert(self):
         class Opts(object):
             ams_host = "example.com"
+            ams_project = "foobar"
             ams_token = None
             ams_cert = "foo"
             ams_key = "bar"
-            timeout = 1234
 
         opts = Opts()
         publisher = ams.AMSPublisher(opts)
-        with mock.patch("requests.get") as m_get:
-            r = mock.MagicMock()
-            r.json.return_value = {"token": "secret"}
-            m_get.return_value = r
-            token = publisher._get_ams_token()
-            url = (
-                "https://example.com:8443/v1/service-types/ams/hosts/"
-                "example.com:authx509"
-            )
-            m_get.assert_called_with(url, cert=("foo", "bar"), timeout=opts.timeout)
-            self.assertEqual("secret", token)
+        with mock.patch("cloud_info_provider.publishers.ams.ArgoMessagingService") as m_ams:
+            publisher._get_ams()
+            m_ams.assert_called_with(endpoint=opts.ams_host,
+                                     project=opts.ams_project,
+                                     cert=opts.ams_cert,
+                                     key=opts.ams_key)
+
+    def test_get_ams_token(self):
+        class Opts(object):
+            ams_host = "example.com"
+            ams_project = "foobar"
+            ams_token = "12445"
+
+        opts = Opts()
+        publisher = ams.AMSPublisher(opts)
+        with mock.patch("cloud_info_provider.publishers.ams.ArgoMessagingService") as m_ams:
+            publisher._get_ams()
+            m_ams.assert_called_with(endpoint=opts.ams_host,
+                                     project=opts.ams_project,
+                                     token=opts.ams_token)
+
 
     def test_publish(self):
         class Opts(object):
             ams_host = "example.com"
             ams_topic = "topic"
             ams_project = "bar"
-            timeout = 1234
+            ams_token = "000"
 
         opts = Opts()
         publisher = ams.AMSPublisher(opts)
         output = "foo"
         with utils.nested(
-            mock.patch("requests.post"), mock.patch.object(publisher, "_get_ams_token")
-        ) as (m_post, m_get_token):
-            r = mock.MagicMock()
-            m_post.return_value = r
-            m_get_token.return_value = "secret"
+            mock.patch("cloud_info_provider.publishers.ams.ArgoMessagingService"),
+            mock.patch("cloud_info_provider.publishers.ams.AmsMessage")
+        ) as (m_ams, m_msg):
             publisher.publish(output)
-            data = {"messages": [{"attributes": {}, "data": "Zm9v"}]}
-            url = (
-                "https://example.com/v1/projects/bar/topics/" "topic:publish?key=secret"
-            )
-            headers = {"content-type": "application/json"}
-            m_post.assert_called_with(
-                url, headers=headers, data=json.dumps(data), timeout=opts.timeout
-            )
+            m_ams.assert_called_with(endpoint=opts.ams_host,
+                                     project=opts.ams_project,
+                                     token=opts.ams_token)
+            m_msg.assert_called_with(data="foo", attributes={})
+            m_ams.return_value.publish.assert_called_with(opts.ams_topic,
+                                                          m_msg.return_value)
