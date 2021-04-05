@@ -69,8 +69,20 @@ class StaticProviderTest(base.TestCase):
 
     def test_get_defaults_from_yaml(self):
         cases = (
-            ("foo", "bar", "", {}, {},),  # what  # which  # prefix  # yaml  # expected
-            ("foo", "bar", "", {"foo": {"bar": {"defaults": None}}}, {},),
+            (
+                "foo",
+                "bar",
+                "",
+                {},
+                {},
+            ),  # what  # which  # prefix  # yaml  # expected
+            (
+                "foo",
+                "bar",
+                "",
+                {"foo": {"bar": {"defaults": None}}},
+                {},
+            ),
             (
                 "foo",
                 "bar",
@@ -102,7 +114,15 @@ class StaticProviderTest(base.TestCase):
                 {},  # yaml
                 {},  # expected
             ),
-            ("foo", "bar", None, None, None, {"foo": {}}, {"bar": {}},),
+            (
+                "foo",
+                "bar",
+                None,
+                None,
+                None,
+                {"foo": {}},
+                {"bar": {}},
+            ),
             (
                 "foo",
                 "bar",

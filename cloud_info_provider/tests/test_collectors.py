@@ -18,10 +18,26 @@ class BaseCollectorTest(base.BaseTest):
     def test_get_info_from_providers(self):
         cases = (
             ({}, {}, {}),
-            ({"foo": "bar"}, {"bar": "bazonk"}, {"foo": "bar", "bar": "bazonk"},),
-            ({"foo": "bar"}, {"foo": "bazonk"}, {"foo": "bazonk"},),
-            ({}, {"foo": "bazonk"}, {"foo": "bazonk"},),
-            ({"foo": "bar"}, {}, {"foo": "bar"},),
+            (
+                {"foo": "bar"},
+                {"bar": "bazonk"},
+                {"foo": "bar", "bar": "bazonk"},
+            ),
+            (
+                {"foo": "bar"},
+                {"foo": "bazonk"},
+                {"foo": "bazonk"},
+            ),
+            (
+                {},
+                {"foo": "bazonk"},
+                {"foo": "bazonk"},
+            ),
+            (
+                {"foo": "bar"},
+                {},
+                {"foo": "bar"},
+            ),
         )
 
         # pylint: disable=abstract-class-instantiated

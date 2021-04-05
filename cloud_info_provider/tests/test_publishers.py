@@ -65,12 +65,16 @@ class AMSPublisherTest(base.TestCase):
 
         opts = Opts()
         publisher = ams.AMSPublisher(opts)
-        with mock.patch("cloud_info_provider.publishers.ams.ArgoMessagingService") as m_ams:
+        with mock.patch(
+            "cloud_info_provider.publishers.ams.ArgoMessagingService"
+        ) as m_ams:
             publisher._get_ams()
-            m_ams.assert_called_with(endpoint=opts.ams_host,
-                                     project=opts.ams_project,
-                                     cert=opts.ams_cert,
-                                     key=opts.ams_key)
+            m_ams.assert_called_with(
+                endpoint=opts.ams_host,
+                project=opts.ams_project,
+                cert=opts.ams_cert,
+                key=opts.ams_key,
+            )
 
     def test_get_ams_token(self):
         class Opts(object):
@@ -80,12 +84,13 @@ class AMSPublisherTest(base.TestCase):
 
         opts = Opts()
         publisher = ams.AMSPublisher(opts)
-        with mock.patch("cloud_info_provider.publishers.ams.ArgoMessagingService") as m_ams:
+        with mock.patch(
+            "cloud_info_provider.publishers.ams.ArgoMessagingService"
+        ) as m_ams:
             publisher._get_ams()
-            m_ams.assert_called_with(endpoint=opts.ams_host,
-                                     project=opts.ams_project,
-                                     token=opts.ams_token)
-
+            m_ams.assert_called_with(
+                endpoint=opts.ams_host, project=opts.ams_project, token=opts.ams_token
+            )
 
     def test_publish(self):
         class Opts(object):
@@ -99,12 +104,13 @@ class AMSPublisherTest(base.TestCase):
         output = "foo"
         with utils.nested(
             mock.patch("cloud_info_provider.publishers.ams.ArgoMessagingService"),
-            mock.patch("cloud_info_provider.publishers.ams.AmsMessage")
+            mock.patch("cloud_info_provider.publishers.ams.AmsMessage"),
         ) as (m_ams, m_msg):
             publisher.publish(output)
-            m_ams.assert_called_with(endpoint=opts.ams_host,
-                                     project=opts.ams_project,
-                                     token=opts.ams_token)
+            m_ams.assert_called_with(
+                endpoint=opts.ams_host, project=opts.ams_project, token=opts.ams_token
+            )
             m_msg.assert_called_with(data="foo", attributes={})
-            m_ams.return_value.publish.assert_called_with(opts.ams_topic,
-                                                          m_msg.return_value)
+            m_ams.return_value.publish.assert_called_with(
+                opts.ams_topic, m_msg.return_value
+            )

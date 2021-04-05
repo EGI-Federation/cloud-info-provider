@@ -13,6 +13,7 @@ import requests
 from argo_ams_library import AmsMessage, ArgoMessagingService
 from cloud_info_provider.publishers.base import BasePublisher
 
+
 class AMSPublisher(BasePublisher):
     @staticmethod
     def populate_parser(parser):
@@ -49,14 +50,18 @@ class AMSPublisher(BasePublisher):
 
     def _get_ams(self):
         if self.opts.ams_token:
-            return ArgoMessagingService(endpoint=self.opts.ams_host,
-                                        project=self.opts.ams_project,
-                                        token=self.opts.ams_token)
+            return ArgoMessagingService(
+                endpoint=self.opts.ams_host,
+                project=self.opts.ams_project,
+                token=self.opts.ams_token,
+            )
         else:
-            return ArgoMessagingService(endpoint=self.opts.ams_host,
-                                        project=self.opts.ams_project,
-                                        cert=self.opts.ams_cert,
-                                        key=self.opts.ams_key)
+            return ArgoMessagingService(
+                endpoint=self.opts.ams_host,
+                project=self.opts.ams_project,
+                cert=self.opts.ams_cert,
+                key=self.opts.ams_key,
+            )
 
     def publish(self, output):
         ams = self._get_ams()
