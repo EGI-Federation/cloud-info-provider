@@ -6,6 +6,8 @@ defusedxml
 requests
 pyOpenSSL
 stevedore
+# AMS publisher
+argo-ams-library
 # For OpenStack
 #python-keystoneclient
 #python-novaclient
