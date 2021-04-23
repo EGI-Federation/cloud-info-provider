@@ -56,11 +56,11 @@ class ComputeCollector(base.BaseCollector):
         site_info = self._get_info_from_providers("get_site_info")
 
         # Get shares / projects and related images and templates
-        shares = self._get_info_from_providers("get_compute_shares")
-
-        for vo, share in shares.items():
+        shares = {}
+        for vo, share in self._get_info_from_providers("get_compute_shares").items():
             try:
                 share.update(self.fetch_share_info(site_info, share, vo))
+                shares[vo] = share
             except CloudInfoException as exc:
                 if not self.opts.ignore_share_errors:
                     raise exc
