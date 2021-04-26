@@ -20,17 +20,23 @@ def get_providers():
 
 
 def get_formatters():
-    mgr = extension.ExtensionManager(namespace="cip.formatters",)
+    mgr = extension.ExtensionManager(
+        namespace="cip.formatters",
+    )
     return [x.name for x in mgr]
 
 
 def get_auth_refreshers():
-    mgr = extension.ExtensionManager(namespace="cip.auth_refreshers",)
+    mgr = extension.ExtensionManager(
+        namespace="cip.auth_refreshers",
+    )
     return dict((x.name, x.plugin) for x in mgr)
 
 
 def get_publishers():
-    mgr = extension.ExtensionManager(namespace="cip.publishers",)
+    mgr = extension.ExtensionManager(
+        namespace="cip.publishers",
+    )
     return dict((x.name, x.plugin) for x in mgr)
 
 
@@ -145,7 +151,9 @@ def main():
     opts = get_parser(providers, formatters, auth_refreshers, publishers).parse_args()
 
     mgr = driver.DriverManager(
-        namespace="cip.formatters", name=opts.format, invoke_on_load=True,
+        namespace="cip.formatters",
+        name=opts.format,
+        invoke_on_load=True,
     )
     auth_refresher = None
     if opts.auth_refresher:
