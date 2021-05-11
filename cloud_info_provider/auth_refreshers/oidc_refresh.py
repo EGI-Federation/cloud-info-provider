@@ -15,15 +15,18 @@ class OidcRefreshToken(auth_refreshers.BaseRefresher):
     ):
         refresh_data = {
             "client_id": client_id,
-            "client_secret": client_secret,
             "grant_type": "refresh_token",
             "refresh_token": refresh_token,
             "scope": scopes,
         }
+        auth = None
+        if client_secret:
+            refresh_data["client_secret"] = client_secret
+            auth = (client_id, client_secret)
         try:
             r = requests.post(
                 token_endpoint,
-                auth=(client_id, client_secret),
+                auth=auth,
                 data=refresh_data,
                 timeout=self.opts.timeout,
             )
