@@ -9,7 +9,7 @@ from cloud_info_provider.providers import base, static
 try:
     import defusedxml.ElementTree
     from defusedxml import xmlrpc
-    from six.moves import xmlrpc_client as xmlrpclib  # nosec
+    from six.moves import xmlrpc_client as xmlrpclib  # type: ignore
 
     # Protect the XMLRPC parser from various XML-based threats
     xmlrpc.monkey_patch()
