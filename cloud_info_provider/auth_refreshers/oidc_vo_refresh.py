@@ -21,7 +21,7 @@ class OidcVORefreshToken(oidc_refresh.OidcRefreshToken):
         args = {}
         for secret in ["client_id", "client_secret", "refresh_token"]:
             with open(os.path.join(base, secret), "r") as f:
-                args[secret] = f.read()
+                args[secret] = f.read().strip()
         token = self._refresh_token(
             self.opts.oidc_token_endpoint,
             args["client_id"],
