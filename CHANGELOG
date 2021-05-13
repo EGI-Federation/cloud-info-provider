@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.2]
+- Support crendential refresh without client secret (#222) (Enol Fernández)
+- Add --ignore-share-errors to continue publishing data even if there are
+  issues in a given share (#217, #218, 221) (Enol Fernández)
+- Add timeout option to core (#219) (Enol Fernández)
+- Minor fixes related to templates (#212) (Enol Fernández)
+
 ## [0.12.1]
 - Migrate from travis to GitHub Actions (#195, #198) (Enol Fernández)
 - Reformatted code with black (#196) (Enol Fernández)
