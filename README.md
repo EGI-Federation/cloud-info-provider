@@ -1,8 +1,8 @@
 # Cloud Information provider
 
-[![BuildStatus](https://travis-ci.org/EGI-Foundation/cloud-info-provider.svg?branch=master)](https://travis-ci.org/EGI-Foundation/cloud-info-provider)
-[![Coveralls](https://img.shields.io/coveralls/EGI-Foundation/cloud-info-provider.svg)](https://coveralls.io/github/EGI-Foundation/cloud-info-provider)
-[![GitHub release](https://img.shields.io/github/release/EGI-Foundation/cloud-info-provider.svg)](https://github.com/EGI-Foundation/cloud-info-provider/releases)
+[![Packaging](https://github.com/EGI-Federation/cloud-info-provider/actions/workflows/packages/badge.svg)
+[![Python tests](https://github.com/EGI-Federation/cloud-info-provider/actions/workflows/python/badge.svg)
+[![GitHub release](https://img.shields.io/github/release/EGI-Federation/cloud-info-provider.svg)](https://github.com/EGI-Federation/cloud-info-provider/releases)
 
 The Cloud Information provider generates a representation of cloud resources,
 that can be published by different systems, like a BDII (using the provided LDIF
@@ -30,7 +30,7 @@ This work is co-funded by the [EOSC-hub project](http://eosc-hub.eu/)
 ### From binaries
 
 Packages are always attached to the
-[releases page in GitHub](https://github.com/EGI-Foundation/cloud-info-provider/releases)
+[releases page in GitHub](https://github.com/EGI-Federation/cloud-info-provider/releases)
 and after they are made available at
 [EGI's AppDB](https://appdb.egi.eu/store/software/cloud.info.provider). AppDB
 providers package repositores ready to be used with `yum` or `apt`.
@@ -88,7 +88,7 @@ sudo chmod g+rwx /etc/cloud-info-provider
 ```
 
 ```sh
-git clone https://github.com/EGI-Foundation/cloud-info-provider
+git clone https://github.com/EGI-Federation/cloud-info-provider
 cd cloud-info-provider
 pip install .
 ```
@@ -119,7 +119,7 @@ The version is set according to the repository information (tags, commits,...).
 
 ```sh
 # Checkout tag to be packaged
-git clone https://github.com/EGI-Foundation/cloud-info-provider.git
+git clone https://github.com/EGI-Federation/cloud-info-provider.git
 cd cloud-info-provider
 git checkout X.X.X
 # Create a source tarball
@@ -148,7 +148,7 @@ The RPM will be available into the `~/rpmbuild` directory.
 
 ```sh
 # Checkout tag to be packaged
-git clone https://github.com/EGI-Foundation/cloud-info-provider.git
+git clone https://github.com/EGI-Federation/cloud-info-provider.git
 cd cloud-info-provider
 git checkout X.X.X
 mkdir -p ~/debs/xenial

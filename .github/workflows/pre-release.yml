@@ -77,8 +77,8 @@ jobs:
                          tr -s "\n" " ")
 
         jq ".version = \"${{ steps.changelog.outputs.version }}\" | \
-            .title = \"EGI-Foundation/cloud-info-provider: ${{ steps.changelog.outputs.version }}\" | \
-            .related_identifiers[0].identifier = \"https://github.com/EGI-Foundation/cloud-info-provider/tree/${{ steps.changelog.outputs.version }}\" | \
+            .title = \"EGI-Federation/cloud-info-provider: ${{ steps.changelog.outputs.version }}\" | \
+            .related_identifiers[0].identifier = \"https://github.com/EGI-Federation/cloud-info-provider/tree/${{ steps.changelog.outputs.version }}\" | \
             .publication_date = \"$(date '+%Y-%m-%d')\" | \
             .description = \"$zenodo_changes\"" < .zenodo.json > .zenodo.json.new
         mv .zenodo.json.new .zenodo.json

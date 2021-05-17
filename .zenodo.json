@@ -2,7 +2,7 @@
   "license": "Apache-2.0",
   "description": "<ul> <li>Migrate from travis to GitHub Actions (#195, #198) (Enol Fernández)</li> <li>Reformatted code with black (#196) (Enol Fernández)</li> <li>Move templates inside the module (#194) (Enol Fernández)</li> <li>Publish project name and project domain name (#190) (Enol Fernández)</li> <li>Improve py3 compatibility (#189, #192) (Enol Fernández)</li> <li>Add EOSC-hub funding acknowledgement as requested by project (#188) (Enol Fernández)</li> <li>Update list of requirements for CentOS7 RPM building (#183) (Pablo Orviz)</li> </ul> ",
   "language": "eng",
-  "title": "EGI-Foundation/cloud-info-provider: 0.12.1",
+  "title": "EGI-Federation/cloud-info-provider: 0.12.1",
   "keywords": [
     "bdii",
     "grid",
@@ -73,7 +73,7 @@
   "related_identifiers": [
     {
       "scheme": "url",
-      "identifier": "https://github.com/EGI-Foundation/cloud-info-provider/tree/0.12.1",
+      "identifier": "https://github.com/EGI-Federation/cloud-info-provider/tree/0.12.1",
       "relation": "isSupplementTo"
     },
     {
