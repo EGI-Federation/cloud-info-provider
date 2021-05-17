@@ -8,7 +8,7 @@ Version: 0.12.1
 Release: 1%{?dist}
 Group: Applications/Internet
 License: Apache Software License 2.0
-URL: https://github.com/EGI-Foundation/cloud-info-provider
+URL: https://github.com/EGI-Federation/cloud-info-provider
 
 Requires: cloud-info-provider
 # OpenStack-specific dependencies

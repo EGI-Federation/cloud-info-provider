@@ -40,7 +40,7 @@ git checkout master
 git tag --list --sort version:refname
 # Compare latest tag (0.8.3 here) with master
 # Using GitHub
-git compare EGI-Foundation 0.8.3..master
+git compare EGI-Federation 0.8.3..master
 # Using CLI
 git log --abbrev-commit 0.8.3..master
 # Prepare a PR to prepare version (0.9.0 here)
@@ -68,7 +68,7 @@ curl \
     -X POST \
     -H "Accept: application/vnd.github.v3+json" \
     -H "Authorization: token $GITHUB_TOKEN" \
-    https://api.github.com/repos/EGI-Foundation/cloud-info-provider/dispatches \
+    https://api.github.com/repos/EGI-Federation/cloud-info-provider/dispatches \
     -d '{"event_type":"release"}'
 # Merge PR
 gh pr merge --squash <pr number>
