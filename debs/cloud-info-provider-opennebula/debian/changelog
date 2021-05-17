@@ -1,3 +1,13 @@
+python-cloud-info-provider-opennebula (0.12.2-1) xenial; urgency=medium
+
+ * Support crendential refresh without client secret (#222) (Enol Fernández)
+ * Add --ignore-share-errors to continue publishing data even if there are
+   issues in a given share (#217, #218, 221) (Enol Fernández)
+ * Add timeout option to core (#219) (Enol Fernández)
+ * Minor fixes related to templates (#212) (Enol Fernández)
+
+ -- egibot <egibot@egi.eu> Mon, 17 May 2021 08:31:55 +0000
+
 python-cloud-info-provider-opennebula (0.12.1-1) xenial; urgency=medium
 
  * Migrate from travis to GitHub Actions (#195, #198) (Enol Fernández)

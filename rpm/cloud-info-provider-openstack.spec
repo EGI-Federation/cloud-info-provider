@@ -4,7 +4,7 @@
 
 Summary: Cloud Information provider meta-package for OpenStack
 Name: cloud-info-provider-openstack
-Version: 0.12.1
+Version: 0.12.2
 Release: 1%{?dist}
 Group: Applications/Internet
 License: Apache Software License 2.0
@@ -25,6 +25,12 @@ Install the cloud-information-provider and the Cloud Middleware dependencies.
 %files
 
 %changelog
+* Mon May 17 2021 egibot <egibot@egi.eu> 0.12.2
+- Support crendential refresh without client secret (#222) (Enol Fernández)
+- Add --ignore-share-errors to continue publishing data even if there are
+  issues in a given share (#217, #218, 221) (Enol Fernández)
+- Add timeout option to core (#219) (Enol Fernández)
+- Minor fixes related to templates (#212) (Enol Fernández)
 * Thu Nov 19 2020 egibot <egibot@egi.eu> 0.12.1
 - Migrate from travis to GitHub Actions (#195, #198) (Enol Fernández)
 - Reformatted code with black (#196) (Enol Fernández)
