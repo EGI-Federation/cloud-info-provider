@@ -29,12 +29,15 @@ class OpenStackProviderOptionsTest(base.TestCase):
                 "--all-images",
                 "--select-flavors",
                 "public",
+                "--os-region",
+                "North pole",
             ]
         )
 
         self.assertEqual(opts.os_username, "foo")
         self.assertEqual(opts.os_password, "bar")
         self.assertEqual(opts.os_auth_url, "http://example.org:5000")
+        self.assertEqual(opts.os_region, "North pole")
         self.assertEqual(opts.insecure, True)
         self.assertEqual(opts.all_images, True)
         self.assertEqual(opts.select_flavors, "public")
@@ -51,6 +54,7 @@ class OpenStackProviderAuthTest(base.TestCase):
         class FakeProvider(os_provider.OpenStackProvider):
             def __init__(self, opts):
                 self.project_id = None
+                self.os_region = None
                 self.opts = mock.Mock()
 
         self.provider = FakeProvider(None)
@@ -111,6 +115,7 @@ class OpenStackProviderTest(base.TestCase):
                 }
                 self.insecure = False
                 self.os_project_id = None
+                self.os_region = None
                 self.select_flavors = "all"
                 self._rescope_project = mock.Mock()
                 self.all_images = False
@@ -750,6 +755,7 @@ class OoiProviderTest(OpenStackProviderTest):
                 }
                 self.insecure = False
                 self.os_project_id = None
+                self.os_region = None
                 self.select_flavors = "all"
                 self._rescope_project = mock.Mock()
                 self.all_images = False
