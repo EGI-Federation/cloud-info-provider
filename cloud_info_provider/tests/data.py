@@ -252,7 +252,9 @@ class OpenStackFakes(object):
                 }
                 return service
 
-            def get_endpoints(self, service_type=None, interface=None):
+            def get_endpoints(
+                self, service_type=None, interface=None, region_name=None
+            ):
                 if service_type == "occi":
                     return self._format_catalog_entry(
                         "occi",

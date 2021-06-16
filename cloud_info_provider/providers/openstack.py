@@ -72,6 +72,7 @@ class OpenStackProvider(base.BaseProvider):
             opts.os_tenant_id = None
         self.project_id = None
         self.auth_refresher = auth_refresher
+        self.os_region = opts.os_region
 
         self.static = static.StaticProvider(opts)
         self.insecure = opts.insecure
@@ -109,8 +110,12 @@ class OpenStackProvider(base.BaseProvider):
             msg = "Could not authorize user in project '%s'" % project_id
             raise exceptions.OpenStackProviderException(msg)
         # make sure the clients know about the change
-        self.nova = novaclient.client.Client(2, session=self.session)
-        self.glance = glanceclient.Client("2", session=self.session)
+        self.nova = novaclient.client.Client(
+            2, session=self.session, region_name=self.os_region
+        )
+        self.glance = glanceclient.Client(
+            "2", session=self.session, region_name=self.os_region
+        )
 
     @staticmethod
     def _get_endpoint_versions(endpoint_url):
@@ -159,7 +164,11 @@ class OpenStackProvider(base.BaseProvider):
         ret["compute_service_name"] = self.auth_plugin.auth_url
         ca_info = self._get_endpoint_ca_information(self.auth_plugin.auth_url)
         catalog = self.auth_plugin.get_access(self.session).service_catalog
-        epts = catalog.get_endpoints(service_type=self.service_type, interface="public")
+        epts = catalog.get_endpoints(
+            service_type=self.service_type,
+            interface="public",
+            region_name=self.os_region,
+        )
         for ept in epts.get(self.service_type, []):
             e_id = ept["id"]
             # URL is in different places depending of Keystone version
@@ -476,6 +485,13 @@ class OpenStackProvider(base.BaseProvider):
             metavar="<key>",
             default=utils.env("OS_KEY", default=None),
             help="Defaults to env[OS_KEY].",
+        )
+
+        parser.add_argument(
+            "--os-region",
+            metavar="<region>",
+            default=utils.env("OS_REGION", default=None),
+            help="Defaults to env[OS_REGION].",
         )
 
         parser.add_argument(
