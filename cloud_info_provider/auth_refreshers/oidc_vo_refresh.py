@@ -17,7 +17,7 @@ class OidcVORefreshToken(oidc_refresh.OidcRefreshToken):
     """
 
     def refresh(self, provider, vo=None, **kwargs):
-        base = os.path.join(self.opts.oidc_credentials_path, vo)
+        base = os.path.join(self.opts.oidc_credentials_path, vo.strip("/"))
         args = {}
         for secret in ["client_id", "client_secret", "refresh_token"]:
             with open(os.path.join(base, secret), "r") as f:
