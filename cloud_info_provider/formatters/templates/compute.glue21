@@ -431,6 +431,7 @@ GLUE2CloudComputingImageNetworkConfigurationAddressRange: ${network_conf['ad:net
 % for template_native_id, template in templates.items():
 <%
     tpl_id = template['template_native_id'] if native_endpoint else template['template_id']
+    tpl_name = template['template_name'] if 'template_name' in template else tpl_id
 %>\
 dn: GLUE2ResourceID=${tpl_id},GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${template['suffix']}
 objectClass: GLUE2Entity
@@ -439,7 +440,7 @@ objectClass: GLUE2CloudComputingInstanceType
 GLUE2ResourceID: ${tpl_id}
 GLUE2EntityCreationTime: ${timestamp}
 GLUE2EntityValidity: ${validity}
-GLUE2EntityName: ${tpl_id}
+GLUE2EntityName: ${tpl_name}
 GLUE2CloudComputingInstanceTypeTemplateID: ${tpl_id}
 GLUE2ResourceManagerForeignKey: ${compute_service_manager}
 GLUE2CloudComputingInstanceTypeCloudComputingShareForeignKey: ${share_id}
