@@ -230,6 +230,7 @@ class OpenStackProvider(base.BaseProvider):
                     "template_ephemeral": flavor.ephemeral,
                     "template_disk": flavor.disk,
                     "template_cpu": flavor.vcpus,
+                    "template_name": flavor.name,
                 }
             )
             flavors[flavor.id] = aux
