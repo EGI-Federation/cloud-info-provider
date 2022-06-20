@@ -244,8 +244,8 @@ class OpenStackFakes(object):
                         {
                             "url": url,
                             "interface": interface,
-                            "region": u"RegionOne",
-                            "region_id": u"RegionOne",
+                            "region": "RegionOne",
+                            "region_id": "RegionOne",
                             "id": id_,
                         }
                     ]

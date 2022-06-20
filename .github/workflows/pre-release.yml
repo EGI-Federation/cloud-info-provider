@@ -9,8 +9,6 @@ jobs:
     name: Prepare Release
     runs-on: ubuntu-latest
     container: ubuntu:bionic
-    outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
     - name: install packages
       run: |

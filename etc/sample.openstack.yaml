@@ -1,3 +1,4 @@
+---
 site:
   # Your site name, as in GODCB (if omitted or set to None, this value is
   # retreived from /etc/glite-info-static/site/site.cfg )

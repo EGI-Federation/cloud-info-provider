@@ -66,7 +66,7 @@ Code review takes place in GitHub pull requests. See
 not familiar with GitHub Pull Requests.
 
 Once you open a pull request, maintainers will review your code using the
-built-in code review process in Github PRs. The process at this point is as
+built-in code review process in GitHub PRs. The process at this point is as
 follows:
 
 1. A maintainer will review your code and merge it if no changes are necessary.
@@ -88,9 +88,9 @@ functionality or creative thinking. Assuming the change does not affect
 functionality, some common obvious fix examples include the following:
 
 - Spelling / grammar fixes
-- Typo correction, white space and formatting changes
+- Typo correction, whitespace and formatting changes
 - Comment clean up
-- Bug fixes that change default return values or error codes stored in constants
+- Bugfixes that change default return values or error codes stored in constants
 - Adding logging messages or debugging output
 - Changes to 'metadata' files like Gemfile, .gitignore, build scripts, etc.
 - Moving source files from one directory or package to another
@@ -120,7 +120,7 @@ easier to send pull requests.
 
 ### Branches and Commits
 
-You should submit your patch as a git branch named after the Github issue, such
+You should submit your patch as a git branch named after the GitHub issue, such
 as `#3`\. This is called a _topic branch_ and allows users to associate a branch
 of code with the ticket.
 
@@ -147,11 +147,11 @@ This pattern says that software versions should take an `X.Y.Z` pattern where:
 
 - X is a major release, which may not be fully compatible with prior major
   releases
-- Y is a minor release, which adds both new features and bug fixes
+- Y is a minor release, which adds both new features and bugfixes
 - Z is a patch release, which adds just bug fixes
 
 Releases are generally performed after any bugfix / feature enhancement pull
-request merge. You can watch the Github repository for updates. The latest
+request merge. You can watch the GitHub repository for updates. The latest
 release will always point to the master branch, whilst release candidates will
 be done in version-specific branches, such as `v0.2.0-rc`.
 
@@ -180,6 +180,6 @@ and vice-versa. If you have any questions or if you would like to get involved
 in the wider EGI community you can check out:
 
 - [EGI Community Forum](https://community.egi.eu/)
-- [EGI website](https://www.egi.eu)
+- [EGI site](https://www.egi.eu)
 
 **This file has been modified from the Chef Cookbook Contributing Guide**.

@@ -16,14 +16,14 @@ Steps:
 1. Update AUTHORS as needed
 1. Merge a PR for updating CHANGELOG and any other needed
    changes for the release
-   - Version should follow [semver](https://semver.org/) like 0.42.0
+   - Version should follow [SemVer](https://semver.org/) like 0.42.0
 1. Push a `release` event to GitHub
    - Requires a valid personal token that can be obtained as described
      [here](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token)
 1. Merge PR created by the event
 1. Present release to [EGI UMD Release Team](https://wiki.egi.eu/wiki/URT)
 
-### Doing it from the Command Line Interface
+### Doing it from the Command-Line Interface
 
 ```console
 # Using GitHub CLI https://cli.github.com/

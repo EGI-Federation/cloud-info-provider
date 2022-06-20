@@ -233,7 +233,7 @@ these `publishers` are provided in this repo: `stdout` and `ams`:
   option, or with a certificate and key pair (using `--ams-cert` and `--ams-key`
   options). The topic to be used for publishing should be in the form:
   `SITE_<SITE_NAME>_ENDPOINT_<ENDPOINT_ID>`, where `<SITE_NAME>` is the site
-  name in GOCDB and the `<ENDPOINT_ID>` is the id of the endpoint in GOCDB.
+  name in GOCDB and the `<ENDPOINT_ID>` is the ID of the endpoint in GOCDB.
 
 #### Providers
 
@@ -243,7 +243,7 @@ specifying the provider to use (see the command help for exact names).
 cloud-info-provider will fallback to static information defined in the YAML file
 if a dynamic provider is not able to return any information.
 
-Each dynamic provider has its own commandline options for specifying how to
+Each dynamic provider has its own command-line options for specifying how to
 connect to the underlying service. Use the `--help` option for a complete
 listing of options.
 
@@ -355,7 +355,7 @@ cloud-info-provider-service  --yaml-file /etc/cloud-info-provider/bdii.yaml \
 Publishing to AMS requires access to your OCCI endpoint certificate (permission
 should be granted to user ldap). The certificate/key pair is used to
 authenticate to AMS. The `SITE-NAME` is your site name in GOCDB, the
-`<ENDPOINT_ID>` is the id at GOCDB of your OCCI endpoint, you can obtain that id
+`<ENDPOINT_ID>` is the ID at GOCDB of your OCCI endpoint, you can obtain that id
 by checking the URL of your endpoint, e.g. for
 `https://goc.egi.eu/portal/index.php?Page_Type=Service&id=9420`, the
 `ENDPOINT_ID` is `9420`.
@@ -398,7 +398,7 @@ cat /etc/grid-security/certificates/*.pem >> $(python -m requests.certs)
 #### Running the provider in a resource-BDII
 
 This is the normal deployment mode for the cloud provider. It should be
-installed in a node with access to your cloud infrastructure: for OpenStack/ooi,
+installed in a host with access to your cloud infrastructure: for OpenStack/ooi,
 access to nova/glance APIs is needed; for OpenNebula-rOCCI provider, access to
 the files describing the rOCCI templates is needed (i.e. installing the provider
 in the same host as rOCCI-server).
