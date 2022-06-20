@@ -23,4 +23,4 @@ jobs:
         # Run tox using the version of Python in `PATH`
         tox -e py
         tox -e bandit
-        tox -e cover,cobertura
+        tox -e cobertura
