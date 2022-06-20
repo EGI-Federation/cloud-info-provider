@@ -148,7 +148,7 @@ This pattern says that software versions should take an `X.Y.Z` pattern where:
 - X is a major release, which may not be fully compatible with prior major
   releases
 - Y is a minor release, which adds both new features and bugfixes
-- Z is a patch release, which adds just bug fixes
+- Z is a patch release, which adds just bugfixes
 
 Releases are generally performed after any bugfix / feature enhancement pull
 request merge. You can watch the GitHub repository for updates. The latest

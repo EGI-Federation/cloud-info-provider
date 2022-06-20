@@ -27,4 +27,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Fail on errors
           DISABLE_ERRORS: false
-          FILTER_REGEX_EXCLUDE: ".*cloud_info_provider/formatters/templates/.*.json"
+          FILTER_REGEX_EXCLUDE: "(.*cloud_info_provider/formatters/templates/.*.json|.*cloud_info_provider/.*/opennebula_rocci_provider_images.json)"
