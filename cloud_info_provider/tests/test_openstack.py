@@ -154,6 +154,7 @@ class OpenStackProviderTest(base.TestCase):
         url = "http://schemas.openstack.org/template/resource"
         for f in FAKES.flavors:
             expected_templates[f.id] = {
+                "template_name": f.name,
                 "template_memory": f.ram,
                 "template_cpu": f.vcpus,
                 "template_id": "%s#%s" % (url, f.id),
@@ -209,6 +210,7 @@ class OpenStackProviderTest(base.TestCase):
         url = "http://schemas.openstack.org/template/resource"
         for f in FAKES.flavors:
             expected_templates[f.id] = {
+                "template_name": f.name,
                 "template_memory": f.ram,
                 "template_cpu": f.vcpus,
                 "template_id": "%s#%s" % (url, f.id),
@@ -263,6 +265,7 @@ class OpenStackProviderTest(base.TestCase):
         url = "http://schemas.openstack.org/template/resource"
         for f in FAKES.flavors:
             expected_templates[f.id] = {
+                "template_name": f.name,
                 "template_memory": f.ram,
                 "template_cpu": f.vcpus,
                 "template_id": "%s#%s" % (url, f.id),
@@ -325,6 +328,7 @@ class OpenStackProviderTest(base.TestCase):
 
             expected_templates[f.id] = {
                 "template_memory": f.ram,
+                "template_name": f.name,
                 "template_cpu": f.vcpus,
                 "template_id": "%s#%s" % (url, f.id),
                 "template_native_id": "%s" % f.id,
@@ -385,6 +389,7 @@ class OpenStackProviderTest(base.TestCase):
                 continue
 
             expected_templates[f.id] = {
+                "template_name": f.name,
                 "template_memory": f.ram,
                 "template_cpu": f.vcpus,
                 "template_id": "%s#%s" % (url, f.id),
