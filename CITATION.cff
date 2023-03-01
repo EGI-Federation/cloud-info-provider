@@ -1,0 +1,63 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Cloud Information provider
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Enol
+    family-names: Fernández
+    email: enol.fernandez@egi.eu
+    affiliation: EGI Foundation
+    orcid: 'https://orcid.org/0000-0002-5152-5902'
+  - given-names: Baptiste
+    family-names: Grenier
+    email: baptiste.grenier@egi.eu
+    affiliation: EGI Foundation
+  - given-names: Álvaro
+    family-names: López García
+    email: aloga@ifca.unican.es
+    affiliation: CSIC
+  - given-names: 'André'
+    family-names: 'Gemünd'
+    email: andre.gemuend@scai.fraunhofer.de
+    affiliation: SCAI Fraunhofer
+  - given-names: 'Björn'
+    family-names: Hagemeier
+    email: b.hagemeier@fz-juelich.de
+    affiliation: FZJ
+  - given-names: Boris
+    family-names: Parak
+  - given-names: Bruce
+    family-names: Becker
+  - given-names: Carlos
+    family-names: Gimeno Yanez
+  - given-names: Pablo
+    family-names: Orviz
+    email: orviz@ifca.unican.es
+    affiliation: CSIC
+  - given-names: Rubén
+    family-names: Díez
+    email: rdiez@cesga.es
+    affiliation: CESGA
+  - given-names: Salvatore
+    family-names: Pinto
+repository-code: 'https://github.com/EGI-Federation/cloud-info-provider'
+abstract: >-
+  The Cloud Information provider generates a representation
+  of cloud resources, that can be published by different
+  systems, like a BDII (using the provided LDIF templates
+  for GlueSchema representation) or any other component like
+  the INDIGO Configuration Management Database (CMDB) (Using
+  specific JSON templates).
+keywords:
+  - Glue
+  - OpenStack
+  - EGI
+  - BDII
+license: Apache-2.0
+version: 0.12.2
+date-released: '2021-05-17'
