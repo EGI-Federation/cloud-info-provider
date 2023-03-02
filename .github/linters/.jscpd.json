@@ -1,3 +1,5 @@
 {
-  "ignore": ["**/cloud_info_provider/tests/**"]
+  "ignore": [
+    "**/cloud_info_provider/tests/**"
+  ]
 }
