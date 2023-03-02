@@ -14,8 +14,8 @@ Steps:
    - Provide main changes, with related author(s)
    - Document changes impacting deployment/configuration/usage
 1. Update AUTHORS as needed
-1. Merge a PR for updating CHANGELOG and any other needed
-   changes for the release
+1. Merge a PR for updating CHANGELOG and any other needed changes for the
+   release
    - Version should follow [SemVer](https://semver.org/) like 0.42.0
 1. Push a `release` event to GitHub
    - Requires a valid personal token that can be obtained as described
