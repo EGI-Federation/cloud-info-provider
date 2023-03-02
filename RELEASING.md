@@ -83,6 +83,7 @@ it's required to follow the
 
 - Submitting a [GGUS ticket](https://ggus.eu/?mode=ticket_submit) to the
   `EGI Software provisioning support` Support Unit
+
   - Ticket category: release
   - Type of issue: Middleware
   - Assign to support unit: `EGI Software Provisioning Support`
