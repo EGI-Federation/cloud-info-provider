@@ -336,20 +336,22 @@ $ cat /var/lib/bdii/gip/provider/cloud-info-provider
 
 # your existing cloud-info-provider invocation
 # do not change this one
-cloud-info-provider-service  --yaml-file /etc/cloud-info-provider/bdii.yaml \
-                             --on-auth <user>:<secret> \
-                             --on-rpcxml-endpoint http://<your opennebula endpoint>:2633/RPC2 \
-                             --rocci-remote-templates --middleware opennebularocci
+cloud-info-provider-service  \
+    --yaml-file /etc/cloud-info-provider/bdii.yaml \
+    --on-auth <user>:<secret> \
+    --on-rpcxml-endpoint http://<your opennebula endpoint>:2633/RPC2 \
+    --rocci-remote-templates --middleware opennebularocci
 
 # and add now the AMS publishing, same options but adding a few more
-cloud-info-provider-service  --yaml-file /etc/cloud-info-provider/bdii.yaml \
-                             --on-auth <user>:<secret> \
-                             --on-rpcxml-endpoint http://<your opennebula endpoint>:2633/RPC2 \
-                             --rocci-remote-templates --middleware opennebularocci \
-                             --format glue21 --publisher ams \
-                             --ams-topic SITE_<SITE-NAME>_ENDPOINT_<ENDPOINT ID>G0 \
-                             --ams-cert /etc/grid-security/hostcert-bdii.pem \
-                             --ams-key /etc/grid-security/hostkey-bdii.pem >> /var/log/cloud-info.log 2>&1
+cloud-info-provider-service  \
+    --yaml-file /etc/cloud-info-provider/bdii.yaml \
+    --on-auth <user>:<secret> \
+    --on-rpcxml-endpoint http://<your opennebula endpoint>:2633/RPC2 \
+    --rocci-remote-templates --middleware opennebularocci \
+    --format glue21 --publisher ams \
+    --ams-topic SITE_<SITE-NAME>_ENDPOINT_<ENDPOINT ID>G0 \
+    --ams-cert /etc/grid-security/hostcert-bdii.pem \
+    --ams-key /etc/grid-security/hostkey-bdii.pem >> /var/log/cloud-info.log 2>&1
 ```
 
 Publishing to AMS requires access to your OCCI endpoint certificate (permission
@@ -479,7 +481,8 @@ up this machine is avaiable in the EGI.eu wiki at
 [How to publish site information](https://wiki.egi.eu/wiki/MAN01_How_to_publish_Site_Information).
 
 Add your cloud-info-provider to your site-BDII by adding a new URL that looks
-like this: `ldap://<cloud-info-provider-hostname>:2170/GLUE2GroupID=cloud,o=glue`
+like this:
+`ldap://<cloud-info-provider-hostname>:2170/GLUE2GroupID=cloud,o=glue`
 
 ### GLUE 2.1 Schema
 
