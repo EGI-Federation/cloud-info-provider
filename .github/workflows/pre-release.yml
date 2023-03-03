@@ -35,8 +35,8 @@ jobs:
         version=$(grep "^## \[[0-9].*\]" CHANGELOG | head -1 | sed -e "s/^.*\[\(.*\)\]/\1/")
         changes=$(sed -e "/^## \[$version\]\$/,/^##/!d;//d;/^\$/d" CHANGELOG | \
                   sed -e "s/\%/%25/g" | sed -e "s/\r/%0D/" | sed -z -e "s/\n/%0A/g")
-        echo "::set-output name=changes::$changes"
-        echo "::set-output name=version::$version"
+        echo "changes=$changes" >> $GITHUB_OUTPUT
+        echo "version=$version" >> $GITHUB_OUTPUT
     - name: bump versions
       run: |
         {
