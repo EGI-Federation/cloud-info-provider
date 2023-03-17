@@ -48,7 +48,6 @@ def _find_url_in_result(svc_url, result):
                 # something is wrong at GOCDB, do not care
                 pass
         for url in urls:
-            print(url)
             if _are_url_similar(svc_url, url):
                 return {
                     "gocdb_id": svc.attrib["PRIMARY_KEY"],
