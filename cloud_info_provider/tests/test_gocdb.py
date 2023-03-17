@@ -18,7 +18,41 @@ sample_goc_response = """<?xml version="1.0" encoding="UTF-8"?>
         <ROC_NAME>NGI_IBERGRID</ROC_NAME>
         <URL>https://keystone.ifca.es:5000/v2.0/?image=18d99a06-c3e5-4157-a0e3-37ec34bdfc24&amp;resource=m1.tiny</URL>
         <ENDPOINTS/>
-  </SERVICE_ENDPOINT>'
+  </SERVICE_ENDPOINT>
+</results>"""
+
+sample_goc_ep_response = """<?xml version="1.0" encoding="UTF-8"?>
+<results>
+  <SERVICE_ENDPOINT PRIMARY_KEY="14541G0">
+    <PRIMARY_KEY>14541G0</PRIMARY_KEY>
+    <HOSTNAME>www.waltoncloud.eu</HOSTNAME>
+    <GOCDB_PORTAL_URL>https://goc.egi.eu/portal/index.php?Page_Type=Service&amp;id=14541</GOCDB_PORTAL_URL>
+    <BETA>N</BETA>
+    <SERVICE_TYPE>org.openstack.nova</SERVICE_TYPE>
+    <CORE/>
+    <IN_PRODUCTION>Y</IN_PRODUCTION>
+    <NODE_MONITORED>Y</NODE_MONITORED>
+    <NOTIFICATIONS>Y</NOTIFICATIONS>
+    <SITENAME>WALTON-CLOUD</SITENAME>
+    <COUNTRY_NAME>Ireland</COUNTRY_NAME>
+    <COUNTRY_CODE>IE</COUNTRY_CODE>
+    <ROC_NAME>NGI_IE</ROC_NAME>
+    <URL/>
+    <ENDPOINTS>
+      <ENDPOINT>
+        <ID>8282</ID>
+        <NAME>WaltonDiscovery</NAME>
+        <EXTENSIONS/>
+        <URL>https://horizon.waltoncloud.eu:5000/v3</URL>
+        <INTERFACENAME>org.openstack.nova</INTERFACENAME>
+        <ENDPOINT_MONITORED>Y</ENDPOINT_MONITORED>
+      </ENDPOINT>
+    </ENDPOINTS>
+    <SCOPES>
+      <SCOPE>EGI</SCOPE>
+    </SCOPES>
+    <EXTENSIONS/>
+  </SERVICE_ENDPOINT>
 </results>"""
 
 
@@ -104,4 +138,16 @@ class GOCDBTest(base.TestCase):
             self.assertEqual(
                 expected,
                 gocdb.find_in_gocdb("https://keystone.ifca.es:5000/v2.0", "bar"),
+            )
+
+    def test_goc_multiple_endpoints(self):
+        with mock.patch("requests.get") as m_requests:
+            r = mock.MagicMock()
+            r.status_code = 200
+            r.text = sample_goc_ep_response
+            m_requests.return_value = r
+            expected = {"gocdb_id": "14541G0", "site_name": "WALTON-CLOUD"}
+            self.assertEqual(
+                expected,
+                gocdb.find_in_gocdb("https://horizon.waltoncloud.eu:5000/v3", "bar"),
             )

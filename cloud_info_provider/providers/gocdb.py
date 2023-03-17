@@ -35,16 +35,25 @@ def _find_url_in_result(svc_url, result):
 
     svc_url = urlparse(svc_url)
     for svc in result:
+        urls = []
         try:
-            url = urlparse(svc.find("URL").text)
+            urls.append(urlparse(svc.find("URL").text))
         except AttributeError:
-            # something is wrong at GOCDB, skip this one
-            continue
-        if _are_url_similar(svc_url, url):
-            return {
-                "gocdb_id": svc.attrib["PRIMARY_KEY"],
-                "site_name": svc.find("SITENAME").text,
-            }
+            # something is wrong at GOCDB, do not care
+            pass
+        for ep in svc.find("ENDPOINTS"):
+            try:
+                urls.append(urlparse(ep.find("URL").text))
+            except AttributeError:
+                # something is wrong at GOCDB, do not care
+                pass
+        for url in urls:
+            print(url)
+            if _are_url_similar(svc_url, url):
+                return {
+                    "gocdb_id": svc.attrib["PRIMARY_KEY"],
+                    "site_name": svc.find("SITENAME").text,
+                }
     logger.warning("Unable to find URL %s in GOCDB!", svc_url)
     return {}
 
