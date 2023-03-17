@@ -20,8 +20,8 @@ jobs:
         version=$(grep "^## \[[0-9].*\]" CHANGELOG | head -1 | sed -e "s/^.*\[\(.*\)\]/\1/")
         changes=$(sed -e "/^## \[$version\]\$/,/^##/!d;//d;/^\$/d" CHANGELOG | \
                   sed -e "s/\%/%25/g" | sed -e "s/\r/%0D/" | sed -z -e "s/\n/%0A/g")
-        echo "::set-output name=changes::$changes"
-        echo "::set-output name=version::$version"
+        echo "changes=$changes" >> $GITHUB_OUTPUT
+        echo "version=$version" >> $GITHUB_OUTPUT
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -52,7 +52,7 @@ jobs:
         python setup.py sdist
     - name: Get version
       id: version
-      run: echo "::set-output name=version::$(python setup.py --version)"
+      run: echo "version=$(python setup.py --version)" >> $GITHUB_OUTPUT
     - name: Upload output file
       uses: actions/upload-artifact@v2
       with:
