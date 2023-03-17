@@ -8,3 +8,4 @@ pyOpenSSL
 python-novaclient
 python-glanceclient
 testtools
+Mako
