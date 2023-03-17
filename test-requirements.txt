@@ -7,3 +7,4 @@ requests
 pyOpenSSL
 python-novaclient
 python-glanceclient
+testtools
