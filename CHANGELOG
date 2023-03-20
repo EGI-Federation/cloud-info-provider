@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 - Add flavor name to templates
+- Support sites with URLs in the endpoints of GOCDB
 
 ## [0.12.2]
 - Support crendential refresh without client secret (#222) (Enol Fernández)
