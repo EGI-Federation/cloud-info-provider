@@ -38,9 +38,9 @@ open describing the need for your contribution. You will need to refer to this
 issue number when you submit the pull request.
 
 - **It is recommended to make pull requests against release candidate branches,
-  whenever features are involved**, instead of against the master branch. See
+  whenever features are involved**, instead of against the main branch. See
   [Release Cycle](#release-cycle) below.
-- Pull requests to the master branch can be made in the case obvious fixes. See
+- Pull requests to the main branch can be made in the case obvious fixes. See
   [Obvious Fix Policy](#obvious-fix-policy)
 
 We have a 3 step process for contributions.
@@ -70,7 +70,7 @@ built-in code review process in GitHub PRs. The process at this point is as
 follows:
 
 1. A maintainer will review your code and merge it if no changes are necessary.
-   Your change will be merged into the repository's `master` branch and will be
+   Your change will be merged into the repository's `main` branch and will be
    noted in the project's `CHANGELOG.md` at the time of release.
 1. If want your contribution to motivate your inclusion in the authorship,
    please add a line to that effect in the pull request
@@ -80,7 +80,7 @@ follows:
 ### Obvious Fix Policy
 
 Small contributions, such as fixing spelling errors, where the content is small
-enough to not be considered intellectual property can be made against the master
+enough to not be considered intellectual property can be made against the main
 branch
 
 As a rule of thumb, changes are obvious fixes if they do not introduce any new
@@ -152,7 +152,7 @@ This pattern says that software versions should take an `X.Y.Z` pattern where:
 
 Releases are generally performed after any bugfix / feature enhancement pull
 request merge. You can watch the GitHub repository for updates. The latest
-release will always point to the master branch, whilst release candidates will
+release will always point to the main branch, whilst release candidates will
 be done in version-specific branches, such as `v0.2.0-rc`.
 
 ### Publishing Releases

@@ -34,15 +34,15 @@ Steps:
 gh issue create -t "Release new package version"
 # Synchronize fork with upstream
 git fetch upstream
-git rebase upstream/master master
-git checkout master
+git rebase upstream/main main
+git checkout main
 # Check latest tag
 git tag --list --sort version:refname
-# Compare latest tag (0.8.3 here) with master
+# Compare latest tag (0.8.3 here) with main
 # Using GitHub
-git compare EGI-Federation 0.8.3..master
+git compare EGI-Federation 0.8.3..main
 # Using CLI
-git log --abbrev-commit 0.8.3..master
+git log --abbrev-commit 0.8.3..main
 # Prepare a PR to prepare version (0.9.0 here)
 git checkout -b prepare-0.9.0
 # Prepare the changelog and add it as a new entry to CHANGELOG

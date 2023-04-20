@@ -49,7 +49,7 @@ pipeline {
             when {
                 anyOf {
                     buildingTag()
-                    branch 'master'
+                    branch 'main'
                 }
             }
             parallel {
