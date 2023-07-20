@@ -44,7 +44,6 @@ class OpenStackProviderOptionsTest(base.TestCase):
 
 
 class OpenStackProviderAuthTest(base.TestCase):
-
     # Do not limit diff output on failures
     maxDiff = None
 
@@ -88,7 +87,6 @@ class OpenStackProviderAuthTest(base.TestCase):
 
 
 class OpenStackProviderTest(base.TestCase):
-
     # Do not limit diff output on failures
     maxDiff = None
 

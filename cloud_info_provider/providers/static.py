@@ -75,7 +75,10 @@ class StaticProvider(base.BaseProvider):
 
     def get_site_info(self, fields=(), **kwargs):
         data = self.yaml.get("site", {"name": None})
-        fields = fields or ("name", "is_public",)
+        fields = fields or (
+            "name",
+            "is_public",
+        )
         site_info = self._get_fields_and_prefix(
             fields, "site_", data, defaults={"is_public": False}
         )

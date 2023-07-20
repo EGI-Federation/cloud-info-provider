@@ -128,10 +128,14 @@ class OpenStackProvider(base.BaseProvider):
             raise exceptions.OpenStackProviderException(msg)
         # make sure the clients know about the change
         self.nova = novaclient.client.Client(
-            2, session=self.session, region_name=region_name,
+            2,
+            session=self.session,
+            region_name=region_name,
         )
         self.glance = glanceclient.Client(
-            "2", session=self.session, region_name=region_name,
+            "2",
+            session=self.session,
+            region_name=region_name,
         )
 
     @staticmethod
@@ -318,7 +322,9 @@ class OpenStackProvider(base.BaseProvider):
         img_sch = defaults.get("image_schema", "os")
         URI = "http://schemas.openstack.org/template/"
 
-        for image in self.glance.images.list(detailed=True, filters={"status": "active"}):
+        for image in self.glance.images.list(
+            detailed=True, filters={"status": "active"}
+        ):
             aux_img = copy.deepcopy(template)
             aux_img.update(defaults)
             aux_img.update(image)
