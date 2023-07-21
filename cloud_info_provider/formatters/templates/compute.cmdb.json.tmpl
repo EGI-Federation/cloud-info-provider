@@ -142,7 +142,7 @@
         "type": "flavor",
         "data": {
             ${render_string('flavor_id', _flavor_id, required_type=True)}
-            ${render_string('flavor_name', _flavor['flavor_name'], required_type=True)}
+            ${render_string('flavor_name', _flavor['template_name'], required_type=True)}
             "num_vcpus": ${_flavor.get('template_cpu', 0)},
             "ram": ${_flavor.get('template_memory', 0)},
             "disk": ${_flavor.get('template_disk', 0)},

@@ -274,8 +274,6 @@ class OpenStackProvider(base.BaseProvider):
                     else:
                         d_properties["template_%s" % property_id] = v
             aux.update(d_properties)
-            # name
-            aux.update({"flavor_name": flavor.name})
             flavors[flavor.id] = aux
         if not flavors:
             logging.warning("No flavors found!?")
