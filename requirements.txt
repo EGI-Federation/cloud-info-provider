@@ -11,3 +11,6 @@ stevedore
 #python-novaclient
 #python-glanceclient
 #keystoneauth1
+# For AWS
+#python-dateutil
+#boto3
