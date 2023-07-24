@@ -9,6 +9,7 @@ class Data(object):
         return {
             "suffix": "o=glue",
             "site_name": "SITE_NAME",
+            "site_is_public": False,
         }
 
     @property
@@ -34,6 +35,7 @@ class Data(object):
             "storage_middleware": "A Middleware",
             "storage_middleware_developer": "Middleware Developer",
             "storage_middleware_version": "v1.0",
+            "storage_oidc_auth_enabled": None,
             "storage_total_storage": 0,
             "storage_service_production_level": "production",
             "storage_service_name": "example.org",
@@ -168,7 +170,18 @@ DATA = Data()
 class OpenStackFakes(object):
     def __init__(self):
         class Flavor(object):
-            def __init__(self, id, name, ram, vcpus, is_public, disk, ephemeral):
+            def __init__(
+                self,
+                id,
+                name,
+                ram,
+                vcpus,
+                is_public,
+                disk,
+                ephemeral,
+                infiniband=None,
+                gpu_number=None,
+            ):
                 self.id = id
                 self.name = name
                 self.ram = ram
@@ -176,6 +189,11 @@ class OpenStackFakes(object):
                 self.is_public = is_public
                 self.disk = disk
                 self.ephemeral = ephemeral
+                self.infiniband = infiniband
+                self.gpu_number = gpu_number
+
+            def get_keys(self):
+                return vars(self)
 
         flavors = (
             {
@@ -186,6 +204,7 @@ class OpenStackFakes(object):
                 "is_public": True,
                 "disk": 0,
                 "ephemeral": 10,
+                "infiniband": "true",
             },
             {
                 "id": 2,
@@ -195,6 +214,7 @@ class OpenStackFakes(object):
                 "is_public": False,
                 "disk": 10,
                 "ephemeral": 10,
+                "gpu_number": 23,
             },
             {
                 "id": 3,
@@ -219,6 +239,8 @@ class OpenStackFakes(object):
                 "file": "v2/foo.id/file",
                 "marketplace": "http://example.org/",
                 "APPLIANCE_ATTRIBUTES": '{"ad:base_mpuri": "foobar"}',
+                "gpu_driver": "driver-x",
+                "gpu_cuda": "CUDA_x.y",
             },
             {
                 "name": "barimage",

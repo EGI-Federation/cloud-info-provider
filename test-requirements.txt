@@ -8,3 +8,5 @@ pyOpenSSL
 python-novaclient
 python-glanceclient
 testtools
+python-dateutil
+boto3

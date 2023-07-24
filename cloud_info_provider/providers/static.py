@@ -73,10 +73,15 @@ class StaticProvider(base.BaseProvider):
                 "accessible and readable" % self.opts.glite_site_info_static
             )
 
-    def get_site_info(self, **kwargs):
+    def get_site_info(self, fields=(), **kwargs):
         data = self.yaml.get("site", {"name": None})
-        site_info = self._get_fields_and_prefix(("name",), "site_", data)
-
+        fields = fields or (
+            "name",
+            "is_public",
+        )
+        site_info = self._get_fields_and_prefix(
+            fields, "site_", data, defaults={"is_public": False}
+        )
         # Resolve site name from BDII configuration
         if site_info["site_name"] is None:
             site_info["site_name"] = self._get_site_info_from_bdii_conf()
@@ -108,6 +113,8 @@ class StaticProvider(base.BaseProvider):
             "access_info",
             "context_format",
             "software",
+            "architecture",
+            "os_type",
         )
         images = self._get_what("compute", "images", None, fields, prefix="image_")
         return images["images"]
@@ -146,6 +153,8 @@ class StaticProvider(base.BaseProvider):
             "default_network_type",
             "public_network_name",
             "membership",
+            "private_network_name",
+            "private_network_cidr",
         )
         shares = self._get_what("compute", "shares", None, fields, prefix="")
         for vo, share in shares["shares"].items():
@@ -173,8 +182,8 @@ class StaticProvider(base.BaseProvider):
         quotas = self._get_what("compute", "quotas", None, fields, prefix="compute_")
         return quotas["quotas"]
 
-    def get_compute_endpoints(self, **kwargs):
-        global_fields = (
+    def get_compute_endpoints(self, global_fields=(), endpoint_fields=(), **kwargs):
+        global_fields = global_fields or (
             "service_production_level",
             "total_ram",
             "total_cores",
@@ -194,8 +203,12 @@ class StaticProvider(base.BaseProvider):
             "live_migration",
             "vm_backup_restore",
             "service_name",
+            "region",
+            "public_ip_assignable",
+            "oidc_auth_enabled",
+            "supported_idps",
         )
-        endpoint_fields = (
+        endpoint_fields = endpoint_fields or (
             "production_level",
             "api_type",
             "api_version",
@@ -224,6 +237,7 @@ class StaticProvider(base.BaseProvider):
             "middleware_version",
             "middleware_developer",
             "service_name",
+            "oidc_auth_enabled",
         )
         endpoint_fields = (
             "production_level",
@@ -304,6 +318,9 @@ class StaticProvider(base.BaseProvider):
             "failover": False,
             "live_migration": False,
             "vm_backup_restore": False,
+            "total_accelerators": 0,
+            "accelerators": {},
+            "oidc_auth_enabled": False,
         }
         return self._populate_default_values(
             self._get_defaults_from_yaml("compute", "endpoints", prefix=prefix),

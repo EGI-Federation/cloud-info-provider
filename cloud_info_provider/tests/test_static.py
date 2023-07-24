@@ -180,8 +180,10 @@ class StaticProviderTest(base.TestCase):
         unprefixed = self.provider.get_compute_endpoint_defaults()
         self.assertEqual(unprefixed.pop("foo"), "bar")
         self.assertEqual(unprefixed.pop("baz"), "bazonk")
+
         self.assertEqual(
             {
+                "accelerators": {},
                 "api_authn_method": "oidc",
                 "api_endpoint_technology": "webservice",
                 "capabilities": [
@@ -192,12 +194,14 @@ class StaticProviderTest(base.TestCase):
                 "live_migration": False,
                 "max_dedicated_ram": 0,
                 "min_dedicated_ram": 0,
+                "oidc_auth_enabled": False,
                 "production_level": "production",
                 "service_capabilities": [
                     "executionmanagement.dynamicvmdeploy",
                     "security.accounting",
                 ],
                 "service_production_level": "production",
+                "total_accelerators": 0,
                 "total_cores": 0,
                 "total_ram": 0,
                 "vm_backup_restore": False,
@@ -209,6 +213,7 @@ class StaticProviderTest(base.TestCase):
         self.assertEqual(prefixed.pop("compute_baz"), "bazonk")
         self.assertEqual(
             {
+                "compute_accelerators": {},
                 "compute_api_authn_method": "oidc",
                 "compute_api_endpoint_technology": "webservice",
                 "compute_capabilities": [
@@ -219,12 +224,14 @@ class StaticProviderTest(base.TestCase):
                 "compute_live_migration": False,
                 "compute_max_dedicated_ram": 0,
                 "compute_min_dedicated_ram": 0,
+                "compute_oidc_auth_enabled": False,
                 "compute_production_level": "production",
                 "compute_service_capabilities": [
                     "executionmanagement.dynamicvmdeploy",
                     "security.accounting",
                 ],
                 "compute_service_production_level": "production",
+                "compute_total_accelerators": 0,
                 "compute_total_cores": 0,
                 "compute_total_ram": 0,
                 "compute_vm_backup_restore": False,
@@ -280,8 +287,12 @@ class StaticProviderTest(base.TestCase):
         expected.update(
             {
                 "compute_accelerators_virt_type": None,
-                "compute_network_virt_type": None,
                 "compute_cpu_virt_type": None,
+                "compute_network_virt_type": None,
+                "compute_oidc_auth_enabled": None,
+                "compute_public_ip_assignable": None,
+                "compute_supported_idps": None,
+                "compute_region": None,
                 "compute_virtual_disk_formats": None,
             }
         )
@@ -312,6 +323,7 @@ class StaticProviderTest(base.TestCase):
             for field in [
                 "image_accel_type",
                 "image_access_info",
+                "image_architecture",
                 "image_context_format",
                 "image_description",
                 "image_id",
@@ -319,6 +331,8 @@ class StaticProviderTest(base.TestCase):
                 "image_minimal_cpu",
                 "image_minimal_ram",
                 "image_native_id",
+                "image_os_type",
+                "image_platform",
                 "image_recommended_accel",
                 "image_recommended_cpu",
                 "image_recommended_ram",
@@ -364,6 +378,8 @@ class StaticProviderTest(base.TestCase):
                 "instance_max_accelerators",
                 "instance_max_cpu",
                 "instance_max_ram",
+                "private_network_cidr",
+                "private_network_name",
             ]:
                 if f not in share:
                     share[f] = None
@@ -421,6 +437,7 @@ class StaticProviderTest(base.TestCase):
             for field in [
                 "image_accel_type",
                 "image_access_info",
+                "image_architecture",
                 "image_context_format",
                 "image_description",
                 "image_id",
@@ -428,6 +445,8 @@ class StaticProviderTest(base.TestCase):
                 "image_minimal_cpu",
                 "image_minimal_ram",
                 "image_native_id",
+                "image_os_type",
+                "image_platform",
                 "image_recommended_accel",
                 "image_recommended_cpu",
                 "image_recommended_ram",

@@ -44,7 +44,6 @@ class OpenStackProviderOptionsTest(base.TestCase):
 
 
 class OpenStackProviderAuthTest(base.TestCase):
-
     # Do not limit diff output on failures
     maxDiff = None
 
@@ -88,7 +87,6 @@ class OpenStackProviderAuthTest(base.TestCase):
 
 
 class OpenStackProviderTest(base.TestCase):
-
     # Do not limit diff output on failures
     maxDiff = None
 
@@ -119,6 +117,14 @@ class OpenStackProviderTest(base.TestCase):
                 self.select_flavors = "all"
                 self._rescope_project = mock.Mock()
                 self.all_images = False
+                self.flavor_properties = {
+                    "infiniband": {"key": "infiniband", "value": "true"},
+                    "flavor_gpu_number": {"key": "gpu_number", "value": None},
+                }
+                self.image_properties = {
+                    "image_gpu_driver": {"key": "gpu_driver", "value": "true"},
+                    "image_gpu_cuda": {"key": "gpu_cuda", "value": "true"},
+                }
 
         self.provider = FakeProvider(None)
 
@@ -163,6 +169,10 @@ class OpenStackProviderTest(base.TestCase):
                 "template_network": "private",
                 "template_disk": f.disk,
                 "template_ephemeral": f.ephemeral,
+                "template_infiniband": True if f.infiniband == "true" else False,
+                "template_flavor_gpu_number": f.gpu_number if f.gpu_number else 0,
+                "template_flavor_gpu_vendor": None,
+                "template_flavor_gpu_model": None,
             }
         with utils.nested(
             mock.patch.object(self.provider.static, "get_template_defaults"),
@@ -219,6 +229,10 @@ class OpenStackProviderTest(base.TestCase):
                 "template_network": "private",
                 "template_disk": f.disk,
                 "template_ephemeral": f.ephemeral,
+                "template_infiniband": True if f.infiniband == "true" else False,
+                "template_flavor_gpu_number": f.gpu_number if f.gpu_number else 0,
+                "template_flavor_gpu_vendor": None,
+                "template_flavor_gpu_model": None,
             }
 
         with utils.nested(
@@ -274,6 +288,10 @@ class OpenStackProviderTest(base.TestCase):
                 "template_network": "private",
                 "template_disk": f.disk,
                 "template_ephemeral": f.ephemeral,
+                "template_infiniband": True if f.infiniband == "true" else False,
+                "template_flavor_gpu_model": None,
+                "template_flavor_gpu_number": f.gpu_number if f.gpu_number else 0,
+                "template_flavor_gpu_vendor": None,
             }
 
         self.provider.select_flavors = "all"
@@ -336,6 +354,10 @@ class OpenStackProviderTest(base.TestCase):
                 "template_network": "private",
                 "template_disk": f.disk,
                 "template_ephemeral": f.ephemeral,
+                "template_infiniband": True if f.infiniband == "true" else False,
+                "template_flavor_gpu_number": f.gpu_number if f.gpu_number else 0,
+                "template_flavor_gpu_vendor": None,
+                "template_flavor_gpu_model": None,
             }
 
         self.provider.select_flavors = "public"
@@ -398,6 +420,10 @@ class OpenStackProviderTest(base.TestCase):
                 "template_network": "private",
                 "template_disk": f.disk,
                 "template_ephemeral": f.ephemeral,
+                "template_infiniband": True if f.infiniband == "true" else False,
+                "template_flavor_gpu_number": f.gpu_number if f.gpu_number else 0,
+                "template_flavor_gpu_vendor": None,
+                "template_flavor_gpu_model": None,
             }
 
         self.provider.select_flavors = "private"
@@ -446,111 +472,98 @@ class OpenStackProviderTest(base.TestCase):
             ],
         )
 
+    def occify(self, value):
+        return value
+
     def test_get_images(self):
-        # XXX move this to a custom class?
         # XXX add docker information
+        defaults = {
+            "architecture": None,
+            "metadata": {},
+            "image_description": None,
+            "image_os_family": None,
+            "image_os_name": None,
+            "image_os_type": None,
+            "image_os_version": None,
+            "image_platform": "amd64",
+            "image_version": None,
+            "image_accel_type": None,
+            "image_access_info": "none",
+            "image_gpu_cuda": None,
+            "image_gpu_driver": None,
+            "image_minimal_cpu": None,
+            "image_minimal_ram": None,
+            "image_minimal_accel": None,
+            "image_recommended_cpu": None,
+            "image_recommended_ram": None,
+            "image_recommended_accel": None,
+            "image_size": None,
+            "image_software": [],
+            "image_traffic_in": [],
+            "image_traffic_out": [],
+            "image_context_format": None,
+            "os_distro": None,
+            "other_info": [],
+        }
         expected_images = {
-            "bar id": {
+            "bar id": defaults.copy(),
+            "foo.id": defaults.copy(),
+            "baz id": defaults.copy(),
+        }
+        expected_images["bar id"].update(
+            {
                 "name": "barimage",
                 "id": "bar id",
-                "metadata": {},
                 "file": "v2/bar id/file",
-                "image_description": None,
                 "image_name": "barimage",
-                "image_os_family": None,
-                "image_os_name": None,
-                "image_os_version": None,
                 "image_platform": "amd64",
-                "image_version": None,
                 "image_marketplace_id": "%s"
                 % urljoin(
                     self.provider.glance.http_client.get_endpoint(), "v2/bar id/file"
                 ),
-                "image_id": "http://schemas.openstack.org/template/os#bar_id",
+                "image_id": "http://schemas.openstack.org/template/%s"
+                % self.occify("os#bar_id"),
                 "image_native_id": "bar id",
-                "image_accel_type": None,
-                "image_access_info": "none",
-                "image_minimal_cpu": None,
-                "image_minimal_ram": None,
-                "image_minimal_accel": None,
-                "image_recommended_cpu": None,
-                "image_recommended_ram": None,
-                "image_recommended_accel": None,
-                "image_size": None,
-                "image_software": [],
-                "image_traffic_in": [],
-                "image_traffic_out": [],
-                "image_context_format": None,
-                "other_info": [],
-            },
-            "foo.id": {
+            }
+        )
+        expected_images["foo.id"].update(
+            {
                 "name": "fooimage",
                 "id": "foo.id",
-                "metadata": {},
                 "marketplace": "http://example.org/",
                 "file": "v2/foo.id/file",
-                "image_description": None,
+                # these are duplicated as the provider would just copy everything
+                "gpu_cuda": "CUDA_x.y",
+                "gpu_driver": "driver-x",
                 "image_name": "fooimage",
-                "image_os_family": None,
-                "image_os_name": None,
-                "image_os_version": None,
-                "image_platform": "amd64",
-                "image_version": None,
                 "image_marketplace_id": "http://example.org/",
-                "image_id": "http://schemas.openstack.org/template/os#foo.id",
+                "image_gpu_cuda": "CUDA_x.y",
+                "image_gpu_driver": "driver-x",
+                "image_id": "http://schemas.openstack.org/template/%s"
+                % self.occify("os#foo.id"),
                 "image_native_id": "foo.id",
-                "image_accel_type": None,
-                "image_access_info": "none",
-                "image_minimal_cpu": None,
-                "image_minimal_ram": None,
-                "image_minimal_accel": None,
-                "image_recommended_cpu": None,
-                "image_recommended_ram": None,
-                "image_recommended_accel": None,
-                "image_size": None,
-                "image_software": [],
-                "image_traffic_in": [],
-                "image_traffic_out": [],
-                "image_context_format": None,
                 "other_info": ["base_mpuri=foobar"],
                 "APPLIANCE_ATTRIBUTES": '{"ad:base_mpuri": "foobar"}',
-            },
-            "baz id": {
+            }
+        )
+        expected_images["baz id"].update(
+            {
                 "name": "bazimage",
                 "id": "baz id",
                 "file": "v2/baz id/file",
-                "image_description": None,
                 "image_name": "bazimage",
-                "image_os_family": None,
-                "image_os_name": None,
-                "image_os_version": None,
-                "image_platform": "amd64",
-                "image_version": None,
                 "image_marketplace_id": "%s"
                 % urljoin(
                     self.provider.glance.http_client.get_endpoint(), "v2/baz id/file"
                 ),
-                "image_id": "http://schemas.openstack.org/template/os#baz_id",
+                "image_id": "http://schemas.openstack.org/template/%s"
+                % self.occify("os#baz_id"),
                 "image_native_id": "baz id",
                 "docker_id": "sha1:xxxxxxxxxxxxxxxxxxxxxxxxxx",
                 "docker_tag": "latest",
                 "docker_name": "test/image",
-                "image_accel_type": None,
-                "image_access_info": "none",
-                "image_minimal_cpu": None,
-                "image_minimal_ram": None,
-                "image_minimal_accel": None,
-                "image_recommended_cpu": None,
-                "image_recommended_ram": None,
-                "image_recommended_accel": None,
-                "image_size": None,
-                "image_software": [],
-                "image_traffic_in": [],
-                "image_traffic_out": [],
-                "image_context_format": None,
-                "other_info": [],
-            },
-        }
+            }
+        )
 
         with utils.nested(
             mock.patch.object(self.provider.static, "get_image_defaults"),
@@ -591,6 +604,7 @@ class OpenStackProviderTest(base.TestCase):
                 "template_network",
                 "template_disk",
                 "template_ephemeral",
+                "template_infiniband",
                 "template_id",
             ],
         )
@@ -688,11 +702,6 @@ class OpenStackProviderTest(base.TestCase):
         self.assertEqual("baz", endpoints.pop("gocfoo"))
         self.assertDictEqual(expected_endpoints, endpoints)
 
-    def test_occify_terms(self):
-        self.assertEqual("m1.tiny", self.provider.adapt_id("m1.tiny"))
-        self.assertEqual("m1 tiny", self.provider.adapt_id("m1 tiny"))
-        self.assertEqual("m1.tiny s", self.provider.adapt_id("m1.tiny s"))
-
     def test_service_type(self):
         self.assertEqual("compute", self.provider.service_type)
 
@@ -764,6 +773,14 @@ class OoiProviderTest(OpenStackProviderTest):
                 self.select_flavors = "all"
                 self._rescope_project = mock.Mock()
                 self.all_images = False
+                self.flavor_properties = {
+                    "infiniband": {"key": "infiniband", "value": "true"},
+                    "flavor_gpu_number": {"key": "gpu_number", "value": None},
+                }
+                self.image_properties = {
+                    "image_gpu_driver": {"key": "gpu_driver", "value": "true"},
+                    "image_gpu_cuda": {"key": "gpu_cuda", "value": "true"},
+                }
 
         self.provider = FakeProvider(None)
 
@@ -772,157 +789,11 @@ class OoiProviderTest(OpenStackProviderTest):
         self.assertEqual("m1_tiny", self.provider.adapt_id("m1 tiny"))
         self.assertEqual("m1-tiny_s", self.provider.adapt_id("m1.tiny s"))
 
+    def occify(self, value):
+        return value.replace(".", "-")
+
     def test_service_type(self):
         self.assertEqual("occi", self.provider.service_type)
-
-    def test_get_images(self):
-        # XXX move this to a custom class?
-        # XXX add docker information
-        expected_images = {
-            "bar id": {
-                "name": "barimage",
-                "id": "bar id",
-                "metadata": {},
-                "file": "v2/bar id/file",
-                "image_description": None,
-                "image_name": "barimage",
-                "image_os_family": None,
-                "image_os_name": None,
-                "image_os_version": None,
-                "image_platform": "amd64",
-                "image_version": None,
-                "image_marketplace_id": "%s"
-                % urljoin(
-                    self.provider.glance.http_client.get_endpoint(), "v2/bar id/file"
-                ),
-                "image_id": "http://schemas.openstack.org/template/os#bar_id",
-                "image_native_id": "bar id",
-                "image_accel_type": None,
-                "image_access_info": "none",
-                "image_minimal_cpu": None,
-                "image_minimal_ram": None,
-                "image_minimal_accel": None,
-                "image_recommended_cpu": None,
-                "image_recommended_ram": None,
-                "image_recommended_accel": None,
-                "image_size": None,
-                "image_software": [],
-                "image_traffic_in": [],
-                "image_traffic_out": [],
-                "image_context_format": None,
-                "other_info": [],
-            },
-            "foo.id": {
-                "name": "fooimage",
-                "id": "foo.id",
-                "metadata": {},
-                "marketplace": "http://example.org/",
-                "file": "v2/foo.id/file",
-                "image_description": None,
-                "image_name": "fooimage",
-                "image_os_family": None,
-                "image_os_name": None,
-                "image_os_version": None,
-                "image_platform": "amd64",
-                "image_version": None,
-                "image_marketplace_id": "http://example.org/",
-                "image_id": "http://schemas.openstack.org/template/os#foo-id",
-                "image_native_id": "foo.id",
-                "image_accel_type": None,
-                "image_access_info": "none",
-                "image_minimal_cpu": None,
-                "image_minimal_ram": None,
-                "image_minimal_accel": None,
-                "image_recommended_cpu": None,
-                "image_recommended_ram": None,
-                "image_recommended_accel": None,
-                "image_size": None,
-                "image_software": [],
-                "image_traffic_in": [],
-                "image_traffic_out": [],
-                "image_context_format": None,
-                "other_info": ["base_mpuri=foobar"],
-                "APPLIANCE_ATTRIBUTES": '{"ad:base_mpuri": "foobar"}',
-            },
-            "baz id": {
-                "name": "bazimage",
-                "id": "baz id",
-                "file": "v2/baz id/file",
-                "image_description": None,
-                "image_name": "bazimage",
-                "image_os_family": None,
-                "image_os_name": None,
-                "image_os_version": None,
-                "image_platform": "amd64",
-                "image_version": None,
-                "image_marketplace_id": "%s"
-                % urljoin(
-                    self.provider.glance.http_client.get_endpoint(), "v2/baz id/file"
-                ),
-                "image_id": "http://schemas.openstack.org/template/os#baz_id",
-                "image_native_id": "baz id",
-                "docker_id": "sha1:xxxxxxxxxxxxxxxxxxxxxxxxxx",
-                "docker_tag": "latest",
-                "docker_name": "test/image",
-                "image_accel_type": None,
-                "image_access_info": "none",
-                "image_minimal_cpu": None,
-                "image_minimal_ram": None,
-                "image_minimal_accel": None,
-                "image_recommended_cpu": None,
-                "image_recommended_ram": None,
-                "image_recommended_accel": None,
-                "image_size": None,
-                "image_software": [],
-                "image_traffic_in": [],
-                "image_traffic_out": [],
-                "image_context_format": None,
-                "other_info": [],
-            },
-        }
-
-        with utils.nested(
-            mock.patch.object(self.provider.static, "get_image_defaults"),
-            mock.patch.object(self.provider.glance.images, "list"),
-        ) as (m_get_image_defaults, m_images_list):
-            m_get_image_defaults.return_value = {}
-            m_images_list.return_value = FAKES.images
-
-            images = self.provider.get_images(**{"auth": {"project_id": None}})
-            self.assertTrue(m_get_image_defaults.called)
-
-        # Filter fields from the template that are not related to images
-        self.assert_resources(
-            expected_images,
-            images,
-            template="compute.ldif",
-            ignored_fields=[
-                "compute_service_name",
-                "compute_api_type",
-                "compute_api_version",
-                ("compute_api_endpoint" "_technology"),
-                "compute_capabilities",
-                "compute_api_authn_method",
-                "compute_total_ram",
-                "compute_middleware",
-                "compute_middleware_developer",
-                "compute_middleware_version",
-                "compute_endpoint_url",
-                "compute_hypervisor",
-                "compute_hypervisor_version",
-                "compute_production_level",
-                ("compute_service" "_production_level"),
-                "compute_total_cores",
-                "compute_total_ram",
-                "template_platform",
-                "template_cpu",
-                "template_memory",
-                "template_network",
-                "template_disk",
-                "template_ephemeral",
-                "template_id",
-            ],
-        )
 
     def test_get_endpoints_with_defaults_from_static(self):
         expected_endpoints = {
