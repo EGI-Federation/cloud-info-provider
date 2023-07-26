@@ -486,11 +486,17 @@ GLUE2CloudComputingVirtualAcceleratorVendor: ${template['template_flavor_gpu_ven
 % if template.get('template_flavor_gpu_model'):
 GLUE2CloudComputingVirtualAcceleratorModel: ${template['template_flavor_gpu_model']}
 % endif
+% if template.get('template_flavor_gpu_version'):
+GLUE2CloudComputingVirtualAcceleratorVersion: ${template['template_flavor_gpu_version']}
+% endif
+% if template.get('template_flavor_gpu_memory'):
+GLUE2CloudComputingVirtualAcceleratorMemory: ${template['template_flavor_gpu_memory']}
+% endif
+% if template.get('template_flavor_gpu_virt_type'):
+GLUE2CloudComputingVirtualAcceleratorVirtualizationType: ${template['template_flavor_gpu_virt_type']}
+% endif
 ## Not available in cloud-info
-##GLUE2CloudComputingVirtualAcceleratorVersion:
 ##GLUE2CloudComputingVirtualAcceleratorClockSpeed:
-##GLUE2CloudComputingVirtualAcceleratorMemory:
-##GLUE2CloudComputingVirtualAcceleratorVirtualizationType:
 ##GLUE2CloudComputingVirtualAcceleratorComputeCapability:
 % endif
 
