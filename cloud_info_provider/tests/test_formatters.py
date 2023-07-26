@@ -36,3 +36,20 @@ class BaseFormatterTest(base.BaseTest):
             ),
         ):
             self.assertEqual(expected, base._format_template("foo", info))
+
+    def test_render_empty_templates(self):
+        formatters = [
+            cloud_info_provider.formatters.glue.GLUE,
+            cloud_info_provider.formatters.glue.GLUE21,
+            cloud_info_provider.formatters.cmdb.CMDB,
+        ]
+        for f in formatters:
+            fmt = f()
+            fmt._load_templates("")
+            for tpl in fmt.templates:
+                try:
+                    fmt._format_template(tpl, {}, {})
+                except KeyError:
+                    # we are looking for syntax errors in the templates
+                    # so we can ignore KeyErrors
+                    pass
