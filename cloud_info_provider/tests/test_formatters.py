@@ -1,5 +1,8 @@
-import cloud_info_provider.formatters.base
 import mock
+
+import cloud_info_provider.formatters.base
+from cloud_info_providers.formatters.cmdb import CMBD
+from cloud_info_providers.formatters.glue import GLUE, GLUE2
 from cloud_info_provider.tests import base, utils
 
 
@@ -39,9 +42,9 @@ class BaseFormatterTest(base.BaseTest):
 
     def test_render_empty_templates(self):
         formatters = [
-            cloud_info_provider.formatters.glue.GLUE,
-            cloud_info_provider.formatters.glue.GLUE21,
-            cloud_info_provider.formatters.cmdb.CMDB,
+            GLUE,
+            GLUE21,
+            CMDB,
         ]
         for f in formatters:
             fmt = f()
