@@ -1,8 +1,6 @@
-import mock
-
 import cloud_info_provider.formatters.base
-from cloud_info_provider.formatters import cmdb
-from cloud_info_provider.formatters import glue
+import mock
+from cloud_info_provider.formatters import cmdb, glue
 from cloud_info_provider.tests import base, utils
 
 
