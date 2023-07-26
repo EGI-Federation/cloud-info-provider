@@ -592,22 +592,43 @@ class OpenStackProvider(base.BaseProvider):
         parser.add_argument(
             "--property-flavor-gpu-number",
             metavar="PROPERTY_KEY",
-            default="gpu_number",
+            default="Accelerator:Number",
             help='Flavor"s property key pointing to number of GPUs.',
+        )
+
+        parser.add_argument(
+            "--property-flavor-gpu-memory",
+            metavar="PROPERTY_KEY",
+            default="Accelerator:Memory",
+            help='Flavor"s property key pointing to GPU memory.',
+        )
+
+        parser.add_argument(
+            "--property-flavor-gpu-virt-type",
+            metavar="PROPERTY_KEY",
+            default="Accelerator:VirtualizationType",
+            help='Flavor"s property key pointing to virtualization type.',
         )
 
         parser.add_argument(
             "--property-flavor-gpu-vendor",
             metavar="PROPERTY_KEY",
-            default="gpu_vendor",
+            default="Accelerator:Vendor",
             help='Flavor"s property key pointing to the GPU vendor.',
         )
 
         parser.add_argument(
             "--property-flavor-gpu-model",
             metavar="PROPERTY_KEY",
-            default="gpu_model",
+            default="Accelerator:Model",
             help='Flavor"s property key pointing to the GPU model.',
+        )
+
+        parser.add_argument(
+            "--property-flavor-gpu-number",
+            metavar="PROPERTY_KEY",
+            default="Accelerator:Number",
+            help='Flavor"s property key pointing to number of GPUs.',
         )
 
         parser.add_argument(
