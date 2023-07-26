@@ -464,11 +464,11 @@ GLUE2CloudComputingInstanceTypeEphemeralStorage: ${template['template_ephemeral'
 ## GLUE2CloudComputingInstanceTypeNetworkPortsIn:
 ## GLUE2CloudComputingInstanceTypeNetworkPortsOut:
 ## GPUs
-% if gpu_number
+% if gpu_number:
 GLUE2CloudComputingInstanceTypeCloudComputingVirtualAcceleratorForeingKey: ${gpu_tpl_id}
 % endif
 
-% if gpu_number
+% if gpu_number:
 dn: GLUE2ResourceID=${gpu_tpl_id},GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${template['suffix']}
 objectClass: GLUE2Entity
 objectClass: GLUE2Resource
