@@ -432,6 +432,9 @@ GLUE2CloudComputingImageNetworkConfigurationAddressRange: ${network_conf['ad:net
 <%
     tpl_id = template['template_native_id'] if native_endpoint else template['template_id']
     tpl_name = template['template_name'] if 'template_name' in template else tpl_id
+    gpu_number = template.get('template_flavor_gpu_number', 0)
+    gpu_tpl_id = tpl_id + "_gpu"
+    gpu_tpl_name = tpl_name + "_gpu"
 %>\
 dn: GLUE2ResourceID=${tpl_id},GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${template['suffix']}
 objectClass: GLUE2Entity
@@ -460,6 +463,43 @@ GLUE2CloudComputingInstanceTypeEphemeralStorage: ${template['template_ephemeral'
 ## GLUE2CloudComputingInstanceTypeMarketplaceURL:
 ## GLUE2CloudComputingInstanceTypeNetworkPortsIn:
 ## GLUE2CloudComputingInstanceTypeNetworkPortsOut:
+## GPUs
+% if gpu_number:
+GLUE2CloudComputingInstanceTypeCloudComputingVirtualAcceleratorForeingKey: ${gpu_tpl_id}
+% endif
+
+% if gpu_number:
+dn: GLUE2ResourceID=${gpu_tpl_id},GLUE2ShareID=${share_id},GLUE2ServiceID=${compute_service_id},GLUE2GroupID=resource,${template['suffix']}
+objectClass: GLUE2Entity
+objectClass: GLUE2Resource
+objectClass: GLUE2CloudComputingVirtualAccelerator
+GLUE2ResourceID: ${gpu_tpl_id}
+GLUE2EntityCreationTime: ${timestamp}
+GLUE2EntityValidity: ${validity}
+GLUE2EntityName: ${gpu_tpl_name}
+GLUE2CloudComputingVirtualAcceleratorCloudComputingInstanceTypeForeignKey: ${tpl_id}
+GLUE2CloudComputingVirtualAcceleratorType: GPU
+GLUE2CloudComputingVirtualAcceleratorNumber: ${gpu_number}
+% if template.get('template_flavor_gpu_vendor'):
+GLUE2CloudComputingVirtualAcceleratorVendor: ${template['template_flavor_gpu_vendor']}
+% endif
+% if template.get('template_flavor_gpu_model'):
+GLUE2CloudComputingVirtualAcceleratorModel: ${template['template_flavor_gpu_model']}
+% endif
+% if template.get('template_flavor_gpu_version'):
+GLUE2CloudComputingVirtualAcceleratorVersion: ${template['template_flavor_gpu_version']}
+% endif
+% if template.get('template_flavor_gpu_memory'):
+GLUE2CloudComputingVirtualAcceleratorMemory: ${template['template_flavor_gpu_memory']}
+% endif
+% if template.get('template_flavor_gpu_virt_type'):
+GLUE2CloudComputingVirtualAcceleratorVirtualizationType: ${template['template_flavor_gpu_virt_type']}
+% endif
+## Not available in cloud-info
+##GLUE2CloudComputingVirtualAcceleratorClockSpeed:
+##GLUE2CloudComputingVirtualAcceleratorComputeCapability:
+% endif
+
 
 % endfor
 ##
