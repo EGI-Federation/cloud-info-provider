@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.13.0] - 2023-07-26
+## [0.13.0]
 ### Added
 - Add flavor name to templates (#231) (Enol Fernández)
 - Support sites with URLs in the endpoints of GOCDB (#234) (Enol Fernández)
