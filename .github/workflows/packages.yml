@@ -24,7 +24,7 @@ jobs:
         id: version
         run: echo "version=$(python setup.py --version)" >> "$GITHUB_OUTPUT"
       - name: Upload output file
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: sdist
           path: dist/*tar.gz
@@ -64,7 +64,7 @@ jobs:
           done
           rpmlint RPMS/noarch/*.rpm
       - name: Upload rpms
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: rpms
           path: |
@@ -105,7 +105,7 @@ jobs:
           mv debs/*.deb .
           mv ../*.deb .
       - name: Upload debs
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: debs
           path: |
