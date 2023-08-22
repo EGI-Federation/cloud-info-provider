@@ -28,4 +28,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Fail on errors
           DISABLE_ERRORS: false
-          FILTER_REGEX_EXCLUDE: "(.*cloud_info_provider/.*/opennebula_rocci_provider_images.json|.*cloud_info_provider/tests/one_samples/*.xml)"
+          # we only have sample XMLs, avoid wasting resources
+          VALIDATE_XML: false
+          FILTER_REGEX_EXCLUDE: ".*tests.*samples.*.json"
