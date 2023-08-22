@@ -45,7 +45,7 @@ class OnedataProvider(base.BaseProvider):
 
     def get_oneproviders_from_onezone(self):
         def _do_request(url):
-            r = requests.get(url, headers=self.headers)
+            r = requests.get(url, headers=self.headers, timeout=self.opts.timeout)
             if r.status_code == requests.codes["ok"]:
                 return r.json()
             else:

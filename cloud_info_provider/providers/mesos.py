@@ -95,7 +95,12 @@ class MesosProvider(base.BaseProvider):
         # gather & update dynamic info
         for api_endp in self.api_endpoints:
             api_url = "/".join([self.framework_url, api_endp])
-            r = requests.get(api_url, headers=self.headers, verify=self.cacert)
+            r = requests.get(
+                api_url,
+                headers=self.headers,
+                verify=self.cacert,
+                timeout=self.opts.timeout,
+            )
             if r.status_code == requests.codes["ok"]:
                 _update(ret["endpoints"][self.framework_url], r.json())
             else:
