@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     container: centos:7
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: sdist
       - name: install build requisites
@@ -78,7 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     container: ubuntu:xenial
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: sdist
       - name: install build requistes
@@ -119,7 +119,7 @@ jobs:
     runs-on: ubuntu-latest
     container: centos:7
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: rpms
       - name: install generated rpms
@@ -134,7 +134,7 @@ jobs:
     runs-on: ubuntu-latest
     container: centos:7
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: rpms
       - name: install generated rpms
@@ -149,7 +149,7 @@ jobs:
     runs-on: ubuntu-latest
     container: ubuntu:xenial
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: debs
       - name: install generated debs
@@ -164,7 +164,7 @@ jobs:
     runs-on: ubuntu-latest
     container: ubuntu:xenial
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: debs
       - name: install generated debs
