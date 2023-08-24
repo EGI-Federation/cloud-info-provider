@@ -28,17 +28,6 @@ jobs:
           file: CHANGELOG
           pattern: ${{ steps.extract-version.outputs.version }}
           no-print-matched-heading: true
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.extract-version.outputs.version }}
-          release_name: Release ${{ steps.extract-version.outputs.version }}
-          draft: false
-          prerelease: false
-          body: '${{ steps.extract-changelog.outputs.markdown }}'
 
   sdist:
     name: build python sdist
@@ -150,57 +139,13 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: rpms
-      - name: Upload base rpm
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
         with:
-          upload_url: ${{ needs.prepare-release.outputs.upload_url }}
-          asset_path: ./cloud-info-provider-${{ needs.sdist.outputs.version }}-1.el7.noarch.rpm
-          asset_name: cloud-info-provider-${{ needs.sdist.outputs.version }}-1.el7.noarch.rpm
-          asset_content_type: application/octet-stream
-      - name: Upload opennebula rpm
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.prepare-release.outputs.upload_url }}
-          asset_path: ./cloud-info-provider-opennebula-${{ needs.sdist.outputs.version }}-1.el7.noarch.rpm
-          asset_name: cloud-info-provider-opennebula-${{ needs.sdist.outputs.version }}-1.el7.noarch.rpm
-          asset_content_type: application/octet-stream
-      - name: Upload openstack rpm
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.prepare-release.outputs.upload_url }}
-          asset_path: ./cloud-info-provider-openstack-${{ needs.sdist.outputs.version }}-1.el7.noarch.rpm
-          asset_name: cloud-info-provider-openstack-${{ needs.sdist.outputs.version }}-1.el7.noarch.rpm
-          asset_content_type: application/octet-stream
-      - name: Upload base deb
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.prepare-release.outputs.upload_url }}
-          asset_path: ./python-cloud-info-provider_${{ needs.sdist.outputs.version }}-1_all.deb
-          asset_name: python-cloud-info-provider_${{ needs.sdist.outputs.version }}-1_all.deb
-          asset_content_type: application/vnd.debian.binary-package
-      - name: Upload opennebula deb
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.prepare-release.outputs.upload_url }}
-          asset_path: ./python-cloud-info-provider-opennebula_${{ needs.sdist.outputs.version }}-1_all.deb
-          asset_name: python-cloud-info-provider-opennebula_${{ needs.sdist.outputs.version }}-1_all.deb
-          asset_content_type: application/vnd.debian.binary-package
-      - name: Upload openstack deb
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.prepare-release.outputs.upload_url }}
-          asset_path: ./python-cloud-info-provider-openstack_${{ needs.sdist.outputs.version }}-1_all.deb
-          asset_name: python-cloud-info-provider-openstack_${{ needs.sdist.outputs.version }}-1_all.deb
-          asset_content_type: application/vnd.debian.binary-package
+          tag_name: ${{ steps.extract-version.outputs.version }}
+          name: Release ${{ steps.extract-version.outputs.version }}
+          body: '${{ steps.extract-changelog.outputs.markdown }}'
+          files: |
+            cloud-info-provider*${{ needs.sdist.outputs.version }}-1.el7.noarch.rpm
+            python-cloud-info-provider_${{ needs.sdist.outputs.version }}-1_all.deb
