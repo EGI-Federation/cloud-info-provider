@@ -1,3 +1,4 @@
+---
 name: Python testing
 
 on: pull_request
@@ -11,16 +12,16 @@ jobs:
         python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install Tox
-      run: pip install tox
-    - name: Run Tox
-      run: |
-        # Run tox using the version of Python in `PATH`
-        tox -e py
-        tox -e bandit
-        tox -e cobertura
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install Tox
+        run: pip install tox
+      - name: Run Tox
+        run: |
+          # Run tox using the version of Python in `PATH`
+          tox -e py
+          tox -e bandit
+          tox -e cobertura

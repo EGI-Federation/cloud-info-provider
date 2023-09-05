@@ -99,7 +99,8 @@ compute:
       default_network_type: public
       # Public Network name
       public_network_name: PUBLIC
-      # Default membership is VO:<share name>, specify if finer grained AuthZ is used
+      # Default membership is VO:<share name>
+      # specify if finer grained AuthZ is used
       #membership:
       #    - VO:ops
     fedcloud.egi.eu:

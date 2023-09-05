@@ -32,7 +32,8 @@ compute:
     #     auth:
     #         project_id: xxxx
     #     sla: https://egi.eu/sla/fedcloud
-    #     # Default network type: none, public, public_only, private, private_only
+    #     # Default network type: none, public, public_only,
+    #     #                       private, private_only
     #     default_network_type: public
     #     # Public Network name
     #     public_network_name: PUBLIC
