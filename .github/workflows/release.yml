@@ -3,7 +3,8 @@ name: Create packages and release
 
 on:
   pull_request:
-    types: [closed]
+    types:
+      - closed
 
 jobs:
   prepare-release:

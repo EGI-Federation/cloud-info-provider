@@ -1,8 +1,8 @@
 {
   "license": "Apache-2.0",
-  "description": "<ul> <li>Support crendential refresh without client secret (#222) (Enol Fernández)</li> <li>Add --ignore-share-errors to continue publishing data even if there are issues in a given share (#217, #218, 221) (Enol Fernández)</li> <li>Add timeout option to core (#219) (Enol Fernández)</li> <li>Minor fixes related to templates (#212) (Enol Fernández)</li> </ul> ",
+  "description": "<h3 id=\"added\">Added</h3> <ul> <li>Add flavor name to templates (#231) (Enol Fernández)</li> <li>Support sites with URLs in the endpoints of GOCDB (#234) (Enol Fernández)</li> <li>Add new providers: AWS, Mesos and onedata (#237) (Pablo Orviz, Enol Fernández)</li> <li>Support regions in OpenStack (#229) (Enol Fernández)</li> <li>Add support for infiniband &amp; GPUs in OpenStack (#237, #240) (Pablo Orviz, Enol Fernández)</li> </ul> <h3 id=\"fixed\">Fixed</h3> <ul> <li>Update GitHub Actions syntax (#234) (Enol Fernández)</li> <li>Remove <code>/</code> from VO names (#230) (Enol Fernández)</li> <li>Use main as default branch (#236) (Enol Fernández)</li> <li>Improved CMDB templates (#237) (Pablo Orviz)</li> </ul> ",
   "language": "eng",
-  "title": "EGI-Federation/cloud-info-provider: 0.12.2",
+  "title": "EGI-Federation/cloud-info-provider: 0.13.0",
   "keywords": [
     "bdii",
     "grid",
@@ -17,13 +17,13 @@
     }
   ],
   "upload_type": "software",
-  "version": "0.12.2",
+  "version": "0.13.0",
   "communities": [
     {
       "identifier": "egi"
     }
   ],
-  "publication_date": "2021-05-17",
+  "publication_date": "2023-09-11",
   "creators": [
     {
       "orcid": "0000-0002-5686-3193",
@@ -73,7 +73,7 @@
   "related_identifiers": [
     {
       "scheme": "url",
-      "identifier": "https://github.com/EGI-Federation/cloud-info-provider/tree/0.12.2",
+      "identifier": "https://github.com/EGI-Federation/cloud-info-provider/tree/0.13.0",
       "relation": "isSupplementTo"
     },
     {

@@ -6,7 +6,7 @@
 
 Summary: Information provider for Cloud Compute and Cloud Storage services for BDII
 Name: cloud-info-provider
-Version: 0.12.2
+Version: 0.13.0
 Release: 1%{?dist}
 Group: Applications/Internet
 License: Apache Software License 2.0
@@ -59,6 +59,20 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/cloud-info-provider/
 
 %changelog
+* Mon Sep 11 2023 egibot <egibot@egi.eu> 0.13.0
+### Added
+- Add flavor name to templates (#231) (Enol Fernández)
+- Support sites with URLs in the endpoints of GOCDB (#234) (Enol Fernández)
+- Add new providers: AWS, Mesos and onedata (#237) (Pablo Orviz, Enol Fernández)
+- Support regions in OpenStack (#229) (Enol Fernández)
+- Add support for infiniband & GPUs in OpenStack (#237, #240) (Pablo Orviz, Enol Fernández)
+
+### Fixed
+- Update GitHub Actions syntax (#234) (Enol Fernández)
+- Remove `/` from VO names (#230) (Enol Fernández)
+- Use main as default branch (#236) (Enol Fernández)
+- Improved CMDB templates (#237) (Pablo Orviz)
+
 * Mon May 17 2021 egibot <egibot@egi.eu> 0.12.2
 - Support crendential refresh without client secret (#222) (Enol Fernández)
 - Add --ignore-share-errors to continue publishing data even if there are
