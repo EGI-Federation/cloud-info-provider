@@ -20,3 +20,11 @@ class BaseRefresher(object):
     @staticmethod
     def populate_parser(parser):
         """Populate the argparser 'parser' with the needed options."""
+
+
+class OidcBaseRefresher(BaseRefresher):
+    def _update_provider(self, provider, token):
+        # this requires some inner knowledge on the oidc auth of OpenStack
+        # and won't work for others, but I'm not sure if we can make
+        # this generic
+        provider.opts.os_access_token = token
