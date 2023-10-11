@@ -110,6 +110,7 @@ class OpenStackProvider(base.BaseProvider):
         It updates every OpenStack client used in case of new project.
         """
         project_id = auth["project_id"]
+        region_name = auth.get("region_name", None)
         if self.project_id == project_id:
             return
         self.opts.os_project_id = project_id
