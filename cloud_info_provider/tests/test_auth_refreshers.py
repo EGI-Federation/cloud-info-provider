@@ -6,9 +6,23 @@ import argparse
 
 import mock
 import requests
-from cloud_info_provider.auth_refreshers import oidc_refresh, oidc_vo_refresh
+from cloud_info_provider.auth_refreshers import access_token, oidc_refresh, oidc_vo_refresh
 from cloud_info_provider.exceptions import RefresherException
 from cloud_info_provider.tests import base
+
+
+class AccessTokenRefreshTest(base.TestCase):
+    def test_refresh(self):
+        class FakeProvider(object):
+            def __init__(self):
+                self.opts = mock.Mock()
+
+        provider = FakeProvider()
+        refresher = access_token.AccessTokenRefresh(None)
+        token = "this token"
+        refresher.refresh(provider, access_token=token, ignore=True)
+        self.assertEqual("this token", provider.opts.os_access_token)
+
 
 
 class OidcRefreshOptionsTest(base.TestCase):
