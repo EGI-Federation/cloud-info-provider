@@ -1,5 +1,4 @@
-import requests
-from cloud_info_provider import auth_refreshers, exceptions
+from cloud_info_provider import auth_refreshers
 
 
 class AccessTokenRefresh(auth_refreshers.OidcBaseRefresher):
