@@ -67,7 +67,8 @@ class OpenStackProviderAuthTest(base.TestCase):
             session = mock.Mock()
             session.get_project_id.return_value = "foo"
             m_load_session.return_value = session
-            self.provider._rescope_project("foo", "bar")
+            auth = {"project_id": "foo", "vo": "bar"}
+            self.provider._rescope_project(auth)
             self.assertEqual("foo", self.provider.project_id)
 
     def test_rescope_refresh(self):
