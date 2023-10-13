@@ -21,10 +21,10 @@ from six.moves.urllib.parse import urljoin, urlparse
 def _rescope(f):
     @functools.wraps(f)
     def inner(self, **kwargs):
-        auth = kwargs.get("auth")
-        vo = kwargs.get("vo")
-        region_name = auth.get("region_name", self.os_region)
-        self._rescope_project(auth["project_id"], vo, region_name)
+        auth = {"region_name": self.os_region}
+        auth.update(kwargs.get("auth"))
+        auth.update({"vo": kwargs.get("vo")})
+        self._rescope_project(auth)
         return f(self, **kwargs)
 
     return inner
@@ -104,18 +104,18 @@ class OpenStackProvider(base.BaseProvider):
             share["project"] = share.get("auth", {}).get("project_id")
         return shares
 
-    def _rescope_project(self, project_id, vo, region_name=None):
+    def _rescope_project(self, auth):
         """Switch to new OS project whenever there is a change.
 
         It updates every OpenStack client used in case of new project.
         """
+        project_id = auth["project_id"]
+        region_name = auth.get("region_name", None)
         if self.project_id == project_id:
             return
         self.opts.os_project_id = project_id
-        # make sure that it also works for v2voms
-        self.opts.os_tenant_id = project_id
         if self.auth_refresher:
-            self.auth_refresher.refresh(self, project_id=project_id, vo=vo)
+            self.auth_refresher.refresh(self, **auth)
         self.auth_plugin = loading.load_auth_from_argparse_arguments(self.opts)
         self.session = loading.load_session_from_argparse_arguments(
             self.opts, auth=self.auth_plugin

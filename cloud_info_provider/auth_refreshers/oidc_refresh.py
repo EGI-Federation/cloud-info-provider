@@ -2,7 +2,7 @@ import requests
 from cloud_info_provider import auth_refreshers, exceptions
 
 
-class OidcRefreshToken(auth_refreshers.BaseRefresher):
+class OidcRefreshToken(auth_refreshers.OidcBaseRefresher):
     """Refreshes OAuth 2.0 access tokens using refresh_token grant.
 
     OAuth2.0 token endpoint and credentials are specified in the options to
@@ -36,12 +36,6 @@ class OidcRefreshToken(auth_refreshers.BaseRefresher):
             return r.json()["access_token"]
         except (ValueError, KeyError, requests.exceptions.RequestException) as e:
             raise exceptions.RefresherException("Unable to get token %s" % e)
-
-    def _update_provider(self, provider, token):
-        # this requires some inner knowledge on the oidc auth of OpenStack
-        # and won't work for others, but I'm not sure if we can make
-        # this generic
-        provider.opts.os_access_token = token
 
     def refresh(self, provider, **kwargs):
         token = self._refresh_token(
