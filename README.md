@@ -19,7 +19,6 @@ Currently supported cloud middleware:
 - OpenStack/ooi
 
 ## Acknowledgement
-
 This work is co-funded by the [EOSC-hub project](http://eosc-hub.eu/)
 (Horizon 2020) under Grant number 777536.
 <img src="https://wiki.eosc-hub.eu/download/attachments/1867786/eu%20logo.jpeg?version=1&modificationDate=1459256840098&api=v2" height="24">
@@ -48,8 +47,8 @@ already include those dependencies (RH based distributions need to enable the
 [EPEL repository](http://fedoraproject.org/wiki/EPEL)).
 
 For running the provider in a production environment with a BDII you will also
-need the `bdii` package (available in Ubuntu/Debian repos, in EPEL for RH based
-distros it is in EPEL).
+need the `bdii` package (available in Ubuntu/Debian repositories, in EPEL for
+RH based distros).
 
 Providers-specific metapackages bring a convenient way to install the tool as
 they depend on the main cloud-info-provider package (common to all providers)
@@ -74,8 +73,8 @@ debs:
 #### Using pip
 
 Source-based installation is not recommended for production usage, but is very
-handy for testing or development purpose. Get the source by cloning this repo
-and do a pip install.
+handy for testing or development purpose. Get the source by cloning this
+repository and do a pip install.
 
 As pip will have to copy files to /etc/cloud-info-provider directory, the
 installation user should be able to write to it, so it is recommended to create
@@ -199,7 +198,7 @@ compute:
     ops:
       # Authentication for the VO into OpenStack
       auth:
-        # the project id in OpenStack
+        # the project ID in OpenStack
         project_id: xxxxx
       # Other optional information:
       # sla: https://egi.eu/sla/ops    # link to the SLA document
@@ -225,8 +224,9 @@ templates can be changed using the `--template-dir` option.
 
 #### Publishers
 
-The cloud-info-provider has a pluggable system for producing its output. Two of
-these `publishers` are provided in this repo: `stdout` `json_stdout` and `ams`:
+The cloud-info-provider has a pluggable system for producing its output. Three
+of these `publishers` are provided in this repository: `stdout`, `json_stdout`
+and `ams`:
 
 - `stdout`: just prints output to the standard output. This is the default
   publisher and the one to use when the cloud-info-provider is used in a BDII
@@ -380,7 +380,7 @@ cloud-info-provider-service  --yaml-file /etc/cloud-info-provider/bdii.yaml \
 Publishing to AMS requires access to your OCCI endpoint certificate (permission
 should be granted to user ldap). The certificate/key pair is used to
 authenticate to AMS. The `SITE-NAME` is your site name in GOCDB, the
-`<ENDPOINT_ID>` is the ID at GOCDB of your OCCI endpoint, you can obtain that id
+`<ENDPOINT_ID>` is the ID at GOCDB of your OCCI endpoint, you can obtain that ID
 by checking the URL of your endpoint, e.g. for
 `https://goc.egi.eu/portal/index.php?Page_Type=Service&id=9420`, the
 `ENDPOINT_ID` is `9420`.
