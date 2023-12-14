@@ -51,7 +51,7 @@ jobs:
         id: version
         run: echo "version=$(python setup.py --version)" >> "$GITHUB_OUTPUT"
       - name: Upload output file
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: sdist
           path: dist/*tar.gz
@@ -84,7 +84,7 @@ jobs:
           rpmbuild --define "_topdir $PWD" -ba rpm/cloud-info-provider-opennebula.spec
           rpmlint RPMS/noarch/*.rpm
       - name: Upload rpms
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: rpms
           path: |
@@ -122,7 +122,7 @@ jobs:
           mv debs/*.deb .
           mv ../*.deb .
       - name: Upload debs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: debs
           path: |
