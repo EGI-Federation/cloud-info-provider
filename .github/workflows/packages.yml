@@ -76,7 +76,7 @@ jobs:
     name: build debs
     needs: sdist
     runs-on: ubuntu-latest
-    container: ubuntu:bionic
+    container: ubuntu:focal
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -147,7 +147,7 @@ jobs:
     name: install debs (openstack)
     needs: ubuntu
     runs-on: ubuntu-latest
-    container: ubuntu:bionic
+    container: ubuntu:focal
     steps:
       - uses: actions/download-artifact@v4
         with:
