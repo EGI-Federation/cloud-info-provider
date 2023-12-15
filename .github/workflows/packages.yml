@@ -77,6 +77,8 @@ jobs:
     needs: sdist
     runs-on: ubuntu-latest
     container: ubuntu:focal
+    env:
+      DEBIAN_FRONTEND: noninteractive
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -148,6 +150,8 @@ jobs:
     needs: ubuntu
     runs-on: ubuntu-latest
     container: ubuntu:focal
+    env:
+      DEBIAN_FRONTEND: noninteractive
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -163,6 +167,8 @@ jobs:
     needs: ubuntu
     runs-on: ubuntu-latest
     container: ubuntu:bionic
+    env:
+      DEBIAN_FRONTEND: noninteractive
     steps:
       - uses: actions/download-artifact@v4
         with:
