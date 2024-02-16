@@ -3,6 +3,8 @@ name: Python testing
 
 on: pull_request
 
+permissions: read-all
+
 jobs:
   test:
     name: test python code

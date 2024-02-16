@@ -6,6 +6,9 @@ on:
     types:
       - closed
 
+permissions:
+  contents: write
+
 jobs:
   prepare-release:
     name: Prepare Release
