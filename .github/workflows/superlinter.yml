@@ -33,3 +33,5 @@ jobs:
           # we only have sample XMLs, avoid wasting resources
           VALIDATE_XML: false
           FILTER_REGEX_EXCLUDE: ".*tests.*samples.*.json"
+          # pylint is too much at the moment, to be removed in the future
+          VALIDATE_PYTHON_PYLINT: false
