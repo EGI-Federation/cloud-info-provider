@@ -4,6 +4,8 @@ name: Create packages and test installation
 on:
   pull_request:
 
+permissions: read-all
+
 jobs:
   sdist:
     name: build python sdist
