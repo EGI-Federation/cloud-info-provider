@@ -1,6 +1,7 @@
 """
 Simple utilities for getting information fro GOCDB about the endpoints
 """
+
 import logging
 from xml.etree.ElementTree import ParseError  # nosec
 
