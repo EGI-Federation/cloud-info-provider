@@ -26,67 +26,69 @@ jobs:
         id: version
         run: echo "version=$(python setup.py --version)" >> "$GITHUB_OUTPUT"
       - name: Upload output file
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: sdist
           path: dist/*tar.gz
 
-  centos7:
-    name: build centos 7 rpms
-    needs: sdist
-    runs-on: ubuntu-latest
-    container: centos:7
-    steps:
-      - uses: actions/download-artifact@v3
-        with:
-          name: sdist
-      - name: install build requisites
-        run: |
-          yum install -y rpm-build rpmlint
-          yum install -y centos-release-openstack-queens
-          yum install -y python-pbr python-setuptools
-      - name: build rpm
-        run: |
-          tar -xzf cloud_info_provider-${{ needs.sdist.outputs.version }}.tar.gz \
-            --strip-components 1 \
-            cloud_info_provider-${{ needs.sdist.outputs.version }}/rpm
-          sed -i "s/^\(Version.\).*/\\1 ${{ needs.sdist.outputs.version }}/" \
-            rpm/cloud-info-provider.spec
-          sed -i "s/^\(Version.\).*/\\1 ${{ needs.sdist.outputs.version }}/" \
-            rpm/cloud-info-provider-opennebula.spec
-          sed -i "s/^\(Version.\).*/\\1 ${{ needs.sdist.outputs.version }}/" \
-            rpm/cloud-info-provider-openstack.spec
-          mkdir -p {BUILD,RPMS,SOURCES,SPECS,SRPMS}
-          cp -v cloud_info_provider-${{ needs.sdist.outputs.version }}.tar.gz \
-            SOURCES
-          for rpm in rpm/cloud-info-provider.spec \
-              rpm/cloud-info-provider-openstack.spec \
-              rpm/cloud-info-provider-opennebula.spec; do
-            rpmbuild --define "_topdir $PWD" -ba "$rpm"
-          done
-          rpmlint RPMS/noarch/*.rpm
-      - name: Upload rpms
-        uses: actions/upload-artifact@v3
-        with:
-          name: rpms
-          path: |
-            RPMS/noarch/cloud-info-provider-${{ needs.sdist.outputs.version }}-1.el7.noarch.rpm
-            RPMS/noarch/cloud-info-provider-opennebula-${{ needs.sdist.outputs.version }}-1.el7.noarch.rpm
-            RPMS/noarch/cloud-info-provider-openstack-${{ needs.sdist.outputs.version }}-1.el7.noarch.rpm
+#  centos7:
+#    name: build centos 7 rpms
+#    needs: sdist
+#    runs-on: ubuntu-latest
+#    container: centos:7
+#    steps:
+#      - uses: actions/download-artifact@v4
+#        with:
+#          name: sdist
+#      - name: install build requisites
+#        run: |
+#          yum install -y rpm-build rpmlint
+#          yum install -y centos-release-openstack-queens
+#          yum install -y python-pbr python-setuptools
+#      - name: build rpm
+#        run: |
+#          tar -xzf cloud_info_provider-${{ needs.sdist.outputs.version }}.tar.gz \
+#            --strip-components 1 \
+#            cloud_info_provider-${{ needs.sdist.outputs.version }}/rpm
+#          sed -i "s/^\(Version.\).*/\\1 ${{ needs.sdist.outputs.version }}/" \
+#            rpm/cloud-info-provider.spec
+#          sed -i "s/^\(Version.\).*/\\1 ${{ needs.sdist.outputs.version }}/" \
+#            rpm/cloud-info-provider-opennebula.spec
+#          sed -i "s/^\(Version.\).*/\\1 ${{ needs.sdist.outputs.version }}/" \
+#            rpm/cloud-info-provider-openstack.spec
+#          mkdir -p {BUILD,RPMS,SOURCES,SPECS,SRPMS}
+#          cp -v cloud_info_provider-${{ needs.sdist.outputs.version }}.tar.gz \
+#            SOURCES
+#          for rpm in rpm/cloud-info-provider.spec \
+#              rpm/cloud-info-provider-openstack.spec \
+#              rpm/cloud-info-provider-opennebula.spec; do
+#            rpmbuild --define "_topdir $PWD" -ba "$rpm"
+#          done
+#          rpmlint RPMS/noarch/*.rpm
+#      - name: Upload rpms
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: rpms
+#          path: |
+#            RPMS/noarch/cloud-info-provider-${{ needs.sdist.outputs.version }}-1.el7.noarch.rpm
+#            RPMS/noarch/cloud-info-provider-opennebula-${{ needs.sdist.outputs.version }}-1.el7.noarch.rpm
+#            RPMS/noarch/cloud-info-provider-openstack-${{ needs.sdist.outputs.version }}-1.el7.noarch.rpm
 
   ubuntu:
     name: build debs
     needs: sdist
     runs-on: ubuntu-latest
-    container: ubuntu:xenial
+    container: ubuntu:focal
+    env:
+      DEBIAN_FRONTEND: noninteractive
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: sdist
       - name: install build requistes
         run: |
           apt-get update -q
-          apt-get install -q -y devscripts debhelper git
+          apt-get install -q -y devscripts debhelper git build-dep
           apt-get install -q -y python-all-dev python-pbr python-setuptools
       - name: build packages
         run: |
@@ -107,7 +109,7 @@ jobs:
           mv debs/*.deb .
           mv ../*.deb .
       - name: Upload debs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: debs
           path: |
@@ -115,43 +117,45 @@ jobs:
             python-cloud-info-provider-opennebula_${{ needs.sdist.outputs.version }}-1_all.deb
             python-cloud-info-provider-openstack_${{ needs.sdist.outputs.version }}-1_all.deb
 
-  centos7-install-openstack:
-    name: install centos 7 rpms (openstack)
-    needs: centos7
-    runs-on: ubuntu-latest
-    container: centos:7
-    steps:
-      - uses: actions/download-artifact@v3
-        with:
-          name: rpms
-      - name: install generated rpms
-        run: |
-         yum install -y centos-release-openstack-queens
-         yum localinstall -y cloud-info-provider-openstack-*.rpm \
-                             cloud-info-provider-[^o]*.rpm
-
-  centos7-install-opennebula:
-    name: install centos 7 rpms (opennebula)
-    needs: centos7
-    runs-on: ubuntu-latest
-    container: centos:7
-    steps:
-      - uses: actions/download-artifact@v3
-        with:
-          name: rpms
-      - name: install generated rpms
-        run: |
-          yum install -y epel-release
-          yum localinstall -y cloud-info-provider-opennebula-*.rpm \
-                              cloud-info-provider-[^o]*.rpm
+#  centos7-install-openstack:
+#    name: install centos 7 rpms (openstack)
+#    needs: centos7
+#    runs-on: ubuntu-latest
+#    container: centos:7
+#    steps:
+#      - uses: actions/download-artifact@v4
+#        with:
+#          name: rpms
+#      - name: install generated rpms
+#        run: |
+#         yum install -y centos-release-openstack-queens
+#         yum localinstall -y cloud-info-provider-openstack-*.rpm \
+#                             cloud-info-provider-[^o]*.rpm
+#
+#  centos7-install-opennebula:
+#    name: install centos 7 rpms (opennebula)
+#    needs: centos7
+#    runs-on: ubuntu-latest
+#    container: centos:7
+#    steps:
+#      - uses: actions/download-artifact@v4
+#        with:
+#          name: rpms
+#      - name: install generated rpms
+#        run: |
+#          yum install -y epel-release
+#          yum localinstall -y cloud-info-provider-opennebula-*.rpm \
+#                              cloud-info-provider-[^o]*.rpm
 
   ubuntu-install-openstack:
     name: install debs (openstack)
     needs: ubuntu
     runs-on: ubuntu-latest
-    container: ubuntu:xenial
+    container: ubuntu:focal
+    env:
+      DEBIAN_FRONTEND: noninteractive
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: debs
       - name: install generated debs
@@ -164,9 +168,11 @@ jobs:
     name: install debs (opennebula)
     needs: ubuntu
     runs-on: ubuntu-latest
-    container: ubuntu:xenial
+    container: ubuntu:bionic
+    env:
+      DEBIAN_FRONTEND: noninteractive
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: debs
       - name: install generated debs
