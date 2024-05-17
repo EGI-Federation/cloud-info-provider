@@ -100,7 +100,7 @@ class OpenNebulaBaseProvider(base.BaseProvider):
             "image_os_name": None,
             "image_os_version": None,
             "image_platform": "amd64",
-            "other_info": [],
+            "other_info": {},
         }
         defaults = self.static.get_image_defaults(prefix=True)
         img_schema = defaults.get("image_schema", "template")
@@ -141,7 +141,7 @@ class OpenNebulaBaseProvider(base.BaseProvider):
                 base_mpuri = ck_attrs.get("ad:base_mpuri")
 
             if base_mpuri:
-                aux_tpl["other_info"].append("base_mpuri=%s" % base_mpuri)
+                aux_tpl["other_info"]["base_mpuri"] = base_mpuri
 
             if not (self.all_images or aux_tpl["image_marketplace_id"]):
                 continue

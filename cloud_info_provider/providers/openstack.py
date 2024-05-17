@@ -316,7 +316,7 @@ class OpenStackProvider(base.BaseProvider):
             "image_context_format": None,
             "image_software": [],
             "os_distro": None,
-            "other_info": [],
+            "other_info": {},
         }
         defaults = self.static.get_image_defaults(prefix=True)
         img_sch = defaults.get("image_schema", "os")
@@ -346,9 +346,7 @@ class OpenStackProvider(base.BaseProvider):
                 )
                 extra_attrs = {}
             if "ad:base_mpuri" in extra_attrs:
-                aux_img["other_info"].append(
-                    "base_mpuri=%s" % extra_attrs["ad:base_mpuri"]
-                )
+                aux_img["other_info"]["base_mpuri"] = extra_attrs["ad:base_mpuri"]
 
             if not marketplace_id:
                 if self.all_images:
