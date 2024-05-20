@@ -280,7 +280,9 @@ class GLUE21Json(base.BaseFormatter):
                         "ID": gpu_tpl_id,
                         "Name": gpu_tpl_name,
                         "Associations": {
-                            "CloudComputingVirtualAcceleratorCloudComputingInstanceType": tpl_id,
+                            "CloudComputingVirtualAcceleratorCloudComputingInstanceType": template[
+                                id_field
+                            ],
                         },
                         "Type": "GPU",
                         "Number": gpu_number,
@@ -358,7 +360,7 @@ class GLUE21Json(base.BaseFormatter):
                         network_obj = {
                             "ID": network_conf_id,
                             "Associations": {
-                                "CloudComputingImage": [img_id],
+                                "CloudComputingImage": image[id_field],
                             },
                             "Direction": network_type,
                             "Protocol": network_conf["ad:net_protocol"],
