@@ -825,6 +825,6 @@
     "image_os_version": null,
     "image_platform": "x86_64",
     "image_version": "0.0.1",
-    "other_info": ["base_mpuri": "https://appdb.egi.eu/store/vo/image/1FDD3B64-9F6E-48C9-9DBE-1AFE304055A8:4321/"]
+    "other_info": {"base_mpuri": "https://appdb.egi.eu/store/vo/image/1FDD3B64-9F6E-48C9-9DBE-1AFE304055A8:4321/"}
   }
 }
