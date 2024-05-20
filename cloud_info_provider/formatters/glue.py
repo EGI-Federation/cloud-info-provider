@@ -159,7 +159,6 @@ class GLUE21Json(base.BaseFormatter):
     def glue_endpoints(self, info):
         endpoints = []
         for url, endpoint in self.all_endpoints.items():
-            native_endpoint = endpoint["compute_api_type"] != "OCCI"
             if endpoint["compute_api_type"] == "OpenStack":
                 interface_name = "org.openstack.nova"
                 endpoint_semantics = "https://developer.openstack.org/api-ref/compute"
@@ -247,10 +246,10 @@ class GLUE21Json(base.BaseFormatter):
             for ep in share.get("endpoints", {}).get("endpoints", {}).values():
                 native_endpoint = ep["compute_api_type"] != "OCCI"
                 id_field = "template_native_id" if native_endpoint else "template_id"
-                tpl_name = (
-                    template["template_name"] if "template_name" in template else tpl_id
+                name_field = (
+                    "template_name" if "template_name" in template else id_field
                 )
-                tpl_obj = self._glue_obj(template[id_field], tpl_name)
+                tpl_obj = self._glue_obj(template[id_field], template[name_field])
                 gpu_number = template.get("template_flavor_gpu_number", 0)
 
                 tpl_obj.update(
@@ -272,8 +271,8 @@ class GLUE21Json(base.BaseFormatter):
                 if template.get("template_ephemeral"):
                     tpl_obj["EphemeralStorage"] = template["template_ephemeral"]
                 if gpu_number:
-                    gpu_tpl_id = tpl_id + "_gpu"
-                    gpu_tpl_name = tpl_name + "_gpu"
+                    gpu_tpl_id = f"{template[id_field]}_gpu"
+                    gpu_tpl_name = f"{template[name_field]}_gpu"
                     tpl_obj["Associations"][
                         "CloudComputingInstanceTypeCloudComputingVirtualAccelerator"
                     ] = gpu_tpl_id
@@ -371,6 +370,7 @@ class GLUE21Json(base.BaseFormatter):
                         )
                         img_assoc.append(network_conf_id)
                         img_obj["Associations"]["ImageNetworkConfiguration"] = img_assoc
+                        image_network.append(network_obj)
 
         self._dict_append(
             {
@@ -414,7 +414,6 @@ class GLUE21Json(base.BaseFormatter):
         )
 
     def glue_shares(self, info):
-        all_obj = {}
         shares = []
         for vo, share in self.shares.items():
             share_id = "%s_share_%s_%s" % (
@@ -463,14 +462,14 @@ class GLUE21Json(base.BaseFormatter):
                 share_template_max_memory = 0
 
             endpoints = share.get("endpoints", {}).get("endpoints", {})
-            templates = share["templates"]
 
-            if share["instance_max_accelerators"]:
-                share_max_accelerators = share["instance_max_accelerators"]
-            else:
-                share_max_accelerators = self.static_compute_info[
-                    "compute_max_accelerators"
-                ]
+            # This is commented out as we are not using it
+            # if share["instance_max_accelerators"]:
+            #     share_max_accelerators = share["instance_max_accelerators"]
+            # else:
+            #     share_max_accelerators = self.static_compute_info[
+            #         "compute_max_accelerators"
+            #     ]
 
             quotas = share["quotas"]
             if "instances" in quotas:
