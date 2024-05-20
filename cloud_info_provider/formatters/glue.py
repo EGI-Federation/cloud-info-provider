@@ -27,9 +27,9 @@ class GLUE21(base.BaseFormatter):
 
 class GLUE21Json(base.BaseFormatter):
     def __init__(self):
-        self.template_extension = ".json.tpl"
+        self.template_extension = "glue21.json.tpl"
         self.templates = [
-            "glue21",
+            "compute",
         ]
         self.glue_dict = {}
         self.creation_time = datetime.now().isoformat()
@@ -547,5 +547,6 @@ class GLUE21Json(base.BaseFormatter):
 
     def _format_template(self, template, info, extra={}):
         # do not mess with formatting in mako, build here our JSON
-        json_info = self.build_json(info)
-        return super()._format_template(template, json_info, extra)
+        glue_info = self.build_glue(info)
+        extra.update({"glue": glue_info})
+        return super()._format_template(template, info, extra)
