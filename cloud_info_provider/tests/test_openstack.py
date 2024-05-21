@@ -505,7 +505,7 @@ class OpenStackProviderTest(base.TestCase):
             "image_traffic_out": [],
             "image_context_format": None,
             "os_distro": None,
-            "other_info": [],
+            "other_info": {},
         }
         expected_images = {
             "bar id": defaults.copy(),
@@ -544,7 +544,7 @@ class OpenStackProviderTest(base.TestCase):
                 "image_id": "http://schemas.openstack.org/template/%s"
                 % self.occify("os#foo.id"),
                 "image_native_id": "foo.id",
-                "other_info": ["base_mpuri=foobar"],
+                "other_info": {"base_mpuri": "foobar"},
                 "APPLIANCE_ATTRIBUTES": '{"ad:base_mpuri": "foobar"}',
             }
         )

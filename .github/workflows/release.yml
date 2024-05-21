@@ -59,42 +59,6 @@ jobs:
           name: sdist
           path: dist/*tar.gz
 
-  centos7:
-    name: build centos 7 rpms
-    needs: sdist
-    runs-on: ubuntu-latest
-    container: centos:7
-    steps:
-      - uses: actions/download-artifact@v3
-        with:
-          name: sdist
-      - name: install build requisites
-        run: |
-          yum install -y rpm-build rpmlint
-          yum install -y centos-release-openstack-queens
-          yum install -y python-pbr python-setuptools
-      - name: build rpm
-        run: |
-          tar -xzf cloud_info_provider-${{ needs.sdist.outputs.version }}.tar.gz \
-              --strip-components 1 cloud_info_provider-${{ needs.sdist.outputs.version }}/rpm
-          sed -i "s/^\(Version.\).*/\\1 ${{ needs.sdist.outputs.version }}/" rpm/cloud-info-provider.spec
-          sed -i "s/^\(Version.\).*/\\1 ${{ needs.sdist.outputs.version }}/" rpm/cloud-info-provider-opennebula.spec
-          sed -i "s/^\(Version.\).*/\\1 ${{ needs.sdist.outputs.version }}/" rpm/cloud-info-provider-openstack.spec
-          mkdir -p {BUILD,RPMS,SOURCES,SPECS,SRPMS}
-          cp -v cloud_info_provider-${{ needs.sdist.outputs.version }}.tar.gz SOURCES
-          rpmbuild --define "_topdir $PWD" -ba rpm/cloud-info-provider.spec
-          rpmbuild --define "_topdir $PWD" -ba rpm/cloud-info-provider-openstack.spec
-          rpmbuild --define "_topdir $PWD" -ba rpm/cloud-info-provider-opennebula.spec
-          rpmlint RPMS/noarch/*.rpm
-      - name: Upload rpms
-        uses: actions/upload-artifact@v3
-        with:
-          name: rpms
-          path: |
-            RPMS/noarch/cloud-info-provider-${{ needs.sdist.outputs.version }}-1.el7.noarch.rpm
-            RPMS/noarch/cloud-info-provider-opennebula-${{ needs.sdist.outputs.version }}-1.el7.noarch.rpm
-            RPMS/noarch/cloud-info-provider-openstack-${{ needs.sdist.outputs.version }}-1.el7.noarch.rpm
-
   ubuntu:
     name: build debs
     needs: sdist
@@ -134,7 +98,7 @@ jobs:
             python-cloud-info-provider-openstack_${{ needs.sdist.outputs.version }}-1_all.deb
 
   release:
-    needs: [sdist, ubuntu, centos7, prepare-release]
+    needs: [sdist, ubuntu, prepare-release]
     name: Upload release artefacts
     runs-on: ubuntu-latest
     steps:
