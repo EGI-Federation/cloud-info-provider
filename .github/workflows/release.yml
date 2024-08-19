@@ -65,7 +65,7 @@ jobs:
     runs-on: ubuntu-latest
     container: ubuntu:xenial
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: sdist
       - name: install build requistes
@@ -102,10 +102,10 @@ jobs:
     name: Upload release artefacts
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: debs
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: rpms
       - name: Create Release

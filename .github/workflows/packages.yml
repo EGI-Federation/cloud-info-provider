@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     container: ubuntu:xenial
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: sdist
       - name: install build requistes
@@ -78,7 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     container: ubuntu:xenial
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: debs
       - name: install generated debs
@@ -93,7 +93,7 @@ jobs:
     runs-on: ubuntu-latest
     container: ubuntu:xenial
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: debs
       - name: install generated debs
