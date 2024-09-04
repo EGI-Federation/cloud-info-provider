@@ -2,6 +2,7 @@ from cloud_info_provider.collectors import base
 
 
 class StorageCollector(base.BaseCollector):
+
     def __init__(self, *args):
         super(StorageCollector, self).__init__(*args)
         self.templates = ["storage"]

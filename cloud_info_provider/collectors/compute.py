@@ -4,6 +4,7 @@ from cloud_info_provider.collectors import base
 
 
 class ComputeCollector(base.BaseCollector):
+
     def __init__(self, *args):
         super(ComputeCollector, self).__init__(*args)
         self.templates = ["compute"]

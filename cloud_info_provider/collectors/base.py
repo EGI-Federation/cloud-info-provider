@@ -5,6 +5,7 @@ import six
 
 @six.add_metaclass(abc.ABCMeta)
 class BaseCollector(object):
+
     def __init__(self, opts, providers, auth_refresher):
         self.opts = opts
         self.providers = providers

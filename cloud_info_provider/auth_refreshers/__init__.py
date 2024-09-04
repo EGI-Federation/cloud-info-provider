@@ -11,6 +11,7 @@ authentication for a new share (i.e. VO)
 
 
 class BaseRefresher(object):
+
     def __init__(self, opts):
         self.opts = opts
 
