@@ -46,7 +46,7 @@ jobs:
           # Zenodo
           zenodo_changes=$(echo '${{ steps.extract-changelog.outputs.markdown}}' \
                            | pandoc --from gfm --to html | tr -s "\n" " ")
-      
+
           jq --arg VERSION "${{ steps.extract-version.outputs.version }}" \
              --arg TITLE "EGI-Federation/cloud-info-provider: ${{ steps.extract-version.outputs.version }}" \
              --arg RELATED "https://github.com/EGI-Federation/cloud-info-provider/tree/${{ steps.extract-version.outputs.version }}" \
@@ -58,15 +58,15 @@ jobs:
               .publication_date = $DATE | 
               .description = $DESC' < .zenodo.json > .zenodo.json.new
           mv .zenodo.json.new .zenodo.json
-      
+
           git commit -a -m "Prepare version ${{ steps.extract-version.outputs.version }}"
       - name: Create Pull Request for version
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           delete-branch: true
           body: >
             Prepares release ${{ steps.extract-version.outputs.version }}
-      
+
             Update .zenodo.json for version ${{  steps.extract-version.outputs.version }}
           labels: release
           branch: release-${{ steps.extract-version.outputs.version }}
