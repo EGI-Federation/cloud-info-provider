@@ -73,6 +73,6 @@ jobs:
         with:
           tag_name: ${{ needs.prepare-release.outputs.version }}
           name: Release ${{ needs.prepare-release.outputs.version }}
-          body: '${{ needs.prepare-release.outputs.changelog }}'
+          body: "${{ needs.prepare-release.outputs.changelog }}"
           files: |
             cloud_info_provider-${{ needs.sdist.outputs.version }}.tar.gz
