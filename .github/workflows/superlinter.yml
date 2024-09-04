@@ -41,3 +41,5 @@ jobs:
           FILTER_REGEX_EXCLUDE: ".*tests.*samples.*.json"
           # pylint is too much at the moment, to be removed in the future
           VALIDATE_PYTHON_PYLINT: false
+          # Focus on black for now
+          VALIDATE_PYTHON_PYINK: false
