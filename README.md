@@ -276,7 +276,7 @@ The `openstack` provider will only generate native OpenStack information, while
 the `ooi` provider will only generate OCCI information and requires a correctly
 configured [ooi](https://ooi.readthedocs.io/en/stable/) deployment.
 
-Other extra options for the providers (defaults should be ok):
+Other extra options for the providers (defaults should be OK):
 
 - `--select-flavors {all,public,private}` Select all (default), public or
   private flavors/templates. For more details see

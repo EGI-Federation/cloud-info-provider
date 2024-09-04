@@ -59,55 +59,14 @@ jobs:
           name: sdist
           path: dist/*tar.gz
 
-  ubuntu:
-    name: build debs
-    needs: sdist
-    runs-on: ubuntu-latest
-    container: ubuntu:xenial
-    steps:
-      - uses: actions/download-artifact@v3
-        with:
-          name: sdist
-      - name: install build requistes
-        run: |
-          apt-get update -q
-          apt-get install -q -y devscripts debhelper git
-          apt-get install -q -y python-all-dev python-pbr python-setuptools
-      - name: build packages
-        run: |
-          tar -xzf cloud_info_provider-${{ needs.sdist.outputs.version }}.tar.gz \
-              --strip-components 1
-          sed -i -e "1s/(.*)/(${{ needs.sdist.outputs.version }}-1)/" debian/changelog
-          debuild --no-tgz-check clean binary
-          cd debs/cloud-info-provider-openstack
-          sed -i -e "1s/(.*)/(${{ needs.sdist.outputs.version }}-1)/" debian/changelog
-          debuild --no-tgz-check clean binary
-          cd ../../debs/cloud-info-provider-opennebula
-          sed -i -e "1s/(.*)/(${{ needs.sdist.outputs.version }}-1)/" debian/changelog
-          debuild --no-tgz-check clean binary
-          cd ../..
-          mv debs/*.deb .
-          mv ../*.deb .
-      - name: Upload debs
-        uses: actions/upload-artifact@v3
-        with:
-          name: debs
-          path: |
-            python-cloud-info-provider_${{ needs.sdist.outputs.version }}-1_all.deb
-            python-cloud-info-provider-opennebula_${{ needs.sdist.outputs.version }}-1_all.deb
-            python-cloud-info-provider-openstack_${{ needs.sdist.outputs.version }}-1_all.deb
-
   release:
-    needs: [sdist, ubuntu, prepare-release]
+    needs: [sdist, prepare-release]
     name: Upload release artefacts
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v3
         with:
-          name: debs
-      - uses: actions/download-artifact@v3
-        with:
-          name: rpms
+          name: sdist
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v2
@@ -116,5 +75,4 @@ jobs:
           name: Release ${{ needs.prepare-release.outputs.version }}
           body: '${{ needs.prepare-release.outputs.changelog }}'
           files: |
-            cloud-info-provider*${{ needs.sdist.outputs.version }}-1.el7.noarch.rpm
-            python-cloud-info-provider*${{ needs.sdist.outputs.version }}-1_all.deb
+            cloud_info_provider-${{ needs.sdist.outputs.version }}.tar.gz
