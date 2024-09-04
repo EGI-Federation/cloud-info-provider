@@ -19,6 +19,7 @@ Currently supported cloud middleware:
 - OpenStack/ooi
 
 ## Acknowledgement
+
 This work is co-funded by the [EOSC-hub project](http://eosc-hub.eu/)
 (Horizon 2020) under Grant number 777536.
 <img alt="EU logo" src="https://wiki.eosc-hub.eu/download/attachments/1867786/eu%20logo.jpeg?version=1&modificationDate=1459256840098&api=v2" height="24">
@@ -287,7 +288,8 @@ Other extra options for the providers (defaults should be OK):
   the others.
 
 ###### Support for specialized hardware (GPU & InfiniBand) through OpenStack properties
-*CMDB only*
+
+_CMDB only_
 
 The `openstack` provider is able to gather additional GPU and InfiniBand
 information made available through flavor's and image's metadata. To this end,
@@ -303,7 +305,6 @@ the metadata. Only if they match, InfiniBand is considered as supported.
 
 Use the `--help` option for the whole list of available GPU and InfiniBand
 properties.
-
 
 ##### OpenNebula
 
@@ -386,7 +387,8 @@ by checking the URL of your endpoint, e.g. for
 `ENDPOINT_ID` is `9420`.
 
 ##### Mesos
-*CMDB only*
+
+_CMDB only_
 
 The `mesos` provider retrieves information about Mesos, Marathon and Chronos
 frameworks. Only one framework at a time can be provided in a single execution
@@ -394,7 +396,8 @@ through the `--mesos-framework` argument. A Bearer authentication token can be
 used to authenticate with the Mesos endpoint.
 
 ##### Onedata
-*CMDB only*
+
+_CMDB only_
 
 The `onedata` provider gathers information related to a OneProvider instance.
 In order to do that, it makes a request to the associated OneZone API, which
@@ -402,13 +405,12 @@ requires an OIDC X-Auth token authentication.
 onedata provider options:
 
 ##### Amazon EC2
-*CMDB only*
+
+_CMDB only_
 
 The `aws` provider gathers image and flavor-related data from a given Amazon
 EC2 region. Currently supported operating systems for the images are Ubuntu,
 CentOS and Windows.
-
-
 
 ### Running the provider
 
