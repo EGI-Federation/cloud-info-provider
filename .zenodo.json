@@ -3,14 +3,7 @@
   "description": "<h3 id=\"added\">Added</h3> <ul> <li>Add flavor name to templates (#231) (Enol Fernández)</li> <li>Support sites with URLs in the endpoints of GOCDB (#234) (Enol Fernández)</li> <li>Add new providers: AWS, Mesos and onedata (#237) (Pablo Orviz, Enol Fernández)</li> <li>Support regions in OpenStack (#229) (Enol Fernández)</li> <li>Add support for infiniband &amp; GPUs in OpenStack (#237, #240) (Pablo Orviz, Enol Fernández)</li> </ul> <h3 id=\"fixed\">Fixed</h3> <ul> <li>Update GitHub Actions syntax (#234) (Enol Fernández)</li> <li>Remove <code>/</code> from VO names (#230) (Enol Fernández)</li> <li>Use main as default branch (#236) (Enol Fernández)</li> <li>Improved CMDB templates (#237) (Pablo Orviz)</li> </ul> ",
   "language": "eng",
   "title": "EGI-Federation/cloud-info-provider: 0.13.0",
-  "keywords": [
-    "bdii",
-    "grid",
-    "information",
-    "cloud",
-    "EGI",
-    "ams"
-  ],
+  "keywords": ["bdii", "grid", "information", "cloud", "EGI", "ams"],
   "grants": [
     {
       "id": "10.13039/501100000780::777536"
