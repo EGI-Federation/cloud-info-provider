@@ -1,5 +1,7 @@
 # Cloud Information provider
 
+[![Packaging](https://github.com/EGI-Federation/cloud-info-provider/actions/workflows/packages/badge.svg)
+[![Python tests](https://github.com/EGI-Federation/cloud-info-provider/actions/workflows/python/badge.svg)
 [![GitHub release](https://img.shields.io/github/release/EGI-Federation/cloud-info-provider.svg)](https://github.com/EGI-Federation/cloud-info-provider/releases)
 
 The Cloud Information provider generates a representation of cloud resources,
