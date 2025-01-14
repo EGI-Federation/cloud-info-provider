@@ -367,7 +367,7 @@ class GLUE21Json(base.BaseFormatter):
                             "Port": network_conf["ad:net_port"],
                             "AddressRange": network_conf["ad:net_range"],
                         }
-                        img_assoc = image["Associations"].get(
+                        img_assoc = img_obj["Associations"].get(
                             "ImageNetworkConfiguration", []
                         )
                         img_assoc.append(network_conf_id)
