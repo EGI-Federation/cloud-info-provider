@@ -230,7 +230,7 @@ class GLUE21Json(base.BaseFormatter):
                 "RunningVM": self.count_instance_status(instances, "ACTIVE"),
                 "SuspendedVM": self.count_instance_status(instances, "SUSPENDED"),
                 "HaltedVM": self.count_instance_status(instances, "SHUTOFF"),
-                "Associations": [{"AdminDomain": [self.site_name]}],
+                "Associations": {"AdminDomain": [self.site_name]},
             }
         )
         if "gocdb_id" in self.static_compute_info:
