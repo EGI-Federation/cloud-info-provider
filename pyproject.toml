@@ -1,3 +1,81 @@
+[project]
+name = "cloud-info-provider"
+dynamic = ["version"]
+description = "A cloud information discovery tool for EGI FedCloud"
+readme = "README.md"
+authors = [
+    { name = "Enol Fernandez", email = "enol.fernandez@egi.eu" },
+    { name = "Baptiste Grenier", email = "baptiste.grenier@egi.eu" },
+    { name = "Alvaro Lopez", email = "aloga@ifca.unican.es" },
+    { name = "Andre Gemuend", email = "andre.gemuend@scai.fraunhofer.de" },
+    { name = "Bjorn Hagemeier", email = "b.hagemeier@fz-juelich.de" },
+    { name = "Boris Parak", email = "parak@cesnet.cz" },
+    { name = "Bruce Becker", email = "bruce.becker@egi.eu" },
+    { name = "Carlos Gimeno Yanez", email = "cgimeno@bifi.es" },
+    { name = "Pablo Orviz", email = "orviz@ifca.unican.es" },
+    { name = "Ruben Diez", email = "rdiez@cesga.es" },
+    { name = "Salvatore Pinto", email = "salvatore.pinto@egi.eu" },
+]
+requires-python = ">=3.13"
+dependencies = [
+    "boto3>=1.35.98",
+    "defusedxml>=0.7.1",
+    "keystoneauth1>=5.9.1",
+    "mako>=1.3.8",
+    "pyopenssl>=25.0.0",
+    "python-dateutil>=2.9.0.post0",
+    "python-glanceclient>=4.7.0",
+    "python-keystoneclient>=5.5.0",
+    "python-novaclient>=18.7.0",
+    "pyyaml>=6.0.2",
+    "requests>=2.32.3",
+    "six>=1.17.0",
+    "stevedore>=5.4.0",
+]
+
 [build-system]
-requires = ["pbr>=6.0.0", "setuptools>=64.0.0"]
-build-backend = "pbr.build"
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
+
+[dependency-groups]
+dev = [
+    "bandit>=1.8.2",
+    "fixtures>=4.2.2",
+    "mock>=5.1.0",
+    "pytest>=8.3.4",
+    "testtools>=2.7.2",
+]
+
+[project.scripts]
+cloud-info-provider-service = "cloud_info_provider.core:main"
+
+[project.entry-points.'cip.providers']
+openstack = "cloud_info_provider.providers.openstack:OpenStackProvider"
+opennebula = "cloud_info_provider.providers.opennebula:OpenNebulaProvider"
+opennebularocci = "cloud_info_provider.providers.opennebula:OpenNebulaROCCIProvider"
+static = "cloud_info_provider.providers.static:StaticProvider"
+ooi = "cloud_info_provider.providers.ooi:OoiProvider"
+
+[project.entry-points.'cip.formatters']
+glue = "cloud_info_provider.formatters.glue:GLUE"
+glue21 = "cloud_info_provider.formatters.glue:GLUE21"
+glue21json = "cloud_info_provider.formatters.glue:GLUE21Json"
+cmdb = "cloud_info_provider.formatters.cmdb:CMDB"
+
+[project.entry-points.'cip.collectors']
+headers = "cloud_info_provider.collectors.cloud:CloudCollector"
+clouddomain = "cloud_info_provider.collectors.cloud:CloudCollector"
+storage = "cloud_info_provider.collectors.storage:StorageCollector"
+compute = "cloud_info_provider.collectors.compute:ComputeCollector"
+
+[project.entry-points.'cip.auth_refreshers']
+oidcrefresh = "cloud_info_provider.auth_refreshers.oidc_refresh:OidcRefreshToken"
+oidcvorefresh = "cloud_info_provider.auth_refreshers.oidc_vo_refresh:OidcVORefreshToken"
+accesstoken = "cloud_info_provider.auth_refreshers.access_token:AccessToken"
+
+[project.entry-points.'cip.publishers']
+stdout = "cloud_info_provider.publishers.stdout:StdOutPublisher"
+ams = "cloud_info_provider.publishers.ams:AMSPublisher"
