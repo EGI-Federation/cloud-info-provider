@@ -524,7 +524,7 @@ class GLUE21Json(base.BaseFormatter):
             self.glue_images(share, share_id)
             self.glue_templates(share, share_id)
             self.glue_access_policy(share, share_id, vo)
-        self._dict_append({"Share": [shares]})
+        self._dict_append({"Share": shares})
 
     def build_glue(self, info):
         self.static_compute_info = info["static_compute_info"]
