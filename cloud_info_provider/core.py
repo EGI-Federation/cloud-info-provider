@@ -1,6 +1,7 @@
 import argparse
 import logging
 
+import cloud_info_provider
 from stevedore import driver, extension
 
 
@@ -46,6 +47,10 @@ def get_parser(providers, formatters, auth_refreshers, publishers):
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
         fromfile_prefix_chars="@",
         conflict_handler="resolve",
+    )
+
+    parser.add_argument(
+        "--version", action="version", version=f"{cloud_info_provider.__version__}"
     )
 
     parser.add_argument(

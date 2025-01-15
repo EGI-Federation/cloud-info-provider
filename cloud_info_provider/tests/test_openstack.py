@@ -624,8 +624,7 @@ class OpenStackProviderTest(base.TestCase):
 
             images = self.provider.get_images(**{"auth": {"project_id": None}})
             self.assertTrue(m_get_image_defaults.called)
-
-        self.assertItemsEqual(images.keys(), expected_images)
+        self.assertCountEqual(images.keys(), expected_images)
 
     def test_get_endpoints_with_defaults_from_static(self):
         expected_endpoints = {
@@ -664,7 +663,8 @@ class OpenStackProviderTest(base.TestCase):
             m_get_goc_info.assert_called_with("http://foo.example.org:5000/v2", False)
         self.assertEqual("baz", endpoints.pop("gocfoo"))
         for k, v in expected_endpoints["endpoints"].items():
-            self.assertDictContainsSubset(v, endpoints["endpoints"].get(k, {}))
+            sub = endpoints["endpoints"].get(k, {})
+            self.assertEqual(sub, sub | v)
 
     def test_get_endpoints_with_defaults(self):
         expected_endpoints = {
@@ -832,7 +832,8 @@ class OoiProviderTest(OpenStackProviderTest):
 
         self.assertEqual("baz", endpoints.pop("gocfoo"))
         for k, v in expected_endpoints["endpoints"].items():
-            self.assertDictContainsSubset(v, endpoints["endpoints"].get(k, {}))
+            sub = endpoints["endpoints"].get(k, {})
+            self.assertEqual(sub, sub | v)
 
     def test_get_endpoints_with_defaults(self):
         expected_endpoints = {

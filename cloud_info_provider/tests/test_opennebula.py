@@ -143,7 +143,7 @@ class OpenNebulaBaseProviderTest(base.TestCase):
             for k, v in self.expected_images.items()
             if v.get("image_marketplace_id")
         }
-        self.assertItemsEqual(
+        self.assertCountEqual(
             marketplace_images.keys(), self.provider.get_images().keys()
         )
 
