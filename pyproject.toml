@@ -16,7 +16,7 @@ authors = [
     { name = "Ruben Diez", email = "rdiez@cesga.es" },
     { name = "Salvatore Pinto", email = "salvatore.pinto@egi.eu" },
 ]
-requires-python = ">=3.13"
+requires-python = ">=3.10"
 dependencies = [
     "boto3>=1.35.98",
     "defusedxml>=0.7.1",
