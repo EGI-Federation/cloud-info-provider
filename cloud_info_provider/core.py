@@ -1,9 +1,8 @@
 import argparse
 import logging
 
-from stevedore import driver, extension
-
 import cloud_info_provider
+from stevedore import driver, extension
 
 
 def get_providers():
