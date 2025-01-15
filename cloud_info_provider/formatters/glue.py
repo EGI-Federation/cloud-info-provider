@@ -230,7 +230,7 @@ class GLUE21Json(base.BaseFormatter):
                 "RunningVM": self.count_instance_status(instances, "ACTIVE"),
                 "SuspendedVM": self.count_instance_status(instances, "SUSPENDED"),
                 "HaltedVM": self.count_instance_status(instances, "SHUTOFF"),
-                "Associations": [{"AdminDomain": [self.site_name]}],
+                "Associations": {"AdminDomain": [self.site_name]},
             }
         )
         if "gocdb_id" in self.static_compute_info:
@@ -367,7 +367,7 @@ class GLUE21Json(base.BaseFormatter):
                             "Port": network_conf["ad:net_port"],
                             "AddressRange": network_conf["ad:net_range"],
                         }
-                        img_assoc = image["Associations"].get(
+                        img_assoc = img_obj["Associations"].get(
                             "ImageNetworkConfiguration", []
                         )
                         img_assoc.append(network_conf_id)
@@ -524,7 +524,7 @@ class GLUE21Json(base.BaseFormatter):
             self.glue_images(share, share_id)
             self.glue_templates(share, share_id)
             self.glue_access_policy(share, share_id, vo)
-        self._dict_append({"Share": [shares]})
+        self._dict_append({"Share": shares})
 
     def build_glue(self, info):
         self.static_compute_info = info["static_compute_info"]
