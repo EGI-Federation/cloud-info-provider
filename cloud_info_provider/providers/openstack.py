@@ -506,7 +506,7 @@ class OpenStackProvider(base.BaseProvider):
                     default=opt.argparse_default,
                     metavar="<auth-%s>" % opt.name,
                     help=opt.help,
-                    dest="os_%s" % opt.dest.replace("-", "_")
+                    dest="os_%s" % opt.dest.replace("-", "_"),
                 )
 
         parser.add_argument(
