@@ -3,6 +3,8 @@ import logging
 
 from stevedore import driver, extension
 
+import cloud_info_provider
+
 
 def get_providers():
     def _handle_exception(*args):
@@ -46,6 +48,10 @@ def get_parser(providers, formatters, auth_refreshers, publishers):
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
         fromfile_prefix_chars="@",
         conflict_handler="resolve",
+    )
+
+    parser.add_argument(
+        "--version", action="version", version=f"{cloud_info_provider.__version__}"
     )
 
     parser.add_argument(
