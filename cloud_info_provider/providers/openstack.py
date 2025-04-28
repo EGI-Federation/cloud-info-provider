@@ -1,43 +1,23 @@
-import copy
-import functools
 import json
 import logging
 import re
+from urllib.parse import urljoin
 
 import glanceclient
 import novaclient.client
-import requests
-from cloud_info_provider import exceptions, utils
-from cloud_info_provider.providers import base, static
 from keystoneauth1 import loading
 from keystoneauth1.exceptions import http as http_exc
 from keystoneauth1.loading import base as loading_base
 from keystoneauth1.loading import session as loading_session
 from novaclient.exceptions import Forbidden
-from six.moves.urllib.parse import urljoin, urlparse
 
-
-# TODO(enolfc): should this be completely inside the provider class?
-def _rescope(f):
-    @functools.wraps(f)
-    def inner(self, **kwargs):
-        auth = {"region_name": self.os_region}
-        auth.update(kwargs.get("auth"))
-        auth.update({"vo": kwargs.get("vo")})
-        self._rescope_project(auth)
-        return f(self, **kwargs)
-
-    return inner
+from cloud_info_provider import exceptions, glue, utils
+from cloud_info_provider.providers import base
 
 
 class OpenStackProvider(base.BaseProvider):
-    service_type = "compute"
     goc_service_type = "org.openstack.nova"
-    service_data = {
-        "compute_api_type": "OpenStack",
-        "compute_middleware": "OpenStack Nova",
-        "compute_middleware_developer": "OpenStack Foundation",
-    }
+    interface_name = "org.openstack.nova"
 
     def setup_logging(self):
         super(OpenStackProvider, self).setup_logging()
@@ -54,10 +34,8 @@ class OpenStackProvider(base.BaseProvider):
         for log in external_logs:
             logging.getLogger(log).setLevel(log_level)
 
-    def __init__(self, opts, auth_refresher=None, **kwargs):
-        super(OpenStackProvider, self).__init__(
-            opts, auth_refresher=auth_refresher, **kwargs
-        )
+    def __init__(self, opts, **kwargs):
+        super().__init__(opts, **kwargs)
 
         # NOTE(aloga): we do not want a project to be passed from the CLI,
         # as we will iterate over it for each configured VO and project.  We
@@ -73,17 +51,13 @@ class OpenStackProvider(base.BaseProvider):
             opts.os_project_id = None
             opts.os_tenant_id = None
         self.project_id = None
-        self.auth_refresher = auth_refresher
+        opts.os_auth_url = self.site_config["endpoint"]
         self.os_region = opts.os_region
-
-        self.static = static.StaticProvider(opts)
-        self.insecure = opts.insecure
         self.all_images = opts.all_images
 
         # Select 'public', 'private' or 'all' (default) templates.
         self.select_flavors = opts.select_flavors
 
-        # flavor and template properties
         self.flavor_properties = {}
         self.image_properties = {}
         for _opt in vars(self.opts):
@@ -97,15 +71,32 @@ class OpenStackProvider(base.BaseProvider):
                 property_id = re.search(r"property_(\w+)", _opt).group(1)
                 # keep the same structure, although we are not using the _value here
                 self.image_properties[property_id] = {"key": opts_k, "value": None}
+        # FIXME(enolfc): this may not exist!
+        vo = self.site_config["vos"][0]
+        self.rescope_project(vo["auth"])
 
-    def get_compute_shares(self, **kwargs):
-        shares = self.static.get_compute_shares(prefix=True)
-        for share in shares.values():
-            share["project"] = share.get("auth", {}).get("project_id")
-        return shares
+    def get_endpoint_id(self):
+        return f"{self.site_config['endpoint']}_OpenStack_v3_oidc"
 
-    def _rescope_project(self, auth):
-        """Switch to new OS project whenever there is a change.
+    def get_service_id(self):
+        return f"{self.site_config['endpoint']}_cloud.compute"
+
+    def get_manager_id(self):
+        return f"{self.site_config['endpoint']}_cloud.compute_manager"
+
+    def get_endpoint(self):
+        ept = super().get_endpoint()
+        ept.implementor = "OpenStack Foundation"
+        ept.implementation_name = "OpenStack Nova"
+        ept.interface_version = self.nova.api_version.get_string()
+        ept.implementation_version = self.nova.versions.get_current().version
+        ept.semantics = "https://developer.openstack.org/api-ref/compute"
+        # assuming this is correct
+        ept.authentication = "oidc"
+        return ept
+
+    def rescope_project(self, auth):
+        """Switch to OS project whenever there is a change.
 
         It updates every OpenStack client used in case of new project.
         """
@@ -114,8 +105,6 @@ class OpenStackProvider(base.BaseProvider):
         if self.project_id == project_id:
             return
         self.opts.os_project_id = project_id
-        if self.auth_refresher:
-            self.auth_refresher.refresh(self, **auth)
         self.auth_plugin = loading.load_auth_from_argparse_arguments(self.opts)
         self.session = loading.load_session_from_argparse_arguments(
             self.opts, auth=self.auth_plugin
@@ -124,6 +113,7 @@ class OpenStackProvider(base.BaseProvider):
         try:
             self.project_id = self.session.get_project_id()
         except http_exc.Unauthorized:
+            # FIXME - this should be just reported in the glue and not break anything
             msg = "Could not authorize user in project '%s'" % project_id
             raise exceptions.OpenStackProviderException(msg)
         # make sure the clients know about the change
@@ -138,287 +128,125 @@ class OpenStackProvider(base.BaseProvider):
             region_name=region_name,
         )
 
-    @staticmethod
-    def _get_endpoint_versions(endpoint_url):
-        """Return the API and middleware versions of a compute endpoint."""
-        e_middleware_version = None
-        e_version = None
-        try:
-            # TODO(gwarf) Retrieve using API programatically
-            e_version = urlparse(endpoint_url).path.split("/")[1]
-        except IndexError:
-            pass
-
-        return {
-            "compute_middleware_version": e_middleware_version,
-            "compute_api_version": e_version,
-        }
-
-    def _get_endpoint_id_url(self, e_url):
-        return self.auth_plugin.auth_url
-
-    def _get_extra_endpoint_info(self, e_url):
-        nova_versions = self._get_endpoint_versions(e_url)
-        nova_api_version = nova_versions["compute_api_version"]
-        return {
-            "compute_nova_endpoint_url": e_url,
-            "compute_nova_api_version": nova_api_version,
-        }
-
-    @_rescope
-    def get_compute_share(self, **kwargs):
-        access = self.auth_plugin.get_access(self.session)
-        return {
-            "project_name": access.project_name,
-            "project_domain_name": access.project_domain_name,
-        }
-
-    @_rescope
-    def get_compute_endpoints(self, **kwargs):
-        ret = {
-            "endpoints": {},
-        }
-
-        defaults = self.static.get_compute_endpoint_defaults(prefix=True)
-        ret.update(defaults)
-        # override default service name
-        ret["compute_service_name"] = self.auth_plugin.auth_url
-        ca_info = self._get_endpoint_ca_information(self.auth_plugin.auth_url)
-        catalog = self.auth_plugin.get_access(self.session).service_catalog
-        epts = catalog.get_endpoints(
-            service_type=self.service_type,
-            interface="public",
-            region_name=self.os_region,
+    def build_instance_type(self, flavor, share):
+        objs = []
+        itype = glue.CloudComputingInstanceType(
+            id=flavor.id,
+            disk=flavor.disk,
+            cpu=flavor.vcpus,
+            name=flavor.name,
+            ram=flavor.ram,
+            platform="amd64",
         )
-        for ept in epts.get(self.service_type, []):
-            e_id = ept["id"]
-            # URL is in different places depending of Keystone version
-            e_url = ept.get("url", ept.get("publicURL"))
-            # the URL used as id is different if OCCI or nova
-            e_id_url = self._get_endpoint_id_url(e_url)
-            e_versions = self._get_endpoint_versions(e_id_url)
-            e_mw_version = e_versions["compute_middleware_version"]
-            e_api_version = e_versions["compute_api_version"]
-            # Fallback on defaults if nothing was found
-            e_mw_version = self._default_if_none(
-                e_mw_version, self.service_type, defaults, "middleware_version"
-            )
-            e_api_version = self._default_if_none(
-                e_api_version, self.service_type, defaults, "api_version"
-            )
+        itype.add_associated_object(share)
+        itype.add_associated_object(self.endpoint)
+        itype.add_associated_object(self.manager)
+        # TODO add infiniband stuff, unclear where that lives in glue
+        objs.append(itype)
 
-            e = defaults.copy()
-            e.update(self.service_data)
-            e.update(
-                {
-                    "compute_endpoint_url": e_id_url,
-                    "compute_endpoint_id": e_id,
-                    "endpoint_trusted_cas": ca_info["trusted_cas"],
-                    "endpoint_issuer": ca_info["issuer"],
-                    "compute_middleware_version": e_mw_version,
-                    "compute_api_type": self.service_data["compute_api_type"],
-                    "compute_api_version": e_api_version,
-                }
+        extra_properties = {}
+        for property_id, opt in self.flavor_properties.items():
+            v = flavor.get_keys().get(opt["key"])
+            if v:
+                opts_v = opt["value"]
+                if opts_v:
+                    extra_properties[property_id] = v == opts_v
+                else:
+                    extra_properties[property_id] = v
+        if extra_properties.get("flavor_gpu_number"):
+            acc = glue.CloudComputingVirtualAccelerator(
+                id=f"{flavor.id}_gpu",
+                name=f"{flavor.name}_gpu",
+                type="GPU",
+                number=extra_properties.get("flavor_gpu_number"),
+                vendor=extra_properties.get("flavor_gpu_vendor", "UNKNOWN"),
+                model=extra_properties.get("flavor_gpu_model", "UNKNOWN"),
             )
-            # overwrites goc info for all endpoints but that's ok
-            ret.update(self.get_goc_info(e_id_url, self.insecure))
-            e.update(self._get_extra_endpoint_info(e_url))
-            ret["endpoints"][e_id_url] = e
-        return ret
+            acc.add_associated_object(itype)
+            itype.add_associated_object(acc)
+            objs.append(acc)
+        return objs
 
-    @_rescope
-    def get_templates(self, **kwargs):
-        """Return templates/flavors selected according to --select-flavors"""
-        flavors = {}
-        defaults = {
-            "template_platform": "amd64",
-            "template_network": "private",
-            "template_memory": 0,
-            "template_ephemeral": 0,
-            "template_disk": 0,
-            "template_cpu": 0,
-            "template_infiniband": False,
-            "template_flavor_gpu_number": 0,
-            "template_flavor_gpu_vendor": None,
-            "template_flavor_gpu_model": None,
-        }
-        defaults.update(self.static.get_template_defaults(prefix=True))
-        tpl_sch = defaults.get("template_schema", "resource")
-        URI = "http://schemas.openstack.org/template/"
+    def get_share_instance_types(self, share):
+        instance_types = []
+        ram = []
+        cpu = []
         add_all = self.select_flavors == "all"
-
         for flavor in self.nova.flavors.list(detailed=True, is_public=None):
             add_pub = self.select_flavors == "public" and flavor.is_public
             add_priv = self.select_flavors == "private" and not flavor.is_public
             if not (add_all or add_pub or add_priv):
                 continue
-            aux = defaults.copy()
-            flavor_id = str(getattr(flavor, "id"))
-            template_id = "%s%s#%s" % (URI, tpl_sch, self.adapt_id(flavor_id))
-            aux.update(
-                {
-                    "template_id": template_id,
-                    "template_native_id": flavor_id,
-                    "template_memory": flavor.ram,
-                    "template_ephemeral": flavor.ephemeral,
-                    "template_disk": flavor.disk,
-                    "template_cpu": flavor.vcpus,
-                    "template_name": flavor.name,
-                }
+            itypes = self.build_instance_type(flavor, share)
+            for i in itypes:
+                if isinstance(i, glue.CloudComputingInstanceType):
+                    ram.append(i.ram)
+                    cpu.append(i.cpu)
+            instance_types.extend(itypes)
+        # update share max/min ram and cpu
+        share.instance_max_ram = max(ram) if ram else 0
+        share.instance_min_ram = min(ram) if ram else 0
+        share.instance_max_cpu = max(cpu) if cpu else 0
+        share.instance_min_cpu = min(cpu) if cpu else 0
+        return instance_types
+
+    def build_image(self, image, share):
+        objs = []
+        image_descr = image.get(
+            "vmcatcher_event_dc_description",
+            image.get("vmcatcher_event_dc_title", "UNKNOWN"),
+        )
+        marketplace_url = image.get(
+            "vmcatcher_event_ad_mpuri", image.get("marketplace")
+        )
+
+        other_info = {}
+        try:
+            extra_attrs = json.loads(image.get("APPLIANCE_ATTRIBUTES", "{}"))
+        except ValueError:
+            logging.warning(
+                "Unexpected issue while getting json for '%s'",
+                image.get("APPLIANCE_ATTRIBUTES", "{}"),
             )
+            extra_attrs = {}
+        if "ad:base_mpuri" in extra_attrs:
+            other_info["base_mpuri"] = extra_attrs["ad:base_mpuri"]
 
-            # properties
-            d_properties = {}
-            for property_id, opt in self.flavor_properties.items():
-                v = flavor.get_keys().get(opt["key"])
-                if v:
-                    opts_v = opt["value"]
-                    if opts_v:
-                        d_properties["template_%s" % property_id] = v == opts_v
-                    else:
-                        d_properties["template_%s" % property_id] = v
-            aux.update(d_properties)
-            flavors[flavor.id] = aux
-        if not flavors:
-            logging.warning("No flavors found!?")
-        return flavors
+        if not marketplace_url:
+            if self.all_images:
+                link = urljoin(
+                    self.glance.http_client.get_endpoint(), image.get("file")
+                )
+                marketplace_url = link
+            else:
+                return objs
 
-    @_rescope
-    def get_images(self, **kwargs):
-        images = {}
+        glue_image = glue.CloudComputingImage(
+            id=image["id"],
+            name=image["name"],
+            osName=image.get("os_distro", "UNKNOWN"),
+            osVersion=image.get("os_version", "UNKNOWN"),
+            osPlatform=image.get("architecture", "UNKNOWN"),
+            description=image_descr,
+            marketplace_url=marketplace_url,
+            other_info=other_info,
+        )
+        glue_image.add_associated_object(share)
+        glue_image.add_associated_object(self.endpoint)
+        glue_image.add_associated_object(self.manager)
+        objs.append(glue_image)
+        # TODO add associated image objects (Image Network)
+        return objs
 
-        # image_native_id: middleware image ID
-        # image_id: OCCI image ID
-        template = {
-            "architecture": None,
-            "image_name": None,
-            "image_id": None,
-            "image_native_id": None,
-            "image_description": None,
-            "image_version": None,
-            "image_marketplace_id": None,
-            "image_platform": "amd64",
-            "image_os_family": None,
-            "image_os_name": None,
-            "image_os_type": None,
-            "image_os_version": None,
-            "image_minimal_cpu": None,
-            "image_recommended_cpu": None,
-            "image_minimal_ram": None,
-            "image_recommended_ram": None,
-            "image_minimal_accel": None,
-            "image_recommended_accel": None,
-            "image_accel_type": None,
-            "image_size": None,
-            "image_traffic_in": [],
-            "image_traffic_out": [],
-            "image_access_info": "none",
-            "image_context_format": None,
-            "image_software": [],
-            "os_distro": None,
-            "other_info": {},
-        }
-        defaults = self.static.get_image_defaults(prefix=True)
-        img_sch = defaults.get("image_schema", "os")
-        URI = "http://schemas.openstack.org/template/"
-
+    def get_share_images(self, share):
+        images = []
         for image in self.glance.images.list(
             detailed=True, filters={"status": "active"}
         ):
-            aux_img = copy.deepcopy(template)
-            aux_img.update(defaults)
-            aux_img.update(image)
-
-            img_id = image.get("id")
-            image_descr = image.get(
-                "vmcatcher_event_dc_description", image.get("vmcatcher_event_dc_title")
-            )
-            marketplace_id = image.get(
-                "vmcatcher_event_ad_mpuri", image.get("marketplace")
-            )
-
-            try:
-                extra_attrs = json.loads(image.get("APPLIANCE_ATTRIBUTES", "{}"))
-            except ValueError:
-                logging.warning(
-                    "Unexpected issue while getting json for '%s'",
-                    image.get("APPLIANCE_ATTRIBUTES", "{}"),
-                )
-                extra_attrs = {}
-            if "ad:base_mpuri" in extra_attrs:
-                aux_img["other_info"]["base_mpuri"] = extra_attrs["ad:base_mpuri"]
-
-            if not marketplace_id:
-                if self.all_images:
-                    link = urljoin(
-                        self.glance.http_client.get_endpoint(), image.get("file")
-                    )
-                    marketplace_id = link
-                else:
-                    continue
-
-            if "ad:traffic_in" in extra_attrs:
-                aux_img["network_traffic_in"] = utils.pythonize_network_info(
-                    extra_attrs["ad:traffic_in"]
-                )
-
-            if "ad:traffic_out" in extra_attrs:
-                aux_img["network_traffic_out"] = utils.pythonize_network_info(
-                    extra_attrs["ad:traffic_out"]
-                )
-
-            aux_img.update(
-                {
-                    "image_native_id": img_id,
-                    "image_id": "%s%s#%s" % (URI, img_sch, self.adapt_id(img_id)),
-                    "image_name": image.get("name"),
-                    "image_os_name": image.get("os_distro"),
-                    "image_os_version": image.get("os_version"),
-                    "image_version": image.get("image_version"),
-                    "image_description": image_descr,
-                    "image_marketplace_id": marketplace_id,
-                }
-            )
-            d_properties = {}
-            for property_id, opt in self.image_properties.items():
-                v = image.get(opt["key"])
-                d_properties[property_id] = v
-            aux_img.update(d_properties)
-
-            images[img_id] = aux_img
+            images.extend(self.build_image(image, share))
         return images
 
-    @_rescope
-    def get_instances(self, **kwargs):
-        instance_template = {
-            "instance_name": None,
-            "instance_image_id": None,
-            "instance_template_id": None,
-            "instance_status": None,
-        }
-
-        instances = {}
-
-        for instance in self.nova.servers.list():
-            ret = instance_template.copy()
-            if isinstance(instance.image, dict):
-                image_id = instance.image.get("id", "")
-            else:
-                image_id = instance.image
-            ret.update(
-                {
-                    "instance_name": instance.name,
-                    "instance_image_id": image_id,
-                    "instance_template_id": instance.flavor.get("id", ""),
-                    "instance_status": instance.status,
-                }
-            )
-            instances[instance.id] = ret
-
-        return instances
-
-    @_rescope
-    def get_compute_quotas(self, **kwargs):
+    def get_share_quotas(self, share, instance_types):
         """Return the quotas set for the current project."""
 
         quota_resources = [
@@ -438,8 +266,7 @@ class OpenStackProvider(base.BaseProvider):
             "server_group_members",
         ]
 
-        defaults = self.static.get_compute_quotas_defaults(prefix=False)
-        quotas = defaults.copy()
+        quotas = {}
 
         try:
             project_quotas = self.nova.quotas.get(self.project_id)
@@ -452,28 +279,93 @@ class OpenStackProvider(base.BaseProvider):
             # Should we raise an error and make this mandatory?
             pass
 
-        return quotas
+        share.max_vm = quotas.get("instances", 0)
+        share.other_info.update({"quotas": quotas})
 
-    @staticmethod
-    def _default_if_none(key_value, endpoint_type, defaults, key_suffix):
-        """Get default value if None
+        # also compute current instance count
+        running_vm, halted_vm, suspended_vm = 0, 0, 0
+        for s in self.nova.servers.list():
+            if s.status == "SHUTOFF":
+                halted_vm += 1
+            elif s.status == "SUSPENDED":
+                suspended_vm += 1
+            else:  # this includes several cases (i.e. errors), but assume that's ok
+                running_vm += 1
+        share.running_vm = running_vm
+        share.halted_vm = halted_vm
+        share.suspended_vm = suspended_vm
+        share.total_vm = running_vm + halted_vm + suspended_vm
 
-        Build key from endpoint_type and return value from default
-        """
-        if key_value is not None:
-            field_value = key_value
-        else:
-            field_name = "compute_%s_%s" % (endpoint_type, key_suffix)
-            field_value = defaults.get(field_name, "UNKNOWN")
-        return field_value
+    def get_shares(self):
+        """Builds the share information for every VO"""
+        share_objs = []
+        rules = []
+        total_vm, running_vm, halted_vm, suspended_vm = 0, 0, 0, 0
+        max_cpu, min_cpu, max_ram, min_ram = 0, 0, 0, 0
+        for vo in self.site_config["vos"]:
+            self.rescope_project(vo["auth"])
+            share_id = f"{self.get_endpoint_id()}_share_{vo['name']}_{self.project_id}"
+            name = f"Share in service {self.get_endpoint_id()} for VO {vo['name']} (Project {self.project_id})"
+            access = self.auth_plugin.get_access(self.session)
+            other_info = {
+                "project_name": access.project_name,
+                "project_domain_name": access.project_domain_name,
+            }
+            share = glue.Share(
+                id=share_id,
+                name=name,
+                project_id=self.project_id,
+                other_info=other_info,
+            )
+            share.add_associated_object(self.service)
+            share.add_associated_object(self.endpoint)
+            share_objs.extend(self.get_share_images(share))
+            itypes = self.get_share_instance_types(share)
+            share_objs.extend(itypes)
+            self.get_share_quotas(share, itypes)
+            max_ram = max(0, share.instance_max_ram)
+            min_ram = min(0, share.instance_min_ram)
+            max_cpu = max(0, share.instance_max_cpu)
+            min_cpu = min(0, share.instance_min_cpu)
+            share_objs.append(share)
 
-    @staticmethod
-    def adapt_id(term_name):
-        """No changes for the ids in default OpenStack."""
-        return term_name
+            # policies
+            rule = f"VO:{vo['name']}"
+            rules.append(rule)
+            mapping_policy = glue.MappingPolicy(id=f"{share_id}_Policy", rule=[rule])
+            mapping_policy.add_associated_object(share)
+            mapping_policy.add_association("PolicyUserDomain", f"VO:{vo['name']}")
+            share_objs.append(mapping_policy)
+
+            running_vm += share.running_vm
+            halted_vm += share.halted_vm
+            suspended_vm += share.suspended_vm
+            total_vm += share.total_vm
+
+        # global policy
+        access_policy = glue.AccessPolicy(
+            id=f"{self.endpoint.id}_policy",
+            rule=rules,
+        )
+        access_policy.add_associated_object(self.endpoint)
+        share_objs.append(access_policy)
+
+        # numbers about VMs in service or manager
+        self.service.running_vm = running_vm
+        self.service.halted_vm = halted_vm
+        self.service.suspended_vm = suspended_vm
+        self.service.total_vm = total_vm
+        self.manager.instance_max_ram = max_ram
+        self.manager.instance_min_ram = min_ram
+        self.manager.instance_max_cpu = max_cpu
+        self.manager.instance_min_cpu = min_cpu
+        return share_objs
 
     @staticmethod
     def populate_parser(parser):
+        """Populate the argparser 'parser' with the needed options."""
+        base.BaseProvider.populate_parser(parser)
+
         plugins = loading_base.get_available_plugin_names()
         default_auth = "v3password"
 
@@ -509,51 +401,14 @@ class OpenStackProvider(base.BaseProvider):
                     dest="os_%s" % opt.dest.replace("-", "_"),
                 )
 
-        parser.add_argument(
-            "--insecure",
-            default=utils.env("NOVACLIENT_INSECURE", default=False),
-            action="store_true",
-            help="Explicitly allow novaclient to perform 'insecure' "
-            "SSL (https) requests. The server's certificate will "
-            "not be verified against any certificate authorities. "
-            "This option should be used with caution.",
-        )
-
-        parser.add_argument(
-            "--os-cacert",
-            metavar="<ca-certificate>",
-            default=utils.env("OS_CACERT", default=requests.certs.where()),
-            help="Specify a CA bundle file to use in "
-            "verifying a TLS (https) server certificate. "
-            "Defaults to env[OS_CACERT].",
-        )
-
-        parser.add_argument(
-            "--os-cert",
-            metavar="<certificate>",
-            default=utils.env("OS_CERT", default=None),
-            help="Defaults to env[OS_CERT].",
-        )
-
-        parser.add_argument(
-            "--os-key",
-            metavar="<key>",
-            default=utils.env("OS_KEY", default=None),
-            help="Defaults to env[OS_KEY].",
-        )
-
-        parser.add_argument(
-            "--os-region",
-            metavar="<region>",
-            default=utils.env("OS_REGION", default=None),
-            help="Defaults to env[OS_REGION].",
-        )
+        # somehow region is missing, so adding explicitly
+        parser.add_argument("--os-region", default=None, help="OpenStack region to use")
 
         parser.add_argument(
             "--select-flavors",
             default="all",
             choices=["all", "public", "private"],
-            help="Select all (default), public or private flavors/templates.",
+            help="Select all (default), public or private flavors.",
         )
 
         parser.add_argument(

@@ -1,8 +1,9 @@
 import argparse
 import logging
 
-import cloud_info_provider
 from stevedore import driver, extension
+
+import cloud_info_provider
 
 
 def get_providers():
@@ -27,13 +28,6 @@ def get_formatters():
     return [x.name for x in mgr]
 
 
-def get_auth_refreshers():
-    mgr = extension.ExtensionManager(
-        namespace="cip.auth_refreshers",
-    )
-    return dict((x.name, x.plugin) for x in mgr)
-
-
 def get_publishers():
     mgr = extension.ExtensionManager(
         namespace="cip.publishers",
@@ -41,7 +35,7 @@ def get_publishers():
     return dict((x.name, x.plugin) for x in mgr)
 
 
-def get_parser(providers, formatters, auth_refreshers, publishers):
+def get_parser(providers, formatters, publishers):
     parser = argparse.ArgumentParser(
         description="Cloud Information System provider",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -57,7 +51,7 @@ def get_parser(providers, formatters, auth_refreshers, publishers):
         "--middleware",
         metavar="MIDDLEWARE",
         choices=providers,
-        default="static",
+        default="openstack",
         help=(
             "Middleware used. Only the following middlewares are "
             "supported: {%(choices)s}"
@@ -68,27 +62,8 @@ def get_parser(providers, formatters, auth_refreshers, publishers):
         "--format",
         metavar="FORMAT",
         choices=formatters,
-        default="glue",
+        default="glue21json",
         help=("Selects the output format. Allowed values: {%(choices)s}"),
-    )
-
-    parser.add_argument(
-        "--auth-refresher",
-        metavar="REFRESHER",
-        choices=auth_refreshers,
-        help=("Selects the token refresher. Allowed values: {%(choices)s}"),
-    )
-
-    parser.add_argument(
-        "--yaml-file",
-        default="/etc/cloud-info-provider/static.yaml",
-        help=(
-            "Path to the YAML file containing configuration static values. "
-            "This file will be used to populate the information "
-            "to the static provider. These values will be used whenever "
-            "a dynamic provider is used and it is not able to produce any "
-            "of the required values, or when using the static provider. "
-        ),
     )
 
     parser.add_argument(
@@ -100,29 +75,19 @@ def get_parser(providers, formatters, auth_refreshers, publishers):
     )
 
     parser.add_argument(
-        "--template-dir",
-        default=None,
-        help=(
-            "Path to the directory overriding the default templates. "
-            "If not specified, use the default templates."
-        ),
-    )
-
-    parser.add_argument(
-        "--ignore-share-errors",
-        action="store_true",
-        default=False,
-        help=(
-            "Ignore errors when getting information about a given share. "
-            "Use with care!"
-        ),
-    )
-
-    parser.add_argument(
         "--timeout",
         default=600,
         metavar="<seconds>",
         help="Set request timeout (in seconds).",
+    )
+
+    parser.add_argument(
+        "--insecure",
+        action="store_true",
+        help="Explicitly allow to perform 'insecure' "
+        "SSL (https) requests. The server's certificate will "
+        "not be verified against any certificate authorities. "
+        "This option should be used with caution.",
     )
 
     parser.add_argument(
@@ -136,10 +101,6 @@ def get_parser(providers, formatters, auth_refreshers, publishers):
         group = parser.add_argument_group("%s provider options" % provider_name)
         provider.populate_parser(group)
 
-    for refresher_name, refresher in auth_refreshers.items():
-        group = parser.add_argument_group("%s auth refresher options" % refresher_name)
-        refresher.populate_parser(group)
-
     for publisher_name, publisher in publishers.items():
         group = parser.add_argument_group("%s publisher options" % publisher_name)
         publisher.populate_parser(group)
@@ -150,19 +111,15 @@ def get_parser(providers, formatters, auth_refreshers, publishers):
 def main():
     providers = get_providers()
     formatters = get_formatters()
-    auth_refreshers = get_auth_refreshers()
     publishers = get_publishers()
 
-    opts = get_parser(providers, formatters, auth_refreshers, publishers).parse_args()
+    opts = get_parser(providers, formatters, publishers).parse_args()
 
-    mgr = driver.DriverManager(
+    formatter = driver.DriverManager(
         namespace="cip.formatters",
         name=opts.format,
         invoke_on_load=True,
     )
-    auth_refresher = None
-    if opts.auth_refresher:
-        auth_refresher = auth_refreshers[opts.auth_refresher](opts)
 
     publisher = driver.DriverManager(
         namespace="cip.publishers",
@@ -170,7 +127,11 @@ def main():
         invoke_on_load=True,
         invoke_args=(opts,),
     )
-    output = mgr.driver.format(opts, providers, auth_refresher)
+
+    provider_class = providers.get(opts.middleware)
+    glue = provider_class(opts).fetch()
+
+    output = formatter.driver.format(opts, glue)
     publisher.driver.publish(output)
 
 
