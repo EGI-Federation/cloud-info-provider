@@ -49,6 +49,7 @@ class GLUE21Json(base.BaseFormatter):
                 "Authentication": "authentication",
                 "IssuerCA": "issuer_ca",
                 "TrustedCA": "trusted_cas",
+                "URL": "url",
             },
         )
 
