@@ -1,7 +1,6 @@
 import argparse
 
 import mock
-
 from cloud_info_provider import glue
 from cloud_info_provider.providers import openstack as os_provider
 from cloud_info_provider.tests import base, data

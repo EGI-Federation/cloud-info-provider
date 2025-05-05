@@ -67,7 +67,7 @@ Each dynamic provider has its own command-line options for specifying how to
 connect to the underlying service. Use the `--help` option for a complete
 listing of options.
 
-##### OpenStack
+#### OpenStack
 
 The `openstack` provider require a working keystone endpoint and valid
 credentials to access that endpoint. It uses
@@ -96,7 +96,7 @@ Other extra options for the providers (defaults should be OK):
   snapshots), otherwise only publish images with EGI registry metadata, ignoring
   the others.
 
-###### Support for specialized hardware (GPU & InfiniBand) through OpenStack properties
+##### Support for specialized hardware (GPU & InfiniBand) through OpenStack properties
 
 The `openstack` provider is able to gather additional GPU and InfiniBand
 information made available through flavor's and image's metadata. To this end,
