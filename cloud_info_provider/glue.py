@@ -71,6 +71,7 @@ class CloudComputingManager(GlueBase):
 
 
 class CloudComputingEndpoint(GlueBase):
+    url: str
     capability: list[str] = []
     quality_level: str = "production"
     serving_state: str = "production"

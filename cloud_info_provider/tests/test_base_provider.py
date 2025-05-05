@@ -59,13 +59,15 @@ class BaseProviderTest(base.TestCase):
             )
             endpoint = {
                 "id": "endpoint",
+                "name": "Cloud computing endpoint for endpoint",
+                "url": "https://foo.example.org:5000/v3",
                 "associations": {"CloudComputingService": ["foo"]},
                 "capability": [],
                 "quality_level": "production",
                 "serving_state": "production",
                 "interface_name": "",
                 "health_state": "ok",
-                "health_state_info": "Endpoint funtioning properly.",
+                "health_state_info": "Endpoint funtioning properly",
                 "technology": "webservice",
                 "downtime_info": "https://goc.egi.eu/portal/index.php?Page_Type=Downtimes_Calendar&site=SITE_NAME",
                 "issuer_ca": "foo_ca",

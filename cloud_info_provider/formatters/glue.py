@@ -160,6 +160,7 @@ class GLUE21Json(base.BaseFormatter):
                 "ID": "id",
                 "Validity": "validity",
                 "CreationTime": "creation_time",
+                "Name": "name",
             },
         )
         if obj.other_info:

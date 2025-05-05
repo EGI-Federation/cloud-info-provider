@@ -108,7 +108,9 @@ class OpenStackProviderTest(base.TestCase):
                 self.site_config = data.DATA.site_config
                 self.service = glue.CloudComputingService(id="foo", status_info="ok")
                 self.endpoint = glue.CloudComputingEndpoint(
-                    id="bar", interface_name="iface"
+                    id="bar",
+                    interface_name="iface",
+                    url="url",
                 )
                 self.manager = glue.CloudComputingManager(id="baz")
                 self._goc_info = {data.DATA.endpoint_url: {"foo": "bar"}}
@@ -142,6 +144,8 @@ class OpenStackProviderTest(base.TestCase):
         self.provider.nova.api_version.get_string.return_value = "vx.y"
         endpoint = {
             "id": "https://foo.example.org:5000/v3_OpenStack_v3_oidc",
+            "url": "https://foo.example.org:5000/v3",
+            "name": "Cloud computing endpoint for https://foo.example.org:5000/v3_OpenStack_v3_oidc",
             "associations": {"CloudComputingService": ["foo"]},
             "capability": [],
             "quality_level": "production",
@@ -153,7 +157,7 @@ class OpenStackProviderTest(base.TestCase):
             "implementation_version": "vy.x",
             "semantics": "https://developer.openstack.org/api-ref/compute",
             "health_state": "ok",
-            "health_state_info": "Endpoint funtioning properly.",
+            "health_state_info": "Endpoint funtioning properly",
             "technology": "webservice",
             "authentication": "oidc",
             "downtime_info": "https://goc.egi.eu/portal/index.php?Page_Type=Downtimes_Calendar&site=SITE_NAME",

@@ -84,15 +84,15 @@ class OpenStackProvider(base.BaseProvider):
         return f"{self.site_config['endpoint']}_cloud.compute_manager"
 
     def get_endpoint(self):
-        ept = super().get_endpoint()
-        ept.implementor = "OpenStack Foundation"
-        ept.implementation_name = "OpenStack Nova"
-        ept.interface_version = self.nova.api_version.get_string()
-        ept.implementation_version = self.nova.versions.get_current().version
-        ept.semantics = "https://developer.openstack.org/api-ref/compute"
-        # assuming this is correct
-        ept.authentication = "oidc"
-        return ept
+        return super().get_endpoint(
+            implementor="OpenStack Foundation",
+            implementation_name="OpenStack Nova",
+            interface_version=self.nova.api_version.get_string(),
+            implementation_version=self.nova.versions.get_current().version,
+            semantics="https://developer.openstack.org/api-ref/compute",
+            # assuming this is correct,
+            authentication="oidc",
+        )
 
     def rescope_project(self, auth):
         """Switch to OS project whenever there is a change.

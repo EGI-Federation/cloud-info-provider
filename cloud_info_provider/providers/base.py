@@ -60,43 +60,51 @@ class BaseProvider:
     def get_endpoint_id(self):
         return "endpoint"
 
-    def get_service(self):
+    def get_service(self, **kwargs):
         site_name = self.site_config["gocdb"]
-        svc_id = self.get_service_id()
-        name = f"Cloud Compute service at {site_name}"
-        status_info = (
-            f"https://argo.egi.eu/egi/report-status/Critical/SITES/{site_name}"
-        )
-        other_info = self._get_goc_info(self.site_config["endpoint"])
-        svc = glue.CloudComputingService(
-            id=svc_id, name=name, status_info=status_info, other_info=other_info
-        )
+        service_defaults = {
+            "id": self.get_service_id(),
+            "name": f"Cloud Compute service at {site_name}",
+            "status_info": (
+                f"https://argo.egi.eu/egi/report-status/Critical/SITES/{site_name}"
+            ),
+            "other_info": self._get_goc_info(self.site_config["endpoint"]),
+        }
+        service_defaults.update(kwargs)
+        svc = glue.CloudComputingService(**service_defaults)
         svc.add_association("AdminDomain", site_name)
         self.service = svc
         return self.service
 
-    def get_manager(self):
-        mgr_id = self.get_manager_id()
-        mgr = glue.CloudComputingManager(id=mgr_id)
+    def get_manager(self, **kwargs):
+        manager_defaults = {"id": self.get_manager_id()}
+        manager_defaults.update(kwargs)
+        mgr = glue.CloudComputingManager(**manager_defaults)
         mgr.add_associated_object(self.service)
         self.manager = mgr
         return self.manager
 
-    def get_endpoint(self):
-        ept_id = self.get_endpoint_id()
-        ept = glue.CloudComputingEndpoint(id=ept_id, interface_name=self.interface_name)
-        ept.add_associated_object(self.service)
-        ept.health_state = "ok"
-        ept.health_state_info = "Endpoint funtioning properly."
+    def get_endpoint(self, **kwargs):
+        ept_defaults = {
+            "id": self.get_endpoint_id(),
+            "name": f"Cloud computing endpoint for {self.get_endpoint_id()}",
+            "interface_name": self.interface_name,
+            "url": self.site_config["endpoint"],
+            "health_state": "ok",
+            "health_state_info": "Endpoint funtioning properly",
+            "downtime_info": (
+                "https://goc.egi.eu/portal/index.php?"
+                f"Page_Type=Downtimes_Calendar&site={self.site_config['gocdb']}"
+            ),
+        }
         ca_info = self._get_ca_info(self.site_config["endpoint"])
         if "issuer" in ca_info:
-            ept.issuer_ca = ca_info["issuer"]
+            ept_defaults["issuer_ca"] = ca_info["issuer"]
         if "trusted_cas" in ca_info:
-            ept.trusted_cas = ca_info["trusted_cas"]
-        ept.downtime_info = (
-            "https://goc.egi.eu/portal/index.php?"
-            f"Page_Type=Downtimes_Calendar&site={self.site_config['gocdb']}"
-        )
+            ept_defaults["trusted_cas"] = ca_info["trusted_cas"]
+        ept_defaults.update(kwargs)
+        ept = glue.CloudComputingEndpoint(**ept_defaults)
+        ept.add_associated_object(self.service)
         self.endpoint = ept
         return self.endpoint
 
