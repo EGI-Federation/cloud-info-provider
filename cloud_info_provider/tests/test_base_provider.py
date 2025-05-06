@@ -19,7 +19,7 @@ class BaseProviderTest(base.TestCase):
             site_config = None
             insecure = None
 
-        super(BaseProviderTest, self).setUp()
+        super().setUp()
         self.provider = FakeBaseProvider(Opts())
 
     def test_provider_build_service(self):

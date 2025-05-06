@@ -20,7 +20,7 @@ class CloudInfoException(Exception):
                     logger.error("%s: %s" % (name, value))
                 raise
 
-        super(CloudInfoException, self).__init__(message)
+        super().__init__(message)
 
 
 class OpenStackProviderException(CloudInfoException):

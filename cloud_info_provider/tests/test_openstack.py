@@ -3,8 +3,10 @@ import argparse
 import mock
 from cloud_info_provider import glue
 from cloud_info_provider.providers import openstack as os_provider
+from cloud_info_provider.exceptions import OpenStackProviderException
 from cloud_info_provider.tests import base, data
 from cloud_info_provider.tests import utils as utils
+from keystoneauth1.exceptions import http as http_exc
 
 FAKES = data.OS_FAKES
 
@@ -33,13 +35,13 @@ class OpenStackProviderOptionsTest(base.TestCase):
             ]
         )
 
-        self.assertEqual(opts.os_username, "foo")
-        self.assertEqual(opts.os_password, "bar")
-        self.assertEqual(opts.os_auth_url, "http://example.org:5000")
-        self.assertEqual(opts.os_region, "North pole")
-        self.assertEqual(opts.insecure, True)
-        self.assertEqual(opts.all_images, True)
-        self.assertEqual(opts.select_flavors, "public")
+        assert opts.os_username == "foo"
+        assert opts.os_password == "bar"
+        assert opts.os_auth_url == "http://example.org:5000"
+        assert opts.os_region == "North pole"
+        assert opts.insecure == True
+        assert opts.all_images == True
+        assert opts.select_flavors == "public"
 
 
 class OpenStackProviderAuthTest(base.TestCase):
@@ -47,7 +49,7 @@ class OpenStackProviderAuthTest(base.TestCase):
     maxDiff = None
 
     def setUp(self):
-        super(OpenStackProviderAuthTest, self).setUp()
+        super().setUp()
 
         class FakeProvider(os_provider.OpenStackProvider):
             def __init__(self, opts):
@@ -67,7 +69,21 @@ class OpenStackProviderAuthTest(base.TestCase):
             m_load_session.return_value = session
             auth = {"project_id": "foo", "vo": "bar"}
             self.provider.rescope_project(auth)
-            self.assertEqual("foo", self.provider.project_id)
+            assert "foo" == self.provider.project_id
+            assert auth == self.provider.last_working_auth
+
+    def test_rescope_fails(self):
+        with utils.nested(
+            mock.patch("keystoneauth1.loading.load_auth_from_argparse_arguments"),
+            mock.patch("keystoneauth1.loading.load_session_from_argparse_arguments"),
+        ) as (_, m_load_session):
+            session = mock.Mock()
+            session.get_project_id.side_effect = http_exc.Unauthorized()
+            m_load_session.return_value = session
+            auth = {"project_id": "foo", "vo": "bar"}
+            self.assertRaises(
+                OpenStackProviderException, self.provider.rescope_project, auth
+            )
 
 
 class OpenStackProviderTest(base.TestCase):
@@ -75,7 +91,7 @@ class OpenStackProviderTest(base.TestCase):
     maxDiff = None
 
     def setUp(self):
-        super(OpenStackProviderTest, self).setUp()
+        super().setUp()
 
         class FakeProvider(os_provider.OpenStackProvider):
             def rescope_project(self, auth):
@@ -124,6 +140,7 @@ class OpenStackProviderTest(base.TestCase):
                 self.add_glue(glue.CloudComputingManager(id="baz"))
                 self._goc_info = {data.DATA.endpoint_url: {"foo": "bar"}}
                 self._ca_info = {data.DATA.endpoint_url: {"foo": "bar"}}
+                self.last_working_auth = {"project_id": "foo"}
 
         self.provider = FakeProvider(None)
 
@@ -155,10 +172,8 @@ class OpenStackProviderTest(base.TestCase):
             "quality_level": "production",
             "serving_state": "production",
             "interface_name": "org.openstack.nova",
-            "interface_version": "vx.y",
             "implementor": "OpenStack Foundation",
             "implementation_name": "OpenStack Nova",
-            "implementation_version": "vy.x",
             "semantics": "https://developer.openstack.org/api-ref/compute",
             "health_state": "ok",
             "health_state_info": "Endpoint funtioning properly",
@@ -300,6 +315,19 @@ class OpenStackProviderTest(base.TestCase):
         assert share.max_vm == 4
         assert share.other_info["quotas"] == FAKES.quotas.get_dict()
 
+    def test_build_failing_share(self):
+        def fail_rescope(auth):
+            raise OpenStackProviderException("err")
+
+        self.provider.exit_on_share_errors = False
+        self.provider.rescope_project = fail_rescope
+        self.provider.build_shares()
+        shares = self.provider.get_objs("Share")
+        assert shares == []
+
+        self.provider.exit_on_share_errors = True
+        self.assertRaises(OpenStackProviderException, self.provider.build_shares)
+
     def test_build_shares(self):
         self.provider.build_shares()
         # 2 shares and a global policy
@@ -320,9 +348,11 @@ class OpenStackProviderTest(base.TestCase):
         assert utils.compare_glue(
             {
                 "id": "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo1_bar",
-                "description": ("Share in service "
-                                "https://foo.example.org:5000/v3_OpenStack_v3_oidc"
-                                " for VO foo1 (Project bar)"),
+                "description": (
+                    "Share in service "
+                    "https://foo.example.org:5000/v3_OpenStack_v3_oidc"
+                    " for VO foo1 (Project bar)"
+                ),
                 "name": "foo1 - bar share",
                 "other_info": {
                     "project_name": "project",
@@ -402,6 +432,20 @@ class OpenStackProviderTest(base.TestCase):
             self.provider.get_first_obj("AccessPolicy"),
         )
 
-    def test_fetch(self):
+    def test_fetch_working_auth(self):
         self.provider.fetch()
         assert self.provider.service.complexity == "endpointType=1,share=2"
+        assert self.provider.endpoint.interface_version == "vx.y"
+        assert self.provider.endpoint.implementation_version == "vy.x"
+
+    def test_fetch_no_auth(self):
+        self.provider.last_working_auth = None
+        self.provider.fetch()
+        assert self.provider.service.complexity == "endpointType=1,share=2"
+        assert self.provider.endpoint.health_state == "UNKNOWN"
+        assert (
+            self.provider.endpoint.health_state_info
+            == "No working authentication configured"
+        )
+        assert self.provider.endpoint.interface_version is None
+        assert self.provider.endpoint.implementation_version is None

@@ -96,6 +96,13 @@ def get_parser(providers, formatters, publishers):
         help="Provide extra logging information",
     )
 
+    parser.add_argument(
+        "--exit-on-share-errors",
+        action="store_true",
+        default=False,
+        help=("Exit if there are errors getting information from a share."),
+    )
+
     for provider_name, provider in providers.items():
         group = parser.add_argument_group("%s provider options" % provider_name)
         provider.populate_parser(group)

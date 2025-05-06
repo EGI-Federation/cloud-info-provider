@@ -19,7 +19,7 @@ class OpenStackProvider(base.BaseProvider):
     interface_name = "org.openstack.nova"
 
     def setup_logging(self):
-        super(OpenStackProvider, self).setup_logging()
+        super().setup_logging()
         # Remove info log messages from output
         external_logs = [
             "stevedore.extension",
@@ -70,9 +70,8 @@ class OpenStackProvider(base.BaseProvider):
                 property_id = re.search(r"property_(\w+)", _opt).group(1)
                 # keep the same structure, although we are not using the _value here
                 self.image_properties[property_id] = {"key": opts_k, "value": None}
-        # FIXME(enolfc): this may not exist!
-        vo = self.site_config["vos"][0]
-        self.rescope_project(vo["auth"])
+        self.last_working_auth = None
+        self.exit_on_share_errors = self.opts.exit_on_share_errors
 
     def get_endpoint_id(self):
         return f"{self.site_config['endpoint']}_OpenStack_v3_oidc"
@@ -87,8 +86,6 @@ class OpenStackProvider(base.BaseProvider):
         return super().build_endpoint(
             implementor="OpenStack Foundation",
             implementation_name="OpenStack Nova",
-            interface_version=self.nova.api_version.get_string(),
-            implementation_version=self.nova.versions.get_current().version,
             semantics="https://developer.openstack.org/api-ref/compute",
             # assuming this is correct,
             authentication="oidc",
@@ -115,6 +112,9 @@ class OpenStackProvider(base.BaseProvider):
             # FIXME - this should be just reported in the glue and not break anything
             msg = "Could not authorize user in project '%s'" % project_id
             raise exceptions.OpenStackProviderException(msg)
+
+        self.last_working_auth = auth
+
         # make sure the clients know about the change
         self.nova = novaclient.client.Client(
             2,
@@ -245,7 +245,6 @@ class OpenStackProvider(base.BaseProvider):
 
     def build_share_quotas(self, share):
         """Return the quotas set for the current project."""
-
         quota_resources = [
             "instances",
             "cores",
@@ -262,9 +261,7 @@ class OpenStackProvider(base.BaseProvider):
             "server_groups",
             "server_group_members",
         ]
-
         quotas = {}
-
         try:
             project_quotas = self.nova.quotas.get(self.project_id)
             for resource in quota_resources:
@@ -275,10 +272,8 @@ class OpenStackProvider(base.BaseProvider):
         except Forbidden:
             # Should we raise an error and make this mandatory?
             pass
-
         share.max_vm = quotas.get("instances", 0)
         share.other_info.update({"quotas": quotas})
-
         # also compute current instance count
         running_vm, halted_vm, suspended_vm = 0, 0, 0
         for s in self.nova.servers.list():
@@ -300,7 +295,15 @@ class OpenStackProvider(base.BaseProvider):
         total_vm, running_vm, halted_vm, suspended_vm = 0, 0, 0, 0
         max_cpu, min_cpu, max_ram, min_ram = 0, 0, 0, 0
         for vo in self.site_config["vos"]:
-            self.rescope_project(vo["auth"])
+            try:
+                self.rescope_project(vo["auth"])
+            except exceptions.OpenStackProviderException as e:
+                if self.exit_on_share_errors:
+                    raise e
+                else:
+                    self.endpoint.health_state = "warn"
+                    self.endpoint.health_state_info = str(e)
+                    continue
             share_id = f"{self.get_endpoint_id()}_share_{vo['name']}_{self.project_id}"
             name = f"{vo['name']} - {self.project_id} share"
             description = f"Share in service {self.get_endpoint_id()} for VO {vo['name']} (Project {self.project_id})"
@@ -358,6 +361,19 @@ class OpenStackProvider(base.BaseProvider):
         self.manager.instance_max_cpu = max_cpu
         self.manager.instance_min_cpu = min_cpu
         return share_objs
+
+    def fetch(self):
+        super().fetch()
+        if self.last_working_auth:
+            self.rescope_project(self.last_working_auth)
+            self.endpoint.interface_version = self.nova.api_version.get_string()
+            self.endpoint.implementation_version = (
+                self.nova.versions.get_current().version
+            )
+        else:
+            self.endpoint.health_state = "UNKNOWN"
+            self.endpoint.health_state_info = "No working authentication configured"
+        return self.objs
 
     @staticmethod
     def populate_parser(parser):
