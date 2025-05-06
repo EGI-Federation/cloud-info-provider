@@ -320,7 +320,9 @@ class OpenStackProviderTest(base.TestCase):
         assert utils.compare_glue(
             {
                 "id": "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo1_bar",
-                "description": "Share in service https://foo.example.org:5000/v3_OpenStack_v3_oidc for VO foo1 (Project bar)",
+                "description": ("Share in service "
+                                "https://foo.example.org:5000/v3_OpenStack_v3_oidc"
+                                " for VO foo1 (Project bar)"),
                 "name": "foo1 - bar share",
                 "other_info": {
                     "project_name": "project",
@@ -401,5 +403,5 @@ class OpenStackProviderTest(base.TestCase):
         )
 
     def test_fetch(self):
-        objs = self.provider.fetch()
+        self.provider.fetch()
         assert self.provider.service.complexity == "endpointType=1,share=2"

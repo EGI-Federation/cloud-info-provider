@@ -314,6 +314,7 @@ class OpenStackProvider(base.BaseProvider):
                 name=name,
                 project_id=self.project_id,
                 other_info=other_info,
+                description=description,
             )
             share.add_associated_object(self.service)
             share.add_associated_object(self.endpoint)
