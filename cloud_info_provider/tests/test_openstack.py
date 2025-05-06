@@ -39,8 +39,8 @@ class OpenStackProviderOptionsTest(base.TestCase):
         assert opts.os_password == "bar"
         assert opts.os_auth_url == "http://example.org:5000"
         assert opts.os_region == "North pole"
-        assert opts.insecure == True
-        assert opts.all_images == True
+        assert opts.insecure
+        assert opts.all_images
         assert opts.select_flavors == "public"
 
 
