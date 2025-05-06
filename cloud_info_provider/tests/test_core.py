@@ -20,15 +20,15 @@ class CoreOptionsTest(base.TestCase):
                 "--debug",
             ]
         )
-        self.assertEqual(opts.middleware, "foo")
-        self.assertEqual(opts.format, "foobar")
-        self.assertEqual(opts.publisher, "boom")
-        self.assertEqual(opts.debug, True)
+        assert opts.middleware == "foo"
+        assert opts.format == "foobar"
+        assert opts.publisher == "boom"
+        assert opts.debug
 
     def test_populate_parser_defaults(self):
         parser = core.get_parser({}, [], {})
         opts = parser.parse_args([])
-        self.assertEqual(opts.middleware, "openstack")
-        self.assertEqual(opts.format, "glue21json")
-        self.assertEqual(opts.publisher, "stdout")
-        self.assertEqual(opts.debug, False)
+        assert opts.middleware == "openstack"
+        assert opts.format == "glue21json"
+        assert opts.publisher == "stdout"
+        assert not opts.debug
