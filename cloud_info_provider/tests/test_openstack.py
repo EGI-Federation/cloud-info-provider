@@ -5,7 +5,6 @@ from cloud_info_provider import glue
 from cloud_info_provider.providers import openstack as os_provider
 from cloud_info_provider.tests import base, data
 from cloud_info_provider.tests import utils as utils
-from cloud_info_provider.tests.utils import compare_glue
 
 FAKES = data.OS_FAKES
 
@@ -60,8 +59,8 @@ class OpenStackProviderAuthTest(base.TestCase):
 
     def test_rescope_simple(self):
         with utils.nested(
-            mock.patch("keystoneauth1.loading." "load_auth_from_argparse_arguments"),
-            mock.patch("keystoneauth1.loading." "load_session_from_argparse_arguments"),
+            mock.patch("keystoneauth1.loading.load_auth_from_argparse_arguments"),
+            mock.patch("keystoneauth1.loading.load_session_from_argparse_arguments"),
         ) as (_, m_load_session):
             session = mock.Mock()
             session.get_project_id.return_value = "foo"
@@ -83,16 +82,24 @@ class OpenStackProviderTest(base.TestCase):
                 self.project_id = auth["project_id"]
 
             def __init__(self, opts):
+                self.objs = {}
                 self.nova = mock.Mock()
+                self.nova.servers.list.return_value = FAKES.servers
+                self.nova.flavors.list.return_value = FAKES.flavors
+                self.nova.quotas.get.return_value = FAKES.quotas
+                self.nova.versions.get_current.return_value = FAKES.version
+                self.nova.api_version.get_string.return_value = "vx.y"
                 self.glance = mock.Mock()
                 self.glance.http_client.get_endpoint.return_value = (
                     "http://glance.example.org:9292/v2"
                 )
+                self.glance.images.list.return_value = FAKES.images
                 self.session = mock.Mock()
                 self.project_id = None
                 self.session.get_project_id.return_value = "TEST_PROJECT_ID"
                 self.auth_plugin = mock.MagicMock()
                 self.auth_plugin.auth_url = data.DATA.endpoint_url
+                self.auth_plugin.get_access.return_value = FAKES.access
                 self.insecure = False
                 self.os_region = None
                 self.select_flavors = "all"
@@ -106,19 +113,21 @@ class OpenStackProviderTest(base.TestCase):
                     "image_gpu_cuda": {"key": "gpu_cuda", "value": "true"},
                 }
                 self.site_config = data.DATA.site_config
-                self.service = glue.CloudComputingService(id="foo", status_info="ok")
-                self.endpoint = glue.CloudComputingEndpoint(
-                    id="bar",
-                    interface_name="iface",
-                    url="url",
+                self.add_glue(glue.CloudComputingService(id="foo", status_info="ok"))
+                self.add_glue(
+                    glue.CloudComputingEndpoint(
+                        id="bar",
+                        interface_name="iface",
+                        url="url",
+                    )
                 )
-                self.manager = glue.CloudComputingManager(id="baz")
+                self.add_glue(glue.CloudComputingManager(id="baz"))
                 self._goc_info = {data.DATA.endpoint_url: {"foo": "bar"}}
                 self._ca_info = {data.DATA.endpoint_url: {"foo": "bar"}}
 
         self.provider = FakeProvider(None)
 
-    def test_get_service(self):
+    def test_build_service(self):
         service = {
             "site_name": data.DATA.site_name,
             "name": f"Cloud Compute service at {data.DATA.site_name}",
@@ -134,14 +143,9 @@ class OpenStackProviderTest(base.TestCase):
             "quality_level": "production",
             "service_aup": "http://go.egi.eu/aup",
         }
-        assert compare_glue(service, self.provider.get_service())
+        assert utils.compare_glue(service, self.provider.build_service())
 
-    def test_provider_get_endpoint(self):
-        class Version:
-            version = "vy.x"
-
-        self.provider.nova.versions.get_current.return_value = Version()
-        self.provider.nova.api_version.get_string.return_value = "vx.y"
+    def test_provider_build_endpoint(self):
         endpoint = {
             "id": "https://foo.example.org:5000/v3_OpenStack_v3_oidc",
             "url": "https://foo.example.org:5000/v3",
@@ -162,13 +166,12 @@ class OpenStackProviderTest(base.TestCase):
             "authentication": "oidc",
             "downtime_info": "https://goc.egi.eu/portal/index.php?Page_Type=Downtimes_Calendar&site=SITE_NAME",
         }
-        assert compare_glue(endpoint, self.provider.get_endpoint())
+        assert utils.compare_glue(endpoint, self.provider.build_endpoint())
 
     def test_build_image(self):
         share = glue.Share(id="share")
-        objs = self.provider.build_image(FAKES.images[0], share)
-        assert len(objs) == 1
-        assert compare_glue(
+        image = self.provider.build_image(FAKES.images[0], share)
+        assert utils.compare_glue(
             {
                 "id": "foo.id",
                 "name": "fooimage",
@@ -185,26 +188,24 @@ class OpenStackProviderTest(base.TestCase):
                 "description": "UNKNOWN",
                 "access_info": "none",
             },
-            objs[0],
+            image,
         )
 
-    def test_get_images(self):
+    def test_build_images(self):
         self.provider.all_images = True
-        self.provider.glance.images.list.return_value = FAKES.images
         share = glue.Share(id="share")
-        images = self.provider.get_share_images(share)
+        images = self.provider.build_share_images(share)
         expected_images = {"bar id", "foo.id", "baz id"}
         assert expected_images == {i.id for i in images}
         self.provider.all_images = False
-        images = self.provider.get_share_images(share)
+        images = self.provider.build_share_images(share)
         expected_images = {"foo.id"}
         assert expected_images == {i.id for i in images}
 
     def test_build_instance_type(self):
         share = glue.Share(id="share")
-        objs = self.provider.build_instance_type(FAKES.flavors[0], share)
-        assert len(objs) == 1
-        assert compare_glue(
+        itype = self.provider.build_instance_type(FAKES.flavors[0], share)
+        assert utils.compare_glue(
             {
                 "id": "1",
                 "name": "m1.foo",
@@ -220,56 +221,51 @@ class OpenStackProviderTest(base.TestCase):
                 "network_in": "UNKNOWN",
                 "network_out": True,
             },
-            objs[0],
+            itype,
         )
 
     def test_build_instance_type_gpu(self):
         share = glue.Share(id="share")
-        objs = self.provider.build_instance_type(FAKES.flavors[1], share)
-        assert len(objs) == 2
-        for o in objs:
-            if isinstance(o, glue.CloudComputingInstanceType):
-                assert compare_glue(
-                    {
-                        "id": "2",
-                        "name": "m1 bar",
-                        "associations": {
-                            "Share": ["share"],
-                            "CloudComputingEndpoint": ["bar"],
-                            "CloudComputingManager": ["baz"],
-                            "CloudComputingVirtualAccelerator": ["2_gpu"],
-                        },
-                        "platform": "amd64",
-                        "cpu": 30,
-                        "ram": 20,
-                        "disk": 10,
-                        "network_in": "UNKNOWN",
-                        "network_out": True,
-                    },
-                    o,
-                )
-            elif isinstance(o, glue.CloudComputingVirtualAccelerator):
-                assert compare_glue(
-                    {
-                        "id": "2_gpu",
-                        "name": "m1 bar_gpu",
-                        "associations": {"CloudComputingInstanceType": ["2"]},
-                        "compute_capability": [],
-                        "type": "GPU",
-                        "number": 23,
-                        "vendor": "UNKNOWN",
-                        "model": "UNKNOWN",
-                    },
-                    o,
-                )
+        itype = self.provider.build_instance_type(FAKES.flavors[1], share)
+        assert utils.compare_glue(
+            {
+                "id": "2",
+                "name": "m1 bar",
+                "associations": {
+                    "Share": ["share"],
+                    "CloudComputingEndpoint": ["bar"],
+                    "CloudComputingManager": ["baz"],
+                    "CloudComputingVirtualAccelerator": ["2_gpu"],
+                },
+                "platform": "amd64",
+                "cpu": 30,
+                "ram": 20,
+                "disk": 10,
+                "network_in": "UNKNOWN",
+                "network_out": True,
+            },
+            itype,
+        )
+        assert utils.compare_glue(
+            {
+                "id": "2_gpu",
+                "name": "m1 bar_gpu",
+                "associations": {"CloudComputingInstanceType": ["2"]},
+                "compute_capability": [],
+                "type": "GPU",
+                "number": 23,
+                "vendor": "UNKNOWN",
+                "model": "UNKNOWN",
+            },
+            self.provider.get_first_obj("CloudComputingVirtualAccelerator"),
+        )
 
-    def test_get_instances(self):
+    def test_build_instances(self):
         # all
         self.provider.select_flavors = "all"
-        self.provider.nova.flavors.list.return_value = FAKES.flavors
         share = glue.Share(id="share")
-        itypes = self.provider.get_share_instance_types(share)
-        expected_types = {"1", "2", "3", "2_gpu"}
+        itypes = self.provider.build_share_instance_types(share)
+        expected_types = {"1", "2", "3"}
         assert expected_types == {i.id for i in itypes}
         assert share.instance_max_ram == 20
         assert share.instance_min_ram == 2
@@ -277,7 +273,7 @@ class OpenStackProviderTest(base.TestCase):
         assert share.instance_min_cpu == 3
         # public
         self.provider.select_flavors = "public"
-        itypes = self.provider.get_share_instance_types(share)
+        itypes = self.provider.build_share_instance_types(share)
         expected_types = {"1", "3"}
         assert expected_types == {i.id for i in itypes}
         assert share.instance_max_ram == 10
@@ -286,20 +282,17 @@ class OpenStackProviderTest(base.TestCase):
         assert share.instance_min_cpu == 3
         # private
         self.provider.select_flavors = "private"
-        itypes = self.provider.get_share_instance_types(share)
-        expected_types = {"2", "2_gpu"}
+        itypes = self.provider.build_share_instance_types(share)
+        expected_types = {"2"}
         assert expected_types == {i.id for i in itypes}
         assert share.instance_max_ram == 20
         assert share.instance_min_ram == 20
         assert share.instance_max_cpu == 30
         assert share.instance_min_cpu == 30
 
-    def test_get_quotas(self):
-        self.provider.nova.servers.list.return_value = FAKES.servers
-        self.provider.nova.quotas.get.return_value = FAKES.quotas
+    def test_build_quotas(self):
         share = glue.Share(id="share")
-        instance_types = [glue.CloudComputingInstanceType(id="foo", cpu=1, ram=4)]
-        self.provider.get_share_quotas(share, instance_types)
+        self.provider.build_share_quotas(share)
         assert share.running_vm == 3
         assert share.halted_vm == 1
         assert share.suspended_vm == 4
@@ -307,28 +300,28 @@ class OpenStackProviderTest(base.TestCase):
         assert share.max_vm == 4
         assert share.other_info["quotas"] == FAKES.quotas.get_dict()
 
-    def test_get_shares(self):
-        self.provider.glance.images.list.return_value = FAKES.images
-        self.provider.nova.flavors.list.return_value = FAKES.flavors
-        self.provider.nova.servers.list.return_value = FAKES.servers
-        self.provider.nova.quotas.get.return_value = FAKES.quotas
-        self.provider.auth_plugin.get_access.return_value = FAKES.access
-        objs = self.provider.get_shares()
+    def test_build_shares(self):
+        self.provider.build_shares()
         # 2 shares and a global policy
         # For each share:
         # 1 image, 1 mapping policy, 3 flavors, 1 virtual accelerator
-        assert len(objs) == 15
-        shares = [s for s in objs if isinstance(s, glue.Share)]
+        shares = self.provider.get_objs("Share")
         assert {
             "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo1_bar",
             "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo2_baz",
         } == {s.id for s in shares}
+        assert len(self.provider.get_objs("CloudComputingInstanceType")) == 6
+        assert len(self.provider.get_objs("CloudComputingVirtualAccelerator")) == 2
+        assert len(self.provider.get_objs("CloudComputingImage")) == 2
+        assert len(self.provider.get_objs("MappingPolicy")) == 2
+        assert len(self.provider.get_objs("AccessPolicy")) == 1
 
         bar_shares = [s for s in shares if s.project_id == "bar"][0]
-        assert compare_glue(
+        assert utils.compare_glue(
             {
                 "id": "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo1_bar",
-                "name": "Share in service https://foo.example.org:5000/v3_OpenStack_v3_oidc for VO foo1 (Project bar)",
+                "description": "Share in service https://foo.example.org:5000/v3_OpenStack_v3_oidc for VO foo1 (Project bar)",
+                "name": "foo1 - bar share",
                 "other_info": {
                     "project_name": "project",
                     "project_domain_name": "default",
@@ -368,51 +361,45 @@ class OpenStackProviderTest(base.TestCase):
         )
 
         # check policies, assume everything else is ok
-        for o in objs:
-            if o.id == "bar_policy":
-                assert compare_glue(
-                    {
-                        "id": "bar_policy",
-                        "associations": {"CloudComputingEndpoint": ["bar"]},
-                        "scheme": "org.glite.standard",
-                        "rule": ["VO:foo1", "VO:foo2"],
+        for o in self.provider.get_objs("MappingPolicy"):
+            # either foo1 or foo2
+            assert utils.compare_glue(
+                {
+                    "id": "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo2_baz_Policy",
+                    "associations": {
+                        "Share": [
+                            "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo2_baz"
+                        ],
+                        "PolicyUserDomain": ["VO:foo2"],
                     },
-                    o,
-                )
-            # foo1 policy
-            elif (
-                o.id
-                == "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo1_bar_Policy"
-            ):
-                assert compare_glue(
-                    {
-                        "id": "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo1_bar_Policy",
-                        "associations": {
-                            "Share": [
-                                "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo1_bar"
-                            ],
-                            "PolicyUserDomain": ["VO:foo1"],
-                        },
-                        "scheme": "org.glite.standard",
-                        "rule": ["VO:foo1"],
+                    "scheme": "org.glite.standard",
+                    "rule": ["VO:foo2"],
+                },
+                o,
+            ) or utils.compare_glue(
+                {
+                    "id": "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo1_bar_Policy",
+                    "associations": {
+                        "Share": [
+                            "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo1_bar"
+                        ],
+                        "PolicyUserDomain": ["VO:foo1"],
                     },
-                    o,
-                )
-            elif (
-                o.id
-                == "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo2_baz_Policy"
-            ):
-                assert compare_glue(
-                    {
-                        "id": "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo2_baz_Policy",
-                        "associations": {
-                            "Share": [
-                                "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo2_baz"
-                            ],
-                            "PolicyUserDomain": ["VO:foo2"],
-                        },
-                        "scheme": "org.glite.standard",
-                        "rule": ["VO:foo2"],
-                    },
-                    o,
-                )
+                    "scheme": "org.glite.standard",
+                    "rule": ["VO:foo1"],
+                },
+                o,
+            )
+        assert utils.compare_glue(
+            {
+                "id": "bar_policy",
+                "associations": {"CloudComputingEndpoint": ["bar"]},
+                "scheme": "org.glite.standard",
+                "rule": ["VO:foo1", "VO:foo2"],
+            },
+            self.provider.get_first_obj("AccessPolicy"),
+        )
+
+    def test_fetch(self):
+        objs = self.provider.fetch()
+        assert self.provider.service.complexity == "endpointType=1,share=2"

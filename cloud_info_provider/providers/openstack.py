@@ -83,8 +83,8 @@ class OpenStackProvider(base.BaseProvider):
     def get_manager_id(self):
         return f"{self.site_config['endpoint']}_cloud.compute_manager"
 
-    def get_endpoint(self):
-        return super().get_endpoint(
+    def build_endpoint(self):
+        return super().build_endpoint(
             implementor="OpenStack Foundation",
             implementation_name="OpenStack Nova",
             interface_version=self.nova.api_version.get_string(),
@@ -128,7 +128,6 @@ class OpenStackProvider(base.BaseProvider):
         )
 
     def build_instance_type(self, flavor, share):
-        objs = []
         itype = glue.CloudComputingInstanceType(
             id=flavor.id,
             disk=flavor.disk,
@@ -141,7 +140,7 @@ class OpenStackProvider(base.BaseProvider):
         itype.add_associated_object(self.endpoint)
         itype.add_associated_object(self.manager)
         # TODO add infiniband stuff, unclear where that lives in glue
-        objs.append(itype)
+        self.add_glue(itype)
 
         extra_properties = {}
         for property_id, opt in self.flavor_properties.items():
@@ -163,34 +162,31 @@ class OpenStackProvider(base.BaseProvider):
             )
             acc.add_associated_object(itype)
             itype.add_associated_object(acc)
-            objs.append(acc)
-        return objs
+            self.add_glue(acc)
+        return itype
 
-    def get_share_instance_types(self, share):
-        instance_types = []
+    def build_share_instance_types(self, share):
         ram = []
         cpu = []
         add_all = self.select_flavors == "all"
+        itypes = []
         for flavor in self.nova.flavors.list(detailed=True, is_public=None):
             add_pub = self.select_flavors == "public" and flavor.is_public
             add_priv = self.select_flavors == "private" and not flavor.is_public
             if not (add_all or add_pub or add_priv):
                 continue
-            itypes = self.build_instance_type(flavor, share)
-            for i in itypes:
-                if isinstance(i, glue.CloudComputingInstanceType):
-                    ram.append(i.ram)
-                    cpu.append(i.cpu)
-            instance_types.extend(itypes)
+            itype = self.build_instance_type(flavor, share)
+            ram.append(itype.ram)
+            cpu.append(itype.cpu)
+            itypes.append(itype)
         # update share max/min ram and cpu
         share.instance_max_ram = max(ram) if ram else 0
         share.instance_min_ram = min(ram) if ram else 0
         share.instance_max_cpu = max(cpu) if cpu else 0
         share.instance_min_cpu = min(cpu) if cpu else 0
-        return instance_types
+        return itypes
 
     def build_image(self, image, share):
-        objs = []
         image_descr = image.get(
             "vmcatcher_event_dc_description",
             image.get("vmcatcher_event_dc_title", "UNKNOWN"),
@@ -218,7 +214,7 @@ class OpenStackProvider(base.BaseProvider):
                 )
                 marketplace_url = link
             else:
-                return objs
+                return None
 
         glue_image = glue.CloudComputingImage(
             id=image["id"],
@@ -233,19 +229,21 @@ class OpenStackProvider(base.BaseProvider):
         glue_image.add_associated_object(share)
         glue_image.add_associated_object(self.endpoint)
         glue_image.add_associated_object(self.manager)
-        objs.append(glue_image)
+        self.add_glue(glue_image)
         # TODO add associated image objects (Image Network)
-        return objs
+        return glue_image
 
-    def get_share_images(self, share):
-        images = []
+    def build_share_images(self, share):
+        image_list = []
         for image in self.glance.images.list(
             detailed=True, filters={"status": "active"}
         ):
-            images.extend(self.build_image(image, share))
-        return images
+            glue_img = self.build_image(image, share)
+            if glue_img:
+                image_list.append(glue_img)
+        return image_list
 
-    def get_share_quotas(self, share, instance_types):
+    def build_share_quotas(self, share):
         """Return the quotas set for the current project."""
 
         quota_resources = [
@@ -295,7 +293,7 @@ class OpenStackProvider(base.BaseProvider):
         share.suspended_vm = suspended_vm
         share.total_vm = running_vm + halted_vm + suspended_vm
 
-    def get_shares(self):
+    def build_shares(self):
         """Builds the share information for every VO"""
         share_objs = []
         rules = []
@@ -304,7 +302,8 @@ class OpenStackProvider(base.BaseProvider):
         for vo in self.site_config["vos"]:
             self.rescope_project(vo["auth"])
             share_id = f"{self.get_endpoint_id()}_share_{vo['name']}_{self.project_id}"
-            name = f"Share in service {self.get_endpoint_id()} for VO {vo['name']} (Project {self.project_id})"
+            name = f"{vo['name']} - {self.project_id} share"
+            description = f"Share in service {self.get_endpoint_id()} for VO {vo['name']} (Project {self.project_id})"
             access = self.auth_plugin.get_access(self.session)
             other_info = {
                 "project_name": access.project_name,
@@ -318,15 +317,14 @@ class OpenStackProvider(base.BaseProvider):
             )
             share.add_associated_object(self.service)
             share.add_associated_object(self.endpoint)
-            share_objs.extend(self.get_share_images(share))
-            itypes = self.get_share_instance_types(share)
-            share_objs.extend(itypes)
-            self.get_share_quotas(share, itypes)
+            self.build_share_images(share)
+            self.build_share_instance_types(share)
+            self.build_share_quotas(share)
             max_ram = max(0, share.instance_max_ram)
             min_ram = min(0, share.instance_min_ram)
             max_cpu = max(0, share.instance_max_cpu)
             min_cpu = min(0, share.instance_min_cpu)
-            share_objs.append(share)
+            self.add_glue(share)
 
             # policies
             rule = f"VO:{vo['name']}"
@@ -334,7 +332,7 @@ class OpenStackProvider(base.BaseProvider):
             mapping_policy = glue.MappingPolicy(id=f"{share_id}_Policy", rule=[rule])
             mapping_policy.add_associated_object(share)
             mapping_policy.add_association("PolicyUserDomain", f"VO:{vo['name']}")
-            share_objs.append(mapping_policy)
+            self.add_glue(mapping_policy)
 
             running_vm += share.running_vm
             halted_vm += share.halted_vm
@@ -347,7 +345,7 @@ class OpenStackProvider(base.BaseProvider):
             rule=rules,
         )
         access_policy.add_associated_object(self.endpoint)
-        share_objs.append(access_policy)
+        self.add_glue(access_policy)
 
         # numbers about VMs in service or manager
         self.service.running_vm = running_vm

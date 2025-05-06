@@ -25,9 +25,7 @@ class BaseProvider:
         self._load_site_config(opts.site_config)
         self._goc_info = {}
         self._ca_info = {}
-        self.service = None
-        self.manager = None
-        self.endpoint = None
+        self.objs = {}
 
     def _get_ca_info(self, url):
         if url not in self._ca_info:
@@ -43,13 +41,41 @@ class BaseProvider:
             )
         return self._goc_info[url]
 
+    def add_glue(self, o):
+        class_name = o.__class__.__name__
+        objs = self.objs.get(class_name, [])
+        objs.append(o)
+        self.objs[class_name] = objs
+
+    def get_first_obj(self, obj_type):
+        o = self.objs.get(obj_type, [None])
+        return o[0]
+
+    def get_objs(self, obj_type):
+        return self.objs.get(obj_type, [])
+
+    @property
+    def service(self):
+        return self.get_first_obj("CloudComputingService")
+
+    @property
+    def manager(self):
+        return self.get_first_obj("CloudComputingManager")
+
+    @property
+    def endpoint(self):
+        return self.get_first_obj("CloudComputingEndpoint")
+
     def fetch(self):
-        self.get_service()
-        self.get_manager()
-        self.get_endpoint()
-        r = [self.service, self.manager, self.endpoint]
-        r.extend(self.get_shares())
-        return r
+        self.build_service()
+        self.build_manager()
+        self.build_endpoint()
+        self.build_shares()
+        share_count = len(self.objs.get("Share", []))
+        svc = self.service
+        if svc:
+            svc.complexity = f"endpointType=1,share={share_count}"
+        return self.objs
 
     def get_service_id(self):
         return "service"
@@ -60,7 +86,7 @@ class BaseProvider:
     def get_endpoint_id(self):
         return "endpoint"
 
-    def get_service(self, **kwargs):
+    def build_service(self, **kwargs):
         site_name = self.site_config["gocdb"]
         service_defaults = {
             "id": self.get_service_id(),
@@ -73,18 +99,18 @@ class BaseProvider:
         service_defaults.update(kwargs)
         svc = glue.CloudComputingService(**service_defaults)
         svc.add_association("AdminDomain", site_name)
-        self.service = svc
-        return self.service
+        self.add_glue(svc)
+        return svc
 
-    def get_manager(self, **kwargs):
+    def build_manager(self, **kwargs):
         manager_defaults = {"id": self.get_manager_id()}
         manager_defaults.update(kwargs)
         mgr = glue.CloudComputingManager(**manager_defaults)
         mgr.add_associated_object(self.service)
-        self.manager = mgr
-        return self.manager
+        self.add_glue(mgr)
+        return mgr
 
-    def get_endpoint(self, **kwargs):
+    def build_endpoint(self, **kwargs):
         ept_defaults = {
             "id": self.get_endpoint_id(),
             "name": f"Cloud computing endpoint for {self.get_endpoint_id()}",
@@ -105,11 +131,11 @@ class BaseProvider:
         ept_defaults.update(kwargs)
         ept = glue.CloudComputingEndpoint(**ept_defaults)
         ept.add_associated_object(self.service)
-        self.endpoint = ept
-        return self.endpoint
+        self.add_glue(ept)
+        return ept
 
-    def get_shares(self):
-        return []
+    def build_shares(self):
+        pass
 
     def setup_logging(self):
         level = logging.DEBUG if self.opts.debug else logging.INFO

@@ -135,5 +135,7 @@ class OpenStackFakes(object):
 
         self.access = FakeObject(project_name="project", project_domain_name="default")
 
+        self.version = FakeObject(version="vy.x")
+
 
 OS_FAKES = OpenStackFakes()

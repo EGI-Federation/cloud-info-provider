@@ -3,7 +3,7 @@ import mock
 from cloud_info_provider import glue
 from cloud_info_provider.tests import base
 from cloud_info_provider.tests.data import DATA
-from cloud_info_provider.tests.utils import compare_glue
+from cloud_info_provider.tests import utils as utils
 
 
 class FakeBaseProvider(cloud_info_provider.providers.base.BaseProvider):
@@ -22,7 +22,7 @@ class BaseProviderTest(base.TestCase):
         super(BaseProviderTest, self).setUp()
         self.provider = FakeBaseProvider(Opts())
 
-    def test_provider_get_service(self):
+    def test_provider_build_service(self):
         with mock.patch(
             "cloud_info_provider.providers.utils.find_in_gocdb"
         ) as m_goc_find:
@@ -42,20 +42,20 @@ class BaseProviderTest(base.TestCase):
                 "quality_level": "production",
                 "service_aup": "http://go.egi.eu/aup",
             }
-            self.assertTrue(compare_glue(service, self.provider.get_service()))
+            assert utils.compare_glue(service, self.provider.build_service())
 
-    def test_provider_get_manager(self):
-        self.provider.service = glue.CloudComputingService(id="foo", status_info="bar")
+    def test_provider_build_manager(self):
+        self.provider.add_glue(glue.CloudComputingService(id="foo", status_info="bar"))
         manager = {"id": "manager", "associations": {"CloudComputingService": ["foo"]}}
-        self.assertTrue(compare_glue(manager, self.provider.get_manager()))
+        assert utils.compare_glue(manager, self.provider.build_manager())
 
-    def test_provider_get_endpoint(self):
+    def test_provider_build_endpoint(self):
         with mock.patch(
             "cloud_info_provider.providers.utils.get_endpoint_ca_information"
         ) as m_ca_get:
             m_ca_get.return_value = {"issuer": "foo_ca", "trusted_cas": ["ca1", "ca2"]}
-            self.provider.service = glue.CloudComputingService(
-                id="foo", status_info="bar"
+            self.provider.add_glue(
+                glue.CloudComputingService(id="foo", status_info="bar")
             )
             endpoint = {
                 "id": "endpoint",
@@ -73,13 +73,14 @@ class BaseProviderTest(base.TestCase):
                 "issuer_ca": "foo_ca",
                 "trusted_cas": ["ca1", "ca2"],
             }
-            self.assertTrue(compare_glue(endpoint, self.provider.get_endpoint()))
+            assert utils.compare_glue(endpoint, self.provider.build_endpoint())
 
-    def test_provider_get_shares(self):
-        self.assertEqual([], self.provider.get_shares())
+    def test_provider_build_shares(self):
+        self.provider.build_shares()
+        self.provider.get_objs("Share") == []
 
     def test_get_goc_info_no_svc(self):
-        self.assertEqual({}, self.provider._get_goc_info("baz"))
+        assert self.provider._get_goc_info("baz") == {}
 
     def test_get_goc_info(self):
         self.provider.goc_service_type = "svc"
@@ -88,5 +89,20 @@ class BaseProviderTest(base.TestCase):
         ) as m_goc_find:
             m_goc_find.return_value = {"foo": "bar"}
             info = self.provider._get_goc_info("baz")
-            self.assertEqual({"baz": {"foo": "bar"}}, self.provider._goc_info)
-            self.assertEqual({"foo": "bar"}, info)
+            assert self.provider._goc_info == {"baz": {"foo": "bar"}}
+            assert info == {"foo": "bar"}
+
+    def test_fetch(self):
+        with utils.nested(
+            mock.patch("cloud_info_provider.providers.utils.find_in_gocdb"),
+            mock.patch(
+                "cloud_info_provider.providers.utils.get_endpoint_ca_information"
+            ),
+        ) as (m_goc_find, m_ca_get):
+            m_goc_find.return_value = {"foo": "bar"}
+            m_ca_get.return_value = {"issuer": "foo_ca", "trusted_cas": ["ca1", "ca2"]}
+            self.provider.fetch()
+            # just check the complexity here
+            assert self.provider.service.complexity == "endpointType=1,share=0"
+            assert self.provider.manager
+            assert self.provider.endpoint

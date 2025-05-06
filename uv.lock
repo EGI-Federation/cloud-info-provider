@@ -115,7 +115,7 @@ wheels = [
 
 [[package]]
 name = "cloud-info-provider"
-version = "0.0.0.post644.dev0+27627af"
+version = "0.0.0.post634.dev0+6aac73a"
 source = { editable = "." }
 dependencies = [
     { name = "defusedxml" },
