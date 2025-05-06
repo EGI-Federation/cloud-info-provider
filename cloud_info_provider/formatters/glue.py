@@ -186,10 +186,7 @@ class GLUE21Json(base.BaseFormatter):
 
     def format(self, opts, glue):
         glue_output = {}
-        for glue_object in glue:
-            class_name = glue_object.__class__.__name__
-            objs = glue_output.get(class_name, [])
-            objs.append(self.dump_glue_object(glue_object))
-            glue_output[class_name] = objs
+        for name, glue_objects in glue.items():
+            glue_output[name] = [self.dump_glue_object(o) for o in glue_objects]
 
         return json.dumps(glue_output, default=str)
