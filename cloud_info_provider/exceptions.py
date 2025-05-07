@@ -20,36 +20,8 @@ class CloudInfoException(Exception):
                     logger.error("%s: %s" % (name, value))
                 raise
 
-        super(CloudInfoException, self).__init__(message)
+        super().__init__(message)
 
 
 class OpenStackProviderException(CloudInfoException):
-    pass
-
-
-class StaticProviderException(CloudInfoException):
-    pass
-
-
-class OpenNebulaProviderException(CloudInfoException):
-    pass
-
-
-class MesosProviderException(CloudInfoException):
-    pass
-
-
-class OnedataProviderException(CloudInfoException):
-    pass
-
-
-class CMDBFormatterException(CloudInfoException):
-    pass
-
-
-class AwsProviderException(CloudInfoException):
-    pass
-
-
-class RefresherException(CloudInfoException):
     pass

@@ -1,5 +1,5 @@
 import mock
-from cloud_info_provider.providers import gocdb
+from cloud_info_provider.providers import utils
 from cloud_info_provider.tests import base
 
 sample_goc_response = """<?xml version="1.0" encoding="UTF-8"?>
@@ -60,45 +60,45 @@ class GOCDBTest(base.TestCase):
     def test_request_call(self):
         with mock.patch("requests.get") as m_requests:
             m_requests.return_value = mock.MagicMock()
-            r = gocdb.find_in_gocdb("foo", "bar")
+            r = utils.find_in_gocdb("foo", "bar")
             m_requests.assert_called_once_with(
                 "https://goc.egi.eu/gocdbpi/public/",
                 params={"method": "get_service", "service_type": "bar"},
                 verify=True,
                 timeout=None,
             )
-            self.assertEqual({}, r)
+            assert {} == r
 
     def test_request_call_insecure(self):
         with mock.patch("requests.get") as m_requests:
             m_requests.return_value = mock.MagicMock()
-            r = gocdb.find_in_gocdb("foo", "bar", insecure=True)
+            r = utils.find_in_gocdb("foo", "bar", insecure=True)
             m_requests.assert_called_once_with(
                 "https://goc.egi.eu/gocdbpi/public/",
                 params={"method": "get_service", "service_type": "bar"},
                 verify=False,
                 timeout=None,
             )
-            self.assertEqual({}, r)
+            assert {} == r
 
     def test_request_call_timeout(self):
         with mock.patch("requests.get") as m_requests:
             m_requests.return_value = mock.MagicMock()
-            r = gocdb.find_in_gocdb("foo", "bar", timeout=1234)
+            r = utils.find_in_gocdb("foo", "bar", timeout=1234)
             m_requests.assert_called_once_with(
                 "https://goc.egi.eu/gocdbpi/public/",
                 params={"method": "get_service", "service_type": "bar"},
                 verify=True,
                 timeout=1234,
             )
-            self.assertEqual({}, r)
+            assert {} == r
 
     def test_goc_non_200(self):
         with mock.patch("requests.get") as m_requests:
             r = mock.MagicMock()
             r.status_code = 404
             m_requests.return_value = r
-            self.assertEqual({}, gocdb.find_in_gocdb("foo", "bar"))
+            assert {} == utils.find_in_gocdb("foo", "bar")
 
     def test_goc_empty(self):
         with mock.patch("requests.get") as m_requests:
@@ -106,7 +106,7 @@ class GOCDBTest(base.TestCase):
             r.status_code = 200
             r.text = '<?xml version="1.0" encoding="UTF-8"?>' "<results/>"
             m_requests.return_value = r
-            self.assertEqual({}, gocdb.find_in_gocdb("foo", "bar"))
+            assert {} == utils.find_in_gocdb("foo", "bar")
 
     def test_goc_not_found(self):
         with mock.patch("requests.get") as m_requests:
@@ -114,7 +114,7 @@ class GOCDBTest(base.TestCase):
             r.status_code = 200
             r.text = sample_goc_response
             m_requests.return_value = r
-            self.assertEqual({}, gocdb.find_in_gocdb("foo", "bar"))
+            assert {} == utils.find_in_gocdb("foo", "bar")
 
     def test_goc_found_same_path(self):
         with mock.patch("requests.get") as m_requests:
@@ -123,9 +123,8 @@ class GOCDBTest(base.TestCase):
             r.text = sample_goc_response
             m_requests.return_value = r
             expected = {"gocdb_id": "1234G0", "site_name": "FOO-BAR-SITE"}
-            self.assertEqual(
-                expected,
-                gocdb.find_in_gocdb("https://keystone.example.com:5000/v2.0/", "bar"),
+            assert expected == utils.find_in_gocdb(
+                "https://keystone.example.com:5000/v2.0/", "bar"
             )
 
     def test_goc_found_similar_path(self):
@@ -135,9 +134,8 @@ class GOCDBTest(base.TestCase):
             r.text = sample_goc_response
             m_requests.return_value = r
             expected = {"gocdb_id": "1234G0", "site_name": "FOO-BAR-SITE"}
-            self.assertEqual(
-                expected,
-                gocdb.find_in_gocdb("https://keystone.example.com:5000/v2.0", "bar"),
+            assert expected == utils.find_in_gocdb(
+                "https://keystone.example.com:5000/v2.0", "bar"
             )
 
     def test_goc_multiple_endpoints(self):
@@ -147,7 +145,6 @@ class GOCDBTest(base.TestCase):
             r.text = sample_goc_ep_response
             m_requests.return_value = r
             expected = {"gocdb_id": "00000G0", "site_name": "BAR-FOO-SITE"}
-            self.assertEqual(
-                expected,
-                gocdb.find_in_gocdb("https://horizon.baz.example.com:5000/v3", "bar"),
+            assert expected == utils.find_in_gocdb(
+                "https://horizon.baz.example.com:5000/v3", "bar"
             )
