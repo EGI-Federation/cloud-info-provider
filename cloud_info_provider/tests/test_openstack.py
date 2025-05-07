@@ -1,13 +1,12 @@
 import argparse
 
 import mock
-from keystoneauth1.exceptions import http as http_exc
-
 from cloud_info_provider import glue
 from cloud_info_provider.exceptions import OpenStackProviderException
 from cloud_info_provider.providers import openstack as os_provider
 from cloud_info_provider.tests import base, data
 from cloud_info_provider.tests import utils as utils
+from keystoneauth1.exceptions import http as http_exc
 
 FAKES = data.OS_FAKES
 
