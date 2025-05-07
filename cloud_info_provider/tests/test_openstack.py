@@ -26,7 +26,7 @@ class OpenStackProviderOptionsTest(base.TestCase):
                 "--os-auth-url",
                 "http://example.org:5000",
                 "--insecure",
-                "--all-images",
+                "--only-appdb-images",
                 "--select-flavors",
                 "public",
                 "--os-region",
@@ -40,7 +40,7 @@ class OpenStackProviderOptionsTest(base.TestCase):
         assert opts.os_auth_url == "http://example.org:5000"
         assert opts.os_region == "North pole"
         assert opts.insecure
-        assert opts.all_images
+        assert opts.only_appdb_images
         assert opts.select_flavors == "public"
 
 

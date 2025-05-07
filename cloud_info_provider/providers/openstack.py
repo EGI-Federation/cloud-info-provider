@@ -52,7 +52,7 @@ class OpenStackProvider(base.BaseProvider):
         self.project_id = None
         opts.os_auth_url = self.site_config["endpoint"]
         self.os_region = opts.os_region
-        self.all_images = opts.all_images
+        self.all_images = not opts.only_appdb_images
 
         # Select 'public', 'private' or 'all' (default) templates.
         self.select_flavors = opts.select_flavors
@@ -426,13 +426,11 @@ class OpenStackProvider(base.BaseProvider):
         )
 
         parser.add_argument(
-            "--all-images",
+            "--only-appdb-images",
             action="store_true",
             default=False,
             help=(
-                "If set, include information about all images (including "
-                "snapshots), otherwise only publish images with cloudkeeper "
-                "metadata, ignoring the others."
+                "If set, only publish images with AppDB metadata, ignoring the others."
             ),
         )
 
