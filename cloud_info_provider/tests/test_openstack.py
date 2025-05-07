@@ -403,7 +403,7 @@ class OpenStackProviderTest(base.TestCase):
                         "Share": [
                             "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo2_baz"
                         ],
-                        "PolicyUserDomain": ["VO:foo2"],
+                        "PolicyUserDomain": ["foo2"],
                     },
                     "scheme": "org.glite.standard",
                     "rule": ["VO:foo2"],
@@ -416,7 +416,7 @@ class OpenStackProviderTest(base.TestCase):
                         "Share": [
                             "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo1_bar"
                         ],
-                        "PolicyUserDomain": ["VO:foo1"],
+                        "PolicyUserDomain": ["foo1"],
                     },
                     "scheme": "org.glite.standard",
                     "rule": ["VO:foo1"],
