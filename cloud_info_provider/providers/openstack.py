@@ -336,7 +336,7 @@ class OpenStackProvider(base.BaseProvider):
             rules.append(rule)
             mapping_policy = glue.MappingPolicy(id=f"{share_id}_Policy", rule=[rule])
             mapping_policy.add_associated_object(share)
-            mapping_policy.add_association("PolicyUserDomain", vo['name'])
+            mapping_policy.add_association("PolicyUserDomain", vo["name"])
             self.add_glue(mapping_policy)
 
             running_vm += share.running_vm
