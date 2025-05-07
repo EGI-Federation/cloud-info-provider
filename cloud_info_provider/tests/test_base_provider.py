@@ -1,9 +1,10 @@
-import cloud_info_provider.providers.base
 import mock
+
+import cloud_info_provider.providers.base
 from cloud_info_provider import glue
 from cloud_info_provider.tests import base
-from cloud_info_provider.tests.data import DATA
 from cloud_info_provider.tests import utils as utils
+from cloud_info_provider.tests.data import DATA
 
 
 class FakeBaseProvider(cloud_info_provider.providers.base.BaseProvider):

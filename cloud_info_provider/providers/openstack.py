@@ -5,13 +5,14 @@ from urllib.parse import urljoin
 
 import glanceclient
 import novaclient.client
-from cloud_info_provider import exceptions, glue, utils
-from cloud_info_provider.providers import base
 from keystoneauth1 import loading
 from keystoneauth1.exceptions import http as http_exc
 from keystoneauth1.loading import base as loading_base
 from keystoneauth1.loading import session as loading_session
 from novaclient.exceptions import Forbidden
+
+from cloud_info_provider import exceptions, glue, utils
+from cloud_info_provider.providers import base
 
 
 class OpenStackProvider(base.BaseProvider):
@@ -335,7 +336,7 @@ class OpenStackProvider(base.BaseProvider):
             rules.append(rule)
             mapping_policy = glue.MappingPolicy(id=f"{share_id}_Policy", rule=[rule])
             mapping_policy.add_associated_object(share)
-            mapping_policy.add_association("PolicyUserDomain", f"VO:{vo['name']}")
+            mapping_policy.add_association("PolicyUserDomain", vo['name'])
             self.add_glue(mapping_policy)
 
             running_vm += share.running_vm

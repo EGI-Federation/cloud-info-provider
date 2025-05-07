@@ -1,6 +1,7 @@
 import logging
 
 import yaml
+
 from cloud_info_provider import glue
 from cloud_info_provider.exceptions import CloudInfoException
 from cloud_info_provider.providers import utils

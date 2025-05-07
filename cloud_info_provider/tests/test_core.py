@@ -1,4 +1,5 @@
 import mock
+
 from cloud_info_provider import core
 from cloud_info_provider.tests import base
 

@@ -5,6 +5,7 @@ Tests for the publishers
 from __future__ import print_function
 
 import mock
+
 from cloud_info_provider.publishers import stdout
 from cloud_info_provider.tests import base
 
