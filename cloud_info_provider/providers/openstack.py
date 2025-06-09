@@ -205,7 +205,8 @@ class OpenStackProvider(base.BaseProvider):
             )
             extra_attrs = {}
         if "ad:base_mpuri" in extra_attrs:
-            other_info["base_mpuri"] = extra_attrs["ad:base_mpuri"]
+            extra_attrs["base_mpuri"] = extra_attrs["ad:base_mpuri"]
+        other_info.update(extra_attrs)
 
         if not marketplace_url:
             if self.all_images:
