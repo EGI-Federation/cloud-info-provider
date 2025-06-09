@@ -135,5 +135,7 @@ def get_endpoint_ca_information(endpoint_url, insecure=False):
         ca_info["trusted_cas"] = trusted_cas
     except SSL.Error as e:
         logger.warning("Issue when getting CA info from endpoint: %s", e)
+    except TimeoutError as e:
+        logger.warning("Timeout when getting CA info from endpoint: %s", e)
 
     return ca_info
