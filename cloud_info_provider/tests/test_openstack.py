@@ -190,7 +190,8 @@ class OpenStackProviderTest(base.TestCase):
             {
                 "id": "foo.id",
                 "name": "fooimage",
-                "other_info": {"base_mpuri": "foobar"},
+                "other_info": {"base_mpuri": "foobar",
+                               "ad:base_mpuri": "foobar"},
                 "associations": {
                     "Share": ["share"],
                     "CloudComputingEndpoint": ["bar"],
