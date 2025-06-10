@@ -204,8 +204,12 @@ class OpenStackProvider(base.BaseProvider):
                 image.get("APPLIANCE_ATTRIBUTES", "{}"),
             )
             extra_attrs = {}
+        # AppDB and cloud-info-api expect base_mpuri in OtherInfo
+        # However atrope/cloudkeeper will push the attribute ad:base_mpuri instead
+        # so we need to duplicate this for the time being
         if "ad:base_mpuri" in extra_attrs:
             other_info["base_mpuri"] = extra_attrs["ad:base_mpuri"]
+        other_info.update(extra_attrs)
 
         if not marketplace_url:
             if self.all_images:
