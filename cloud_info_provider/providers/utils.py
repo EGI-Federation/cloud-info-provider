@@ -108,7 +108,7 @@ def get_endpoint_ca_information(endpoint_url, insecure=False):
         port = 443
 
     try:
-        ctx = SSL.Context(SSL.SSLv23_METHOD)
+        ctx = SSL.Context(SSL.TLSv1_2_METHOD)
         ctx.set_options(SSL.OP_NO_SSLv2)
         ctx.set_options(SSL.OP_NO_SSLv3)
         ctx.set_verify(verify, lambda conn, cert, errno, depth, ok: ok)
