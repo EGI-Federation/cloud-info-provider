@@ -20,7 +20,7 @@ class BoolEnum(Enum):
 class GlueBase(BaseModel):
     id: str
     name: Optional[str] = None
-    creation_time: datetime.datetime = datetime.datetime.now(datetime.UTC)
+    creation_time: datetime.datetime = datetime.datetime.now(datetime.timezone.utc)
     # 12 hours validity
     validity: int = 3600 * 12
     other_info: dict = {}
