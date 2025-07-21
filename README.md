@@ -120,7 +120,7 @@ your endpoints and GOCDB, so please make sure those CAs include the IGTF CAs.
 The location of the CAs depending on how you installed the different python
 packages (using deb/rpm packages or `pip`).
 
-For debian-based systems (e.g. ubuntu), use the following:
+For debian-based systems (e.g. Ubuntu), use the following:
 
 ```sh
 cd /usr/local/share/ca-certificates
