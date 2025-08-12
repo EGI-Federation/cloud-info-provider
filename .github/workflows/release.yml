@@ -18,7 +18,7 @@ jobs:
       version: ${{ steps.extract-version.outputs.version }}
       changelog: ${{ steps.extract-changelog.outputs.markdown }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Extract version
         id: extract-version
         run: |
@@ -41,7 +41,7 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Set up Python
