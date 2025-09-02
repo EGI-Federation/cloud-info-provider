@@ -23,7 +23,7 @@ jobs:
             > pandoc-2.11.1.1-1-amd64.deb
           apt-get install -y ./pandoc-2.11.1.1-1-amd64.deb
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: get git ready
         run: |
           git config user.name "egibot"
