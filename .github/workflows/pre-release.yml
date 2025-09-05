@@ -24,6 +24,8 @@ jobs:
           apt-get install -y ./pandoc-2.11.1.1-1-amd64.deb
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - name: get git ready
         run: |
           git config user.name "egibot"
@@ -44,12 +46,12 @@ jobs:
       - name: bump versions
         run: |
           # Zenodo
-          zenodo_changes=$(echo '${{ steps.extract-changelog.outputs.markdown}}' \
+          zenodo_changes=$(echo '${STEPS_EXTRACT_CHANGELOG_OUTPUTS_MARKDOWN}' \
                            | pandoc --from gfm --to html | tr -s "\n" " ")
 
-          jq --arg VERSION "${{ steps.extract-version.outputs.version }}" \
-             --arg TITLE "EGI-Federation/cloud-info-provider: ${{ steps.extract-version.outputs.version }}" \
-             --arg RELATED "https://github.com/EGI-Federation/cloud-info-provider/tree/${{ steps.extract-version.outputs.version }}" \
+          jq --arg VERSION "${STEPS_EXTRACT_VERSION_OUTPUTS_VERSION}" \
+             --arg TITLE "EGI-Federation/cloud-info-provider: ${STEPS_EXTRACT_VERSION_OUTPUTS_VERSION}" \
+             --arg RELATED "https://github.com/EGI-Federation/cloud-info-provider/tree/${STEPS_EXTRACT_VERSION_OUTPUTS_VERSION}" \
              --arg DATE "$(date '+%Y-%m-%d')" \
              --arg DESC "$zenodo_changes" \
              '.version = $VERSION |
@@ -59,7 +61,10 @@ jobs:
               .description = $DESC' < .zenodo.json > .zenodo.json.new
           mv .zenodo.json.new .zenodo.json
 
-          git commit -a -m "Prepare version ${{ steps.extract-version.outputs.version }}"
+          git commit -a -m "Prepare version ${STEPS_EXTRACT_VERSION_OUTPUTS_VERSION}"
+        env:
+          STEPS_EXTRACT_CHANGELOG_OUTPUTS_MARKDOWN: ${{ steps.extract-changelog.outputs.markdown}}
+          STEPS_EXTRACT_VERSION_OUTPUTS_VERSION: ${{ steps.extract-version.outputs.version }}
       - name: Create Pull Request for version
         uses: peter-evans/create-pull-request@v7
         with:
