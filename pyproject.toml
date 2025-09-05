@@ -21,13 +21,13 @@ dependencies = [
     "defusedxml>=0.7.1",
     "keystoneauth1>=5.9.1",
     "pydantic>=2.11.3",
-    "pyopenssl>=25.0.0",
+    "pyopenssl>=25.1.0",
     "python-dateutil>=2.9.0.post0",
     "python-glanceclient>=4.7.0",
     "python-keystoneclient>=5.5.0",
     "python-novaclient>=18.7.0",
     "pyyaml>=6.0.2",
-    "requests>=2.28.1",
+    "requests>=2.32.4",
     "stevedore>=5.4.0",
 ]
 
