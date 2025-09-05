@@ -46,7 +46,7 @@ jobs:
       - name: bump versions
         run: |
           # Zenodo
-          zenodo_changes=$(echo '${STEPS_EXTRACT_CHANGELOG_OUTPUTS_MARKDOWN}' \
+          zenodo_changes=$(echo "${STEPS_EXTRACT_CHANGELOG_OUTPUTS_MARKDOWN}" \
                            | pandoc --from gfm --to html | tr -s "\n" " ")
 
           jq --arg VERSION "${STEPS_EXTRACT_VERSION_OUTPUTS_VERSION}" \
