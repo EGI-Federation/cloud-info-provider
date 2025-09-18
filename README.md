@@ -144,12 +144,12 @@ cat /etc/grid-security/certificates/*.pem >> $(python -m requests.certs)
 
 ## Creating releases
 
-1. Open an issue to track the release process
 1. Create a PR to update the changelog to reflect the changes since last version
    and any other needed changes for the release
    - Version should follow [SemVer](https://semver.org/) like 0.42.0
-1. Tag the PR as `release`, this will automate the process of creating the
-   release in GitHub and pushing packages to repositories (PyPi) once merged.
+1. Once merged, create a release with a tag `vX.Y.Z`, fill in as description of the
+   release the changelog. As soon as the tag is pushed to the repository,
+   packages will be available at GitHub.
 
 ## Acknowledgement
 
