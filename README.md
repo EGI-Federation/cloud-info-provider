@@ -142,9 +142,14 @@ Otherwise, you need to add the IGTF CAs to the internal requests bundle:
 cat /etc/grid-security/certificates/*.pem >> $(python -m requests.certs)
 ```
 
-## Release management
+## Creating releases
 
-Release management is documented in [RELEASING.md](RELEASING.md)
+1. Open an issue to track the release process
+1. Create a PR to update the changelog to reflect the changes since last version
+   and any other needed changes for the release
+   - Version should follow [SemVer](https://semver.org/) like 0.42.0
+1. Tag the PR as `release`, this will automate the process of creating the
+   release in GitHub and pushing packages to repositories (PyPi) once merged.
 
 ## Acknowledgement
 
