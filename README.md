@@ -150,5 +150,3 @@ Release management is documented in [RELEASING.md](RELEASING.md)
 
 This work recieved funding from the [EOSC-hub project](http://eosc-hub.eu/)
 (Horizon 2020) under Grant number 777536.
-<img alt="EU logo" src="https://wiki.eosc-hub.eu/download/attachments/1867786/eu%20logo.jpeg?version=1&modificationDate=1459256840098&api=v2" height="24">
-<img alt="EOSC-Hub logo" src="https://wiki.eosc-hub.eu/download/attachments/18973612/eosc-hub-web.png?version=1&modificationDate=1516099993132&api=v2" height="24">
