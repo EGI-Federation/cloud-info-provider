@@ -28,7 +28,7 @@ jobs:
           echo "version=$version" >> "$GITHUB_OUTPUT"
       - name: Extract changelog
         id: extract-changelog
-        uses: sean0x42/markdown-extract@v4
+        uses: sean0x42/markdown-extract@7b185cbe85263116bbf741e739e7198ba86465dc # v2.1.0
         with:
           file: CHANGELOG.md
           pattern: ${{ steps.extract-version.outputs.version }}
