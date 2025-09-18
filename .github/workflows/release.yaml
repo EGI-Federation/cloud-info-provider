@@ -23,7 +23,7 @@ jobs:
         id: extract-version
         run: |
           # this uses GNU sed -z!
-          version=$(grep "^## \[[0-9].*\]" CHANGELOG | \
+          version=$(grep "^## \[[0-9].*\]" CHANGELOG.md | \
                     head -1 | sed -e "s/^.*\[\(.*\)\].*/\1/")
           echo "version=$version" >> "$GITHUB_OUTPUT"
       - name: Extract changelog
