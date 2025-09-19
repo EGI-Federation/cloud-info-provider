@@ -19,6 +19,8 @@ jobs:
       changelog: ${{ steps.extract-changelog.outputs.markdown }}
     steps:
       - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - name: Extract version
         id: extract-version
         run: |
