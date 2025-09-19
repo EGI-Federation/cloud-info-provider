@@ -8,12 +8,27 @@ and this project adheres to
 
 ## [Unreleased]
 
-## [1.0.1] - 2025-09-05
+## [1.0.0] - 2025-09-19
+
+### Changed
+
+- Heavily simplified the code to follow closely the GlueSchema
+- Support additional information for network/accelerator
+- Publishing to PyPi
 
 ### Removed
 
 - Support for formatters other than JSON
-- Support
+- Support for credential refresh
+- RPM and deb packages
+- Support for storage information
+- Support for OpenNebula, Onedata, OOI, Mesos and AWS
+- Support for publishers other than standard output
+
+### Chore
+
+- Bump requirements as detected by dependabot
+- Move from PBR / setup tools to a uv based flow
 
 ## [0.13.0] - 2023-10-05
 
