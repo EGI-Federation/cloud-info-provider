@@ -1,4 +1,5 @@
 ---
+# See https://packaging.python.org/en/latest/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
 name: Publish Python 🐍 distribution 📦 to PyPI and TestPyPI
 
 on:
@@ -38,11 +39,11 @@ jobs:
       url: https://pypi.org/p/cloud-info-provider
     permissions:
       id-token: write # IMPORTANT: mandatory for trusted publishing
-
     steps:
       - name: Download all the dists
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v4
         with:
           name: python-package-distributions
           path: dist/
       - name: Publish distribution 📦 to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
