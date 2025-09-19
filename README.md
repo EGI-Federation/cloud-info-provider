@@ -142,13 +142,16 @@ Otherwise, you need to add the IGTF CAs to the internal requests bundle:
 cat /etc/grid-security/certificates/*.pem >> $(python -m requests.certs)
 ```
 
-## Release management
+## Creating releases
 
-Release management is documented in [RELEASING.md](RELEASING.md)
+1. Open an issue to track the release process
+1. Create a PR to update the changelog to reflect the changes since last version
+   and any other needed changes for the release
+   - Version should follow [SemVer](https://semver.org/) like 0.42.0
+1. Tag the PR as `release`, this will automate the process of creating the
+   release in GitHub and pushing packages to repositories (PyPi) once merged.
 
 ## Acknowledgement
 
 This work recieved funding from the [EOSC-hub project](http://eosc-hub.eu/)
 (Horizon 2020) under Grant number 777536.
-<img alt="EU logo" src="https://wiki.eosc-hub.eu/download/attachments/1867786/eu%20logo.jpeg?version=1&modificationDate=1459256840098&api=v2" height="24">
-<img alt="EOSC-Hub logo" src="https://wiki.eosc-hub.eu/download/attachments/18973612/eosc-hub-web.png?version=1&modificationDate=1516099993132&api=v2" height="24">
