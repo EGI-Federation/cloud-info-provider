@@ -124,7 +124,9 @@ For debian-based systems (e.g. Ubuntu), use the following:
 
 ```sh
 cd /usr/local/share/ca-certificates
-for f in /etc/grid-security/certificates/*.pem ; do ln -s $f $(basename $f .pem).crt; done
+for f in /etc/grid-security/certificates/*.pem ; do
+    ln -s $f $(basename $f .pem).crt
+done
 update-ca-certificates
 ```
 
