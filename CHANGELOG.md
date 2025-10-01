@@ -11,6 +11,7 @@ and this project adheres to
 ## [1.0.1] - 2025-10-01
 
 ### Chore
+
 - Update setup-uv from 6.7.0 to 6.8.0 (#303)
 
 ## [1.0.0] - 2025-09-19
