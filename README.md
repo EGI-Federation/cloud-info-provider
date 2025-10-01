@@ -124,7 +124,9 @@ For debian-based systems (e.g. Ubuntu), use the following:
 
 ```sh
 cd /usr/local/share/ca-certificates
-for f in /etc/grid-security/certificates/*.pem ; do ln -s $f $(basename $f .pem).crt; done
+for f in /etc/grid-security/certificates/*.pem ; do
+    ln -s $f $(basename $f .pem).crt
+done
 update-ca-certificates
 ```
 
@@ -147,8 +149,8 @@ cat /etc/grid-security/certificates/*.pem >> $(python -m requests.certs)
 1. Create a PR to update the changelog to reflect the changes since last version
    and any other needed changes for the release
    - Version should follow [SemVer](https://semver.org/) like 0.42.0
-1. Once merged, create a release with a tag `vX.Y.Z`, fill in as description of the
-   release the changelog. As soon as the tag is pushed to the repository,
+1. Once merged, create a release with a tag `vX.Y.Z`, fill in as description of
+   the release the changelog. As soon as the tag is pushed to the repository,
    packages will be available at GitHub.
 
 ## Acknowledgement
