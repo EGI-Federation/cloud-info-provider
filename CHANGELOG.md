@@ -8,6 +8,16 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [1.0.2] - 2025-10-10
+
+### Fixed
+
+- Avoid nested argparse groups, add version fallback (#308)
+
+### Chore
+
+- Format code with Black (#308)
+
 ## [1.0.1] - 2025-10-01
 
 ### Chore
