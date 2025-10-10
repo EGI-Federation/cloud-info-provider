@@ -9,7 +9,7 @@ def get_providers():
     def _handle_exception(*args):
         mgr, entry_point, exception = args
         logging.getLogger("stevedore.extension").error(
-            ("Cannot load '%s': %s") % (entry_point, exception)
+            (("Cannot load '%s': %s") % (entry_point, exception))
         )
 
     mgr = extension.ExtensionManager(
@@ -104,12 +104,15 @@ def get_parser(providers, formatters, publishers):
     )
 
     for provider_name, provider in providers.items():
-        group = parser.add_argument_group("%s provider options" % provider_name)
-        provider.populate_parser(group)
+        # Do not pass an argument group to plugins that may create their own
+        # argument groups (for example keystoneauth loading.session). Passing
+        # the root parser avoids nested argument groups which argparse
+        # disallows (raises ValueError: argument groups cannot be nested).
+        provider.populate_parser(parser)
 
     for publisher_name, publisher in publishers.items():
-        group = parser.add_argument_group("%s publisher options" % publisher_name)
-        publisher.populate_parser(group)
+        # Likewise, pass the root parser to publishers.
+        publisher.populate_parser(parser)
 
     return parser
 
