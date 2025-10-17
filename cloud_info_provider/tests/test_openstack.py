@@ -349,9 +349,7 @@ class OpenStackProviderTest(base.TestCase):
             {
                 "id": "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo1_bar",
                 "description": (
-                    "Share in service "
-                    "https://foo.example.org:5000/v3_OpenStack_v3_oidc"
-                    " for VO foo1 (Project bar)"
+                    "Share in service https://foo.example.org:5000/v3_OpenStack_v3_oidc for VO foo1 (Project bar)"
                 ),
                 "name": "foo1 - bar share",
                 "other_info": {

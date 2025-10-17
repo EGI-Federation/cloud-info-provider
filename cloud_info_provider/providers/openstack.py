@@ -393,8 +393,8 @@ class OpenStackProvider(base.BaseProvider):
             metavar="<name>",
             default=utils.env("OS_AUTH_TYPE", default=default_auth),
             choices=plugins,
-            help="Authentication type to use, available "
-            "types are: %s" % ", ".join(plugins),
+            help="Authentication type to use, available types are: %s"
+            % ", ".join(plugins),
         )
 
         # arguments come from session and plugins
@@ -453,8 +453,7 @@ class OpenStackProvider(base.BaseProvider):
             metavar="PROPERTY_VALUE",
             default="true",
             help=(
-                "When Infiniband is supported, this option specifies the "
-                "value to match."
+                "When Infiniband is supported, this option specifies the value to match."
             ),
         )
 

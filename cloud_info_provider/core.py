@@ -52,8 +52,7 @@ def get_parser(providers, formatters, publishers):
         choices=providers,
         default="openstack",
         help=(
-            "Middleware used. Only the following middlewares are "
-            "supported: {%(choices)s}"
+            "Middleware used. Only the following middlewares are supported: {%(choices)s}"
         ),
     )
 
@@ -70,7 +69,7 @@ def get_parser(providers, formatters, publishers):
         metavar="PUBLISHER",
         choices=publishers,
         default="stdout",
-        help=("Selects where to publish output to. Allowed values: " "%(choices)s}"),
+        help=("Selects where to publish output to. Allowed values: %(choices)s}"),
     )
 
     parser.add_argument(

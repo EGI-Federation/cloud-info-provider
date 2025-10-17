@@ -119,8 +119,7 @@ class BaseProvider:
             "health_state": "ok",
             "health_state_info": "Endpoint funtioning properly",
             "downtime_info": (
-                "https://goc.egi.eu/portal/index.php?"
-                f"Page_Type=Downtimes_Calendar&site={self.site_config['gocdb']}"
+                f"https://goc.egi.eu/portal/index.php?Page_Type=Downtimes_Calendar&site={self.site_config['gocdb']}"
             ),
         }
         ca_info = self._get_ca_info(self.site_config["endpoint"])

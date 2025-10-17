@@ -104,7 +104,7 @@ class GOCDBTest(base.TestCase):
         with mock.patch("requests.get") as m_requests:
             r = mock.MagicMock()
             r.status_code = 200
-            r.text = '<?xml version="1.0" encoding="UTF-8"?>' "<results/>"
+            r.text = '<?xml version="1.0" encoding="UTF-8"?><results/>'
             m_requests.return_value = r
             assert {} == utils.find_in_gocdb("foo", "bar")
 
