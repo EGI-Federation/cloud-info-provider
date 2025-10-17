@@ -42,3 +42,5 @@ jobs:
           VALIDATE_PYTHON_PYLINT: false
           # Focus on black for now
           VALIDATE_PYTHON_PYINK: false
+          # Conflicts with JSON PRETTIER
+          VALIDATE_BIOME_FORMAT: false
