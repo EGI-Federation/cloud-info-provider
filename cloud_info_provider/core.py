@@ -70,7 +70,7 @@ def get_parser(providers, formatters, publishers):
         metavar="PUBLISHER",
         choices=publishers,
         default="stdout",
-        help=("Selects where to publish output to. Allowed values: " "%(choices)s}"),
+        help=("Selects where to publish output to. Allowed values: %(choices)s}"),
     )
 
     parser.add_argument(
