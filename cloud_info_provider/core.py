@@ -8,9 +8,7 @@ from stevedore import driver, extension
 def get_providers():
     def _handle_exception(*args):
         mgr, entry_point, exception = args
-        logging.getLogger("stevedore.extension").error(
-            (("Cannot load '%s': %s") % (entry_point, exception))
-        )
+        logging.getLogger("stevedore.extension").error((("Cannot load '%s': %s") % (entry_point, exception)))
 
     mgr = extension.ExtensionManager(
         namespace="cip.providers",
@@ -42,19 +40,14 @@ def get_parser(providers, formatters, publishers):
         conflict_handler="resolve",
     )
 
-    parser.add_argument(
-        "--version", action="version", version=f"{cloud_info_provider.__version__}"
-    )
+    parser.add_argument("--version", action="version", version=f"{cloud_info_provider.__version__}")
 
     parser.add_argument(
         "--middleware",
         metavar="MIDDLEWARE",
         choices=providers,
         default="openstack",
-        help=(
-            "Middleware used. Only the following middlewares are "
-            "supported: {%(choices)s}"
-        ),
+        help=("Middleware used. Only the following middlewares are supported: {%(choices)s}"),
     )
 
     parser.add_argument(

@@ -102,9 +102,7 @@ class OpenStackProvider(base.BaseProvider):
             return
         self.opts.os_project_id = project_id
         self.auth_plugin = loading.load_auth_from_argparse_arguments(self.opts)
-        self.session = loading.load_session_from_argparse_arguments(
-            self.opts, auth=self.auth_plugin
-        )
+        self.session = loading.load_session_from_argparse_arguments(self.opts, auth=self.auth_plugin)
         self.auth_plugin.invalidate()
         try:
             self.project_id = self.session.get_project_id()
@@ -191,9 +189,7 @@ class OpenStackProvider(base.BaseProvider):
             "vmcatcher_event_dc_description",
             image.get("vmcatcher_event_dc_title", "UNKNOWN"),
         )
-        marketplace_url = image.get(
-            "vmcatcher_event_ad_mpuri", image.get("marketplace")
-        )
+        marketplace_url = image.get("vmcatcher_event_ad_mpuri", image.get("marketplace"))
 
         other_info = {}
         try:
@@ -213,9 +209,7 @@ class OpenStackProvider(base.BaseProvider):
 
         if not marketplace_url:
             if self.all_images:
-                link = urljoin(
-                    self.glance.http_client.get_endpoint(), image.get("file")
-                )
+                link = urljoin(self.glance.http_client.get_endpoint(), image.get("file"))
                 marketplace_url = link
             else:
                 return None
@@ -239,9 +233,7 @@ class OpenStackProvider(base.BaseProvider):
 
     def build_share_images(self, share):
         image_list = []
-        for image in self.glance.images.list(
-            detailed=True, filters={"status": "active"}
-        ):
+        for image in self.glance.images.list(detailed=True, filters={"status": "active"}):
             glue_img = self.build_image(image, share)
             if glue_img:
                 image_list.append(glue_img)
@@ -371,9 +363,7 @@ class OpenStackProvider(base.BaseProvider):
         if self.last_working_auth:
             self.rescope_project(self.last_working_auth)
             self.endpoint.interface_version = self.nova.api_version.get_string()
-            self.endpoint.implementation_version = (
-                self.nova.versions.get_current().version
-            )
+            self.endpoint.implementation_version = self.nova.versions.get_current().version
         else:
             self.endpoint.health_state = "UNKNOWN"
             self.endpoint.health_state_info = "No working authentication configured"
@@ -393,8 +383,7 @@ class OpenStackProvider(base.BaseProvider):
             metavar="<name>",
             default=utils.env("OS_AUTH_TYPE", default=default_auth),
             choices=plugins,
-            help="Authentication type to use, available "
-            "types are: %s" % ", ".join(plugins),
+            help="Authentication type to use, available types are: %s" % ", ".join(plugins),
         )
 
         # arguments come from session and plugins
@@ -433,9 +422,7 @@ class OpenStackProvider(base.BaseProvider):
             "--only-appdb-images",
             action="store_true",
             default=False,
-            help=(
-                "If set, only publish images with AppDB metadata, ignoring the others."
-            ),
+            help=("If set, only publish images with AppDB metadata, ignoring the others."),
         )
 
         # PROPERTIES
@@ -452,10 +439,7 @@ class OpenStackProvider(base.BaseProvider):
             "--property-flavor-infiniband-value",
             metavar="PROPERTY_VALUE",
             default="true",
-            help=(
-                "When Infiniband is supported, this option specifies the "
-                "value to match."
-            ),
+            help=("When Infiniband is supported, this option specifies the value to match."),
         )
 
         parser.add_argument(

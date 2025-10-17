@@ -81,9 +81,7 @@ class OpenStackProviderAuthTest(base.TestCase):
             session.get_project_id.side_effect = http_exc.Unauthorized()
             m_load_session.return_value = session
             auth = {"project_id": "foo", "vo": "bar"}
-            self.assertRaises(
-                OpenStackProviderException, self.provider.rescope_project, auth
-            )
+            self.assertRaises(OpenStackProviderException, self.provider.rescope_project, auth)
 
 
 class OpenStackProviderTest(base.TestCase):
@@ -106,9 +104,7 @@ class OpenStackProviderTest(base.TestCase):
                 self.nova.versions.get_current.return_value = FAKES.version
                 self.nova.api_version.get_string.return_value = "vx.y"
                 self.glance = mock.Mock()
-                self.glance.http_client.get_endpoint.return_value = (
-                    "http://glance.example.org:9292/v2"
-                )
+                self.glance.http_client.get_endpoint.return_value = "http://glance.example.org:9292/v2"
                 self.glance.images.list.return_value = FAKES.images
                 self.session = mock.Mock()
                 self.project_id = None
@@ -349,9 +345,7 @@ class OpenStackProviderTest(base.TestCase):
             {
                 "id": "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo1_bar",
                 "description": (
-                    "Share in service "
-                    "https://foo.example.org:5000/v3_OpenStack_v3_oidc"
-                    " for VO foo1 (Project bar)"
+                    "Share in service https://foo.example.org:5000/v3_OpenStack_v3_oidc for VO foo1 (Project bar)"
                 ),
                 "name": "foo1 - bar share",
                 "other_info": {
@@ -399,9 +393,7 @@ class OpenStackProviderTest(base.TestCase):
                 {
                     "id": "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo2_baz_Policy",
                     "associations": {
-                        "Share": [
-                            "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo2_baz"
-                        ],
+                        "Share": ["https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo2_baz"],
                         "PolicyUserDomain": ["foo2"],
                     },
                     "scheme": "org.glite.standard",
@@ -412,9 +404,7 @@ class OpenStackProviderTest(base.TestCase):
                 {
                     "id": "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo1_bar_Policy",
                     "associations": {
-                        "Share": [
-                            "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo1_bar"
-                        ],
+                        "Share": ["https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo1_bar"],
                         "PolicyUserDomain": ["foo1"],
                     },
                     "scheme": "org.glite.standard",
@@ -443,9 +433,6 @@ class OpenStackProviderTest(base.TestCase):
         self.provider.fetch()
         assert self.provider.service.complexity == "endpointType=1,share=2"
         assert self.provider.endpoint.health_state == "UNKNOWN"
-        assert (
-            self.provider.endpoint.health_state_info
-            == "No working authentication configured"
-        )
+        assert self.provider.endpoint.health_state_info == "No working authentication configured"
         assert self.provider.endpoint.interface_version is None
         assert self.provider.endpoint.implementation_version is None

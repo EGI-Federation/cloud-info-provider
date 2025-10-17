@@ -36,9 +36,7 @@ class BaseProvider:
     def _get_goc_info(self, url):
         if url not in self._goc_info:
             # pylint: disable=no-member
-            self._goc_info[url] = utils.find_in_gocdb(
-                url, self.goc_service_type, self.opts.insecure, self.opts.timeout
-            )
+            self._goc_info[url] = utils.find_in_gocdb(url, self.goc_service_type, self.opts.insecure, self.opts.timeout)
         return self._goc_info[url]
 
     def add_glue(self, o):
@@ -91,9 +89,7 @@ class BaseProvider:
         service_defaults = {
             "id": self.get_service_id(),
             "name": f"Cloud Compute service at {site_name}",
-            "status_info": (
-                f"https://argo.egi.eu/egi/report-status/Critical/SITES/{site_name}"
-            ),
+            "status_info": (f"https://argo.egi.eu/egi/report-status/Critical/SITES/{site_name}"),
             "other_info": self._get_goc_info(self.site_config["endpoint"]),
         }
         service_defaults.update(kwargs)
@@ -119,8 +115,7 @@ class BaseProvider:
             "health_state": "ok",
             "health_state_info": "Endpoint funtioning properly",
             "downtime_info": (
-                "https://goc.egi.eu/portal/index.php?"
-                f"Page_Type=Downtimes_Calendar&site={self.site_config['gocdb']}"
+                f"https://goc.egi.eu/portal/index.php?Page_Type=Downtimes_Calendar&site={self.site_config['gocdb']}"
             ),
         }
         ca_info = self._get_ca_info(self.site_config["endpoint"])
