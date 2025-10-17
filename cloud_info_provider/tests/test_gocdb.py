@@ -123,7 +123,9 @@ class GOCDBTest(base.TestCase):
             r.text = sample_goc_response
             m_requests.return_value = r
             expected = {"gocdb_id": "1234G0", "site_name": "FOO-BAR-SITE"}
-            assert expected == utils.find_in_gocdb("https://keystone.example.com:5000/v2.0/", "bar")
+            assert expected == utils.find_in_gocdb(
+                "https://keystone.example.com:5000/v2.0/", "bar"
+            )
 
     def test_goc_found_similar_path(self):
         with mock.patch("requests.get") as m_requests:
@@ -132,7 +134,9 @@ class GOCDBTest(base.TestCase):
             r.text = sample_goc_response
             m_requests.return_value = r
             expected = {"gocdb_id": "1234G0", "site_name": "FOO-BAR-SITE"}
-            assert expected == utils.find_in_gocdb("https://keystone.example.com:5000/v2.0", "bar")
+            assert expected == utils.find_in_gocdb(
+                "https://keystone.example.com:5000/v2.0", "bar"
+            )
 
     def test_goc_multiple_endpoints(self):
         with mock.patch("requests.get") as m_requests:
@@ -141,4 +145,6 @@ class GOCDBTest(base.TestCase):
             r.text = sample_goc_ep_response
             m_requests.return_value = r
             expected = {"gocdb_id": "00000G0", "site_name": "BAR-FOO-SITE"}
-            assert expected == utils.find_in_gocdb("https://horizon.baz.example.com:5000/v3", "bar")
+            assert expected == utils.find_in_gocdb(
+                "https://horizon.baz.example.com:5000/v3", "bar"
+            )

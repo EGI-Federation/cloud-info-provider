@@ -23,7 +23,9 @@ class BaseProviderTest(base.TestCase):
         self.provider = FakeBaseProvider(Opts())
 
     def test_provider_build_service(self):
-        with mock.patch("cloud_info_provider.providers.utils.find_in_gocdb") as m_goc_find:
+        with mock.patch(
+            "cloud_info_provider.providers.utils.find_in_gocdb"
+        ) as m_goc_find:
             m_goc_find.return_value = {"foo": "bar"}
             service = {
                 "site_name": DATA.site_name,
@@ -48,9 +50,13 @@ class BaseProviderTest(base.TestCase):
         assert utils.compare_glue(manager, self.provider.build_manager())
 
     def test_provider_build_endpoint(self):
-        with mock.patch("cloud_info_provider.providers.utils.get_endpoint_ca_information") as m_ca_get:
+        with mock.patch(
+            "cloud_info_provider.providers.utils.get_endpoint_ca_information"
+        ) as m_ca_get:
             m_ca_get.return_value = {"issuer": "foo_ca", "trusted_cas": ["ca1", "ca2"]}
-            self.provider.add_glue(glue.CloudComputingService(id="foo", status_info="bar"))
+            self.provider.add_glue(
+                glue.CloudComputingService(id="foo", status_info="bar")
+            )
             endpoint = {
                 "id": "endpoint",
                 "name": "Cloud computing endpoint for endpoint",
@@ -78,7 +84,9 @@ class BaseProviderTest(base.TestCase):
 
     def test_get_goc_info(self):
         self.provider.goc_service_type = "svc"
-        with mock.patch("cloud_info_provider.providers.utils.find_in_gocdb") as m_goc_find:
+        with mock.patch(
+            "cloud_info_provider.providers.utils.find_in_gocdb"
+        ) as m_goc_find:
             m_goc_find.return_value = {"foo": "bar"}
             info = self.provider._get_goc_info("baz")
             assert self.provider._goc_info == {"baz": {"foo": "bar"}}
@@ -87,7 +95,9 @@ class BaseProviderTest(base.TestCase):
     def test_fetch(self):
         with utils.nested(
             mock.patch("cloud_info_provider.providers.utils.find_in_gocdb"),
-            mock.patch("cloud_info_provider.providers.utils.get_endpoint_ca_information"),
+            mock.patch(
+                "cloud_info_provider.providers.utils.get_endpoint_ca_information"
+            ),
         ) as (m_goc_find, m_ca_get):
             m_goc_find.return_value = {"foo": "bar"}
             m_ca_get.return_value = {"issuer": "foo_ca", "trusted_cas": ["ca1", "ca2"]}
