@@ -44,3 +44,5 @@ jobs:
           VALIDATE_PYTHON_PYINK: false
           # Conflicts with JSON PRETTIER
           VALIDATE_BIOME_FORMAT: false
+          # Conflicts with black
+          VALIDATE_PYTHON_RUFF_FORMAT: false
