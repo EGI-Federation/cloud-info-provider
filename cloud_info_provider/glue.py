@@ -10,7 +10,7 @@ from pydantic import BaseModel
 
 
 class BoolEnum(Enum):
-    """A class to deal with true/false or not knwon"""
+    """A class to deal with true/false or not known"""
 
     TRUE = True
     FALSE = False

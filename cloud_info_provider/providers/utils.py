@@ -30,7 +30,7 @@ def _find_url_in_result(svc_url, result):
     """Finds service matching URL in GOCDB
 
     Parses XML gotten from GOC and tries to find the service which
-    mathces the URL of the service. It returns a dictionary with keys
+    matches the URL of the service. It returns a dictionary with keys
     `gocdb_id` which has the ID in GOCDB of the service and `site_name`
     with the name of the site. If no match is found, an empty dictionary
     is returned.

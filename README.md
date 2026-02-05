@@ -155,5 +155,5 @@ cat /etc/grid-security/certificates/*.pem >> $(python -m requests.certs)
 
 ## Acknowledgement
 
-This work recieved funding from the [EOSC-hub project](http://eosc-hub.eu/)
+This work received funding from the [EOSC-hub project](http://eosc-hub.eu/)
 (Horizon 2020) under Grant number 777536.

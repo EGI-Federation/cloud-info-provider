@@ -66,7 +66,7 @@ and this project adheres to
 
 ## [0.12.2] - 2021-05-17
 
-- Support crendential refresh without client secret (#222) (Enol Fernández)
+- Support credential refresh without client secret (#222) (Enol Fernández)
 - Add --ignore-share-errors to continue publishing data even if there are issues
   in a given share (#217, #218, 221) (Enol Fernández)
 - Add timeout option to core (#219) (Enol Fernández)
