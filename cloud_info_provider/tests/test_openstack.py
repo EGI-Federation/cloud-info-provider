@@ -176,7 +176,7 @@ class OpenStackProviderTest(base.TestCase):
             "implementation_name": "OpenStack Nova",
             "semantics": "https://developer.openstack.org/api-ref/compute",
             "health_state": "ok",
-            "health_state_info": "Endpoint funtioning properly",
+            "health_state_info": "Endpoint functioning properly",
             "technology": "webservice",
             "authentication": "oidc",
             "downtime_info": "https://goc.egi.eu/portal/index.php?Page_Type=Downtimes_Calendar&site=SITE_NAME",

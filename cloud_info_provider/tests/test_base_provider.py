@@ -67,7 +67,7 @@ class BaseProviderTest(base.TestCase):
                 "serving_state": "production",
                 "interface_name": "",
                 "health_state": "ok",
-                "health_state_info": "Endpoint funtioning properly",
+                "health_state_info": "Endpoint functioning properly",
                 "technology": "webservice",
                 "downtime_info": "https://goc.egi.eu/portal/index.php?Page_Type=Downtimes_Calendar&site=SITE_NAME",
                 "issuer_ca": "foo_ca",

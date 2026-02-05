@@ -117,7 +117,7 @@ class BaseProvider:
             "interface_name": self.interface_name,
             "url": self.site_config["endpoint"],
             "health_state": "ok",
-            "health_state_info": "Endpoint funtioning properly",
+            "health_state_info": "Endpoint functioning properly",
             "downtime_info": (
                 f"https://goc.egi.eu/portal/index.php?Page_Type=Downtimes_Calendar&site={self.site_config['gocdb']}"
             ),
