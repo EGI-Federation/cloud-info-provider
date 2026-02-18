@@ -4,7 +4,7 @@ GlueSchema 2.1 Objects
 
 import datetime
 from enum import Enum
-from typing import Optional
+from typing import Literal, Optional
 
 from pydantic import BaseModel
 
@@ -38,7 +38,9 @@ class GlueBase(BaseModel):
 
 class CloudComputingService(GlueBase):
     type: str = "org.cloud.iaas"
-    quality_level: str = "production"
+    quality_level: Literal["development", "pre-production", "production", "testing"] = (
+        "production"
+    )
     status_info: str
     service_aup: str = "http://go.egi.eu/aup"
     complexity: Optional[str] = None
@@ -74,12 +76,18 @@ class CloudComputingManager(GlueBase):
 class CloudComputingEndpoint(GlueBase):
     url: str
     capability: list[str] = []
-    quality_level: str = "production"
-    serving_state: str = "production"
+    quality_level: Literal["development", "pre-production", "production", "testing"] = (
+        "production"
+    )
+    serving_state: Literal["closed", "draining", "production", "queueing"] = (
+        "production"
+    )
     interface_name: str
     interface_version: Optional[str] = None
     # FIXME: This should be actually computed
-    health_state: str = "ok"
+    health_state: Literal[
+        "critical", "ok", "other", "unknown", "warning", "downtime"
+    ] = "ok"
     health_state_info: Optional[str] = None
     technology: str = "webservice"
     implementor: Optional[str] = None
@@ -98,7 +106,7 @@ class CloudComputingImage(GlueBase):
     osName: str = ""
     osVersion: Optional[str] = None
     description: Optional[str] = None
-    access_info: str = "none"
+    access_info: Literal["none", "passwd", "rsa"] = "none"
 
 
 class CloudComputingInstanceType(GlueBase):
