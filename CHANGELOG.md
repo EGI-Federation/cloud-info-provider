@@ -8,6 +8,9 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Chore
+- Update dependencies ()
+
 ## [1.0.2] - 2025-10-10
 
 ### Fixed
