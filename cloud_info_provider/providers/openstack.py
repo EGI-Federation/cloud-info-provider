@@ -74,7 +74,7 @@ class OpenStackProvider(base.BaseProvider):
         self.exit_on_share_errors = self.opts.exit_on_share_errors
 
     def get_endpoint_id(self):
-        return f"{self.site_config['endpoint']}_OpenStack_v3_oidc"
+        return f"{self.site_config['endpoint']}_OpenStack_v3"
 
     def get_service_id(self):
         return f"{self.site_config['endpoint']}_cloud.compute"
@@ -88,7 +88,7 @@ class OpenStackProvider(base.BaseProvider):
             implementation_name="OpenStack Nova",
             semantics="https://developer.openstack.org/api-ref/compute",
             # assuming this is correct,
-            authentication="oidc",
+            authentication=self.opts.os_auth_type,
         )
 
     def rescope_project(self, auth):
