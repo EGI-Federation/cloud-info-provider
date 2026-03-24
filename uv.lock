@@ -1054,7 +1054,7 @@ wheels = [
 
 [[package]]
 name = "python-glanceclient"
-version = "4.10.0"
+version = "4.11.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "keystoneauth1" },
@@ -1067,14 +1067,14 @@ dependencies = [
     { name = "warlock" },
     { name = "wrapt" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/fc/96/e0e2ea7258cb3825be4aa0c19372a182b5c17788660d9985090fe81f6ae5/python_glanceclient-4.10.0.tar.gz", hash = "sha256:ff6c2d42a1767c5cfa3cd1d22a3732d38ab113d471ad22c4ee64a1bd3941b103", size = 210540, upload-time = "2025-08-28T09:55:37.701Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ac/5d/71731cf4f9225594442bc08ee438e7534d2e50344ecca4972385a9ea9e39/python_glanceclient-4.11.0.tar.gz", hash = "sha256:5ce2118bfe7462934805916617e537bc5b00fd4cab3fb7bb88a4f9253970562d", size = 210930, upload-time = "2026-02-27T15:45:06.891Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0e/44/0d1b00f298ddd04d3467a1d84deb4890ff41a0c9038537de7930e8ceab9b/python_glanceclient-4.10.0-py3-none-any.whl", hash = "sha256:286f2fac1dcbdfcde8781b3fb41ec61608a15b7b6c154d049e75ab84395f796a", size = 208707, upload-time = "2025-08-28T09:55:36.568Z" },
+    { url = "https://files.pythonhosted.org/packages/37/a3/683cb59ed2ec1bd35255fd76dffc12be0529b24e6f3723ff017dafefe3ad/python_glanceclient-4.11.0-py3-none-any.whl", hash = "sha256:43b49eb6f501fe1e91afeba6fad908444712a5e8ccf6bce333b754a0d7950e31", size = 208816, upload-time = "2026-02-27T15:45:05.769Z" },
 ]
 
 [[package]]
 name = "python-keystoneclient"
-version = "5.7.0"
+version = "5.8.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "debtcollector" },
@@ -1088,14 +1088,14 @@ dependencies = [
     { name = "requests" },
     { name = "stevedore" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/94/29/3775d7a722924a72208753a8aa5ddb0a58de24f5a5dd287cc9a0f66038e4/python_keystoneclient-5.7.0.tar.gz", hash = "sha256:8ce7bf1c8cddca6d7140fc76918b44eddf1d64040a60cb8ff7059136104d4ceb", size = 322387, upload-time = "2025-08-28T09:50:01.249Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/97/ef/c8c68219a2bf9f296ad18cb0b9804c45adfdceee72d51684225488746262/python_keystoneclient-5.8.0.tar.gz", hash = "sha256:3ca87c67c404298ce862310b569f545a58acf75cd5685094c82f35320b3a355d", size = 322844, upload-time = "2026-02-27T15:36:24.33Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/90/d1/eb39a6e544f5f789fd44c09274a8b1b08a86e3e7ac0e016d07ceb94c0b42/python_keystoneclient-5.7.0-py3-none-any.whl", hash = "sha256:2ec19994ba8b8b16fe6cf4ac45c3f2180a22e203d1b3aa977a34a0160caae0b6", size = 397216, upload-time = "2025-08-28T09:49:59.798Z" },
+    { url = "https://files.pythonhosted.org/packages/be/35/483db648710bd0aeefd505db288490c229fef0e1fb7b78d8f277e2dc375b/python_keystoneclient-5.8.0-py3-none-any.whl", hash = "sha256:0cc96cc719bbd8b1ca8fda71e38017dba3e87ebe3b479fcc9261a67e30b21b85", size = 397325, upload-time = "2026-02-27T15:36:23.21Z" },
 ]
 
 [[package]]
 name = "python-novaclient"
-version = "18.11.0"
+version = "18.12.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "iso8601" },
@@ -1107,9 +1107,9 @@ dependencies = [
     { name = "prettytable" },
     { name = "stevedore" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/5c/8a/ac14136fe0a549416b69e6111d6e45c7d821508037922baefa2d54b661f0/python_novaclient-18.11.0.tar.gz", hash = "sha256:0a31ae20779d4cd171bb29c1fe4e6b22b9c7d97c79670db5149bbdfac03f57dc", size = 340209, upload-time = "2025-09-01T13:31:59.62Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/bb/e0/69ae17e322d3f03ae05633e7155388286ddfde528b6bf6d73df18162256a/python_novaclient-18.12.0.tar.gz", hash = "sha256:ead3db2a3dd43a89bb5a56f62f87362a76e7ef9c01938699ff6c1a060f0e9eab", size = 340638, upload-time = "2026-02-24T14:35:33.499Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/3e/1f/f944e5f61083af25176b46296522085b0faa17381d0251fd9c0f9f6288d0/python_novaclient-18.11.0-py3-none-any.whl", hash = "sha256:fc4ce032a6ce0fb911f4c640d260318d770ee171eedce7c12f887307fc24dc0c", size = 335871, upload-time = "2025-09-01T13:31:57.87Z" },
+    { url = "https://files.pythonhosted.org/packages/d6/ca/01037283efdf27d521b39cab1debb4857bf0a78e80f3ff40f9c91985d8e2/python_novaclient-18.12.0-py3-none-any.whl", hash = "sha256:ca70deb5f6b89c36a44df5abf62c67f41b2d35a1f906d3feba1716c1f056d26f", size = 336041, upload-time = "2026-02-24T14:35:31.976Z" },
 ]
 
 [[package]]
@@ -1369,20 +1369,20 @@ wheels = [
 
 [[package]]
 name = "stevedore"
-version = "5.6.0"
+version = "5.7.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/96/5b/496f8abebd10c3301129abba7ddafd46c71d799a70c44ab080323987c4c9/stevedore-5.6.0.tar.gz", hash = "sha256:f22d15c6ead40c5bbfa9ca54aa7e7b4a07d59b36ae03ed12ced1a54cf0b51945", size = 516074, upload-time = "2025-11-20T10:06:07.264Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a2/6d/90764092216fa560f6587f83bb70113a8ba510ba436c6476a2b47359057c/stevedore-5.7.0.tar.gz", hash = "sha256:31dd6fe6b3cbe921e21dcefabc9a5f1cf848cf538a1f27543721b8ca09948aa3", size = 516200, upload-time = "2026-02-20T13:27:06.765Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f4/40/8561ce06dc46fd17242c7724ab25b257a2ac1b35f4ebf551b40ce6105cfa/stevedore-5.6.0-py3-none-any.whl", hash = "sha256:4a36dccefd7aeea0c70135526cecb7766c4c84c473b1af68db23d541b6dc1820", size = 54428, upload-time = "2025-11-20T10:06:05.946Z" },
+    { url = "https://files.pythonhosted.org/packages/69/06/36d260a695f383345ab5bbc3fd447249594ae2fa8dfd19c533d5ae23f46b/stevedore-5.7.0-py3-none-any.whl", hash = "sha256:fd25efbb32f1abb4c9e502f385f0018632baac11f9ee5d1b70f88cc5e22ad4ed", size = 54483, upload-time = "2026-02-20T13:27:05.561Z" },
 ]
 
 [[package]]
 name = "testtools"
-version = "2.8.5"
+version = "2.8.7"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/97/d0/e7a37e196235f2d438114359c041a614d6c8ea59dc839375faf518564c66/testtools-2.8.5.tar.gz", hash = "sha256:f6026ad7b97c66bca87c29058ec10237bd24709643cbfe59c27eff973d33ac0c", size = 219116, upload-time = "2026-02-28T11:36:11.934Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/df/55/f45c9107eaafeffc99ddb330601994bb6fc93b30e941118faa6952bf89ec/testtools-2.8.7.tar.gz", hash = "sha256:1aa19aaabf9736385fc111a95f94f6b0661c0b41e65ca5129223eb518c63e8b9", size = 219464, upload-time = "2026-03-14T10:48:17.941Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/33/5b/d1f8ec4c9f8353dd00bcb0d73917f017bb3818c98a818a1e837c4a69b858/testtools-2.8.5-py3-none-any.whl", hash = "sha256:786603cdc4967304622e10a0d5a75ef077356de8efca5bf0e7116222afecfffc", size = 109826, upload-time = "2026-02-28T11:36:08.988Z" },
+    { url = "https://files.pythonhosted.org/packages/26/d6/e632c4e99dcb522e0fd0e62da07413ee4e545e2a26860cd09aaf2bbafba2/testtools-2.8.7-py3-none-any.whl", hash = "sha256:c94fb07f7999a237161d12d6065df107f6d1958506dc1c4af80e9464f561ed03", size = 109959, upload-time = "2026-03-14T10:48:16.196Z" },
 ]
 
 [[package]]
