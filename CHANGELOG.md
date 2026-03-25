@@ -13,6 +13,7 @@ and this project adheres to
 - Allow different authentication methods
 
 ### Chore
+
 - Update dependencies
 
 ## [1.0.2] - 2025-10-10
