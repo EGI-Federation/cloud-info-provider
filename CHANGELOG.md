@@ -8,8 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Allow different authentication methods
+
 ### Chore
-- Update dependencies ()
+- Update dependencies
 
 ## [1.0.2] - 2025-10-10
 
