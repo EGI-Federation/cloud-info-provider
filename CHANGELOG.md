@@ -19,7 +19,6 @@ and this project adheres to
 
 - Several dependencies updates
 
-
 ## [1.0.2] - 2025-10-10
 
 ### Fixed
