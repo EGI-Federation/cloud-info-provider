@@ -141,6 +141,8 @@ class OpenStackProviderTest(base.TestCase):
                 self._goc_info = {data.DATA.endpoint_url: {"foo": "bar"}}
                 self._ca_info = {data.DATA.endpoint_url: {"foo": "bar"}}
                 self.last_working_auth = {"project_id": "foo"}
+                self.opts = mock.Mock()
+                self.opts.os_auth_type = "oidc"
 
         self.provider = FakeProvider(None)
 
