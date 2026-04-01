@@ -141,6 +141,8 @@ class OpenStackProviderTest(base.TestCase):
                 self._goc_info = {data.DATA.endpoint_url: {"foo": "bar"}}
                 self._ca_info = {data.DATA.endpoint_url: {"foo": "bar"}}
                 self.last_working_auth = {"project_id": "foo"}
+                self.opts = mock.Mock()
+                self.opts.os_auth_type = "oidc"
 
         self.provider = FakeProvider(None)
 
@@ -164,9 +166,9 @@ class OpenStackProviderTest(base.TestCase):
 
     def test_provider_build_endpoint(self):
         endpoint = {
-            "id": "https://foo.example.org:5000/v3_OpenStack_v3_oidc",
+            "id": "https://foo.example.org:5000/v3_OpenStack_v3",
             "url": "https://foo.example.org:5000/v3",
-            "name": "Cloud computing endpoint for https://foo.example.org:5000/v3_OpenStack_v3_oidc",
+            "name": "Cloud computing endpoint for https://foo.example.org:5000/v3_OpenStack_v3",
             "associations": {"CloudComputingService": ["foo"]},
             "capability": [],
             "quality_level": "production",
@@ -335,8 +337,8 @@ class OpenStackProviderTest(base.TestCase):
         # 1 image, 1 mapping policy, 3 flavors, 1 virtual accelerator
         shares = self.provider.get_objs("Share")
         assert {
-            "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo1_bar",
-            "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo2_baz",
+            "https://foo.example.org:5000/v3_OpenStack_v3_share_foo1_bar",
+            "https://foo.example.org:5000/v3_OpenStack_v3_share_foo2_baz",
         } == {s.id for s in shares}
         assert len(self.provider.get_objs("CloudComputingInstanceType")) == 6
         assert len(self.provider.get_objs("CloudComputingVirtualAccelerator")) == 2
@@ -347,9 +349,9 @@ class OpenStackProviderTest(base.TestCase):
         bar_shares = [s for s in shares if s.project_id == "bar"][0]
         assert utils.compare_glue(
             {
-                "id": "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo1_bar",
+                "id": "https://foo.example.org:5000/v3_OpenStack_v3_share_foo1_bar",
                 "description": (
-                    "Share in service https://foo.example.org:5000/v3_OpenStack_v3_oidc for VO foo1 (Project bar)"
+                    "Share in service https://foo.example.org:5000/v3_OpenStack_v3 for VO foo1 (Project bar)"
                 ),
                 "name": "foo1 - bar share",
                 "other_info": {
@@ -395,10 +397,10 @@ class OpenStackProviderTest(base.TestCase):
             # either foo1 or foo2
             assert utils.compare_glue(
                 {
-                    "id": "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo2_baz_Policy",
+                    "id": "https://foo.example.org:5000/v3_OpenStack_v3_share_foo2_baz_Policy",
                     "associations": {
                         "Share": [
-                            "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo2_baz"
+                            "https://foo.example.org:5000/v3_OpenStack_v3_share_foo2_baz"
                         ],
                         "PolicyUserDomain": ["foo2"],
                     },
@@ -408,10 +410,10 @@ class OpenStackProviderTest(base.TestCase):
                 o,
             ) or utils.compare_glue(
                 {
-                    "id": "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo1_bar_Policy",
+                    "id": "https://foo.example.org:5000/v3_OpenStack_v3_share_foo1_bar_Policy",
                     "associations": {
                         "Share": [
-                            "https://foo.example.org:5000/v3_OpenStack_v3_oidc_share_foo1_bar"
+                            "https://foo.example.org:5000/v3_OpenStack_v3_share_foo1_bar"
                         ],
                         "PolicyUserDomain": ["foo1"],
                     },

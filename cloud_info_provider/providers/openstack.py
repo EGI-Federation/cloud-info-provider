@@ -74,7 +74,7 @@ class OpenStackProvider(base.BaseProvider):
         self.exit_on_share_errors = self.opts.exit_on_share_errors
 
     def get_endpoint_id(self):
-        return f"{self.site_config['endpoint']}_OpenStack_v3_oidc"
+        return f"{self.site_config['endpoint']}_OpenStack_v3"
 
     def get_service_id(self):
         return f"{self.site_config['endpoint']}_cloud.compute"
@@ -88,7 +88,7 @@ class OpenStackProvider(base.BaseProvider):
             implementation_name="OpenStack Nova",
             semantics="https://developer.openstack.org/api-ref/compute",
             # assuming this is correct,
-            authentication="oidc",
+            authentication=self.opts.os_auth_type,
         )
 
     def rescope_project(self, auth):
@@ -96,11 +96,10 @@ class OpenStackProvider(base.BaseProvider):
 
         It updates every OpenStack client used in case of new project.
         """
-        project_id = auth["project_id"]
         region_name = auth.get("region_name", None)
-        if self.project_id == project_id:
-            return
-        self.opts.os_project_id = project_id
+        for k, v in auth.items():
+            setattr(self.opts, k, v)
+            setattr(self.opts, f"os_{k}", v)
         self.auth_plugin = loading.load_auth_from_argparse_arguments(self.opts)
         self.session = loading.load_session_from_argparse_arguments(
             self.opts, auth=self.auth_plugin
@@ -108,13 +107,11 @@ class OpenStackProvider(base.BaseProvider):
         self.auth_plugin.invalidate()
         try:
             self.project_id = self.session.get_project_id()
-        except http_exc.Unauthorized:
+        except http_exc.Unauthorized as e:
             # FIXME - this should be just reported in the glue and not break anything
-            msg = "Could not authorize user in project '%s'" % project_id
-            raise exceptions.OpenStackProviderException(msg)
+            raise exceptions.OpenStackProviderException(e.details)
 
         self.last_working_auth = auth
-
         # make sure the clients know about the change
         self.nova = novaclient.client.Client(
             2,
