@@ -8,6 +8,17 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-04-01
+
+### Added
+
+- Flexible support for authentication mechanisms (#340)
+- Stricter definition of closed enumeration types (#329)
+
+### Chore
+
+- Several dependencies updates
+
 ## [1.0.2] - 2025-10-10
 
 ### Fixed
