@@ -489,11 +489,11 @@ wheels = [
 
 [[package]]
 name = "fixtures"
-version = "4.3.1"
+version = "4.3.2"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/ab/f5/4dbf6053895931a5110a38d7ebacecce41683cb9f01377ba8cc0254d1bc8/fixtures-4.3.1.tar.gz", hash = "sha256:88cdf089784b84f931a1e32ad3492c4ae707f862459be22020e9ffe4aa1e5823", size = 46858, upload-time = "2026-02-23T12:47:57.105Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/79/fc/da17efe78bb35b945441170363328ad11d953d69e6273bceb668b1d68c34/fixtures-4.3.2.tar.gz", hash = "sha256:b7db64014732513f23d12b0c49ae527ba0c0c1f2667ec97d9136d67157ebce5d", size = 47173, upload-time = "2026-03-25T17:25:40.51Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c4/0e/ce58447f5b1e929d52f8c9326430622e8b9e7220d59e6178614f75211493/fixtures-4.3.1-py3-none-any.whl", hash = "sha256:bf381ea4d20e795598a281c5c344b446382ced4b61859cdece66c102f0140c06", size = 40695, upload-time = "2026-02-23T12:47:55.865Z" },
+    { url = "https://files.pythonhosted.org/packages/de/58/b7efb4b7c01cefd47efb53e50c7f1eb2cdc4aff3d98268bdc46c7f628f2c/fixtures-4.3.2-py3-none-any.whl", hash = "sha256:c71ad55a9139bd20b3265c1d44c1a67fefb9efdddd79614096f538de63fbf4d8", size = 41625, upload-time = "2026-03-25T17:25:38.898Z" },
 ]
 
 [[package]]
@@ -1192,7 +1192,7 @@ wheels = [
 
 [[package]]
 name = "requests"
-version = "2.33.0"
+version = "2.33.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "certifi" },
@@ -1200,9 +1200,9 @@ dependencies = [
     { name = "idna" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/34/64/8860370b167a9721e8956ae116825caff829224fbca0ca6e7bf8ddef8430/requests-2.33.0.tar.gz", hash = "sha256:c7ebc5e8b0f21837386ad0e1c8fe8b829fa5f544d8df3b2253bff14ef29d7652", size = 134232, upload-time = "2026-03-25T15:10:41.586Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/5f/a4/98b9c7c6428a668bf7e42ebb7c79d576a1c3c1e3ae2d47e674b468388871/requests-2.33.1.tar.gz", hash = "sha256:18817f8c57c6263968bc123d237e3b8b08ac046f5456bd1e307ee8f4250d3517", size = 134120, upload-time = "2026-03-30T16:09:15.531Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/56/5d/c814546c2333ceea4ba42262d8c4d55763003e767fa169adc693bd524478/requests-2.33.0-py3-none-any.whl", hash = "sha256:3324635456fa185245e24865e810cecec7b4caf933d7eb133dcde67d48cee69b", size = 65017, upload-time = "2026-03-25T15:10:40.382Z" },
+    { url = "https://files.pythonhosted.org/packages/d7/8e/7540e8a2036f79a125c1d2ebadf69ed7901608859186c856fa0388ef4197/requests-2.33.1-py3-none-any.whl", hash = "sha256:4e6d1ef462f3626a1f0a0a9c42dd93c63bad33f9f1c1937509b8c5c8718ab56a", size = 64947, upload-time = "2026-03-30T16:09:13.83Z" },
 ]
 
 [[package]]
