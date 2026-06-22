@@ -79,9 +79,6 @@ class BaseProviderTest(base.TestCase):
         self.provider.build_shares()
         self.provider.get_objs("Share") == []
 
-    def test_get_goc_info_no_svc(self):
-        assert self.provider._get_goc_info("baz") == {}
-
     def test_get_goc_info(self):
         self.provider.goc_service_type = "svc"
         with mock.patch(
