@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-06-01
+
+### Chore
+
+- Dependencies updates
+
 ## [1.1.0] - 2026-04-01
 
 ### Added
