@@ -8,7 +8,7 @@ and this project adheres to
 
 ## [Unreleased]
 
-## [1.1.1] - 2026-06-01
+## [1.1.1] - 2026-06-23
 
 ### Chore
 
