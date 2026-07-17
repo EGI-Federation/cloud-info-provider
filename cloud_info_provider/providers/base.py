@@ -34,6 +34,7 @@ class BaseProvider:
         return self._ca_info[url]
 
     def _get_goc_info(self, url):
+        print(utils.find_in_gocdb)
         if url not in self._goc_info:
             # pylint: disable=no-member
             self._goc_info[url] = utils.find_in_gocdb(

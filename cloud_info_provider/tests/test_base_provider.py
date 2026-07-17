@@ -84,8 +84,11 @@ class BaseProviderTest(base.TestCase):
         with mock.patch(
             "cloud_info_provider.providers.utils.find_in_gocdb"
         ) as m_goc_find:
+            print(m_goc_find)
             m_goc_find.return_value = {"foo": "bar"}
             info = self.provider._get_goc_info("baz")
+            print(info)
+            assert True == False
             assert self.provider._goc_info == {"baz": {"foo": "bar"}}
             assert info == {"foo": "bar"}
 
