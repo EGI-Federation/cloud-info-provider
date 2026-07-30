@@ -13,8 +13,8 @@ from keystoneauth1.exceptions import http as http_exc
 from keystoneauth1.exceptions.base import ClientException as client_exc
 from novaclient.exceptions import Forbidden
 
-from cloud_info_provider import exceptions, glue
-from cloud_info_provider.providers import base
+from .. import exceptions, glue
+from . import base
 
 
 class OpenStackProvider(base.BaseProvider):
