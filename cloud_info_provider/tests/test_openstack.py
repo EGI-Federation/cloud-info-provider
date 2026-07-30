@@ -7,6 +7,7 @@ from cloud_info_provider.providers import openstack as os_provider
 from cloud_info_provider.tests import base, data
 from cloud_info_provider.tests import utils as utils
 from keystoneauth1.exceptions import http as http_exc
+import keystoneauth1.loading.session
 
 FAKES = data.OS_FAKES
 
@@ -29,8 +30,6 @@ class OpenStackProviderOptionsTest(base.TestCase):
                 "--only-appdb-images",
                 "--select-flavors",
                 "public",
-                "--os-region",
-                "North pole",
                 "site_config",
             ]
         )
@@ -38,7 +37,6 @@ class OpenStackProviderOptionsTest(base.TestCase):
         assert opts.os_username == "foo"
         assert opts.os_password == "bar"
         assert opts.os_auth_url == "http://example.org:5000"
-        assert opts.os_region == "North pole"
         assert opts.insecure
         assert opts.only_appdb_images
         assert opts.select_flavors == "public"
@@ -60,26 +58,32 @@ class OpenStackProviderAuthTest(base.TestCase):
         self.provider = FakeProvider(None)
 
     def test_rescope_simple(self):
+        session = mock.Mock()
+        session.get_project_id.return_value = "foo"
         with utils.nested(
-            mock.patch("keystoneauth1.loading.load_auth_from_argparse_arguments"),
-            mock.patch("keystoneauth1.loading.load_session_from_argparse_arguments"),
-        ) as (_, m_load_session):
-            session = mock.Mock()
-            session.get_project_id.return_value = "foo"
-            m_load_session.return_value = session
+            mock.patch("keystoneauth1.loading.get_plugin_loader"),
+            mock.patch.object(
+                keystoneauth1.loading.session.Session,
+                "load_from_options",
+                return_value=session,
+            ),
+        ):
             auth = {"project_id": "foo", "vo": "bar"}
             self.provider.rescope_project(auth)
             assert "foo" == self.provider.project_id
             assert auth == self.provider.last_working_auth
 
     def test_rescope_fails(self):
+        session = mock.Mock()
+        session.get_project_id.side_effect = http_exc.Unauthorized()
         with utils.nested(
-            mock.patch("keystoneauth1.loading.load_auth_from_argparse_arguments"),
-            mock.patch("keystoneauth1.loading.load_session_from_argparse_arguments"),
-        ) as (_, m_load_session):
-            session = mock.Mock()
-            session.get_project_id.side_effect = http_exc.Unauthorized()
-            m_load_session.return_value = session
+            mock.patch("keystoneauth1.loading.get_plugin_loader"),
+            mock.patch.object(
+                keystoneauth1.loading.session.Session,
+                "load_from_options",
+                return_value=session,
+            ),
+        ):
             auth = {"project_id": "foo", "vo": "bar"}
             self.assertRaises(
                 OpenStackProviderException, self.provider.rescope_project, auth
@@ -94,8 +98,11 @@ class OpenStackProviderTest(base.TestCase):
         super().setUp()
 
         class FakeProvider(os_provider.OpenStackProvider):
-            def rescope_project(self, auth):
-                self.project_id = auth["project_id"]
+            def rescope_project(self, auth=None, os_cloud=None):
+                if auth:
+                    self.project_id = auth["project_id"]
+                else:
+                    self.project_id = "noproject"
 
             def __init__(self, opts):
                 self.objs = {}
@@ -143,6 +150,7 @@ class OpenStackProviderTest(base.TestCase):
                 self.last_working_auth = {"project_id": "foo"}
                 self.opts = mock.Mock()
                 self.opts.os_auth_type = "oidc"
+                self.opts.auditor_role_cloud = None
 
         self.provider = FakeProvider(None)
 
@@ -442,7 +450,7 @@ class OpenStackProviderTest(base.TestCase):
         self.provider.last_working_auth = None
         self.provider.fetch()
         assert self.provider.service.complexity == "endpointType=1,share=2"
-        assert self.provider.endpoint.health_state == "UNKNOWN"
+        assert self.provider.endpoint.health_state == "unknown"
         assert (
             self.provider.endpoint.health_state_info
             == "No working authentication configured"
