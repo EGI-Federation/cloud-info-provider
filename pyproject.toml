@@ -20,6 +20,7 @@ requires-python = ">=3.10"
 dependencies = [
     "defusedxml>=0.7.1",
     "keystoneauth1>=5.9.1",
+    "os-client-config>=2.3.0",
     "pydantic>=2.11.3",
     "pyopenssl>=25.1.0",
     "python-dateutil>=2.9.0.post0",
