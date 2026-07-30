@@ -113,6 +113,16 @@ the metadata. Only if they match, InfiniBand is considered as supported.
 Use the `--help` option for the whole list of available GPU and InfiniBand
 properties.
 
+##### Checking the auditor role
+
+The `openstack` provider can check whether a given user has `"identity:list_users"`
+capability (see [VO auditing](https://docs.egi.eu/providers/cloud-compute/openstack/aai/#vo-auditing)).
+For enabling the check, set the `--auditor-role-cloud` parameter with the name
+of a valid configuration on a `clouds.yaml` file as expected by OpenStack.
+
+The result of the check will be added to the `OtherInfo` of the `CloudComputingEndpoint`
+with a boolean field named `auditor_role`.
+
 #### CAs
 
 The provider will use your python default CAs for checking and connecting to
@@ -143,6 +153,9 @@ Otherwise, you need to add the IGTF CAs to the internal requests bundle:
 ```sh
 cat /etc/grid-security/certificates/*.pem >> $(python -m requests.certs)
 ```
+
+
+
 
 ## Creating releases
 

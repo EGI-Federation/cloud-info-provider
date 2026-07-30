@@ -1,19 +1,20 @@
 import json
 import logging
 import re
-from urllib.parse import urljoin
 import sys
+from urllib.parse import urljoin
 
 import glanceclient
+import keystoneclient.v3.client
 import novaclient.client
-from cloud_info_provider import exceptions, glue, utils
-from cloud_info_provider.providers import base
+import os_client_config
 from keystoneauth1 import loading
 from keystoneauth1.exceptions import http as http_exc
-from keystoneauth1.loading import base as loading_base
-from keystoneauth1.loading import session as loading_session
+from keystoneauth1.exceptions.base import ClientException as client_exc
 from novaclient.exceptions import Forbidden
-import os_client_config
+
+from cloud_info_provider import exceptions, glue
+from cloud_info_provider.providers import base
 
 
 class OpenStackProvider(base.BaseProvider):
@@ -49,7 +50,7 @@ class OpenStackProvider(base.BaseProvider):
             if _opt.startswith("property_flavor_") and not _opt.endswith("_value"):
                 opts_k = vars(self.opts)[_opt]
                 property_id = re.search(r"property_(\w+)", _opt).group(1)
-                opts_v = vars(self.opts).get("_".join([_opt, "value"]), None)
+                opts_v = vars(self.opts).get(f"{_opt}_value", None)
                 self.flavor_properties[property_id] = {"key": opts_k, "value": opts_v}
             elif _opt.startswith("property_image"):
                 opts_k = vars(self.opts)[_opt]
@@ -287,12 +288,13 @@ class OpenStackProvider(base.BaseProvider):
         rules = []
         total_vm, running_vm, halted_vm, suspended_vm = 0, 0, 0, 0
         max_cpu, min_cpu, max_ram, min_ram = 0, 0, 0, 0
-        for vo in self.site_config["vos"]:
+        vo_list = self.site_config.get("vos", None) or []
+        for vo in vo_list:
             try:
                 self.rescope_project(vo["auth"])
             except exceptions.OpenStackProviderException as e:
                 if self.exit_on_share_errors:
-                    raise e
+                    raise
                 else:
                     self.endpoint.health_state = "warning"
                     self.endpoint.health_state_info = str(e)
@@ -355,6 +357,18 @@ class OpenStackProvider(base.BaseProvider):
         self.manager.instance_min_cpu = min_cpu
         return share_objs
 
+    def check_auditor_role(self, cloud_name):
+        auditor_role = False
+        try:
+            self.rescope_project(auth=None, os_cloud=cloud_name)
+            keystone = keystoneclient.v3.client.Client(session=self.session)
+            users = keystone.users.list()
+            # there should be at least 1 user (self)
+            auditor_role = bool(users)
+        except (exceptions.OpenStackProviderException, client_exc) as e:
+            logging.warning(f"Not able to list users: {e!s}")
+        return {"auditor_role": auditor_role}
+
     def fetch(self):
         super().fetch()
         if self.last_working_auth:
@@ -367,15 +381,17 @@ class OpenStackProvider(base.BaseProvider):
             self.endpoint.health_state = "unknown"
             self.endpoint.health_state_info = "No working authentication configured"
 
+        if self.opts.auditor_role_cloud:
+            self.endpoint.other_info.update(
+                self.check_auditor_role(self.opts.auditor_role_cloud)
+            )
+
         return self.objs
 
     @staticmethod
     def populate_parser(parser):
         """Populate the argparser 'parser' with the needed options."""
         base.BaseProvider.populate_parser(parser)
-
-        plugins = loading_base.get_available_plugin_names()
-        default_auth = "v3password"
 
         cloud_config = os_client_config.OpenStackConfig()
         cloud_config.register_argparse_arguments(parser, sys.argv)
@@ -476,4 +492,11 @@ class OpenStackProvider(base.BaseProvider):
             metavar="PROPERTY_KEY",
             default="gpu_cudnn",
             help='Image"s property key to specify the cuDNN library version',
+        )
+
+        parser.add_argument(
+            "--auditor-role-cloud",
+            metavar="AUDITOR_CLOUD",
+            default="",
+            help="configuration in clouds.yaml for testing auditor role",
         )
