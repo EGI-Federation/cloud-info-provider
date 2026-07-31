@@ -75,7 +75,6 @@ class OpenStackProvider(base.BaseProvider):
             implementation_name="OpenStack Nova",
             semantics="https://developer.openstack.org/api-ref/compute",
             # assuming this is correct,
-            #
             authentication=self.opts.os_auth_type,
         )
 
@@ -87,7 +86,10 @@ class OpenStackProvider(base.BaseProvider):
         if not self.opts.os_auth_url:
             self.opts.os_auth_url = self.site_config["endpoint"]
         cloud_config = os_client_config.OpenStackConfig()
-        cloud = cloud_config.get_one_cloud(os_cloud, argparse=self.opts)
+        if os_cloud:
+            cloud = cloud_config.get_one_cloud(os_cloud)
+        else:
+            cloud = cloud_config.get_one_cloud(argparse=self.opts)
         auth_plugin_name = cloud.config.get("auth_type", "password")
         auth_args = cloud.get_auth_args()
         if auth:
