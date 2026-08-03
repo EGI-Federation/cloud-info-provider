@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-08-03
+
 ### Added
 
 - Check for auditor role (#401)
