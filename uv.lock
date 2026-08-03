@@ -1,6 +1,10 @@
 version = 1
 revision = 3
 requires-python = ">=3.10"
+resolution-markers = [
+    "python_full_version >= '3.11'",
+    "python_full_version < '3.11'",
+]
 
 [[package]]
 name = "annotated-types"
@@ -221,6 +225,7 @@ source = { editable = "." }
 dependencies = [
     { name = "defusedxml" },
     { name = "keystoneauth1" },
+    { name = "os-client-config" },
     { name = "pydantic" },
     { name = "pyopenssl" },
     { name = "python-dateutil" },
@@ -246,6 +251,7 @@ dev = [
 requires-dist = [
     { name = "defusedxml", specifier = ">=0.7.1" },
     { name = "keystoneauth1", specifier = ">=5.9.1" },
+    { name = "os-client-config", specifier = ">=2.3.0" },
     { name = "pydantic", specifier = ">=2.11.3" },
     { name = "pyopenssl", specifier = ">=25.1.0" },
     { name = "python-dateutil", specifier = ">=2.9.0.post0" },
@@ -464,6 +470,15 @@ wheels = [
 ]
 
 [[package]]
+name = "decorator"
+version = "5.3.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/60/8b/32f9823da46cde7df2087faa08cd98d01b908f8dcab982cdba9c84e85355/decorator-5.3.1.tar.gz", hash = "sha256:4cbcdd55a6efadb9dbea26b858f4fb3264567b52d69ca0d25b721b553f60ea82", size = 58084, upload-time = "2026-05-18T06:03:28.057Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/05/7f/798705f5296a58ca505d600456748d1be48078eac8a7050d8a98bc9edb89/decorator-5.3.1-py3-none-any.whl", hash = "sha256:f47fe6fdbd2edd623ecfe36875d37aba411624e2670dd395dddae1358689bb3c", size = 10365, upload-time = "2026-05-18T06:03:26.517Z" },
+]
+
+[[package]]
 name = "defusedxml"
 version = "0.7.1"
 source = { registry = "https://pypi.org/simple" }
@@ -473,11 +488,25 @@ wheels = [
 ]
 
 [[package]]
+name = "dogpile-cache"
+version = "1.5.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "decorator" },
+    { name = "stevedore" },
+    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/e7/c8/301ff89746e76745b937606df4753c032787c59ecb37dd4d4250bddc8929/dogpile_cache-1.5.0.tar.gz", hash = "sha256:849c5573c9a38f155cd4173103c702b637ede0361c12e864876877d0cd125eec", size = 947962, upload-time = "2025-10-11T17:35:36.898Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/dc/80/12235e5b75bb2c586733280854f131b86051e0bbdfb55349ff70d0f72cf9/dogpile_cache-1.5.0-py3-none-any.whl", hash = "sha256:dc7b47d37844db15e8fdc0243c1b58857a2ddc52a5118237a97127bac200e18d", size = 64447, upload-time = "2025-10-11T17:35:38.573Z" },
+]
+
+[[package]]
 name = "exceptiongroup"
 version = "1.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
+    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/50/79/66800aadf48771f6b62f7eb014e352e5d06856655206165d775e675a02c9/exceptiongroup-1.3.1.tar.gz", hash = "sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219", size = 30371, upload-time = "2025-11-21T23:01:54.787Z" }
 wheels = [
@@ -518,6 +547,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/b9/f3/ef59cee614d5e0accf6fd0cbba025b93b272e626ca89fb70a3e9187c5d15/iso8601-2.1.0.tar.gz", hash = "sha256:6b1d3829ee8921c4301998c909f7829fa9ed3cbdac0d3b16af2d743aed1ba8df", size = 6522, upload-time = "2023-10-03T00:25:39.317Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/6c/0c/f37b6a241f0759b7653ffa7213889d89ad49a2b76eb2ddf3b57b2738c347/iso8601-2.1.0-py3-none-any.whl", hash = "sha256:aac4145c4dcb66ad8b648a02830f5e2ff6c24af20f4f482689be402db2429242", size = 7545, upload-time = "2023-10-03T00:25:32.304Z" },
+]
+
+[[package]]
+name = "jmespath"
+version = "1.1.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/d3/59/322338183ecda247fb5d1763a6cbe46eff7222eaeebafd9fa65d4bf5cb11/jmespath-1.1.0.tar.gz", hash = "sha256:472c87d80f36026ae83c6ddd0f1d05d4e510134ed462851fd5f754c8c3cbb88d", size = 27377, upload-time = "2026-01-22T16:35:26.279Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/14/2f/967ba146e6d58cf6a652da73885f52fc68001525b4197effc174321d70b4/jmespath-1.1.0-py3-none-any.whl", hash = "sha256:a5663118de4908c91729bea0acadca56526eb2698e83de10cd116ae0f4e97c64", size = 20419, upload-time = "2026-01-22T16:35:24.919Z" },
 ]
 
 [[package]]
@@ -698,6 +736,73 @@ wheels = [
 ]
 
 [[package]]
+name = "openstacksdk"
+version = "4.13.0"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version < '3.11'",
+]
+dependencies = [
+    { name = "cryptography", marker = "python_full_version < '3.11'" },
+    { name = "decorator", marker = "python_full_version < '3.11'" },
+    { name = "dogpile-cache", marker = "python_full_version < '3.11'" },
+    { name = "iso8601", marker = "python_full_version < '3.11'" },
+    { name = "jmespath", marker = "python_full_version < '3.11'" },
+    { name = "jsonpatch", marker = "python_full_version < '3.11'" },
+    { name = "keystoneauth1", marker = "python_full_version < '3.11'" },
+    { name = "os-service-types", marker = "python_full_version < '3.11'" },
+    { name = "pbr", marker = "python_full_version < '3.11'" },
+    { name = "platformdirs", marker = "python_full_version < '3.11'" },
+    { name = "psutil", marker = "python_full_version < '3.11'" },
+    { name = "pyyaml", marker = "python_full_version < '3.11'" },
+    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/eb/ee/12590365cec760c4e559eef4e77ba82b8cd024d98b5ede37750201068b6e/openstacksdk-4.13.0.tar.gz", hash = "sha256:ab5b0d7e3a42de3dbc78497b31b5be53abf77a962986b3a621821e07e38c69a2", size = 1341338, upload-time = "2026-05-18T09:36:52.922Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/57/90/d07b37783885891d34300610542f60d386c8110fb6b11eb2c2e5220d22b5/openstacksdk-4.13.0-py3-none-any.whl", hash = "sha256:3588662fdfba753ec32336dca836562622017ab8ed7b5bc910dd128681ebac8a", size = 1895999, upload-time = "2026-05-18T09:36:51.121Z" },
+]
+
+[[package]]
+name = "openstacksdk"
+version = "4.17.0"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version >= '3.11'",
+]
+dependencies = [
+    { name = "cryptography", marker = "python_full_version >= '3.11'" },
+    { name = "decorator", marker = "python_full_version >= '3.11'" },
+    { name = "dogpile-cache", marker = "python_full_version >= '3.11'" },
+    { name = "iso8601", marker = "python_full_version >= '3.11'" },
+    { name = "jmespath", marker = "python_full_version >= '3.11'" },
+    { name = "jsonpatch", marker = "python_full_version >= '3.11'" },
+    { name = "keystoneauth1", marker = "python_full_version >= '3.11'" },
+    { name = "os-service-types", marker = "python_full_version >= '3.11'" },
+    { name = "pbr", marker = "python_full_version >= '3.11'" },
+    { name = "platformdirs", marker = "python_full_version >= '3.11'" },
+    { name = "psutil", marker = "python_full_version >= '3.11'" },
+    { name = "pyyaml", marker = "python_full_version >= '3.11'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/48/1d/0238c57f7eb64170be6ff1703c3f87afa44a648f0672c91de7f66a58a11e/openstacksdk-4.17.0.tar.gz", hash = "sha256:827e1ade488db6116f59af1da6c97dbdfeeb879d3fc96bca99b19351f15df8ba", size = 1399124, upload-time = "2026-06-24T09:25:09.839Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4e/b8/7c48faf004219cba8cd160800f11fd8440a5ae18e621679da2d4607fa1fd/openstacksdk-4.17.0-py3-none-any.whl", hash = "sha256:3c968f8b97b38b7d73ddb88d16c6a7d80bcc554c5fbfcc12638a7b51bdae144e", size = 1988252, upload-time = "2026-06-24T09:25:08.325Z" },
+]
+
+[[package]]
+name = "os-client-config"
+version = "2.3.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "openstacksdk", version = "4.13.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "openstacksdk", version = "4.17.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "pbr" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/50/cd/352f6f18d1fb90780b95fdc3a668a279bd41d89905d70ee06076b529077c/os_client_config-2.3.0.tar.gz", hash = "sha256:e16a260f2fd500af14f157b9b7b7d69292ce83b0f8a461ec68ce6a8a42967cbd", size = 49928, upload-time = "2025-07-08T09:00:46.701Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3e/d1/0f6fe5650516fd5113ca64f3efbdd35c91be14ead96065b835207a9cd75a/os_client_config-2.3.0-py3-none-any.whl", hash = "sha256:bac8486bbafc0dd92704c29d5581d65030912804e8e675d13bc43b76ce051c82", size = 30898, upload-time = "2025-07-08T09:00:45.265Z" },
+]
+
+[[package]]
 name = "os-service-types"
 version = "1.8.2"
 source = { registry = "https://pypi.org/simple" }
@@ -793,6 +898,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/5e/ab/1de9a4f730edde1bdbbc2b8d19f8fa326f036b4f18b2f72cfbea7dc53c26/pbr-7.0.3.tar.gz", hash = "sha256:b46004ec30a5324672683ec848aed9e8fc500b0d261d40a3229c2d2bbfcedc29", size = 135625, upload-time = "2025-11-03T17:04:56.274Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c0/db/61efa0d08a99f897ef98256b03e563092d36cc38dc4ebe4a85020fe40b31/pbr-7.0.3-py2.py3-none-any.whl", hash = "sha256:ff223894eb1cd271a98076b13d3badff3bb36c424074d26334cd25aebeecea6b", size = 131898, upload-time = "2025-11-03T17:04:54.875Z" },
+]
+
+[[package]]
+name = "platformdirs"
+version = "4.11.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/78/9b/560e4be8e26f6fd133a03630a8df0c663b9e8d61b4ade152b72005aec83b/platformdirs-4.11.0.tar.gz", hash = "sha256:0555d18370482847566ffabcaa53ad7c6c1c29f195989ae1ed634a05f76ea1e0", size = 31953, upload-time = "2026-07-21T13:09:36.565Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7d/68/d8d58938dfb1370b266a1a729e6d77a985be23689a0496498ee17b2cbf90/platformdirs-4.11.0-py3-none-any.whl", hash = "sha256:360ccded2b7fce0af0ff80cc8f5942a1c5d99b0e856033acb030bfc634709e74", size = 23247, upload-time = "2026-07-21T13:09:35.422Z" },
 ]
 
 [[package]]

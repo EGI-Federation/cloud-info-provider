@@ -8,6 +8,14 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Check for auditor role (#401)
+
+### Chore
+
+- Dependencies updates
+
 ## [1.1.1] - 2026-06-23
 
 ### Chore

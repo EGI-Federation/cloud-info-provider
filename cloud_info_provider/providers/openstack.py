@@ -1,17 +1,20 @@
 import json
 import logging
 import re
+import sys
 from urllib.parse import urljoin
 
 import glanceclient
+import keystoneclient.v3.client
 import novaclient.client
-from cloud_info_provider import exceptions, glue, utils
-from cloud_info_provider.providers import base
+import os_client_config
 from keystoneauth1 import loading
 from keystoneauth1.exceptions import http as http_exc
-from keystoneauth1.loading import base as loading_base
-from keystoneauth1.loading import session as loading_session
+from keystoneauth1.exceptions.base import ClientException as client_exc
 from novaclient.exceptions import Forbidden
+
+from .. import exceptions, glue
+from . import base
 
 
 class OpenStackProvider(base.BaseProvider):
@@ -35,25 +38,9 @@ class OpenStackProvider(base.BaseProvider):
 
     def __init__(self, opts, **kwargs):
         super().__init__(opts, **kwargs)
-
-        # NOTE(aloga): we do not want a project to be passed from the CLI,
-        # as we will iterate over it for each configured VO and project.  We
-        # have not added these arguments to the parser, but, since the plugin
-        # is expecting them when parsing the arguments we need to set them to
-        # None before calling the load_auth_from_argparse_arguments. However,
-        # we may receive this in the "opts" namespace, therefore we do not set
-        # it this is passed.
-        if "os_project_name" not in opts:
-            opts.os_project_name = None
-            opts.os_tenant_name = None
-        if "os_project_id" not in opts:
-            opts.os_project_id = None
-            opts.os_tenant_id = None
         self.project_id = None
-        opts.os_auth_url = self.site_config["endpoint"]
-        self.os_region = opts.os_region
-        self.all_images = not opts.only_appdb_images
 
+        self.all_images = not opts.only_appdb_images
         # Select 'public', 'private' or 'all' (default) templates.
         self.select_flavors = opts.select_flavors
 
@@ -63,7 +50,7 @@ class OpenStackProvider(base.BaseProvider):
             if _opt.startswith("property_flavor_") and not _opt.endswith("_value"):
                 opts_k = vars(self.opts)[_opt]
                 property_id = re.search(r"property_(\w+)", _opt).group(1)
-                opts_v = vars(self.opts).get("_".join([_opt, "value"]), None)
+                opts_v = vars(self.opts).get(f"{_opt}_value", None)
                 self.flavor_properties[property_id] = {"key": opts_k, "value": opts_v}
             elif _opt.startswith("property_image"):
                 opts_k = vars(self.opts)[_opt]
@@ -91,24 +78,32 @@ class OpenStackProvider(base.BaseProvider):
             authentication=self.opts.os_auth_type,
         )
 
-    def rescope_project(self, auth):
+    def rescope_project(self, auth=None, os_cloud=None):
         """Switch to OS project whenever there is a change.
 
         It updates every OpenStack client used in case of new project.
         """
-        region_name = auth.get("region_name", None)
-        for k, v in auth.items():
-            setattr(self.opts, k, v)
-            setattr(self.opts, f"os_{k}", v)
-        self.auth_plugin = loading.load_auth_from_argparse_arguments(self.opts)
-        self.session = loading.load_session_from_argparse_arguments(
-            self.opts, auth=self.auth_plugin
+        if not self.opts.os_auth_url:
+            self.opts.os_auth_url = self.site_config["endpoint"]
+        cloud_config = os_client_config.OpenStackConfig()
+        if os_cloud:
+            cloud = cloud_config.get_one_cloud(os_cloud)
+        else:
+            cloud = cloud_config.get_one_cloud(argparse=self.opts)
+        auth_plugin_name = cloud.config.get("auth_type", "password")
+        auth_args = cloud.get_auth_args()
+        if auth:
+            for k, v in auth.items():
+                auth_args[k] = v
+        loader = loading.get_plugin_loader(auth_plugin_name)
+        self.auth_plugin = loader.load_from_options(**auth_args)
+        self.session = loading.session.Session().load_from_options(
+            auth=self.auth_plugin
         )
         self.auth_plugin.invalidate()
         try:
             self.project_id = self.session.get_project_id()
         except http_exc.Unauthorized as e:
-            # FIXME - this should be just reported in the glue and not break anything
             raise exceptions.OpenStackProviderException(e.details)
 
         self.last_working_auth = auth
@@ -116,12 +111,12 @@ class OpenStackProvider(base.BaseProvider):
         self.nova = novaclient.client.Client(
             2,
             session=self.session,
-            region_name=region_name,
+            region_name=cloud.config.get("region_name", ""),
         )
         self.glance = glanceclient.Client(
             "2",
             session=self.session,
-            region_name=region_name,
+            region_name=cloud.config.get("region_name", ""),
         )
 
     def build_instance_type(self, flavor, share):
@@ -295,14 +290,15 @@ class OpenStackProvider(base.BaseProvider):
         rules = []
         total_vm, running_vm, halted_vm, suspended_vm = 0, 0, 0, 0
         max_cpu, min_cpu, max_ram, min_ram = 0, 0, 0, 0
-        for vo in self.site_config["vos"]:
+        vo_list = self.site_config.get("vos", None) or []
+        for vo in vo_list:
             try:
                 self.rescope_project(vo["auth"])
             except exceptions.OpenStackProviderException as e:
                 if self.exit_on_share_errors:
-                    raise e
+                    raise
                 else:
-                    self.endpoint.health_state = "warn"
+                    self.endpoint.health_state = "warning"
                     self.endpoint.health_state_info = str(e)
                     continue
             share_id = f"{self.get_endpoint_id()}_share_{vo['name']}_{self.project_id}"
@@ -363,6 +359,18 @@ class OpenStackProvider(base.BaseProvider):
         self.manager.instance_min_cpu = min_cpu
         return share_objs
 
+    def check_auditor_role(self, cloud_name):
+        auditor_role = False
+        try:
+            self.rescope_project(auth=None, os_cloud=cloud_name)
+            keystone = keystoneclient.v3.client.Client(session=self.session)
+            users = keystone.users.list()
+            # there should be at least 1 user (self)
+            auditor_role = bool(users)
+        except (exceptions.OpenStackProviderException, client_exc) as e:
+            logging.warning(f"Not able to list users: {e!s}")
+        return {"auditor_role": auditor_role}
+
     def fetch(self):
         super().fetch()
         if self.last_working_auth:
@@ -372,8 +380,14 @@ class OpenStackProvider(base.BaseProvider):
                 self.nova.versions.get_current().version
             )
         else:
-            self.endpoint.health_state = "UNKNOWN"
+            self.endpoint.health_state = "unknown"
             self.endpoint.health_state_info = "No working authentication configured"
+
+        if self.opts.auditor_role_cloud:
+            self.endpoint.other_info.update(
+                self.check_auditor_role(self.opts.auditor_role_cloud)
+            )
+
         return self.objs
 
     @staticmethod
@@ -381,43 +395,8 @@ class OpenStackProvider(base.BaseProvider):
         """Populate the argparser 'parser' with the needed options."""
         base.BaseProvider.populate_parser(parser)
 
-        plugins = loading_base.get_available_plugin_names()
-        default_auth = "v3password"
-
-        parser.add_argument(
-            "--os-auth-type",
-            "--os-auth-plugin",
-            metavar="<name>",
-            default=utils.env("OS_AUTH_TYPE", default=default_auth),
-            choices=plugins,
-            help="Authentication type to use, available types are: %s"
-            % ", ".join(plugins),
-        )
-
-        # arguments come from session and plugins
-        loading_session.register_argparse_arguments(parser)
-        for plugin_name in plugins:
-            plugin = loading_base.get_plugin_loader(plugin_name)
-            # NOTE(aloga): we do not want a project to be passed from the
-            # CLI, as we will iterate over it for each configured VO and
-            # project. However, as the plugin is expecting them when
-            # parsing the arguments we need to set them to None before
-            # calling the load_auth_from_argparse_arguments method in the
-            # __init__ method of this class.
-            for opt in filter(
-                lambda x: x.name not in ("project-name", "project-id"),
-                plugin.get_options(),
-            ):
-                parser.add_argument(
-                    *opt.argparse_args,
-                    default=opt.argparse_default,
-                    metavar="<auth-%s>" % opt.name,
-                    help=opt.help,
-                    dest="os_%s" % opt.dest.replace("-", "_"),
-                )
-
-        # somehow region is missing, so adding explicitly
-        parser.add_argument("--os-region", default=None, help="OpenStack region to use")
+        cloud_config = os_client_config.OpenStackConfig()
+        cloud_config.register_argparse_arguments(parser, sys.argv)
 
         parser.add_argument(
             "--select-flavors",
@@ -515,4 +494,11 @@ class OpenStackProvider(base.BaseProvider):
             metavar="PROPERTY_KEY",
             default="gpu_cudnn",
             help='Image"s property key to specify the cuDNN library version',
+        )
+
+        parser.add_argument(
+            "--auditor-role-cloud",
+            metavar="AUDITOR_CLOUD",
+            default="",
+            help="configuration in clouds.yaml for testing auditor role",
         )
