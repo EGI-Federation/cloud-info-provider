@@ -2,7 +2,6 @@
 Tests for the publishers
 """
 
-
 from unittest import mock
 
 from ..publishers import stdout

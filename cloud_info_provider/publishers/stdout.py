@@ -4,7 +4,6 @@ StdOut Publisher
 Just prints to stdout
 """
 
-
 import json
 from io import StringIO
 

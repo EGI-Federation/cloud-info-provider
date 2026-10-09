@@ -43,9 +43,7 @@ def get_parser(providers, formatters, publishers):
         conflict_handler="resolve",
     )
 
-    parser.add_argument(
-        "--version", action="version", version=f"{__version__}"
-    )
+    parser.add_argument("--version", action="version", version=f"{__version__}")
 
     parser.add_argument(
         "--middleware",
