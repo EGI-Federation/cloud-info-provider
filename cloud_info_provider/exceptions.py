@@ -17,7 +17,7 @@ class CloudInfoException(Exception):
                 # log the issue and the kwargs
                 logger.exception("Exception in string format operation")
                 for name, value in kwargs.items():
-                    logger.error("%s: %s" % (name, value))
+                    logger.error(f"{name}: {value}")
                 raise
 
         super().__init__(message)

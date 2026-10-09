@@ -1,6 +1,6 @@
-import contextlib  # noqa
+import contextlib
 
-from cloud_info_provider import glue
+from .. import glue
 
 
 def compare_glue(obj, glue_obj):
