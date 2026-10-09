@@ -1,19 +1,19 @@
-import cloud_info_provider.providers.base
-import mock
-from cloud_info_provider import glue
-from cloud_info_provider.tests import base
-from cloud_info_provider.tests import utils as utils
-from cloud_info_provider.tests.data import DATA
+from unittest import mock
+
+from .. import glue
+from ..providers import base as providers_base
+from . import base, utils
+from .data import DATA
 
 
-class FakeBaseProvider(cloud_info_provider.providers.base.BaseProvider):
+class FakeBaseProvider(providers_base.BaseProvider):
     def _load_site_config(self, site_config):
         self.site_config = DATA.site_config
 
 
 class BaseProviderTest(base.TestCase):
     def setUp(self):
-        class Opts(object):
+        class Opts:
             debug = None
             timeout = 1234
             site_config = None
@@ -77,7 +77,7 @@ class BaseProviderTest(base.TestCase):
 
     def test_provider_build_shares(self):
         self.provider.build_shares()
-        self.provider.get_objs("Share") == []
+        assert self.provider.get_objs("Share") == []
 
     def test_get_goc_info(self):
         self.provider.goc_service_type = "svc"

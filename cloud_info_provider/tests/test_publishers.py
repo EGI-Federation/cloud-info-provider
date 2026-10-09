@@ -2,11 +2,11 @@
 Tests for the publishers
 """
 
-from __future__ import print_function
 
-import mock
-from cloud_info_provider.publishers import stdout
-from cloud_info_provider.tests import base
+from unittest import mock
+
+from ..publishers import stdout
+from . import base
 
 
 class StdOutPublisherTest(base.TestCase):

@@ -1,15 +1,16 @@
 import argparse
 import logging
 
-import cloud_info_provider
 from stevedore import driver, extension
+
+from . import __version__
 
 
 def get_providers():
     def _handle_exception(*args):
-        mgr, entry_point, exception = args
+        _, entry_point, exception = args
         logging.getLogger("stevedore.extension").error(
-            (("Cannot load '%s': %s") % (entry_point, exception))
+            f"Cannot load '{entry_point}': {exception}"
         )
 
     mgr = extension.ExtensionManager(
@@ -17,7 +18,7 @@ def get_providers():
         on_load_failure_callback=_handle_exception,
         propagate_map_exceptions=True,
     )
-    return dict((x.name, x.plugin) for x in mgr)
+    return {x.name: x.plugin for x in mgr}
 
 
 def get_formatters():
@@ -31,7 +32,7 @@ def get_publishers():
     mgr = extension.ExtensionManager(
         namespace="cip.publishers",
     )
-    return dict((x.name, x.plugin) for x in mgr)
+    return {x.name: x.plugin for x in mgr}
 
 
 def get_parser(providers, formatters, publishers):
@@ -43,7 +44,7 @@ def get_parser(providers, formatters, publishers):
     )
 
     parser.add_argument(
-        "--version", action="version", version=f"{cloud_info_provider.__version__}"
+        "--version", action="version", version=f"{__version__}"
     )
 
     parser.add_argument(
@@ -102,14 +103,14 @@ def get_parser(providers, formatters, publishers):
         help=("Exit if there are errors getting information from a share."),
     )
 
-    for provider_name, provider in providers.items():
+    for provider in providers.values():
         # Do not pass an argument group to plugins that may create their own
         # argument groups (for example keystoneauth loading.session). Passing
         # the root parser avoids nested argument groups which argparse
         # disallows (raises ValueError: argument groups cannot be nested).
         provider.populate_parser(parser)
 
-    for publisher_name, publisher in publishers.items():
+    for publisher in publishers.values():
         # Likewise, pass the root parser to publishers.
         publisher.populate_parser(parser)
 

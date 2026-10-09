@@ -1,7 +1,7 @@
 import abc
 
 
-class BaseFormatter(object):
+class BaseFormatter:
     """Base class for the formatters."""
 
     __metaclass__ = abc.ABCMeta
