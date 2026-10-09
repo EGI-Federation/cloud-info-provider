@@ -28,7 +28,7 @@ class TestCase(testtools.TestCase):
         """Run before each test method to initialize test environment."""
 
         super().setUp()
-        test_timeout = os.environ.get("OS_TEST_TIMEOUT", 0)
+        test_timeout = os.environ.get("OS_TEST_TIMEOUT", "0")
         try:
             test_timeout = int(test_timeout)
         except ValueError:

@@ -1,6 +1,7 @@
-import mock
-from cloud_info_provider import core
-from cloud_info_provider.tests import base
+from unittest import mock
+
+from .. import core
+from . import base
 
 
 class CoreOptionsTest(base.TestCase):

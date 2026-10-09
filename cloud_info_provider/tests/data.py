@@ -1,7 +1,7 @@
 """Test fixtures"""
 
 
-class Data(object):
+class Data:
     @property
     def site_name(self):
         return "SITE_NAME"
@@ -25,9 +25,9 @@ class Data(object):
 DATA = Data()
 
 
-class OpenStackFakes(object):
+class OpenStackFakes:
     def __init__(self):
-        class FakeObject(object):
+        class FakeObject:
             def __init__(self, **kwargs):
                 self.d = kwargs
                 for k, v in kwargs.items():

@@ -16,6 +16,8 @@ from novaclient.exceptions import Forbidden
 from .. import exceptions, glue
 from . import base
 
+logger = logging.getLogger(__name__)
+
 
 class OpenStackProvider(base.BaseProvider):
     goc_service_type = "org.openstack.nova"
@@ -191,7 +193,7 @@ class OpenStackProvider(base.BaseProvider):
         try:
             extra_attrs = json.loads(image.get("APPLIANCE_ATTRIBUTES", "{}"))
         except ValueError:
-            logging.warning(
+            logger.warning(
                 "Unexpected issue while getting json for '%s'",
                 image.get("APPLIANCE_ATTRIBUTES", "{}"),
             )
@@ -368,7 +370,7 @@ class OpenStackProvider(base.BaseProvider):
             # there should be at least 1 user (self)
             auditor_role = bool(users)
         except (exceptions.OpenStackProviderException, client_exc) as e:
-            logging.warning(f"Not able to list users: {e!s}")
+            logger.warning(f"Not able to list users: {e!s}")
         return {"auditor_role": auditor_role}
 
     def fetch(self):

@@ -1,13 +1,13 @@
 import argparse
+from unittest import mock
 
 import keystoneauth1.loading.session
-import mock
-from cloud_info_provider import glue
-from cloud_info_provider.exceptions import OpenStackProviderException
-from cloud_info_provider.providers import openstack as os_provider
-from cloud_info_provider.tests import base, data
-from cloud_info_provider.tests import utils as utils
 from keystoneauth1.exceptions import http as http_exc
+
+from .. import glue
+from ..exceptions import OpenStackProviderException
+from ..providers import openstack as os_provider
+from . import base, data, utils
 
 FAKES = data.OS_FAKES
 
@@ -354,7 +354,7 @@ class OpenStackProviderTest(base.TestCase):
         assert len(self.provider.get_objs("MappingPolicy")) == 2
         assert len(self.provider.get_objs("AccessPolicy")) == 1
 
-        bar_shares = [s for s in shares if s.project_id == "bar"][0]
+        bar_shares = next(s for s in shares if s.project_id == "bar")
         assert utils.compare_glue(
             {
                 "id": "https://foo.example.org:5000/v3_OpenStack_v3_share_foo1_bar",
