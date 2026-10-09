@@ -2,9 +2,9 @@ import logging
 
 import yaml
 
-from . import glue
-from .exceptions import CloudInfoException
-from .providers import utils
+from .. import glue
+from ..exceptions import CloudInfoException
+from . import utils
 
 
 class BaseProvider:
