@@ -23,7 +23,6 @@ dependencies = [
     "os-client-config>=2.3.0",
     "pydantic>=2.11.3",
     "pyopenssl>=25.1.0",
-    "python-dateutil>=2.9.0.post0",
     "python-glanceclient>=4.7.0",
     "python-keystoneclient>=5.5.0",
     "python-novaclient>=18.7.0",
